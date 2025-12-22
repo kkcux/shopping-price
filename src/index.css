@@ -1,0 +1,15 @@
+/* ล้างค่าขอบเริ่มต้นของ Browser */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden; /* ป้องกันการเลื่อนซ้ายขวาที่ไม่ได้ตั้งใจ */
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
