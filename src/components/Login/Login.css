@@ -1,40 +1,31 @@
 @import url("https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap");
 
-:root {
-  --primary-green: #4a7f35;
-  --text-gray: #777;
-  --border-gray: #c9c9c9;
-  --footer-navy: #0a2540;
-}
-
-/* ================= Reset ================= */
+/* ================= Global ================= */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
-
 body {
   font-family: "Prompt", sans-serif;
-  background: #fff;
+  background-color: #f8f9fa;
 }
 
-/* ================= Layout ================= */
-.page-wrapper {
+/* โครงสร้างหลักแบบ Flex Column เพื่อดัน Footer ลงล่างสุด */
+.page-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-/* ================= Header ================= */
+/* ================= Header (Nav) ================= */
 .site-header {
-  padding: 18px 50px;
+  background: #fff;
+  padding: 15px 50px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #ffffff;
-  border-bottom: 1px solid #eeeeee;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  border-bottom: 1px solid #eee; /* เส้นขอบบางๆ ด้านล่าง */
 }
 
 .brand {
@@ -42,347 +33,306 @@ body {
   align-items: center;
   gap: 10px;
 }
-
 .brand-logo {
-  width: 38px;
-  height: 38px;
+  width: 40px;
+  height: 40px;
   background: #000;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #00e676;
+  color: #4a7f35;
 }
-
 .brand-text {
-  font-size: 1.25rem;
+  font-size: 1.4rem;
   font-weight: 700;
+  color: #000;
 }
 
 .btn-back {
   background: #e5e5e5;
   border: none;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 0.85rem;
+  padding: 10px 20px;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  font-family: "Prompt";
+  font-weight: 500;
+  color: #333;
+  transition: 0.2s;
+}
+.btn-back:hover {
+  background: #dcdcdc;
 }
 
-/* ================= Main ================= */
+/* ================= Main Content ================= */
 .main-content {
-  flex: 1;
-  background: #f6f6f6;
+  flex: 1; /* ยืดเต็มพื้นที่ที่เหลือ */
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  padding: 50px 20px;
+  padding: 60px 20px;
 }
 
-/* ================= Auth Header ================= */
+/* การ์ด Login (สไตล์เดิมที่สวยแล้ว) */
+.auth-card {
+  background: #fff;
+  width: 100%;
+  max-width: 480px;
+  border-radius: 16px;
+  padding: 40px 45px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  border: 1px solid #f0f0f0;
+}
+
 .auth-header {
   text-align: center;
-  margin-bottom: 28px;
+  margin-bottom: 35px;
 }
-
 .auth-header h1 {
-  font-size: 1.9rem;
-  margin-bottom: 6px;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
 }
-
 .auth-header p {
-  font-size: 0.9rem;
-  color: var(--text-gray);
+  color: #666;
+  font-size: 0.95rem;
 }
 
-/* ================= Card ================= */
-.auth-card {
-  width: 100%;
-  max-width: 420px;
-  background: #fff;
-  border-radius: 12px;
-  border: 1px solid #dcdcdc;
-  padding: 36px 32px 40px;
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
-  transition: box-shadow 0.2s ease;
-}
-
-.auth-card:focus-within {
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
-}
-
-/* ================= Form ================= */
 .form-group {
-  margin-bottom: 18px;
+  margin-bottom: 22px;
 }
-
 .form-group label {
   display: block;
-  margin-bottom: 6px;
-  font-size: 0.9rem;
+  margin-bottom: 8px;
+  font-weight: 400;
 }
 
-/* ===== Input with icon ===== */
-.input-with-icon {
+.input-wrapper {
   position: relative;
   display: flex;
   align-items: center;
 }
-
 .input-icon {
   position: absolute;
-  left: 16px;
-  font-size: 18px;
-  color: #9a9a9a;
-  transition: color 0.2s ease;
+  left: 18px;
+  color: #9ca3af;
+  font-size: 1.2rem;
+  z-index: 10;
 }
-
-.input-with-icon input {
-  width: 100%;
-  padding: 12px 50px 12px 46px;
-  border-radius: 10px;
-  border: 1px solid var(--border-gray);
-  font-family: "Prompt";
-  font-size: 0.9rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  outline: none;
-  box-shadow: none;
-}
-
-.input-with-icon input::placeholder {
-  color: #b5b5b5;
-}
-
-.input-with-icon input:focus {
-  border-color: var(--primary-green);
-  box-shadow: 0 0 0 2px rgba(74, 127, 53, 0.15);
-}
-
-.input-with-icon:focus-within .input-icon {
-  color: var(--primary-green);
-}
-
-/* ===== Toggle password (👁) ===== */
 .toggle-password {
   position: absolute;
-  right: 16px;
+  right: 18px;
+  color: #9ca3af;
   cursor: pointer;
-  color: #9a9a9a;
-  font-size: 18px;
-  transition: color 0.2s ease;
+  font-size: 1.2rem;
 }
 
-.toggle-password:hover {
-  color: var(--primary-green);
+.input-wrapper input {
+  width: 100%;
+  padding: 14px 45px 14px 50px;
+  border-radius: 10px;
+  border: 1.5px solid #d1d5db;
+  font-family: "Prompt";
+  font-size: 1rem;
+  outline: none;
+  transition: 0.2s;
+}
+.input-wrapper input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
 }
 
-/* ================= Options ================= */
-
+/* Options */
 .form-options {
-  margin: 20px 0 26px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
 }
-
-/* Checkbox + text (FIXED) */
-.checkbox-wrapper {
+.checkbox-container {
   display: flex;
   align-items: center;
-  gap: 12px;
   cursor: pointer;
-  font-size: 0.9rem;
-  line-height: 1.4;
-  color: #333;
-  max-width: 100%;
+  gap: 8px;
 }
-
-/* Circle checkbox */
-.checkbox-wrapper input {
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  min-width: 18px;
-  min-height: 18px;
+.checkbox-container input {
+  display: none;
+}
+.custom-checkbox {
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid #333;
   border-radius: 50%;
-  border: 2px solid #b5b5b5;
-  background: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0; /* ❗ กัน checkbox ถูกบีบ */
   position: relative;
-  transition: all 0.2s ease;
 }
-
-/* inner dot */
-.checkbox-wrapper input::after {
+.checkbox-container input:checked + .custom-checkbox {
+  background: #333;
+}
+.checkbox-container input:checked + .custom-checkbox::after {
   content: "";
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #fff;
-  opacity: 0;
-  transform: scale(0.6);
-  transition: all 0.2s ease;
+  position: absolute;
+  left: 6px;
+  top: 3px;
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
 }
-
-.checkbox-wrapper input:checked {
-  background: var(--primary-green);
-  border-color: var(--primary-green);
+.label-text {
+  font-size: 0.9rem;
 }
-
-.checkbox-wrapper input:checked::after {
-  opacity: 1;
-  transform: scale(1);
-}
-
-/* Text container (KEY FIX) */
-.checkbox-wrapper span {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  white-space: nowrap; /* ❗ อยู่บรรทัดเดียว */
-  max-width: calc(100% - 30px); /* ❗ ไม่ให้ล้น card */
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* Links */
-.checkbox-wrapper .link {
-  color: var(--primary-green);
-  font-weight: 500;
+.forgot-password-link {
+  font-size: 0.9rem;
+  color: #4a7f35;
   cursor: pointer;
+  font-weight: 500;
 }
 
-.checkbox-wrapper .link:hover {
-  text-decoration: underline;
-}
-
-/* ================= Buttons ================= */
+/* Buttons */
 .btn-submit {
   width: 100%;
-  background: var(--primary-green);
-  color: #fff;
+  padding: 14px;
+  background: #4a7f35;
+  color: white;
   border: none;
-  padding: 13px;
   border-radius: 10px;
-  font-size: 0.95rem;
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-  transition: background 0.2s ease;
+  box-shadow: 0 4px 15px rgba(74, 127, 53, 0.3);
+  transition: 0.2s;
 }
-
 .btn-submit:hover {
   background: #3f6d2e;
 }
 
 .divider {
-  position: relative;
+  margin: 25px 0;
   text-align: center;
-  margin: 22px 0;
+  position: relative;
 }
-
 .divider::before {
   content: "";
   position: absolute;
+  top: 50%;
   left: 0;
   right: 0;
-  top: 50%;
   height: 1px;
-  background: #e2e2e2;
+  background: #eee;
 }
-
 .divider span {
   background: #fff;
-  padding: 0 12px;
+  padding: 0 15px;
+  color: #999;
   font-size: 0.85rem;
-  color: #aaa;
   position: relative;
-  z-index: 1;
 }
 
 .btn-google {
   width: 100%;
-  background: #fff;
-  border: 1px solid #dcdcdc;
   padding: 12px;
+  background: #fff;
+  border: 1px solid #ddd;
   border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   font-family: "Prompt";
+  font-size: 1rem;
   cursor: pointer;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
-  transition: background 0.2s ease;
 }
-
 .btn-google:hover {
   background: #f9f9f9;
 }
 
-/* ================= Footer text ================= */
-.auth-footer {
+.auth-footer-text {
   text-align: center;
-  margin-top: 22px;
-  font-size: 0.9rem;
+  margin-top: 30px;
+  font-size: 0.95rem;
 }
-
-.auth-footer a {
-  color: var(--primary-green);
-  font-weight: 500;
-  text-decoration: none;
+.register-link {
+  color: #4a7f35;
+  font-weight: 600;
+  cursor: pointer;
+  margin-left: 5px;
 }
 
 /* ================= Footer ================= */
 .site-footer {
-  background: var(--footer-navy);
+  background: #0a2540;
   color: #fff;
-  padding: 55px 40px 30px;
+  padding: 60px 50px 40px;
 }
 
 .footer-content {
   max-width: 1200px;
-  margin: auto;
+  margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1.5fr;
+  grid-template-columns: 1.5fr 1fr 1fr 1.5fr; /* 4 Columns */
   gap: 40px;
 }
 
-.footer-brand .brand-logo {
-  background: var(--primary-green);
+.footer-logo {
+  background: #4a7f35;
+  color: #fff;
+} /* Logo ใน Footer สีเขียว */
+.footer-brand .brand-text {
   color: #fff;
 }
-
 .footer-desc {
-  font-size: 0.85rem;
   color: #aab;
-  margin-top: 14px;
+  font-size: 0.85rem;
   line-height: 1.6;
+  margin-top: 15px;
 }
 
-.link-group h3 {
-  margin-bottom: 18px;
+.footer-col h3 {
   font-size: 1rem;
+  margin-bottom: 20px;
+  font-weight: 600;
 }
-
-.link-group ul {
+.footer-col ul {
   list-style: none;
 }
-
-.link-group li {
-  margin-bottom: 10px;
-  font-size: 0.85rem;
+.footer-col li {
   color: #aab;
+  font-size: 0.85rem;
+  margin-bottom: 12px;
   cursor: pointer;
+  transition: 0.2s;
 }
-
-.link-group li:hover {
+.footer-col li:hover {
   color: #fff;
 }
 
 .footer-bottom-line {
-  margin: 40px auto 0;
-  max-width: 1200px;
+  margin-top: 50px;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Mobile Responsive */
+@media (max-width: 900px) {
+  .footer-content {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (max-width: 500px) {
+  .site-header {
+    padding: 15px 20px;
+  }
+  .btn-back span {
+    display: none;
+  } /* ซ่อน text ปุ่มกลับในมือถือ */
+  .footer-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .footer-brand {
+    justify-content: center;
+  }
 }
