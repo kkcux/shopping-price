@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+// ใช้ CSS ตัวเดียวกับ Login เพื่อให้ Theme เหมือนกันเป๊ะ
 import "../Login/Login.css";
 
 import {
@@ -11,12 +13,27 @@ import {
 } from "react-icons/fi";
 
 const Register = () => {
+  const navigate = useNavigate();
+
   const [showPass, setShowPass] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [agree, setAgree] = useState(false);
+
+  const handleRegister = (e) => {
+    e.preventDefault();
+
+    if (!agree) {
+      alert("กรุณายอมรับเงื่อนไขการใช้งาน");
+      return;
+    }
+
+    console.log("สมัครสมาชิกสำเร็จ");
+    // TODO: ต่อ API สมัครสมาชิก
+  };
 
   return (
-    <div className="page-wrapper">
-      {/* Header */}
+    <div className="page-container">
+      {/* ================= Header (Nav) ================= */}
       <header className="site-header">
         <div className="brand">
           <div className="brand-logo">
@@ -25,13 +42,13 @@ const Register = () => {
           <span className="brand-text">PriceFinder</span>
         </div>
 
-        <button className="btn-back">
+        <button className="btn-back" onClick={() => navigate("/")}>
           <FiArrowLeft size={16} />
-          กลับหน้าเข้าสู่ระบบ
+          <span>กลับหน้าเข้าสู่ระบบ</span>
         </button>
       </header>
 
-      {/* Main */}
+      {/* ================= Main Content (Card) ================= */}
       <main className="main-content">
         <div className="auth-card">
           <div className="auth-header">
@@ -43,93 +60,117 @@ const Register = () => {
             </p>
           </div>
 
-          <form>
+          <form onSubmit={handleRegister}>
             {/* Email */}
             <div className="form-group">
               <label>อีเมล</label>
-              <div className="input-with-icon">
+              <div className="input-wrapper">
                 <FiMail className="input-icon" />
-                <input type="email" placeholder="กรอกอีเมลของคุณ" />
+                <input
+                  type="email"
+                  placeholder="กรอกอีเมลของคุณ"
+                  required
+                />
               </div>
             </div>
 
             {/* Password */}
             <div className="form-group">
               <label>รหัสผ่าน</label>
-              <div className="input-with-icon">
+              <div className="input-wrapper">
                 <FiLock className="input-icon" />
                 <input
                   type={showPass ? "text" : "password"}
-                  placeholder="กรอกรหัสผ่าน"
+                  placeholder="กำหนดรหัสผ่าน"
+                  required
                 />
-                <span
+                <div
                   className="toggle-password"
                   onClick={() => setShowPass(!showPass)}
                 >
                   {showPass ? <FiEyeOff /> : <FiEye />}
-                </span>
+                </div>
               </div>
             </div>
 
             {/* Confirm Password */}
             <div className="form-group">
               <label>ยืนยันรหัสผ่าน</label>
-              <div className="input-with-icon">
+              <div className="input-wrapper">
                 <FiLock className="input-icon" />
                 <input
                   type={showConfirm ? "text" : "password"}
-                  placeholder="ยืนยันรหัสผ่าน"
+                  placeholder="ยืนยันรหัสผ่านอีกครั้ง"
+                  required
                 />
-                <span
+                <div
                   className="toggle-password"
                   onClick={() => setShowConfirm(!showConfirm)}
                 >
                   {showConfirm ? <FiEyeOff /> : <FiEye />}
-                </span>
+                </div>
               </div>
             </div>
 
-            {/* Agreement (FIXED) */}
-            <div className="form-options">
-              <label className="checkbox-wrapper">
-                <input type="checkbox" />
-                <span className="agreement-text">
+            {/* Agreement (Checkbox แบบใหม่) */}
+            <div className="form-options" style={{ justifyContent: 'flex-start' }}>
+              <label className="checkbox-container">
+                <input
+                  type="checkbox"
+                  checked={agree}
+                  onChange={(e) => setAgree(e.target.checked)}
+                />
+                <span className="custom-checkbox"></span>
+                <span className="label-text">
                   ยอมรับ{" "}
-                  <span className="link">เงื่อนไขการใช้งาน</span>{" "}
+                  <span className="register-link">เงื่อนไขการใช้งาน</span>{" "}
                   และ{" "}
-                  <span className="link">นโยบายความเป็นส่วนตัว</span>
+                  <span className="register-link">นโยบายความเป็นส่วนตัว</span>
                 </span>
               </label>
             </div>
 
-            <button type="submit" className="btn-submit">
+            <button
+              type="submit"
+              className="btn-submit"
+              disabled={!agree}
+              // เพิ่ม style ให้ปุ่มจางลงถ้ายังไม่ติ๊ก
+              style={{ opacity: agree ? 1 : 0.6, cursor: agree ? 'pointer' : 'not-allowed' }}
+            >
               สมัครสมาชิก
             </button>
           </form>
 
-          <div className="auth-footer">
-            มีบัญชีอยู่แล้ว? <a href="#">เข้าสู่ระบบ</a>
+          <div className="auth-footer-text">
+            มีบัญชีอยู่แล้ว?{" "}
+            <span
+              className="register-link"
+              onClick={() => navigate("/")}
+            >
+              เข้าสู่ระบบ
+            </span>
           </div>
         </div>
       </main>
 
-      {/* Footer */}
+      {/* ================= Footer (4 คอลัมน์ เหมือนหน้า Login) ================= */}
       <footer className="site-footer">
         <div className="footer-content">
-          <div className="footer-brand-section">
+          {/* Brand Col */}
+          <div className="footer-col brand-col">
             <div className="brand footer-brand">
-              <div className="brand-logo">
-                <FiShoppingCart size={20} />
+              <div className="brand-logo footer-logo">
+                <FiShoppingCart size={18} />
               </div>
               <span className="brand-text">PriceFinder</span>
             </div>
             <p className="footer-desc">
-              เปรียบเทียบราคาสินค้าจากร้านค้าชั้นนำ
-              เพื่อให้คุณได้สินค้าคุณภาพดีในราคาที่ดีที่สุด
+              เปรียบเทียบราคาสินค้าจากร้านค้าชั้นนำ เพื่อให้คุณได้สินค้าคุณภาพดีในราคาที่ดีที่สุด
             </p>
           </div>
 
-          <div className="link-group">
+          {/* Service Col */}
+          <div className="footer-col">
             <h3>บริการ</h3>
             <ul>
               <li>เปรียบเทียบราคาสินค้า</li>
@@ -138,7 +179,8 @@ const Register = () => {
             </ul>
           </div>
 
-          <div className="link-group">
+          {/* Category Col */}
+          <div className="footer-col">
             <h3>หมวดหมู่</h3>
             <ul>
               <li>อาหาร</li>
@@ -148,7 +190,8 @@ const Register = () => {
             </ul>
           </div>
 
-          <div className="link-group">
+          {/* More Category Col */}
+          <div className="footer-col">
             <h3>หมวดหมู่เพิ่มเติม</h3>
             <ul>
               <li>อาหารแห้งและเครื่องปรุง</li>
@@ -158,8 +201,7 @@ const Register = () => {
             </ul>
           </div>
         </div>
-
-        <div className="footer-bottom-line" />
+        <div className="footer-bottom-line"></div>
       </footer>
     </div>
   );
