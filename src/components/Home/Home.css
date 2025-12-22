@@ -1,0 +1,368 @@
+/* --- Navbar --- */
+.navbar {
+  background: white;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  width: 100%;
+  padding: 0 2rem;
+}
+
+.nav-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 100% !important; 
+  margin: 0;
+  padding: 0;
+}
+
+/* --- ส่วนโลโก้ (ใช้ Sarabun แต่ทำตัวหนา) --- */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 1.5rem;
+  color: #0f172a;
+  
+  /* ใช้ Sarabun (Inherit จาก Body) */
+  font-family: 'Sarabun', sans-serif;
+  font-weight: 800; /* หนาพิเศษเพื่อให้ดูเป็นโลโก้ */
+  letter-spacing: -0.5px;
+}
+
+.logo-circle-nav {
+  background: black;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+}
+
+.brand.white { 
+  color: white; 
+  font-family: 'Sarabun', sans-serif;
+  font-weight: 800;
+}
+
+.menu {
+  display: flex;
+  gap: 3rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #0f172a;
+  /* ใช้ Sarabun */
+  font-family: 'Sarabun', sans-serif;
+  text-transform: uppercase;
+  margin-left: auto;
+  margin-right: 3rem;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.login-btn {
+  background: #22c55e;
+  color: white;
+  border: none;
+  padding: 8px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
+}
+
+.bell-icon { color: #64748b; cursor: pointer; }
+
+/* --- Hero Section --- */
+.hero {
+  background: linear-gradient(180deg, #dbeafe 0%, #f0f9ff 60%, #ffffff 100%);
+  padding: 4rem 0;
+  text-align: center;
+  font-family: 'Sarabun', sans-serif;
+}
+
+.hero h1 {
+  font-size: 2.2rem;
+  color: #0f172a;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+  font-weight: 700;
+  text-align: center;
+}
+
+.hero p {
+  color: #64748b;
+  margin-bottom: 2rem;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.search-bar {
+  background: white;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.search-bar input {
+  flex: 1;
+  border: none;
+  outline: none;
+  padding: 0 1rem;
+  font-family: 'Sarabun', sans-serif;
+  font-size: 1rem;
+}
+
+.search-btn {
+  background: #22c55e;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* --- Sections --- */
+.main-content { padding-bottom: 4rem; }
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2.5rem 0 1.5rem 0;
+}
+
+.section-header h2 { font-size: 1.25rem; color: #1e293b; font-weight: 600; }
+
+.badge {
+  background: #22c55e;
+  color: white;
+  font-size: 0.75rem;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
+}
+
+/* --- Categories Grid --- */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 1rem;
+}
+
+.cat-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: transform 0.2s;
+  min-height: 110px;
+}
+
+.cat-card:hover { transform: translateY(-3px); border-color: #22c55e; }
+.cat-card span { font-size: 0.9rem; color: #64748b; font-weight: 500; }
+.cat-icon { color: #0f172a; display: flex; align-items: center; }
+
+/* --- Product Grid --- */
+.product-grid {
+  display: grid;
+  /* เปลี่ยนจาก repeat(5, 1fr) เป็น 6 */
+  grid-template-columns: repeat(6, 1fr); 
+  gap: 15px;
+}
+
+/* --- การ์ดสินค้า --- */
+.product-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  transition: box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+}
+
+.product-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-4px);
+}
+
+.heart-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: #ef4444;
+  cursor: pointer;
+  background: rgba(255,255,255,0.8);
+  border-radius: 50%;
+  padding: 4px;
+  display: flex;
+}
+
+.product-card img {
+  width: 100%;
+  height: 120px;
+  object-fit: contain;
+  margin: 0.5rem 0;
+}
+
+.product-card h3 {
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  color: #1e293b;
+  line-height: 1.4rem;
+  height: 2.8rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.add-btn {
+  margin-top: auto;
+  background: #22c55e;
+  color: white;
+  border: none;
+  width: 100%;
+  padding: 8px;
+  border-radius: 50px;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-weight: 600;
+}
+
+.add-btn:hover { background: #16a34a; }
+
+/* --- Footer Styling --- */
+.footer {
+  background-color: #001524;
+  color: #94a3b8;
+  padding-top: 3rem;
+  padding-bottom: 1.5rem;
+  margin-top: 2rem;
+  font-family: 'Sarabun', sans-serif;
+  width: 100%;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  padding-bottom: 0.5rem;
+}
+
+.footer-col-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.logo-circle-footer {
+  background: black;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+}
+
+.footer-desc {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  font-weight: 300;
+  color: #64748b;
+  width: 100%;
+}
+
+.footer-col h3 {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  min-height: 27px;
+}
+
+.invisible-header {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.footer-col ul li {
+  list-style: none;
+  margin-bottom: 0.8rem;
+  font-size: 0.95rem;
+  font-weight: 300;
+  cursor: pointer;
+  transition: color 0.2s;
+  color: #94a3b8;
+}
+
+.footer-col ul li:hover {
+  color: #22c55e;
+}
+
+.footer-divider {
+  border-top: 1px solid #1e293b;
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .nav-content {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 0;
+  }
+  .menu { display: none; }
+  .nav-actions { gap: 1rem; }
+  
+  .footer-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 3rem;
+  }
+  .footer-col-brand { align-items: center; }
+  .invisible-header { display: none; }
+}
+
