@@ -1,109 +1,121 @@
-import React from 'react';
-import './Login.css';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./Login.css";
 
-import {
-  FiShoppingCart,
-  FiMail,
-  FiLock,
-  FiArrowLeft
-} from 'react-icons/fi';
-import { FcGoogle } from 'react-icons/fc';
+import { FiShoppingCart, FiMail, FiLock, FiEye, FiEyeOff, FiArrowLeft } from "react-icons/fi";
+import { FcGoogle } from "react-icons/fc";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [remember, setRemember] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    console.log("Login submitted");
+  };
+
   return (
-    <div className="page-wrapper">
+    <div className="page-container">
+      {/* ================= Header (Nav) ================= */}
       <header className="site-header">
         <div className="brand">
           <div className="brand-logo">
-            <FiShoppingCart size={22} />
+            <FiShoppingCart size={20} />
           </div>
           <span className="brand-text">PriceFinder</span>
         </div>
 
-        <button className="btn-back">
+        <button className="btn-back" onClick={() => navigate("/")}>
           <FiArrowLeft size={16} />
-          กลับไปยังหน้าหลัก
+          <span>กลับไปยังหน้าหลัก</span>
         </button>
       </header>
 
+      {/* ================= Main Content (Card) ================= */}
       <main className="main-content">
-        <div className="auth-header">
-          <h1>เข้าสู่ระบบ</h1>
-          <p>เข้าสู่ระบบเพื่อใช้งานฟีเจอร์ต่างๆ ของ PriceFinder</p>
-        </div>
-
         <div className="auth-card">
-          <form>
-            {/* Email */}
+          <div className="auth-header">
+            <h1>เข้าสู่ระบบ</h1>
+            <p>เข้าสู่ระบบเพื่อใช้งานฟีเจอร์ต่างๆ ของ PriceFinder</p>
+          </div>
+
+          <form onSubmit={handleLogin}>
             <div className="form-group">
               <label>อีเมล</label>
-              <div className="input-with-icon">
+              <div className="input-wrapper">
                 <FiMail className="input-icon" />
-                <input
-                  type="email"
-                  placeholder="กรอกอีเมลของคุณ"
-                />
+                <input type="email" placeholder="กรอกอีเมลของคุณ" required />
               </div>
             </div>
 
-            {/* Password */}
             <div className="form-group">
               <label>รหัสผ่าน</label>
-              <div className="input-with-icon">
+              <div className="input-wrapper">
                 <FiLock className="input-icon" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="กรอกรหัสผ่านของคุณ"
+                  required
                 />
+                <div className="toggle-password" onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? <FiEyeOff /> : <FiEye />}
+                </div>
               </div>
             </div>
 
             <div className="form-options">
-              <label className="checkbox-wrapper">
-                <input type="checkbox" />
-                จดจำการเข้าสู่ระบบ
+              <label className="checkbox-container">
+                <input
+                  type="checkbox"
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
+                />
+                <span className="custom-checkbox"></span>
+                <span className="label-text">จดจำการเข้าสู่ระบบ</span>
               </label>
 
-              <a href="#" className="forgot-pass">
+              <span className="forgot-password-link" onClick={() => navigate("/forgot-password")}>
                 ลืมรหัสผ่าน?
-              </a>
+              </span>
             </div>
 
-            <button type="submit" className="btn-submit">
-              เข้าสู่ระบบ
-            </button>
+            <button type="submit" className="btn-submit">เข้าสู่ระบบ</button>
 
             <div className="divider">
               <span>หรือเข้าสู่ระบบด้วย</span>
             </div>
 
             <button type="button" className="btn-google">
-              <FcGoogle size={20} />
+              <FcGoogle size={22} />
               เข้าสู่ระบบด้วย Google
             </button>
           </form>
 
-          <div className="auth-footer">
-            ยังไม่มีบัญชี? <a href="#">สมัครสมาชิก</a>
+          <div className="auth-footer-text">
+            ยังไม่มีบัญชี? <span className="register-link" onClick={() => navigate("/register")}>สมัครสมาชิก</span>
           </div>
         </div>
       </main>
 
+      {/* ================= Footer ================= */}
       <footer className="site-footer">
         <div className="footer-content">
-          <div className="footer-brand-section">
+          {/* Brand Col */}
+          <div className="footer-col brand-col">
             <div className="brand footer-brand">
-              <div className="brand-logo">
-                <FiShoppingCart size={20} />
+              <div className="brand-logo footer-logo">
+                <FiShoppingCart size={18} />
               </div>
               <span className="brand-text">PriceFinder</span>
             </div>
             <p className="footer-desc">
-              เปรียบเทียบราคาสินค้าจากร้านค้าชั้นนำเพื่อให้คุณได้สินค้าคุณภาพดีในราคาที่ดีที่สุด
+              เปรียบเทียบราคาสินค้าจากร้านค้าชั้นนำ เพื่อให้คุณได้สินค้าคุณภาพดีในราคาที่ดีที่สุด
             </p>
           </div>
 
-          <div className="link-group">
+          {/* Service Col */}
+          <div className="footer-col">
             <h3>บริการ</h3>
             <ul>
               <li>เปรียบเทียบราคาสินค้า</li>
@@ -112,7 +124,8 @@ const Login = () => {
             </ul>
           </div>
 
-          <div className="link-group">
+          {/* Category Col */}
+          <div className="footer-col">
             <h3>หมวดหมู่</h3>
             <ul>
               <li>อาหาร</li>
@@ -122,8 +135,9 @@ const Login = () => {
             </ul>
           </div>
 
-          <div className="link-group">
-            <h3 style={{ opacity: 0 }}>หมวดหมู่เพิ่มเติม</h3>
+          {/* More Category Col */}
+          <div className="footer-col">
+            <h3>หมวดหมู่เพิ่มเติม</h3>
             <ul>
               <li>อาหารแห้งและเครื่องปรุง</li>
               <li>ขนมและของหวาน</li>
@@ -132,8 +146,7 @@ const Login = () => {
             </ul>
           </div>
         </div>
-
-        <div className="footer-bottom-line" />
+        <div className="footer-bottom-line"></div>
       </footer>
     </div>
   );
