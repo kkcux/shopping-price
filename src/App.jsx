@@ -8,6 +8,7 @@ import Navbar from './components/Home/Navbar';
 import Footer from './components/Home/Footer';
 import Hero from './components/Home/hero';
 import Home from './components/Home/Home'; 
+import MyLists from './MyLists'; 
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
         {/* หน้า Login และ Register (แยกออกมาต่างหาก ไม่ติด Navbar มาด้วย) */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/mylists" element={<MyLists />} />
 
       </Routes>
     </div>
