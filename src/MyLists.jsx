@@ -12,17 +12,20 @@ const MyLists = () => {
       <main className="page-container-full">
         {/* ส่วนหัวข้อ */}
         <div className="page-header">
-          <a href="/">
-            <button className="back-button">
-              <ChevronLeft size={24} color="#666" />
-            </button>
-          </a>
-          <div className="header-text">
-            <h1 className="page-title">MYLISTS</h1>
-            <p className="page-subtitle">
-              เพิ่มสินค้าลงในรายการของคุณและเราจะค้นหาราคาที่ถูกที่สุดจากทุกร้านค้า
-            </p>
+          <div className="header-left">
+            <a href="/">
+              <button className="back-button">
+                <ChevronLeft size={24} color="#666" />
+              </button>
+            </a>
+            <div className="header-text">
+              <h1 className="page-title">MYLISTS</h1>
+              <p className="page-subtitle">
+                เพิ่มสินค้าลงในรายการของคุณและเราจะค้นหาราคาที่ถูกที่สุดจากทุกร้านค้า
+              </p>
+            </div>
           </div>
+          <button className="new-button">+MYLISTS</button>
         </div>
 
         {/* ส่วน Login Prompt */}
