@@ -1,4 +1,43 @@
-.App {
+/* src/App.css */
+
+/* 1. รีเซ็ตค่าพื้นฐาน */
+* {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+}
+
+/* 2. บังคับให้ทั้งเว็บชิดซ้ายเป็นค่าเริ่มต้น (แก้ปัญหา Default ของ Vite) */
+:root, body, #root {
+  text-align: left !important; /* บังคับชิดซ้าย */
+  width: 100%;
+}
+
+/* 3. โครงสร้างหลักของหน้าเว็บ */
+.app-container {
+  min-height: 100vh;      
+  display: flex;          
+  flex-direction: column; 
+}
+
+/* 4. ตัวจัด layout กลางหน้าจอ (Container) */
+/* class นี้ใช้ทั้ง Navbar และ Favorites ดังนั้นถ้าตั้งตรงนี้ ทั้งคู่จะตรงกันเป๊ะ */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;   /* จัดกล่องให้อยู่กึ่งกลางจอ */
+  padding: 0 20px;  /* เว้นขอบซ้ายขวา */
+  width: 100%;
+  
+  /* บังคับเนื้อหาข้างในให้ชิดซ้าย */
+  display: block; 
+  text-align: left; 
+}
+
+/* 5. ส่วนหุ้มเนื้อหา (ดัน Footer ลงล่าง) */
+.main-content-wrapper {
+  flex: 1;                
+  display: flex;          
+  flex-direction: column; 
+  width: 100%;
+  align-items: flex-start; /* จัดทุกอย่างในนี้ชิดซ้าย */
 }

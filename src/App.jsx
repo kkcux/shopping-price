@@ -1,18 +1,36 @@
 import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom'; // 1. เพิ่ม Navigate ตรงนี้
+import { Routes, Route } from 'react-router-dom'; // ลบ Navigate ออกเพราะไม่ได้ใช้แล้ว
 import Login from './components/Login/Login';
 import Register from './components/Register/register';
 import './App.css';
+
+import Navbar from './components/Home/Navbar';
+import Footer from './components/Home/Footer';
+import Hero from './components/Home/hero';
+import Home from './components/Home/Home'; 
+import MyLists from './MyLists'; 
 
 function App() {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
+        
+        {/* หน้า Home (path "/") : รวม Navbar, Hero, Home, Footer ไว้ด้วยกัน */}
+        <Route path="/" element={
+          <>
+            <Navbar />
+            <Hero />
+            <Home />
+            <Footer />
+          </>
+        } />
+
+        {/* หน้า Login และ Register (แยกออกมาต่างหาก ไม่ติด Navbar มาด้วย) */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/mylists" element={<MyLists />} />
+
       </Routes>
-      tast
     </div>
   );
 }
