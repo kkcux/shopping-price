@@ -1,12 +1,12 @@
 import React from 'react';
-import './components/Home/Home.css'; 
+import './Home.css'; 
 import { 
   ShoppingCart, Search, Bell, Heart, Plus, 
   Smartphone, Monitor, WashingMachine, Utensils, 
   Salad, Coffee, Cookie, Tag 
 } from 'lucide-react';
 
-import productsData from './data/big_c.json'; 
+import productsData from '../../data/big_c.json'; 
 
 function App() {
   
