@@ -1,15 +1,20 @@
-import React from 'react';
+import React, { useState } from 'react'; // 1. เพิ่ม useState
 import './Home.css'; 
 import { 
-  ShoppingCart, Search, Bell, Heart, Plus, 
+  Heart, Plus, 
   Smartphone, Monitor, WashingMachine, Utensils, 
   Salad, Coffee, Cookie, Tag 
 } from 'lucide-react';
 
 import productsData from '../../data/big_c.json'; 
+import AddToListModal from './AddToListModal';
 
-function App() {
+function Home() { // เปลี่ยนชื่อ function ให้ตรงกับไฟล์ (Home)
   
+  // 3. สร้าง State สำหรับควบคุม Modal
+  const [showModal, setShowModal] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
   const categories = [
     { name: "มือถือ", icon: <Smartphone /> },
     { name: "คอมพิวเตอร์", icon: <Monitor /> },
@@ -23,6 +28,18 @@ function App() {
   const recommendedProducts = productsData.slice(35, 41); 
   const popularProducts = productsData.slice(145, 151); 
   const promoProducts = productsData.slice(200, 206); 
+
+  // 4. ฟังก์ชันเปิด Modal เมื่อกดปุ่ม
+  const handleAddClick = (product) => {
+    setSelectedProduct(product);
+    setShowModal(true);
+  };
+
+  // 5. ฟังก์ชันปิด Modal
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedProduct(null);
+  };
 
   return (
     <div className="app-container">
@@ -55,7 +72,10 @@ function App() {
               <div className="heart-icon"><Heart size={18} /></div>
               <img src={item.image} alt={item.data} />
               <h3>{item.data}</h3>
-              <button className="add-btn"><Plus size={16} /> เพิ่ม</button>
+              {/* 6. แก้ปุ่ม onClick ให้เรียก function */}
+              <button className="add-btn" onClick={() => handleAddClick(item)}>
+                <Plus size={16} /> เพิ่ม
+              </button>
             </div>
           ))}
         </div>
@@ -71,7 +91,10 @@ function App() {
               <div className="heart-icon"><Heart size={18} /></div>
               <img src={item.image} alt={item.data} />
               <h3>{item.data}</h3>
-              <button className="add-btn"><Plus size={16} /> เพิ่ม</button>
+              {/* แก้ปุ่ม onClick */}
+              <button className="add-btn" onClick={() => handleAddClick(item)}>
+                <Plus size={16} /> เพิ่ม
+              </button>
             </div>
           ))}
         </div>
@@ -90,16 +113,25 @@ function App() {
               <div className="heart-icon"><Heart size={18} /></div>
               <img src={item.image} alt={item.data} />
               <h3>{item.data}</h3>
-              <button className="add-btn"><Plus size={16} /> เพิ่ม</button>
+              {/* แก้ปุ่ม onClick */}
+              <button className="add-btn" onClick={() => handleAddClick(item)}>
+                <Plus size={16} /> เพิ่ม
+              </button>
             </div>
           ))}
         </div>
 
       </main>
 
+      {/* 7. เรียกใช้ Modal ตรงนี้ (สำคัญมาก! ต้องวางไว้นอก main แต่อยู่ใน div หลัก) */}
+      <AddToListModal 
+        isOpen={showModal} 
+        onClose={handleCloseModal} 
+        product={selectedProduct} 
+      />
       
     </div>
   );
 }
 
-export default App;
+export default Home;
