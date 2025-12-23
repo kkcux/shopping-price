@@ -13,6 +13,7 @@
   flex-direction: column;
   flex: 1;         /* ยืดให้เต็มความสูงที่เหลือจาก Navbar/Footer */
   width: 100%;
+    background-color: #ffffff; /* สีพื้นหลังอ่อน */
 }
 
 /* --- ส่วนหัวข้อ  --- */
@@ -61,7 +62,7 @@
   font-size: 1rem;
 }
 
-/* --- พื้นที่สีเทา (Login Prompt) --- */
+/* --- พื้นที่สีขาว (Login Prompt) --- */
 .login-prompt-area {
   background-color: #f8f9fa; /* สีเทาอ่อน */
   width: 100%;               /* กว้างเต็มจอ */
