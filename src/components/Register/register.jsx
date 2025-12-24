@@ -1,16 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+
 // ใช้ CSS ตัวเดียวกับ Login เพื่อให้ Theme เหมือนกันเป๊ะ
 import "../Login/Login.css";
 
-import {
-  FiShoppingCart,
-  FiMail,
-  FiLock,
-  FiEye,
-  FiEyeOff,
-  FiArrowLeft
-} from "react-icons/fi";
+
+import Navbar from "../Home/Navbar";
+import Footer from "../Home/Footer";
+import { FiMail, FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -33,20 +30,9 @@ const Register = () => {
 
   return (
     <div className="page-container">
-      {/* ================= Header (Nav) ================= */}
-      <header className="site-header">
-        <div className="brand">
-          <div className="brand-logo">
-            <FiShoppingCart size={20} />
-          </div>
-          <span className="brand-text">PriceFinder</span>
-        </div>
-
-        <button className="btn-back" onClick={() => navigate("/")}>
-          <FiArrowLeft size={16} />
-          <span>กลับหน้าเข้าสู่ระบบ</span>
-        </button>
-      </header>
+      
+      {/*  ใส่ Navbar ตรงนี้ */}
+      <Navbar />
 
       {/* ================= Main Content (Card) ================= */}
       <main className="main-content">
@@ -112,7 +98,7 @@ const Register = () => {
               </div>
             </div>
 
-            {/* Agreement (Checkbox แบบใหม่) */}
+            {/* Agreement (Checkbox) */}
             <div className="form-options" style={{ justifyContent: 'flex-start' }}>
               <label className="checkbox-container">
                 <input
@@ -153,56 +139,9 @@ const Register = () => {
         </div>
       </main>
 
-      {/* ================= Footer (4 คอลัมน์ เหมือนหน้า Login) ================= */}
-      <footer className="site-footer">
-        <div className="footer-content">
-          {/* Brand Col */}
-          <div className="footer-col brand-col">
-            <div className="brand footer-brand">
-              <div className="brand-logo footer-logo">
-                <FiShoppingCart size={18} />
-              </div>
-              <span className="brand-text">PriceFinder</span>
-            </div>
-            <p className="footer-desc">
-              เปรียบเทียบราคาสินค้าจากร้านค้าชั้นนำ เพื่อให้คุณได้สินค้าคุณภาพดีในราคาที่ดีที่สุด
-            </p>
-          </div>
-
-          {/* Service Col */}
-          <div className="footer-col">
-            <h3>บริการ</h3>
-            <ul>
-              <li>เปรียบเทียบราคาสินค้า</li>
-              <li>รายการโปรด</li>
-              <li>แจ้งเตือนราคา</li>
-            </ul>
-          </div>
-
-          {/* Category Col */}
-          <div className="footer-col">
-            <h3>หมวดหมู่</h3>
-            <ul>
-              <li>อาหาร</li>
-              <li>เครื่องดื่ม</li>
-              <li>ผักและผลไม้</li>
-              <li>อิเล็กทรอนิกส์</li>
-            </ul>
-          </div>
-
-          {/* More Category Col */}
-          <div className="footer-col">
-            <h3>หมวดหมู่เพิ่มเติม</h3>
-            <ul>
-              <li>อาหารแห้งและเครื่องปรุง</li>
-              <li>ขนมและของหวาน</li>
-              <li>เนื้อสัตว์</li>
-              <li>ของใช้ในบ้าน</li>
-            </ul>
-          </div>
-        </div>
-        <div className="footer-bottom-line"></div>
-      </footer>
+      {/*  ใส่ Footer ตรงนี้ */}
+      <Footer />
+      
     </div>
   );
 };
