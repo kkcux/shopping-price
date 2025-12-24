@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
@@ -7,7 +7,7 @@ import "./lists-edit.css";
 
 export default function ListsEdit() {
   const navigate = useNavigate();
-  const { id } = useParams();
+  // const { id } = useParams();
 
   const [listName] = useState("ของใช้รายสัปดาห์");
 
@@ -105,7 +105,7 @@ export default function ListsEdit() {
   const saveList = () => {
     console.log("SAVE LIST:", selected);
     // navigate(`/mylists/${id}`); // ถ้ายังไม่ได้ทำหน้า detail ให้ redirect ไป mylists เฉยๆ ก่อนได้
-    navigate("/mylists");
+    navigate("/mylists/mylists2");
   };
 
   return (
@@ -123,7 +123,7 @@ export default function ListsEdit() {
                 ‹
               </button>
               <div>
-                <h1 className="le-title">MYLISTS</h1>
+                <h1 className="le-title">EDIT MYLISTS</h1>
                 <p className="le-subtitle">
                   เพิ่มสินค้าในรายการของคุณและเราจะค้นหาราคาที่ถูกที่สุดจากทุกร้านค้า
                 </p>
