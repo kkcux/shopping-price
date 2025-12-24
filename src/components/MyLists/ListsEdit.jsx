@@ -1,8 +1,9 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import "../styles/lists-edit.css";
+
+import Navbar from "../Home/Navbar";
+import Footer from "../Home/Footer";
+import "./lists-edit.css";
 
 export default function ListsEdit() {
   const navigate = useNavigate();
@@ -103,12 +104,14 @@ export default function ListsEdit() {
 
   const saveList = () => {
     console.log("SAVE LIST:", selected);
-    navigate(`/mylists/${id}`);
+    // navigate(`/mylists/${id}`); // ถ้ายังไม่ได้ทำหน้า detail ให้ redirect ไป mylists เฉยๆ ก่อนได้
+    navigate("/mylists");
   };
 
   return (
     <>
-      <Header />
+      {/* ✅ 3. เรียกใช้ Navbar แทน Header */}
+      <Navbar />
 
       <main className="le-page">
         <div className="le-container">
