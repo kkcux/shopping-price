@@ -1,0 +1,384 @@
+/* --- Global Font & Reset --- */
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Sarabun', sans-serif;
+  background-color: #f9f9f9;
+}
+
+/* --- Layout --- */
+.profile-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.profile-card {
+  background: white;
+  width: 100%;
+  max-width: 600px;
+  padding: 40px 50px;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eee;
+}
+
+/* --- Header --- */
+.profile-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.profile-header h1 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #000;
+}
+
+.profile-header p {
+  color: #666;
+  font-size: 0.95rem;
+  font-weight: 300;
+}
+
+/* --- Image Upload --- */
+.profile-image-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.image-upload-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  background-color: #fff;
+  transition: all 0.2s;
+}
+
+.image-upload-circle:hover {
+  background-color: #f8f8f8;
+  border-color: #aaa;
+}
+
+.image-upload-circle span {
+  margin-top: 8px;
+  font-size: 0.8rem;
+  color: #999;
+}
+
+/* --- Form Inputs --- */
+.form-group {
+  margin-bottom: 25px;
+}
+
+.form-group label,
+.membership-section label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #555;
+  font-size: 1rem;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 15px;
+  color: #999;
+}
+
+.input-wrapper input {
+  width: 100%;
+  padding: 12px 15px 12px 45px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'Sarabun', sans-serif;
+  color: #333;
+  outline: none;
+}
+
+.input-wrapper input::placeholder {
+  color: #bbb;
+}
+
+.input-wrapper input:focus {
+  border-color: #333;
+}
+
+/* --- Membership Section --- */
+.membership-section {
+  margin-bottom: 40px;
+}
+
+.membership-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.membership-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 12px 20px;
+  background: white;
+  position: relative; /* สำคัญ: เพื่อให้ Popup อ้างอิงจากตรงนี้ได้ถ้าต้องการ */
+}
+
+.membership-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.membership-logo {
+  font-weight: 800;
+  font-size: 0.9rem;
+  border: 2px solid;
+  padding: 4px 10px;
+  border-radius: 6px;
+  min-width: 70px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 36px;
+}
+
+.membership-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #777;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.apply-link {
+  background: none;
+  border: none;
+  color: #00b0f0;
+  font-weight: 600;
+  font-family: 'Sarabun', sans-serif;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 5px 10px;
+}
+
+.apply-link:hover {
+  text-decoration: underline;
+}
+
+/* --- Tooltip / Popup Styles (แก้ไขให้เหมือนรูปเป๊ะๆ) --- */
+
+/* Wrapper ของไอคอน (i) */
+.info-tooltip-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: help;
+}
+
+.info-icon {
+  color: #999;
+  transition: color 0.2s;
+}
+
+.info-tooltip-wrapper:hover .info-icon {
+  color: #00b050; /* เปลี่ยนสีไอคอนเมื่อ Hover */
+}
+
+/* ตัว Popup หลัก */
+.benefit-popup {
+  display: none; /* ซ่อนไว้ก่อน */
+  position: absolute;
+  bottom: 160%; /* ดันขึ้นไปด้านบน */
+  left: 50%;
+  transform: translateX(-12%); /* จัดตำแหน่งซ้ายขวาให้ตรงกับไอคอน */
+  
+  width: 380px; /* ขยายความกว้างให้พอดี */
+  background-color: #00b050; /* สีเขียวหลัก */
+  color: white;
+  padding: 25px; /* เพิ่ม padding ภายใน */
+  border-radius: 16px; /* มุมมน */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* เงาชัดๆ */
+  z-index: 1000;
+  font-family: 'Sarabun', sans-serif;
+  text-align: left;
+}
+
+/* แสดง Popup เมื่อ Hover */
+.info-tooltip-wrapper:hover .benefit-popup {
+  display: block;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+/* สามเหลี่ยมชี้ลงด้านล่าง */
+.benefit-popup::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 12%; /* ตำแหน่งให้ตรงกับไอคอน i */
+  margin-left: -8px;
+  border-width: 10px;
+  border-style: solid;
+  border-color: #00b050 transparent transparent transparent;
+}
+
+/* เนื้อหา Header (มงกุฎ + ชื่อ) */
+.popup-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.crown-icon-bg {
+  background-color: rgba(255, 255, 255, 0.2); /* วงกลมโปร่งแสง */
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.popup-header h3 {
+  margin: 0;
+  font-size: 1.1rem; /* ขนาดตัวอักษรหัวข้อใหญ่ขึ้น */
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+/* รายการสิทธิประโยชน์ */
+.benefit-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 20px 0;
+}
+
+.benefit-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.95rem; /* ขนาดตัวอักษรรายการ */
+  margin-bottom: 12px;
+  line-height: 1.4;
+}
+
+.benefit-list li svg {
+  flex-shrink: 0;
+  margin-top: 3px; /* จัดไอคอน Check ให้ตรงบรรทัด */
+  stroke-width: 3px; /* ทำให้เส้นไอคอนหนาขึ้น */
+}
+
+/* ลิงก์สมัครสมาชิก */
+.popup-footer-link {
+  font-size: 0.95rem;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.popup-footer-link a {
+  color: white;
+  text-decoration: underline;
+  font-weight: 700;
+  margin-left: 5px;
+}
+
+/* ปุ่ม "เข้าใจแล้ว" */
+.popup-btn-ok {
+  width: 100%;
+  background-color: white;
+  color: #006020; /* สีเขียวเข้มสำหรับตัวหนังสือ */
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-family: 'Sarabun', sans-serif;
+  transition: transform 0.1s;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.popup-btn-ok:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 8px rgba(0,0,0,0.15);
+}
+
+.popup-btn-ok:active {
+  transform: translateY(1px);
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(-12%) translateY(10px); }
+  to { opacity: 1; transform: translateX(-12%) translateY(0); }
+}
+
+/* --- Buttons (Action) --- */
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.btn-save {
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Sarabun', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.btn-save:hover {
+  background-color: #1b5e20;
+}
+
+.btn-cancel {
+  background-color: #dcdcdc;
+  color: #333;
+  border: 1px solid #ccc;
+  padding: 10px 30px;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Sarabun', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn-cancel:hover {
+  background-color: #cfcfcf;
+}

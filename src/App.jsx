@@ -8,7 +8,8 @@ import Navbar from './components/Home/Navbar';
 import Footer from './components/Home/Footer';
 import Hero from './components/Home/hero';
 import Home from './components/Home/Home'; 
-import MyLists from './components/Mylist/MyLists'; 
+import MyLists from './components/MyLists/MyLists'; 
+import Profile from './components/Profile/Profile'; 
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/mylists" element={<MyLists />} />
+        <Route path="/profile" element={<Profile />} />
 
       </Routes>
     </div>
