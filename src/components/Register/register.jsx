@@ -145,7 +145,7 @@ const Register = () => {
             มีบัญชีอยู่แล้ว?{" "}
             <span
               className="register-link"
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/login")}
             >
               เข้าสู่ระบบ
             </span>
