@@ -26,7 +26,7 @@ const MyLists = () => {
               </p>
             </div>
           </div>
-          <Link to="/lists-edit">
+          <Link to="/mylists/listsedit">
             <button className="new-button">+MYLISTS</button>
           </Link>
 

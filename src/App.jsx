@@ -11,6 +11,9 @@ import Home from './components/Home/Home';
 import MyLists from './components/MyLists/MyLists'; 
 import Profile from './components/Profile/Profile';
 import ListsEdit from './components/MyLists/ListsEdit';
+import MyLists2 from './components/MyLists/MyLists2';
+import MyLists3 from './components/MyLists/MyLists3';
+
 function App() {
   return (
     <div className="App">
@@ -31,8 +34,9 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/mylists" element={<MyLists />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/listsedit" element={<ListsEdit />} />
-
+        <Route path="/mylists/listsedit" element={<ListsEdit />} />
+        <Route path="/mylists/mylists2" element={<MyLists2 />} />
+        <Route path="/mylists/mylists3" element={<MyLists3 />} />
       </Routes>
     </div>
   );
