@@ -1,0 +1,110 @@
+/* CSS Variables */
+:root {
+  --primary-green: #28a745;
+  --text-light: #666;
+  --link-blue: #007bff;
+}
+
+/* คอนเทนเนอร์หลักที่ยืดเต็มหน้าจอ */
+.page-container-full {
+  display: flex;
+  flex-direction: column;
+  flex: 1;             /* ยืดให้เต็มพื้นที่ว่างระหว่าง Navbar กับ Footer */
+  width: 100%;
+  background-color: #ffffff;
+}
+
+/* --- ส่วนหัวข้อ --- */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  
+  /* Padding ซ้ายขวาให้ตรงกับแนวคอนเทนเนอร์ของ Navbar */
+  padding-left: 5%;  /* ปรับเปอร์เซ็นต์ตามความเหมาะสมของหน้าจอ */
+  padding-right: 5%;
+}
+
+/* ใช้ media query เพื่อล็อคความกว้าง content ถ้าหน้าจอกว้างมาก */
+@media (min-width: 1200px) {
+  .page-header {
+    padding-left: calc((100% - 1140px) / 2);
+    padding-right: calc((100% - 1140px) / 2);
+  }
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.header-text {
+  text-align: left;
+  display: flex;
+  flex-direction: column; /* จัดแนวตั้ง: หัวข้ออยู่บน คำบรรยายอยู่ล่าง */
+}
+
+.back-button {
+  background: #f0f0f0;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-top: 5px; 
+}
+
+.page-title {
+  color: var(--primary-green);
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 5px 0;
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  color: var(--text-light);
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* --- พื้นที่สีเทา (Login Prompt) --- */
+.login-prompt-area {
+  background-color: #f8f9fa; /* สีเทาอ่อน */
+  width: 100%;               /* กว้างเต็มจอ */
+  flex: 1;                   /* ยืดกินพื้นที่ที่เหลือทั้งหมดลงไปถึง Footer */
+  
+  /* จัดกึ่งกลางเนื้อหา */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  /* ระยะห่าง */
+  padding: 50px 0;
+  min-height: 400px; /* ความสูงขั้นต่ำให้ดูสวยงาม */
+}
+
+.login-message {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.login-link {
+  color: #3b82f6; /* สีฟ้า */
+  display: inline-block;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  margin-top: 10px;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}
