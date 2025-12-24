@@ -1,0 +1,330 @@
+/* ===== page bg (เหมือนภาพ: กลางขาว + กรอบเบา) ===== */
+.ml2-page {
+  background: #f3f3f3;
+  padding: 22px 0 70px;
+}
+
+/* ให้กว้างเหมือนหน้า MyLists เดิม */
+.ml2-container {
+  width: 1200px;
+  margin: 0 auto;
+}
+
+/* ===== TOP TITLE ROW ===== */
+.ml2-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 18px 18px;
+}
+
+.ml2-topLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.ml2-back {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: #eee;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 30px;
+}
+
+.ml2-title {
+  font-size: 34px;
+  font-weight: 800;
+  color: #2e7d32;
+  line-height: 1;
+}
+
+.ml2-subtitle {
+  margin-top: 4px;
+  font-size: 13px;
+  color: #666;
+}
+
+.ml2-edit {
+  border: 1px solid #d7d7d7;
+  background: #f6f6f6;
+  padding: 7px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* ===== NAME INPUT ===== */
+.ml2-nameBlock {
+  margin-top: 16px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 16px 18px;
+}
+
+.ml2-label {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.ml2-input {
+  width: 240px;
+  border: 1px solid #cfcfcf;
+  border-radius: 8px;
+  padding: 9px 12px;
+  background: #fff;
+}
+
+/* ===== BOX ===== */
+.ml2-box {
+  margin-top: 16px;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 16px 18px 18px;
+}
+
+.ml2-boxHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.ml2-boxTitle {
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.ml2-pill {
+  background: #2e7d32;
+  color: #fff;
+  font-size: 12px;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+
+.ml2-cards {
+  display: flex;
+  gap: 14px;
+}
+
+/* ===== PRODUCT CARD ===== */
+.ml2-card {
+  width: 168px;
+  border: 1px solid #cfcfcf;
+  border-radius: 10px;
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 3px 0 rgba(0,0,0,0.12); /* เงาแข็งแบบรูป */
+}
+
+.ml2-imgWrap {
+  height: 120px;
+  background: #fff;
+  display: grid;
+  place-items: center;
+}
+
+.ml2-imgWrap img {
+  width: 115px;
+  height: 95px;
+  object-fit: contain;
+}
+
+.ml2-imgPh {
+  width: 110px;
+  height: 90px;
+  background: #f0f0f0;
+  border-radius: 8px;
+}
+
+.ml2-cardName {
+  padding: 10px 10px 6px;
+  font-weight: 700;
+  text-align: center;
+  font-size: 14px;
+}
+
+.ml2-cardSub {
+  padding: 0 10px 12px;
+  text-align: center;
+  font-size: 12px;
+  color: #555;
+}
+
+.ml2-cardSubSpacer {
+  height: 28px;
+}
+
+/* ===== BOTTOM GRID ===== */
+.ml2-bottomGrid {
+  margin-top: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.ml2-boxTall {
+  padding: 18px;
+}
+
+.ml2-boxTitleLg {
+  font-size: 20px;
+  font-weight: 900;
+  margin-bottom: 10px;
+}
+
+/* ===== checkbox list (เหมือนรูป: กล่องสี่เหลี่ยมใหญ่ + ติ๊กเขียว) ===== */
+.ml2-checkRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.ml2-check {
+  width: 28px;
+  height: 28px;
+  border: 2px solid #5f5f5f;
+  border-radius: 2px;
+  background: #fff;
+  position: relative;
+}
+
+.ml2-check.on {
+  border-color: #2e7d32;
+  background: #2e7d32;
+}
+
+.ml2-check.on::after {
+  content: "✓";
+  position: absolute;
+  left: 6px;
+  top: -2px;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 900;
+}
+
+.ml2-checkText {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* ===== membership ===== */
+.ml2-membersHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.ml2-info {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid #999;
+  color: #777;
+  font-size: 12px;
+  display: grid;
+  place-items: center;
+}
+
+/* แถบสมาชิกแบบรูป: tops แถบขาว+เส้น / อันที่เป็นสมาชิกพื้นเขียวอ่อน */
+.ml2-memberRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin-top: 10px;
+  border: 1px solid #d7d7d7;
+}
+
+.ml2-memberRow.ok {
+  background: #eaffea;
+  border-color: #4caf50;
+}
+
+.ml2-memberRow.no {
+  background: #fff;
+}
+
+.ml2-brand {
+  min-width: 48px;
+  height: 24px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 900;
+  color: #fff;
+}
+
+.ml2-brand.tops { background: #ff3b30; }
+.ml2-brand.makro { background: #d50000; }
+.ml2-brand.lotus { background: #00bcd4; }
+.ml2-brand.bigc { background: #f9a825; color: #1b1b1b; }
+
+.ml2-memberText {
+  flex: 1;
+  font-size: 14px;
+  color: #666;
+  font-weight: 700;
+}
+
+.ml2-join {
+  color: #1e88e5;
+  font-weight: 800;
+  text-decoration: none; /* ✅ สำคัญ */
+  cursor: pointer;
+}
+
+.ml2-join:hover {
+  text-decoration: underline;
+}
+
+
+/* ===== Search Button ===== */
+.ml2-searchWrap {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+}
+
+.ml2-searchBtn {
+  width: 520px;
+  height: 52px;
+  border-radius: 10px;
+  border: none;
+  background: #2e7d32;
+  color: #fff;
+  font-size: 20px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.2);
+  cursor: pointer;
+}
+
+.ml2-searchIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+}
