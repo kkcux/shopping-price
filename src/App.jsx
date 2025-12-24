@@ -8,7 +8,7 @@ import Navbar from './components/Home/Navbar';
 import Footer from './components/Home/Footer';
 import Hero from './components/Home/hero';
 import Home from './components/Home/Home'; 
-import MyLists from './MyLists'; 
+import MyLists from './components/Mylist/MyLists'; 
 
 function App() {
   return (
