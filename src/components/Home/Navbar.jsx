@@ -1,6 +1,6 @@
 import React from 'react';
 import { ShoppingCart, Bell } from 'lucide-react';
-import { Link } from 'react-router-dom'; // ต้องใช้ตัวนี้
+import { Link } from 'react-router-dom'; // ✅ import Link
 
 function Navbar() {
   return (
@@ -16,13 +16,19 @@ function Navbar() {
         </Link>
         
         <ul className="menu">
-          <Link to="/"><li>HOME</li></Link>
-          <Link to="/favorites"><li>FAVORITES</li></Link>
-          <Link to="/mylists"><li>MYLISTS</li></Link>
+          {/* ใส่ style เพื่อลบเส้นขีดเส้นใต้ของ Link ถ้ามี */}
+          <Link to="/" style={{textDecoration:'none', color:'inherit'}}><li>HOME</li></Link>
+          <Link to="/favorites" style={{textDecoration:'none', color:'inherit'}}><li>FAVORITES</li></Link>
+          <Link to="/mylists" style={{textDecoration:'none', color:'inherit'}}><li>MYLISTS</li></Link>
         </ul>
 
         <div className="nav-actions">
-          <button className="login-btn">LOGIN</button>
+          
+          {/* ✅ แก้ไขตรงนี้: เอา Link มาครอบปุ่ม LOGIN */}
+          <Link to="/login">
+            <button className="login-btn">LOGIN</button>
+          </Link>
+          
           <Bell className="bell-icon" />
         </div>
       </div>
