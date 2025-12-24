@@ -9,8 +9,8 @@ import Footer from './components/Home/Footer';
 import Hero from './components/Home/hero';
 import Home from './components/Home/Home'; 
 import MyLists from './components/MyLists/MyLists'; 
-import Profile from './components/Profile/Profile'; 
-
+import Profile from './components/Profile/Profile';
+import ListsEdit from './components/MyLists/ListsEdit';
 function App() {
   return (
     <div className="App">
@@ -31,6 +31,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/mylists" element={<MyLists />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/listsedit" element={<ListsEdit />} />
 
       </Routes>
     </div>
