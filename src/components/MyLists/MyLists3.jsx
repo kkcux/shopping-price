@@ -1,11 +1,13 @@
 import { useMemo } from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import "../styles/mylists3.css";
+import { useNavigate } from "react-router-dom"; // ✅ 1. เพิ่ม import useNavigate
+
+import Navbar from "../Home/Navbar";
+import Footer from "../Home/Footer";
+import "./MyLists3.css";
 
 // ===== ข้อมูลจริง =====
-import lotusData from "../data/lotus/lotus_fresh-and-uht-milk_full.json";
-import makroData from "../data/makro/makro_beverages.json";
+import lotusData from "../../data/lotus/lotus_adult-care_full.json";
+import makroData from "../../data/makro/makro_beverages.json";
 
 /* ================= helpers ================= */
 
@@ -18,15 +20,15 @@ const toNumber = (v) => {
   return Number.isFinite(n) ? n : null;
 };
 
-// clean ชื่อสินค้า (generic)
+// clean ชื่อสินค้า
 const cleanName = (name) => {
   return String(name || "")
     .toLowerCase()
-    .replace(/\b[xX]\s*\d+\b/g, "")                 // x12, x24
-    .replace(/\b\d+(\.\d+)?\b/g, "")                // ตัวเลข
+    .replace(/\b[xX]\s*\d+\b/g, "")
+    .replace(/\b\d+(\.\d+)?\b/g, "")
     .replace(/มล\.?|ล\.?|ml|liter|ลิตร|กรัม|g|kg/gi, "")
     .replace(/เครื่องดื่มน้ำอัดลม|เครื่องดื่ม|น้ำอัดลม/gi, "")
-    .replace(/[^\u0E00-\u0E7Fa-z\s]/g, "")           // สัญลักษณ์
+    .replace(/[^\u0E00-\u0E7Fa-z\s]/g, "")
     .replace(/\s+/g, " ")
     .trim();
 };
@@ -38,7 +40,7 @@ const tokenize = (name) => {
     .filter((w) => w.length >= 2);
 };
 
-// match แบบ generic (ไม่ผูกแบรนด์)
+// match สินค้า
 const matchProduct = (targetName, candidates) => {
   const baseTokens = tokenize(targetName);
   if (baseTokens.length === 0) return null;
@@ -58,11 +60,9 @@ const matchProduct = (targetName, candidates) => {
     }
   }
 
-  // ต้องมีคำตรงกันอย่างน้อย 1 คำ
   return bestScore >= 1 ? bestMatch : null;
 };
 
-// ใช้ Lotus เป็น base (ชั่วคราว)
 const pickBaseItems = (arr, count = 5) => {
   const list = Array.isArray(arr) ? arr : [];
   return list.slice(0, count);
@@ -71,8 +71,16 @@ const pickBaseItems = (arr, count = 5) => {
 /* ================= component ================= */
 
 export default function MyLists3() {
-  const lotusList = Array.isArray(lotusData) ? lotusData : [];
-  const makroList = Array.isArray(makroData) ? makroData : [];
+  const navigate = useNavigate(); // ✅ 2. ประกาศตัวแปร navigate
+
+  const lotusList = useMemo(
+    () => (Array.isArray(lotusData) ? lotusData : []),
+    []
+  );
+  const makroList = useMemo(
+    () => (Array.isArray(makroData) ? makroData : []),
+    []
+  );
 
   /* ===== สร้างแถวสินค้า ===== */
   const items = useMemo(() => {
@@ -86,7 +94,7 @@ export default function MyLists3() {
 
       const priceMap = {
         LOTUS: lotusPrice,
-        BIGC: null,
+        BIGC: null, // ไม่มีข้อมูล
         MAKRO: makroPrice,
       };
 
@@ -122,7 +130,7 @@ export default function MyLists3() {
         MAKRO: sum("MAKRO"),
       },
       member: {
-        LOTUS: Math.max(0, sum("LOTUS") - 10),
+        LOTUS: Math.max(0, sum("LOTUS") - 10), // สมมติลด 10 บาท
         BIGC: null,
         MAKRO: sum("MAKRO"),
       },
@@ -162,13 +170,18 @@ export default function MyLists3() {
 
   return (
     <>
-      <Header />
+      <Navbar />
 
       <main className="ml3-page">
         {/* ===== TOP BAR ===== */}
         <section className="ml3-topbar">
           <div className="ml3-topbar-inner">
-            <button className="ml3-back">‹</button>
+            
+            {/* ✅ 3. เพิ่ม onClick ให้กดแล้วย้อนกลับ (-1 คือย้อนไปหน้าก่อนหน้า) */}
+            <button className="ml3-back" onClick={() => navigate(-1)}>
+              ‹
+            </button>
+
             <div className="ml3-titlewrap">
               <h1 className="ml3-title">ของใช้รายสัปดาห์</h1>
               <p className="ml3-subtitle">
@@ -177,6 +190,8 @@ export default function MyLists3() {
             </div>
           </div>
         </section>
+
+        {/* ... (ส่วนอื่นๆ เหมือนเดิม) ... */}
 
         {/* ===== SUMMARY ===== */}
         <section className="ml3-mini">

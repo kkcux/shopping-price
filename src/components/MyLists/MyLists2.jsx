@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import "../styles/mylists2.css";
-import { useNavigate, useParams } from "react-router-dom";
+import Navbar from "../Home/Navbar";
+import Footer from "../Home/Footer";
+import "./mylists2.css";
+import { useNavigate } from "react-router-dom";
 
 const REGISTER_URL = {
   TOPS: "https://www.tops.co.th/th/register",
@@ -11,12 +11,11 @@ const REGISTER_URL = {
   BIGC: "https://www.bigc.co.th/register",
 };
 
-
 export default function MyLists2() {
   const navigate = useNavigate();
-  const { id } = useParams();
+  // const { id } = useParams();
 
-  // ===== mock data (แก้ชื่อ/รูปได้ตามจริง) =====
+  // ===== mock data =====
   const catalog = useMemo(
     () => [
       { id: "p1", name: "KITO รองเท้าแตะสวมบุรุษ ดำ ไซส์ 42", img: "https://o2o-static.lotuss.com/products/73889/51838953.jpg" },
@@ -52,7 +51,7 @@ export default function MyLists2() {
     []
   );
 
-  // membership status (ให้เหมือนภาพ: TOPS ไม่เป็นสมาชิก, ที่เหลือเป็นสมาชิก)
+  // membership status
   const membership = useMemo(
     () => ({
       TOPS: { isMember: false, brand: "tops" },
@@ -92,14 +91,14 @@ export default function MyLists2() {
 
   return (
     <>
-      <Header />
+      <Navbar />
 
       <main className="ml2-page">
         <div className="ml2-container">
           {/* ===== Top Title Row ===== */}
           <div className="ml2-top">
             <div className="ml2-topLeft">
-              <button className="ml2-back" aria-label="back">
+              <button className="ml2-back" aria-label="back" onClick={() => navigate('/mylists')}>
                 ‹
               </button>
 
@@ -112,12 +111,12 @@ export default function MyLists2() {
             </div>
 
             <button
-  className="ml2-edit"
-  onClick={() => navigate(`/mylists/${id}/edit`)}
->
-  ✎ <span>EDITLIST</span>
-</button>
-
+              className="ml2-edit"
+              // onClick={() => navigate(`/mylists/${id}/listsedit`)
+              onClick={() => navigate(`/mylists/listsedit`)}
+              >
+              ✎ <span>EDITLIST</span>
+            </button>
           </div>
 
           {/* ===== Name ===== */}
@@ -193,9 +192,12 @@ export default function MyLists2() {
             </section>
           </div>
 
-          {/* ===== Search Button ===== */}
+          {/* ===== Search Button (แก้ไขตรงนี้) ===== */}
           <div className="ml2-searchWrap">
-            <button className="ml2-searchBtn">
+            <button 
+              className="ml2-searchBtn"
+              onClick={() => navigate("/mylists/mylists3")} // ✅ เพิ่ม onClick ตรงนี้
+            >
               <span className="ml2-searchIcon">🔍</span>
               เริ่มค้นหาร้านที่ถูกที่สุด
             </button>
@@ -212,7 +214,6 @@ function ProductCard({ name, img, sub }) {
   return (
     <div className="ml2-card">
       <div className="ml2-imgWrap">
-        {/* ถ้าไม่มีรูป ระบบยังไม่พัง */}
         {img ? <img src={img} alt={name} /> : <div className="ml2-imgPh" />}
       </div>
       <div className="ml2-cardName">{name}</div>
@@ -231,16 +232,15 @@ function MemberRow({ brand, title, isMember }) {
       </div>
 
       {!isMember && (
-  <a
-    href={REGISTER_URL[brand.toUpperCase()]}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="ml2-join"
-  >
-    สมัคร
-  </a>
-)}
-
+        <a
+          href={REGISTER_URL[brand.toUpperCase()]}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="ml2-join"
+        >
+          สมัคร
+        </a>
+      )}
     </div>
   );
 }
