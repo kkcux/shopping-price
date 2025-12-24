@@ -1,4 +1,4 @@
-import React, { useState } from 'react'; // 1. เพิ่ม useState
+import React, { useState } from 'react';
 import './Home.css'; 
 import { 
   Heart, Plus, 
@@ -6,12 +6,14 @@ import {
   Salad, Coffee, Cookie, Tag 
 } from 'lucide-react';
 
+// Import Snowfall เข้ามา
+import Snowfall from 'react-snowfall';
+
 import productsData from '../../data/big_c.json'; 
 import AddToListModal from './AddToListModal';
 
-function Home() { // เปลี่ยนชื่อ function ให้ตรงกับไฟล์ (Home)
+function Home() { 
   
-  // 3. สร้าง State สำหรับควบคุม Modal
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -29,20 +31,33 @@ function Home() { // เปลี่ยนชื่อ function ให้ตร�
   const popularProducts = productsData.slice(145, 151); 
   const promoProducts = productsData.slice(200, 206); 
 
-  // 4. ฟังก์ชันเปิด Modal เมื่อกดปุ่ม
   const handleAddClick = (product) => {
     setSelectedProduct(product);
     setShowModal(true);
   };
 
-  // 5. ฟังก์ชันปิด Modal
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedProduct(null);
   };
 
   return (
-    <div className="app-container">
+    // เพิ่ม style relative ให้ div หลัก (เพื่อให้หิมะอ้างอิงตำแหน่งได้ถูกต้อง)
+    <div className="app-container" style={{ position: 'relative' }}>
+
+      {/*  ใส่ Snowfall ไว้ตรงนี้ (บนสุด) */}
+      <Snowfall 
+        snowflakeCount={150} // จำนวนหิมะ (ปรับได้ตามชอบ)
+        style={{
+          position: 'fixed', // ให้หิมะติดหน้าจอตลอดเวลาเลื่อนลง
+          width: '100vw',
+          height: '100vh',
+          top: 0,
+          left: 0,
+          zIndex: 90, // ให้อยู่เหนือพื้นหลังแต่อยู่ใต้ Modal (Modal มักจะ z-index 100+)
+          pointerEvents: 'none', // สำคัญ! เพื่อให้กดคลิกทะลุหิมะไปโดนปุ่มได้
+        }}
+      />
 
       {/* --- Main Content --- */}
       <main className="container main-content">
@@ -72,7 +87,6 @@ function Home() { // เปลี่ยนชื่อ function ให้ตร�
               <div className="heart-icon"><Heart size={18} /></div>
               <img src={item.image} alt={item.data} />
               <h3>{item.data}</h3>
-              {/* 6. แก้ปุ่ม onClick ให้เรียก function */}
               <button className="add-btn" onClick={() => handleAddClick(item)}>
                 <Plus size={16} /> เพิ่ม
               </button>
@@ -91,7 +105,6 @@ function Home() { // เปลี่ยนชื่อ function ให้ตร�
               <div className="heart-icon"><Heart size={18} /></div>
               <img src={item.image} alt={item.data} />
               <h3>{item.data}</h3>
-              {/* แก้ปุ่ม onClick */}
               <button className="add-btn" onClick={() => handleAddClick(item)}>
                 <Plus size={16} /> เพิ่ม
               </button>
@@ -113,7 +126,6 @@ function Home() { // เปลี่ยนชื่อ function ให้ตร�
               <div className="heart-icon"><Heart size={18} /></div>
               <img src={item.image} alt={item.data} />
               <h3>{item.data}</h3>
-              {/* แก้ปุ่ม onClick */}
               <button className="add-btn" onClick={() => handleAddClick(item)}>
                 <Plus size={16} /> เพิ่ม
               </button>
@@ -123,7 +135,7 @@ function Home() { // เปลี่ยนชื่อ function ให้ตร�
 
       </main>
 
-      {/* 7. เรียกใช้ Modal ตรงนี้ (สำคัญมาก! ต้องวางไว้นอก main แต่อยู่ใน div หลัก) */}
+      {/* Modal */}
       <AddToListModal 
         isOpen={showModal} 
         onClose={handleCloseModal} 
