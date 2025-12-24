@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChevronLeft } from 'lucide-react';
-import Navbar from './components/Home/Navbar';
-import Footer from './components/Home/Footer';
+import Navbar from '../Home/Navbar';
+import Footer from '../Home/Footer';
 import './MyLists.css';
 
 const MyLists = () => {
