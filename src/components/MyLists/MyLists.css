@@ -1,0 +1,133 @@
+/* src/pages/MyLists.css */
+
+/* CSS Variables */
+:root {
+  --primary-green: #28a745;
+  --text-light: #666;
+  --link-blue: #007bff;
+}
+
+/* คอนเทนเนอร์ของหน้านี้ */
+.page-container-full {
+  display: flex;
+  flex-direction: column;
+  flex: 1;         /* ยืดให้เต็มความสูงที่เหลือจาก Navbar/Footer */
+  width: 100%;
+    background-color: #ffffff; /* สีพื้นหลังอ่อน */
+}
+
+/* --- ส่วนหัวข้อ  --- */
+
+.page-header {
+  display: flex;
+  justify-content: space-between; /* ชิดซ้ายและขวา */
+  align-items: center;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  
+  /* เพิ่ม padding เพื่อให้ตรงกับ Navbar */
+  padding-left: 2rem;
+  padding-right: 3rem;
+  
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+/* เพิ่มส่วนนี้เพื่อความชัวร์ */
+.header-text {
+  text-align: left;
+  align-items: flex-start;
+}
+
+.back-button {
+  background: #f0f0f0;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-top: 5px; /* ดันลงมานิดหน่อยให้ตรงกับหัวข้อ */
+}
+
+.new-button {
+  background: var(--primary-green);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.new-button:hover {
+  background: #218838;
+}
+
+.page-title {
+  color: var(--primary-green);
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  color: var(--text-light);
+  font-size: 1rem;
+}
+
+/* --- พื้นที่สีขาว (Login Prompt) --- */
+.login-prompt-area {
+  background-color: #f8f9fa; /* สีเทาอ่อน */
+  width: 100%;               /* กว้างเต็มจอ */
+  
+  /* สำคัญ: สั่งให้ยืดกินพื้นที่ว่างด้านล่างทั้งหมด */
+  flex: 1;                   
+  
+  /* จัดกึ่งกลาง */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  /* ระยะห่าง */
+  padding: 50px 0;
+  min-height: 300px; /* ความสูงขั้นต่ำกันดูโล่งเกินไป */
+}
+
+.login-container {
+  text-align: center;
+}
+
+.login-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.login-message {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.login-link {
+  color: var(--link-blue);
+  display: inline-block;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}
