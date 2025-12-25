@@ -725,3 +725,88 @@
 .note-text span {
   font-weight: 400; /* ลดความหนาตัวอักษรลง */
 }
+/* --- 1. Wrapper สำหรับ Slider --- */
+.slider-wrapper {
+  position: relative;
+  width: 100%;
+  
+  /* ✅ แก้ไขตรงนี้: ปรับ Padding เป็น 0 เพื่อให้กรอบสินค้าขยายเต็มความกว้าง 
+     เท่ากับแนวของหัวข้อและปุ่ม "ดูทั้งหมด" ด้านบน */
+  padding: 0; 
+  
+  box-sizing: border-box;
+}
+
+/* --- 2. Container สินค้า --- */
+.product-scroll-container {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  
+  /* เพิ่ม padding ซ้ายขวานิดหน่อย เพื่อไม่ให้สินค้าตัวแรก/ตัวสุดท้ายชิดขอบจอจนเกินไป */
+  padding: 15px 5px; 
+  
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.product-scroll-container::-webkit-scrollbar {
+  display: none;
+}
+
+.product-card.min-w-card {
+  min-width: 200px; 
+  max-width: 200px;
+  flex-shrink: 0;
+}
+
+/* --- 3. ปุ่มเลื่อน (แบบลอยเหนือสินค้า - Overlay) --- */
+.scroll-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  
+  /* ปรับสีให้โปร่งแสงนิดหน่อย เพื่อให้ดูไม่ทึบเกินไปเวลาบังสินค้า */
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  
+  width: 44px; 
+  height: 44px;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20; /* ให้แน่ใจว่าอยู่เหนือสินค้า */
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: all 0.2s;
+  color: #333;
+}
+
+.scroll-btn:hover {
+  background-color: #22c55e;
+  color: white;
+  border-color: #22c55e;
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* ✅ จัดตำแหน่งปุ่มให้ลอยอยู่ด้านในชิดขอบ */
+.scroll-btn.left {
+  left: -60px; /* ห่างจากขอบซ้าย 10px */
+}
+
+.scroll-btn.right {
+  right: -60px; /* ห่างจากขอบขวา 10px (ตรงกับแนวปุ่มดูทั้งหมด) */
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .scroll-btn {
+    display: none; /* มือถือซ่อนปุ่ม ใช้ปัดเอา */
+  }
+  .product-scroll-container {
+    padding-right: 20px;
+  }
+}
