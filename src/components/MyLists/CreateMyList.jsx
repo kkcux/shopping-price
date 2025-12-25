@@ -8,6 +8,11 @@ import "./lists-edit.css";
 
 export default function CreateMyList() {
   const navigate = useNavigate();
+
+  // ✅ 1. เพิ่ม Scroll to Top
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   // State ควบคุม Modal
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -26,13 +31,14 @@ export default function CreateMyList() {
     { id: "c5", name: "ส้มแมนดาริน", img: "https://o2o-static.lotuss.com/products/73889/51635718.jpg", qty: 1 },
   ]);
 
-  // 2. รายการที่เลือก (โหลดจาก Draft ถ้ามี)
+  // 2. รายการที่เลือก (โหลดจาก Draft ถ้ามี) - ✅ เพิ่ม Try-Catch เพื่อความปลอดภัย
   const [selected, setSelected] = useState(() => {
     const saved = localStorage.getItem("myListDraft_Items");
     if (saved) {
       try {
         return JSON.parse(saved);
       } catch (error) {
+        console.error("Error parsing draft items:", error);
         return [];
       }
     }
@@ -93,7 +99,7 @@ export default function CreateMyList() {
     setShowConfirmModal(true);
   };
 
-  // ✅ ฟังก์ชันยืนยันการบันทึก (แก้ไขส่วนนี้)
+  // ✅ ฟังก์ชันยืนยันการบันทึก
   const handleConfirmSave = () => {
     // 1. ดึงรายการเก่าที่มีอยู่แล้วออกมา (ถ้าไม่มีให้เป็น array ว่าง)
     const existingLists = JSON.parse(localStorage.getItem("myLists")) || [];
