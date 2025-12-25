@@ -1,386 +1,324 @@
 /* =========================
-   PAGE
+   PAGE LAYOUT (แก้ให้ติด Nav)
 ========================= */
-.le-page {
-  background: #f3f3f3;
-  padding: 22px 0 80px;
+@import url("https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap");
+
+* {
+  box-sizing: border-box;
 }
 
-.le-container {
-  width: 1200px;
-  margin: 0 auto;
+.le-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+
+  /* ✅ ตั้งค่าเป็น 0 เพื่อให้ Header ชนกับ Navbar ด้านบน */
+  padding-top: 0;
+  padding-bottom: 100px;
+  font-family: "Prompt", sans-serif;
 }
 
 /* =========================
-   TOP BAR
+   HEADER SECTION (FULL WIDTH)
+   ✅ เปลี่ยนจาก .le-top เป็น Section เต็มจอ
 ========================= */
-.le-top {
-  background: #fff;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  padding: 18px;
+.le-header-section {
+  width: 100%;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb; /* เส้นขอบล่าง */
+  padding: 24px 0;
+  margin-bottom: 30px; /* ระยะห่างจากเนื้อหาด้านล่าง */
+}
+
+/* จัดกึ่งกลางเนื้อหาภายใน Header */
+.le-header-inner {
+  width: 100%;
+  max-width: 1440px; /* กว้างเท่าเนื้อหาหลัก */
+  margin: 0 auto;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .le-topLeft {
   display: flex;
-  gap: 12px;
-  align-items: flex-start;
+  align-items: flex-start; /* จัดชิดบน */
+  gap: 15px;
 }
 
-.le-back {
-  width: 28px;
-  height: 28px;
+/* ปุ่มย้อนกลับ */
+.le-back-btn {
+  width: 40px;
+  height: 40px;
+  background-color: #f3f4f6;
+  color: #374151;
   border-radius: 50%;
   border: none;
-  background: #eee;
-  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  margin-top: 5px; /* ดันลงมานิดนึงให้เสมอ Title */
+}
+
+.le-back-btn:hover {
+  background-color: #e5e7eb;
 }
 
 .le-title {
-  font-size: 30px;
-  font-weight: 800;
-  color: #2e7d32;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #438438;
   margin: 0;
+  line-height: 1.2;
+  text-transform: uppercase;
 }
 
 .le-subtitle {
-  font-size: 14px;
-  color: #666;
-  margin-top: 4px;
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: 4px 0 0 0;
+  font-weight: 400;
 }
 
 /* =========================
-   LIST NAME
+   CONTENT CONTAINER
 ========================= */
+.le-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+/* ... (ส่วนอื่นๆ ด้านล่างเหมือนเดิม แต่เช็คความถูกต้องให้ครับ) ... */
+
+/* LIST NAME */
 .le-nameBlock {
-  margin-top: 16px;
-  background: #fff;
-  border: 1px solid #eee;
+  background: #ffffff;
   border-radius: 12px;
-  padding: 16px 18px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
-
 .le-label {
-  font-weight: 800;
-  margin-bottom: 8px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #1f2937;
+  font-size: 1rem;
 }
-
 .le-input {
-  width: 260px;
-  border: 1px solid #cfcfcf;
+  width: 100%;
+  max-width: 500px;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
-  padding: 9px 12px;
+  padding: 12px 16px;
+  font-family: "Prompt", sans-serif;
+  font-size: 1rem;
+}
+.le-input:focus {
+  outline: 2px solid #438438;
+  border-color: transparent;
 }
 
-/* =========================
-   BOX
-========================= */
+/* BOX & CARDS */
 .le-box {
-  margin-top: 18px;
-  background: #fff;
-  border: 1px solid #eee;
+  background: #ffffff;
   border-radius: 12px;
-  padding: 16px 18px 18px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
-
 .le-boxHead {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
-
 .le-boxTitle {
-  font-size: 18px;
-  font-weight: 900;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1f2937;
 }
-
 .le-pill {
-  background: #2e7d32;
+  background: #438438;
   color: #fff;
-  font-size: 12px;
-  padding: 2px 12px;
+  font-size: 0.8rem;
+  padding: 3px 12px;
   border-radius: 999px;
+  font-weight: 600;
+  cursor: pointer;
 }
-
-/* =========================
-   CARDS
-========================= */
 .le-cards {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 16px;
-  flex-wrap: wrap;
+  align-items: stretch;
 }
 
+/* PRODUCT CARD */
 .le-card {
-  width: 180px;
-  border: 1px solid #cfcfcf;
-  border-radius: 12px;
+  width: auto;
+  display: flex;
+  flex-direction: column;
   background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 3px 0 rgba(0, 0, 0, 0.12);
-  padding-bottom: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  padding-bottom: 10px;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
-
+.le-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+  border-color: #d1d5db;
+}
 .le-imgWrap {
   height: 120px;
-  display: grid;
-  place-items: center;
-}
-
-.le-imgWrap img {
-  width: 110px;
-  height: 90px;
-  object-fit: contain;
-}
-
-.le-cardName {
-  font-size: 14px;
-  font-weight: 800;
-  text-align: center;
-  padding: 8px 8px 4px;
-}
-
-.le-cardSub {
-  font-size: 12px;
-  color: #555;
-  text-align: center;
-}
-
-/* =========================
-   QTY (+ -)
-========================= */
-.le-qty {
+  width: 100%;
+  flex-shrink: 0;
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 12px;
-  margin: 6px 0 10px;
+  padding: 10px;
+  background-color: #fff;
+}
+.le-imgWrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.le-cardName {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 0 8px;
+  color: #374151;
+  height: 36px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.3;
+}
+.le-cardSub {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  text-align: center;
+  margin-top: auto;
+  padding-bottom: 5px;
 }
 
+/* QTY Control */
+.le-qty {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
 .le-qty button {
-  width: 26px;
-  height: 26px;
-  border-radius: 6px;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
   border: none;
-  background: #2e7d32;
-  color: #fff;
-  font-size: 18px;
-  font-weight: 900;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
 .le-qty span {
   min-width: 20px;
   text-align: center;
-  font-weight: 800;
+  font-weight: 700;
+  font-size: 0.9rem;
 }
-
-/* =========================
-   SELECT BUTTON
-========================= */
 .le-select {
   display: block;
-  margin: 0 auto;
-  background: #2e7d32;
+  margin: 0 auto 10px;
+  background: #438438;
   color: #fff;
   border: none;
-  border-radius: 8px;
-  padding: 6px 26px;
-  font-size: 14px;
-  font-weight: 800;
+  border-radius: 6px;
+  padding: 4px 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: background 0.2s;
 }
-
-/* =========================
-   REMOVE (X)
-========================= */
+.le-select:hover {
+  background: #366b2d;
+}
 .le-remove {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 6px;
+  right: 6px;
   width: 22px;
   height: 22px;
   border-radius: 50%;
   border: none;
-  background: #e53935;
-  color: #fff;
-  font-size: 14px;
+  background: #fee2e2;
+  color: #ef4444;
+  font-size: 12px;
   font-weight: 900;
   cursor: pointer;
-  line-height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 10;
+}
+.le-remove:hover {
+  background: #ef4444;
+  color: white;
 }
 
-/* =========================
-   SAVE
-========================= */
+/* SAVE BUTTON */
 .le-saveWrap {
-  margin-top: 26px;
+  margin-top: 40px;
   display: flex;
   justify-content: center;
 }
-
 .le-saveBtn {
-  width: 360px;
-  height: 48px;
-  background: #2e7d32;
+  width: 100%;
+  max-width: 380px;
+  height: 50px;
+  background: #438438;
   color: #fff;
-  border: none;
-  border-radius: 10px;
-  font-size: 18px;
-  font-weight: 900;
-  cursor: pointer;
-  box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
-}
-
-/* ===== MODAL POPUP STYLES ===== */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.4); /* พื้นหลังสีดำจางๆ */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  backdrop-filter: blur(2px); /* เบลอฉากหลังนิดๆ */
-}
-
-.modal-box {
-  background: white;
-  width: 90%;
-  max-width: 400px;
-  padding: 30px 20px;
-  border-radius: 16px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@keyframes popIn {
-  from {
-    transform: scale(0.8);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.modal-icon-circle {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background-color: #dcfce7; /* สีเขียวอ่อนพื้นหลังไอคอน */
-  border: 2px solid #22c55e;
-  color: #22c55e; /* สีไอคอนเขียว */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 auto 20px;
-}
-
-.modal-title {
-  font-family: "Prompt", sans-serif;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #000;
-  margin-bottom: 8px;
-}
-
-.modal-desc {
-  font-family: "Prompt", sans-serif;
-  font-size: 0.95rem;
-  color: #6b7280;
-  margin-bottom: 25px;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 15px;
-  justify-content: center;
-}
-
-.modal-btn {
-  flex: 1;
-  padding: 12px;
   border: none;
   border-radius: 8px;
-  font-family: "Prompt", sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.05rem;
+  font-weight: 700;
   cursor: pointer;
-  transition: transform 0.1s;
-}
-
-.modal-btn:active {
-  transform: scale(0.95);
-}
-
-.modal-btn.cancel {
-  background-color: #ef4444; /* สีแดง */
-  color: white;
-  box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
-}
-
-.modal-btn.cancel:hover {
-  background-color: #dc2626;
-}
-
-.modal-btn.confirm {
-  background-color: #3e7b2e; /* สีเขียวเข้มแบบในรูป */
-  color: white;
-  box-shadow: 0 4px 6px rgba(62, 123, 46, 0.2);
-}
-
-.modal-btn.confirm:hover {
-  background-color: #366b28;
-}
-
-/* ... (CSS ส่วนอื่นๆ ของคุณ) ... */
-
-/* ✅ ปุ่มย้อนกลับดีไซน์ใหม่ */
-.le-back-btn {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: none;
-  background-color: white; /* พื้นขาว */
-  color: #374151; /* ไอคอนสีเทาเข้ม */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* เงานุ่มๆ */
+  box-shadow: 0 4px 6px rgba(46, 125, 50, 0.2);
+  transition: transform 0.1s, background 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
-  margin-right: 20px;
+}
+.le-saveBtn:hover {
+  background: #1b5e20;
+}
+.le-saveBtn:active {
+  transform: scale(0.98);
 }
 
-/* Effect ตอนเอาเมาส์ไปชี้ */
-.le-back-btn:hover {
-  background-color: #438438; /* เปลี่ยนเป็นสีเขียวหลัก */
-  color: white; /* ไอคอนเปลี่ยนเป็นสีขาว */
-  transform: translateX(-4px); /* ขยับไปทางซ้ายนิดนึง */
-  box-shadow: 0 8px 16px rgba(67, 132, 56, 0.25);
-}
-
-.le-back-btn:active {
-  transform: scale(0.95) translateX(-4px);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-}
-
-.le-topLeft {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-
-/* --- Modal Styling --- */
+/* MODAL */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -391,10 +329,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 9999;
   backdrop-filter: blur(3px);
 }
-
 .modal-box {
   background: white;
   width: 90%;
@@ -404,22 +341,6 @@
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
   text-align: center;
 }
-
-.fade-in {
-  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@keyframes popIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9) translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
-}
-
 .modal-icon-circle {
   width: 70px;
   height: 70px;
@@ -429,37 +350,33 @@
   align-items: center;
   margin: 0 auto 20px;
 }
-
 .modal-icon-circle.success {
   background-color: #dcfce7;
   color: #22c55e;
 }
-
-/* ✅ สีส้ม (แจ้งเตือน) */
 .modal-icon-circle.warning {
   background-color: #fef3c7;
   color: #f59e0b;
 }
-
 .modal-title {
+  font-family: "Prompt", sans-serif;
   font-size: 1.25rem;
   font-weight: 700;
-  margin-bottom: 10px;
   color: #1f2937;
+  margin-bottom: 10px;
 }
-
 .modal-desc {
+  font-family: "Prompt", sans-serif;
   font-size: 0.95rem;
   color: #6b7280;
   margin-bottom: 25px;
+  line-height: 1.5;
 }
-
 .modal-actions {
   display: flex;
   gap: 12px;
   justify-content: center;
 }
-
 .modal-btn {
   flex: 1;
   padding: 12px;
@@ -467,30 +384,31 @@
   border-radius: 8px;
   font-family: "Prompt", sans-serif;
   font-weight: 600;
-  cursor: pointer;
   font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
 }
-
 .modal-btn.cancel {
   background-color: #f3f4f6;
   color: #4b5563;
 }
-.modal-btn.cancel:hover {
-  background-color: #e5e7eb;
-}
-
 .modal-btn.confirm {
   background-color: #438438;
   color: white;
 }
-.modal-btn.confirm:hover {
-  background-color: #366b2d;
-}
-
 .modal-btn.close-warning {
   background-color: #f59e0b;
   color: white;
 }
-.modal-btn.close-warning:hover {
-  background-color: #d97706;
+
+@media (max-width: 600px) {
+  .le-header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .le-container,
+  .le-header-inner {
+    padding: 0 20px;
+  }
 }
