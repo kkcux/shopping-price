@@ -14,6 +14,7 @@ import ListsEdit from './components/MyLists/ListsEdit';
 import MyLists2 from './components/MyLists/MyLists2';
 import MyLists3 from './components/MyLists/MyLists3';
 import Favorites from './components/Favorites/Favorites';
+import CreateMyList from './components/MyLists/CreateMyList';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/mylists" element={<MyLists />} />
         <Route path="/profile" element={<Profile />} />
+        <Route path="/mylists/createmylists" element={<CreateMyList />} />
         <Route path="/mylists/listsedit" element={<ListsEdit />} />
         <Route path="/mylists/mylists2" element={<MyLists2 />} />
         <Route path="/mylists/mylists3" element={<MyLists3 />} />
