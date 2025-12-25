@@ -234,3 +234,110 @@
   cursor: pointer;
   box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
 }
+
+/* ===== MODAL POPUP STYLES ===== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4); /* พื้นหลังสีดำจางๆ */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(2px); /* เบลอฉากหลังนิดๆ */
+}
+
+.modal-box {
+  background: white;
+  width: 90%;
+  max-width: 400px;
+  padding: 30px 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-icon-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #dcfce7; /* สีเขียวอ่อนพื้นหลังไอคอน */
+  border: 2px solid #22c55e;
+  color: #22c55e; /* สีไอคอนเขียว */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 20px;
+}
+
+.modal-title {
+  font-family: "Prompt", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #000;
+  margin-bottom: 8px;
+}
+
+.modal-desc {
+  font-family: "Prompt", sans-serif;
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin-bottom: 25px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-family: "Prompt", sans-serif;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.modal-btn:active {
+  transform: scale(0.95);
+}
+
+.modal-btn.cancel {
+  background-color: #ef4444; /* สีแดง */
+  color: white;
+  box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
+}
+
+.modal-btn.cancel:hover {
+  background-color: #dc2626;
+}
+
+.modal-btn.confirm {
+  background-color: #3e7b2e; /* สีเขียวเข้มแบบในรูป */
+  color: white;
+  box-shadow: 0 4px 6px rgba(62, 123, 46, 0.2);
+}
+
+.modal-btn.confirm:hover {
+  background-color: #366b28;
+}
