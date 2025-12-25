@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom"; // ✅ 1. เพิ่ม useParams
+import { useNavigate, useParams } from "react-router-dom";
 import { Check } from "lucide-react";
 
 import Navbar from "../Home/Navbar";
@@ -8,29 +8,29 @@ import "./lists-edit.css";
 
 export default function ListsEdit() {
   const navigate = useNavigate();
-  const { id } = useParams(); // ✅ 2. ดึง ID จาก URL มาใช้
+  const { id } = useParams();
+
+  // ✅ 1. เตรียมข้อมูลตั้งแต่เริ่ม (ไม่ต้องรอ useEffect)
+  // ดึงข้อมูลครั้งเดียวแล้วเก็บไว้ใช้กำหนดค่าเริ่มต้น
+  const [initialData] = useState(() => {
+    const savedLists = JSON.parse(localStorage.getItem("myLists")) || [];
+    return savedLists.find((list) => String(list.id) === String(id));
+  });
 
   // State ควบคุม Modal
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-  // State เก็บชื่อรายการและสินค้า (เริ่มต้นเป็นค่าว่างก่อนรอโหลด)
-  const [listName, setListName] = useState("");
-  const [selected, setSelected] = useState([]);
+  // ✅ 2. กำหนดค่าเริ่มต้นจาก initialData ทันที
+  const [listName, setListName] = useState(initialData ? initialData.name : "");
+  const [selected, setSelected] = useState(initialData ? initialData.items : []);
 
-  // ✅ 3. Effect: โหลดข้อมูลจาก localStorage เมื่อเปิดหน้าเว็บ
+  // ✅ 3. Effect นี้เอาไว้แค่ "เด้งออก" กรณีหา ID ไม่เจอเท่านั้น (ไม่ต้อง set state)
   useEffect(() => {
-    const savedLists = JSON.parse(localStorage.getItem("myLists")) || [];
-    // ค้นหารายการที่มี ID ตรงกับ URL (ต้องแปลง id เป็น number หรือ string ให้ตรงกัน)
-    const currentList = savedLists.find((list) => String(list.id) === String(id));
-
-    if (currentList) {
-      setListName(currentList.name);
-      setSelected(currentList.items);
-    } else {
-      // ถ้าหาไม่เจอ (เช่น URL ผิด) ให้เด้งกลับ
+    if (!initialData) {
       navigate("/mylists");
     }
-  }, [id, navigate]);
+  }, [initialData, navigate]);
+
 
   // ===== catalog (สินค้าตัวอย่างสำหรับเลือกเพิ่ม) =====
   const [catalog, setCatalog] = useState([
@@ -51,7 +51,7 @@ export default function ListsEdit() {
     setCatalog((prev) => prev.map((i) => (i.id === id && i.qty > 1 ? { ...i, qty: i.qty - 1 } : i)));
   };
 
-  // ✅ 4. เพิ่มฟังก์ชัน: เลือกสินค้าจาก Catalog ลงไปใน Selected
+  // เลือกสินค้าจาก Catalog ลงไปใน Selected
   const handleSelectFromCatalog = (product) => {
     const existingItem = selected.find((item) => item.id === product.id);
     if (existingItem) {
@@ -75,7 +75,7 @@ export default function ListsEdit() {
     setShowConfirmModal(true);
   };
 
-  // ✅ 5. ฟังก์ชันยืนยันการบันทึก (Update localStorage)
+  // ฟังก์ชันยืนยันการบันทึก (Update localStorage)
   const handleConfirmSave = () => {
     const savedLists = JSON.parse(localStorage.getItem("myLists")) || [];
     
@@ -84,10 +84,10 @@ export default function ListsEdit() {
       if (String(list.id) === String(id)) {
         return {
           ...list,
-          name: listName, // อัปเดตชื่อ (ถ้าแก้ได้)
+          name: listName, // อัปเดตชื่อ
           items: selected, // อัปเดตสินค้า
           totalItems: selected.reduce((sum, item) => sum + item.qty, 0), // อัปเดตจำนวนรวม
-          updatedAt: new Date().toLocaleDateString('th-TH') // (Optional) เก็บเวลาแก้ไข
+          updatedAt: new Date().toLocaleDateString('th-TH')
         };
       }
       return list;
@@ -102,6 +102,9 @@ export default function ListsEdit() {
     // กลับไปหน้า MyLists (หรือหน้ารายละเอียด)
     navigate("/mylists");
   };
+
+  // ถ้ายังไม่มีข้อมูล (และกำลังจะ Redirect) ให้ return null หรือ Loading ไปก่อน
+  if (!initialData) return null;
 
   return (
     <>
@@ -161,7 +164,6 @@ export default function ListsEdit() {
             </div>
             <div className="le-cards">
               {selected.map((p, index) => (
-                // ใช้ index ช่วย key เผื่อ id ซ้ำตอน dev แต่จริงๆ ควร unique
                 <div key={`${p.id}-${index}`} className="le-card">
                   <button className="le-remove" onClick={() => removeItem(p.id)}>✕</button>
                   <div className="le-imgWrap"><img src={p.img} alt={p.name} /></div>
