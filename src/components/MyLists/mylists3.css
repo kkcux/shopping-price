@@ -1,228 +1,408 @@
-.ml3-page{
-  background:#f2f2f2;
-  min-height: calc(100vh - 120px);
-  padding-bottom: 24px;
+/* =========================
+   PAGE LAYOUT (Theme เดียวกับ MyLists2 & Edit)
+========================= */
+@import url("https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap");
+
+* {
+  box-sizing: border-box;
 }
 
-.ml3-topbar{
-  background:#f3f3f3;
-  border-bottom:1px solid #e0e0e0;
-  padding: 14px 0 10px;
+.ml3-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f5f5f5;
+
+  /* ✅ เอา padding-top ออก เพื่อให้ Header ชนกับ Navbar */
+  padding-top: 0;
+  padding-bottom: 100px;
+  font-family: "Prompt", sans-serif;
 }
-.ml3-topbar-inner{
-  width: 980px;
-  max-width: calc(100% - 40px);
+
+/* =========================
+   HEADER SECTION (FULL WIDTH)
+========================= */
+.ml3-header-section {
+  width: 100%;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 24px 0;
+  margin-bottom: 30px;
+}
+
+/* Inner Container สำหรับ Header */
+.ml3-header-inner {
+  width: 100%;
+  max-width: 1440px;
   margin: 0 auto;
-  display:flex;
-  gap:12px;
-  align-items:flex-start;
-}
-.ml3-back{
-  width:26px;height:26px;
-  border-radius:50%;
-  border:none;
-  background:#e7e7e7;
-  font-size:18px;
-  cursor:pointer;
-  margin-top:6px;
-}
-.ml3-titlewrap{ flex:1; }
-.ml3-title{
-  margin:0;
-  font-size:22px;
-  font-weight:800;
-  color:#1f8f2b;
-}
-.ml3-subtitle{
-  margin:4px 0 0;
-  font-size:12px;
-  color:#777;
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.ml3-mini{
-  width: 980px;
-  max-width: calc(100% - 40px);
-  margin: 14px auto 0;
-  display:flex;
-  gap:14px;
-}
-.ml3-mini-card{
-  background:#fff;
-  border-radius:10px;
-  box-shadow:0 1px 5px rgba(0,0,0,.12);
-  padding:12px 14px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-  min-width: 220px;
-}
-.ml3-mini-ico{
-  width:34px;height:34px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:16px;
-}
-.ml3-mini-ico.blue{ background:#dbe9ff; }
-.ml3-mini-ico.green{ background:#d9ffe3; }
-.ml3-mini-top{ font-size:12px; color:#666; }
-.ml3-mini-bottom{ font-size:14px; font-weight:800; color:#222; }
-
-.ml3-block{
-  width: 980px;
-  max-width: calc(100% - 40px);
-  margin: 16px auto 0;
-  background:#fff;
-  border-radius:10px;
-  overflow:hidden;
-  box-shadow:0 1px 6px rgba(0,0,0,.12);
-}
-.ml3-block-head{
-  background:#e9e9e9;
-  padding:10px 14px;
-  font-weight:800;
-  color:#333;
-  font-size:14px;
+.ml3-topLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
 }
 
-.ml3-table{
-  padding: 0;
-}
-.ml3-thead{
-  display:grid;
-  grid-template-columns: 1.7fr 0.6fr 0.6fr 0.6fr 0.6fr;
-  gap:0;
-  padding: 10px 14px 6px;
-  font-size:12px;
-  color:#666;
-}
-.ml3-th{
-  text-align:center;
-  font-weight:700;
-}
-.ml3-th.left{ text-align:left; }
-
-.ml3-tr{
-  display:grid;
-  grid-template-columns: 1.7fr 0.6fr 0.6fr 0.6fr 0.6fr;
-  padding: 10px 14px;
-  border-top:1px solid #eee;
-  align-items:center;
-}
-.ml3-tr:nth-child(even){ background:#fafafa; }
-.ml3-tr.total{
-  background:#f1f1f1;
-}
-.ml3-td{
-  text-align:center;
-}
-.ml3-td.left{
-  text-align:left;
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-.ml3-prodimg{
-  width:32px;height:32px;
-  border-radius:8px;
-  object-fit:cover;
-  background:#fff;
-  border:1px solid #eee;
-}
-.ml3-prodmeta{ line-height:1.2; }
-.ml3-prodname{
-  font-size:12px;
-  font-weight:700;
-  color:#222;
-}
-.ml3-prodqty{
-  font-size:11px;
-  color:#888;
-  margin-top:2px;
+/* ปุ่มย้อนกลับ */
+.ml3-back {
+  width: 40px;
+  height: 40px;
+  background-color: #f3f4f6;
+  color: #374151;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  margin-top: 5px;
 }
 
-.ml3-pill{
-  display:inline-block;
-  min-width:54px;
-  padding:4px 10px;
-  border-radius:8px;
-  border:1px solid #cfcfcf;
-  background:#fff;
-  font-weight:800;
-  font-size:12px;
-  color:#333;
-}
-.ml3-pill.best{
-  background:#c7f7c7;
-  border-color:#71d971;
-}
-.total-label{
-  font-weight:800;
-  font-size:12px;
-  color:#444;
+.ml3-back:hover {
+  background-color: #e5e7eb;
 }
 
-.ml3-shop-table{
-  padding: 10px 14px 14px;
-}
-.ml3-shop-head{
-  display:grid;
-  grid-template-columns: 1.2fr 0.7fr 0.8fr 0.9fr 0.8fr;
-  font-size:12px;
-  color:#666;
-  font-weight:700;
-  padding: 8px 8px;
-  border-bottom:1px solid #eee;
-}
-.ml3-shop-row{
-  display:grid;
-  grid-template-columns: 1.2fr 0.7fr 0.8fr 0.9fr 0.8fr;
-  padding: 12px 8px;
-  border-bottom:1px solid #f0f0f0;
-  align-items:center;
-}
-.ml3-shop-row:last-child{ border-bottom:none; }
-.ml3-shop-brand{
-  font-weight:800;
-  color:#222;
-}
-.ml3-shop-muted{ color:#666; font-size:12px; }
-.ml3-shop-price{ font-weight:800; color:#333; }
-.ml3-shop-action{ text-align:right; }
-.ml3-go{
-  background:#1e88ff;
-  border:none;
-  color:#fff;
-  font-weight:800;
-  border-radius:6px;
-  padding:6px 10px;
-  cursor:pointer;
-  font-size:12px;
+.ml3-titlewrap {
+  display: flex;
+  flex-direction: column;
 }
 
-.ml3-save{
-  width: 980px;
-  max-width: calc(100% - 40px);
-  margin: 18px auto 0;
-  display:flex;
-  justify-content:center;
+.ml3-title {
+  font-size: 32px; /* ขนาดเท่าหน้าอื่น */
+  font-weight: 800;
+  color: #438438;
+  margin: 0;
+  line-height: 1;
+  text-transform: uppercase;
 }
-.ml3-savebtn{
-  width: 320px;
-  max-width: 100%;
-  padding: 12px 14px;
-  border:none;
-  border-radius:8px;
-  background:#2e7d27;
-  color:#fff;
-  font-weight:900;
-  font-size:14px;
-  cursor:pointer;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  gap:10px;
-  box-shadow:0 2px 8px rgba(0,0,0,.18);
+
+.ml3-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin-top: 6px;
+  font-weight: 400;
 }
-.ml3-saveicon{ font-size:16px; }
+
+/* =========================
+   CONTENT CONTAINER
+========================= */
+.ml3-container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+/* =========================
+   MINI CARDS (Summary)
+========================= */
+.ml3-mini {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.ml3-mini-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+}
+
+.ml3-mini-ico {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+.ml3-mini-ico.blue {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+.ml3-mini-ico.green {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.ml3-mini-top {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.ml3-mini-bottom {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* =========================
+   BLOCK & TABLE
+========================= */
+.ml3-block {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
+}
+
+.ml3-block-head {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 20px;
+}
+
+/* Table Grid System */
+.ml3-table {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Grid Columns: 2fr (ชื่อสินค้า) + 1fr x 3 (ราคาร้านค้า) */
+.ml3-thead,
+.ml3-tr {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  align-items: center;
+}
+
+.ml3-thead {
+  padding: 12px 16px;
+  background: #f8fafc;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.ml3-th {
+  font-weight: 600;
+  color: #475569;
+  text-align: center;
+  font-size: 0.9rem;
+}
+.ml3-th.left {
+  text-align: left;
+}
+
+.ml3-tr {
+  padding: 16px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.ml3-tr:last-child {
+  border-bottom: none;
+}
+
+.ml3-td {
+  text-align: center;
+  font-size: 0.95rem;
+  color: #334155;
+}
+.ml3-td.left {
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Product Info */
+.ml3-prodimg {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  border-radius: 6px;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  padding: 2px;
+  flex-shrink: 0;
+}
+.ml3-prodmeta {
+  display: flex;
+  flex-direction: column;
+}
+.ml3-prodname {
+  font-weight: 600;
+  color: #1e293b;
+  font-size: 0.95rem;
+  line-height: 1.3;
+}
+.ml3-prodqty {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+/* Price Pill */
+.ml3-pill {
+  display: inline-block;
+  min-width: 70px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #64748b;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+.ml3-pill.best {
+  background: #dcfce7;
+  color: #16a34a;
+  border: 1px solid #bbf7d0;
+}
+
+/* Total Rows */
+.ml3-tr.total {
+  background: #f8fafc;
+  border-radius: 8px;
+  margin-top: 10px;
+  border-bottom: none;
+}
+.total-label {
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 0.95rem;
+}
+
+/* =========================
+   SHOP RECOMMENDATION
+========================= */
+.ml3-shop-table {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Grid Columns: 1.5fr (ชื่อร้าน) + 1fr x 4 (ระยะทาง, ราคา, ปุ่ม) */
+.ml3-shop-head,
+.ml3-shop-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr 1fr;
+  align-items: center;
+  text-align: center;
+}
+
+.ml3-shop-head {
+  padding: 12px 16px;
+  background: #f1f5f9;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: #475569;
+  font-size: 0.9rem;
+}
+.ml3-shop-head div:first-child {
+  text-align: left;
+}
+
+.ml3-shop-row {
+  padding: 16px 12px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.ml3-shop-brand {
+  text-align: left;
+  font-weight: 700;
+  color: #1e293b;
+  font-size: 1rem;
+}
+.ml3-shop-muted {
+  color: #94a3b8;
+  font-size: 0.9rem;
+}
+.ml3-shop-price {
+  font-weight: 600;
+  color: #334155;
+}
+
+/* Go Button */
+.ml3-go {
+  background: transparent;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 600;
+}
+.ml3-go:hover {
+  background: #438438;
+  color: #fff;
+  border-color: #438438;
+}
+
+/* =========================
+   SAVE BUTTON
+========================= */
+.ml3-save {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.ml3-savebtn {
+  background: #438438;
+  color: white;
+  border: none;
+  padding: 14px 40px;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(22, 163, 74, 0.2);
+  transition: all 0.2s;
+}
+.ml3-savebtn:hover {
+  background: #166534;
+  transform: translateY(-2px);
+}
+.ml3-saveicon {
+  font-size: 1.2rem;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+@media (max-width: 900px) {
+  /* ปรับ Grid ให้เป็น Column เดียวในมือถือ */
+  .ml3-thead,
+  .ml3-tr,
+  .ml3-shop-head,
+  .ml3-shop-row {
+    grid-template-columns: 1fr; /* แถวเดียว */
+    gap: 10px;
+    text-align: left;
+  }
+
+  .ml3-td,
+  .ml3-th,
+  .ml3-shop-head div,
+  .ml3-shop-row div {
+    text-align: left;
+  }
+
+  .ml3-header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+
+  .ml3-container {
+    padding: 0 20px;
+  }
+}
