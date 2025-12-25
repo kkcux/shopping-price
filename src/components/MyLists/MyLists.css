@@ -1,133 +1,369 @@
-/* src/pages/MyLists.css */
+/* MyLists.css */
+@import url("https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap");
 
-/* CSS Variables */
-:root {
-  --primary-green: #28a745;
-  --text-light: #666;
-  --link-blue: #007bff;
+/* Global Reset */
+* {
+  box-sizing: border-box;
 }
 
-/* คอนเทนเนอร์ของหน้านี้ */
-.page-container-full {
+.page-wrapper {
   display: flex;
   flex-direction: column;
-  flex: 1;         /* ยืดให้เต็มความสูงที่เหลือจาก Navbar/Footer */
-  width: 100%;
-    background-color: #ffffff; /* สีพื้นหลังอ่อน */
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  font-family: "Prompt", sans-serif;
 }
 
-/* --- ส่วนหัวข้อ  --- */
+/* --- Container กลาง --- */
+.content-container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 40px;
+  width: 100%;
+}
 
-.page-header {
+/* --- ส่วน Header (สีขาว) --- */
+.header-section {
+  background-color: #ffffff;
+  padding: 30px 0;
+  border-bottom: 1px solid #e5e7eb;
+  width: 100%;
+}
+
+.mylist-header {
   display: flex;
-  justify-content: space-between; /* ชิดซ้ายและขวา */
+  justify-content: space-between;
   align-items: center;
-  margin-top: 30px;
-  margin-bottom: 30px;
-  
-  /* เพิ่ม padding เพื่อให้ตรงกับ Navbar */
-  padding-left: 2rem;
-  padding-right: 3rem;
-  
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .header-left {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 15px;
 }
 
-/* เพิ่มส่วนนี้เพื่อความชัวร์ */
-.header-text {
-  text-align: left;
-  align-items: flex-start;
-}
-
-.back-button {
-  background: #f0f0f0;
-  border: none;
-  width: 36px;
-  height: 36px;
+.back-circle {
+  width: 40px;
+  height: 40px;
+  background-color: #f3f4f6;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  margin-top: 5px; /* ดันลงมานิดหน่อยให้ตรงกับหัวข้อ */
+  margin-top: 5px;
+  transition: background 0.2s;
 }
 
-.new-button {
-  background: var(--primary-green);
+.back-circle:hover {
+  background-color: #e5e7eb;
+}
+
+.header-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #438438;
+  margin: 0;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.header-subtitle {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin: 4px 0 0 0;
+}
+
+.btn-newlist {
+  background-color: #438438;
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-family: "Prompt", sans-serif;
+  font-weight: 600;
   cursor: pointer;
-  font-weight: 500;
-  font-size: 1rem;
+  transition: background 0.2s;
 }
 
-.new-button:hover {
-  background: #218838;
+.btn-newlist:hover {
+  background-color: #366b2d;
 }
 
-.page-title {
-  color: var(--primary-green);
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 5px;
-  line-height: 1.2;
+/* --- ส่วนเนื้อหา (สีเทา) --- */
+.content-section {
+  background-color: #f5f5f5;
+  padding-top: 40px;
+  padding-bottom: 100px;
+  flex: 1;
 }
 
-.page-subtitle {
-  color: var(--text-light);
-  font-size: 1rem;
+.lists-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
 }
 
-/* --- พื้นที่สีขาว (Login Prompt) --- */
-.login-prompt-area {
-  background-color: #f8f9fa; /* สีเทาอ่อน */
-  width: 100%;               /* กว้างเต็มจอ */
-  
-  /* สำคัญ: สั่งให้ยืดกินพื้นที่ว่างด้านล่างทั้งหมด */
-  flex: 1;                   
-  
-  /* จัดกึ่งกลาง */
+.list-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  
-  /* ระยะห่าง */
-  padding: 50px 0;
-  min-height: 300px; /* ความสูงขั้นต่ำกันดูโล่งเกินไป */
+  position: relative;
+  min-height: 200px;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 
-.login-container {
+.list-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
   text-align: center;
+  margin-bottom: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
-.login-actions {
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin: 0 0 5px 0;
+  color: #1f2937;
+}
+
+.card-count {
+  font-size: 0.9rem;
+  color: #9ca3af;
+  margin: 0;
+}
+
+.card-footer {
+  width: 100%;
+}
+
+.btn-open {
+  width: 100%;
+  background-color: #438438;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-family: "Prompt", sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-open:hover {
+  background-color: #366b2d;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 80px;
+  color: #9ca3af;
+}
+
+.link-create {
+  color: #438438;
+  font-weight: 600;
+  text-decoration: none;
+  margin-top: 10px;
+  display: inline-block;
+}
+
+/* ========================================= */
+/* ✅ ส่วน Menu Dropdown (3 จุด) - แก้กระตุก */
+/* ========================================= */
+.card-top-menu {
+  width: 100%;
   display: flex;
+  justify-content: flex-end;
+  position: relative;
+  z-index: 10;
+}
+
+.menu-icon-btn {
+  background: transparent;
+  border: 1px solid transparent; /* กันขอบขยับ */
+  outline: none; /* ปิดเส้นขอบเวลาคลิก */
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
   justify-content: center;
+  -webkit-tap-highlight-color: transparent; /* แก้ปัญหามือถือ */
+}
+
+.menu-icon-btn:hover {
+  background-color: #f3f4f6;
+}
+
+.menu-icon-btn:active {
+  background-color: #e5e7eb;
+}
+
+/* 🔥 ตัวแก้กระตุกที่สำคัญที่สุด: ให้คลิกทะลุไอคอนไปโดนปุ่ม */
+.menu-icon-btn svg {
+  pointer-events: none;
+  display: block;
+}
+
+.menu-dropdown {
+  position: absolute;
+  top: 40px; /* ล็อกตำแหน่งให้แน่นอน */
+  right: 0;
+  background: white;
+  min-width: 140px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f3f4f6;
+  padding: 5px;
+  z-index: 20;
+  transform-origin: top right;
+  animation: scaleIn 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.menu-item {
+  display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 10px;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  color: #374151;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 0.1s;
 }
 
-.login-message {
+.menu-item:hover {
+  background-color: #f9fafb;
+}
+
+.menu-item.delete {
+  color: #ef4444;
+}
+
+.menu-item.delete:hover {
+  background-color: #fef2f2;
+}
+
+/* ========================================= */
+/* ✅ ส่วน Small Modal (Pop-up แจ้งเตือน) */
+/* ========================================= */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(2px);
+}
+
+.modal-box {
+  background: white;
+  width: 280px;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   text-align: center;
-  font-size: 1.1rem;
-  color: #333;
+  animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.login-link {
-  color: var(--link-blue);
-  display: inline-block;
+@keyframes popIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-title-small {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0 0 5px 0;
+  color: #1f2937;
+}
+
+.modal-desc-small {
+  font-size: 0.9rem;
+  color: #6b7280;
+  margin: 0 0 20px 0;
+}
+
+.modal-actions-small {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.btn-small {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 6px;
+  font-family: "Prompt", sans-serif;
+  font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  text-decoration: none;
 }
 
-.login-link:hover {
-  text-decoration: underline;
+.btn-small.cancel {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+.btn-small.cancel:hover {
+  background-color: #e5e7eb;
+}
+
+.btn-small.confirm {
+  background-color: #ef4444;
+  color: white;
+}
+.btn-small.confirm:hover {
+  background-color: #dc2626;
+}
+
+@media (max-width: 600px) {
+  .mylist-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .btn-newlist {
+    width: 100%;
+  }
+  .content-container {
+    padding: 0 20px;
+  }
 }
