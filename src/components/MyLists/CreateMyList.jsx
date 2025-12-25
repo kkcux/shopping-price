@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-// ✅ Import ChevronLeft เพิ่มเข้ามา
-import { Check, AlertCircle, ChevronLeft } from "lucide-react"; 
-
+import { Check, AlertCircle, ChevronLeft, Plus } from "lucide-react"; 
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
 import "./lists-edit.css"; 
@@ -10,24 +8,18 @@ import "./lists-edit.css";
 export default function CreateMyList() {
   const navigate = useNavigate();
 
-  // Scroll to Top
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
   
-  // State ควบคุม Modal ยืนยัน (สีเขียว)
   const [showConfirmModal, setShowConfirmModal] = useState(false);
-
-  // State ควบคุม Modal แจ้งเตือน (สีส้ม)
   const [showWarningModal, setShowWarningModal] = useState(false);
   const [warningMsg, setWarningMsg] = useState("");
 
-  // 1. ชื่อรายการ
   const [listName, setListName] = useState(() => {
     return localStorage.getItem("myListDraft_Name") || "";
   });
 
-  // 2. สินค้าแนะนำ
   const [catalog, setCatalog] = useState([
     { id: "c1", name: "หมูแผ่นทอด x6", img: "https://o2o-static.lotuss.com/products/73889/51838953.jpg", qty: 1 },
     { id: "c2", name: "แอปเปิ้ล", img: "https://o2o-static.lotuss.com/products/73889/50845992.jpg", qty: 1 },
@@ -36,13 +28,11 @@ export default function CreateMyList() {
     { id: "c5", name: "ส้มแมนดาริน", img: "https://o2o-static.lotuss.com/products/73889/51635718.jpg", qty: 1 },
   ]);
 
-  // 3. รายการที่เลือก
   const [selected, setSelected] = useState(() => {
     const saved = localStorage.getItem("myListDraft_Items");
     if (saved) {
       try {
         return JSON.parse(saved);
-      // eslint-disable-next-line no-unused-vars
       } catch (error) {
         return [];
       }
@@ -50,7 +40,6 @@ export default function CreateMyList() {
     return [];
   });
 
-  // Effect บันทึก Draft
   useEffect(() => {
     localStorage.setItem("myListDraft_Name", listName);
   }, [listName]);
@@ -59,8 +48,6 @@ export default function CreateMyList() {
     localStorage.setItem("myListDraft_Items", JSON.stringify(selected));
   }, [selected]);
 
-
-  // ===== Handlers =====
 
   const increaseCatalogQty = (id) => {
     setCatalog((prev) => prev.map((i) => (i.id === id ? { ...i, qty: i.qty + 1 } : i)));
@@ -83,7 +70,6 @@ export default function CreateMyList() {
     setSelected((prev) => prev.filter((i) => i.id !== id));
   };
 
-  // Check ก่อนบันทึก
   const handleSaveClick = () => {
     if (!listName.trim()) {
       setWarningMsg("กรุณาตั้งชื่อรายการก่อนบันทึก");
@@ -121,11 +107,10 @@ export default function CreateMyList() {
       <Navbar />
 
       <main className="le-page">
-        <div className="le-container">
-          
-          <div className="le-top">
+        {/* ✅ ส่วน Header แยกออกมาอยู่ข้างบนเพื่อให้กว้างเต็มจอ */}
+        <section className="le-header-section">
+          <div className="le-header-inner">
             <div className="le-topLeft">
-              {/* ✅ เปลี่ยนปุ่มย้อนกลับให้เป็นไอคอน ChevronLeft */}
               <button className="le-back-btn" onClick={() => navigate(-1)}>
                 <ChevronLeft size={28} strokeWidth={2.5} />
               </button>
@@ -135,7 +120,11 @@ export default function CreateMyList() {
               </div>
             </div>
           </div>
+        </section>
 
+        {/* ✅ Container หลักสำหรับเนื้อหา */}
+        <div className="le-container">
+          
           <div className="le-nameBlock">
             <div className="le-label">ชื่อรายการ</div>
             <input 
@@ -143,7 +132,6 @@ export default function CreateMyList() {
               value={listName} 
               onChange={(e) => setListName(e.target.value)}
               placeholder="ตั้งชื่อรายการของคุณ... (เช่น ของทำบุญ, ปาร์ตี้ปีใหม่)"
-              style={{ backgroundColor: '#fff', border: '1px solid #ddd' }} 
             />
           </div>
 
@@ -155,14 +143,18 @@ export default function CreateMyList() {
             <div className="le-cards">
               {catalog.map((p) => (
                 <div key={p.id} className="le-card">
-                  <div className="le-imgWrap"><img src={p.img} alt={p.name} /></div>
+                  <div className="le-imgWrap">
+                    <img src={p.img} alt={p.name} />
+                  </div>
                   <div className="le-cardName">{p.name}</div>
                   <div className="le-qty">
                     <button onClick={() => decreaseCatalogQty(p.id)}>−</button>
                     <span>{p.qty}</span>
                     <button onClick={() => increaseCatalogQty(p.id)}>+</button>
                   </div>
-                  <button className="le-select" onClick={() => handleSelectFromCatalog(p)}>เลือก</button>
+                  <button className="le-select" onClick={() => handleSelectFromCatalog(p)}>
+                    เลือก
+                  </button>
                 </div>
               ))}
             </div>
@@ -173,7 +165,7 @@ export default function CreateMyList() {
               <div className="le-boxTitle">รายการสินค้าของคุณ ({selected.length})</div>
             </div>
             {selected.length === 0 ? (
-              <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
+              <div style={{ padding: '40px', textAlign: 'center', color: '#999', width: '100%' }}>
                 ยังไม่มีสินค้าในรายการ เลือกสินค้าจากด้านบนได้เลย
               </div>
             ) : (
@@ -181,7 +173,9 @@ export default function CreateMyList() {
                 {selected.map((p, index) => (
                   <div key={`${p.id}-${index}`} className="le-card">
                     <button className="le-remove" onClick={() => removeItem(p.id)}>✕</button>
-                    <div className="le-imgWrap"><img src={p.img} alt={p.name} /></div>
+                    <div className="le-imgWrap">
+                      <img src={p.img} alt={p.name} />
+                    </div>
                     <div className="le-cardName">{p.name}</div>
                     <div className="le-cardSub">จำนวน {p.qty} ชิ้น</div>
                   </div>
@@ -192,13 +186,14 @@ export default function CreateMyList() {
 
           <div className="le-saveWrap">
             <button className="le-saveBtn" onClick={handleSaveClick}>
+              <Plus size={20} strokeWidth={3} style={{ marginRight: 8 }} />
               สร้างรายการ
             </button>
           </div>
         </div>
       </main>
 
-      {/* Modal ยืนยัน (Confirm Save) */}
+      {/* Modal ยืนยัน */}
       {showConfirmModal && (
         <div className="modal-overlay">
           <div className="modal-box fade-in">
@@ -207,7 +202,6 @@ export default function CreateMyList() {
             </div>
             <h3 className="modal-title">ยืนยันการสร้างรายการใหม่ ?</h3>
             <p className="modal-desc">คุณสามารถกลับมาแก้ไขรายการนี้ได้ภายหลัง</p>
-            
             <div className="modal-actions">
               <button className="modal-btn cancel" onClick={() => setShowConfirmModal(false)}>
                 ยกเลิก
@@ -220,7 +214,7 @@ export default function CreateMyList() {
         </div>
       )}
 
-      {/* Modal แจ้งเตือน (Warning) */}
+      {/* Modal แจ้งเตือน */}
       {showWarningModal && (
         <div className="modal-overlay">
           <div className="modal-box fade-in">
@@ -229,7 +223,6 @@ export default function CreateMyList() {
             </div>
             <h3 className="modal-title">ข้อมูลไม่ครบถ้วน</h3>
             <p className="modal-desc">{warningMsg}</p>
-            
             <div className="modal-actions">
               <button className="modal-btn close-warning" onClick={() => setShowWarningModal(false)}>
                 ตกลง
