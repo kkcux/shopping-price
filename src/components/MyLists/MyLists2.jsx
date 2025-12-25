@@ -1,8 +1,8 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
 import "./mylists2.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom"; // ✅ 1. เพิ่ม useParams
 
 const REGISTER_URL = {
   TOPS: "https://www.tops.co.th/th/register",
@@ -13,9 +13,31 @@ const REGISTER_URL = {
 
 export default function MyLists2() {
   const navigate = useNavigate();
-  // const { id } = useParams();
+  const { id } = useParams(); // ✅ 2. รับ ID รายการจาก URL
 
-  // ===== mock data =====
+  // State สำหรับเก็บข้อมูลที่โหลดจาก localStorage
+  const [listName, setListName] = useState("กำลังโหลด...");
+  const [wanted, setWanted] = useState([]);
+
+  // ✅ 3. โหลดข้อมูลเมื่อเปิดหน้าเว็บ
+  useEffect(() => {
+    // ดึงข้อมูลทั้งหมดจาก localStorage
+    const savedLists = JSON.parse(localStorage.getItem("myLists")) || [];
+    
+    // ค้นหารายการที่ ID ตรงกัน
+    const currentList = savedLists.find((list) => String(list.id) === String(id));
+
+    if (currentList) {
+      setListName(currentList.name);
+      setWanted(currentList.items);
+    } else {
+      // ถ้าไม่เจอ ID นี้ (เช่น พิมพ์ URL มั่ว) ให้กลับไปหน้าหลัก
+      // navigate('/mylists'); // เปิดบรรทัดนี้ถ้าต้องการให้เด้งกลับอัตโนมัติ
+      setListName("ไม่พบรายการ");
+    }
+  }, [id]);
+
+  // ===== catalog (สินค้าแนะนำ/Mock Data สำหรับตกแต่ง) =====
   const catalog = useMemo(
     () => [
       { id: "p1", name: "KITO รองเท้าแตะสวมบุรุษ ดำ ไซส์ 42", img: "https://o2o-static.lotuss.com/products/73889/51838953.jpg" },
@@ -26,19 +48,6 @@ export default function MyLists2() {
     ],
     []
   );
-
-  const wanted = useMemo(
-    () => [
-      { id: "w1", name: "อินโนวีเนส อาหารทางการแพทย์ 300ก.", img: "https://o2o-static.lotuss.com/products/105727/51921065.jpg", qty: "จำนวน 300ก." },
-      { id: "w2", name: "อันอัน แผ่นรองซึมซับ ไซส์ XXL 10 ชิ้น", img: "https://o2o-static.lotuss.com/products/105727/75583866.jpg", qty: "จำนวน 10 ชิ้น" },
-      { id: "w3", name: "เนสท์เล่ บู๊สท์ ออฟติมัม 800 กรัม", img: "https://o2o-static.lotuss.com/products/105727/75009552.jpg", qty: "จำนวน 800 กรัม" },
-      { id: "w4", name: "ฟีลฟรีแผ่นรองซึมซับใหญ่พิเศษXXL 8 ชิ้น", img: "https://o2o-static.lotuss.com/products/105727/51165406.jpg", qty: "จำนวน 8 ชิ้น" },
-      { id: "w5", name: "ซอฟเท็กซ์ แผ่นรองซับ ขนาดใหญ่ 10 ชิ้น", img: "https://o2o-static.lotuss.com/products/105727/791156.jpg", qty: "จำนวน 10 ชิ้น" },
-    ],
-    []
-  );
-
-  const [listName] = useState("ของใช้รายสัปดาห์");
 
   // ===== compare stores =====
   const stores = useMemo(
@@ -112,9 +121,9 @@ export default function MyLists2() {
 
             <button
               className="ml2-edit"
-              // onClick={() => navigate(`/mylists/${id}/listsedit`)
-              onClick={() => navigate(`/mylists/listsedit`)}
-              >
+              // ✅ 4. แก้ลิงก์ปุ่ม Edit ให้ส่ง ID ไปด้วย
+              onClick={() => navigate(`/mylists/${id}/edit`)}
+            >
               ✎ <span>EDITLIST</span>
             </button>
           </div>
@@ -125,10 +134,10 @@ export default function MyLists2() {
             <input className="ml2-input" value={listName} readOnly />
           </div>
 
-          {/* ===== Catalog ===== */}
+          {/* ===== Catalog (สินค้าแนะนำ - Mock Data) ===== */}
           <section className="ml2-box">
             <div className="ml2-boxHead">
-              <div className="ml2-boxTitle">เลือกรายการสินค้า</div>
+              <div className="ml2-boxTitle">เลือกรายการสินค้าเพิ่มเติม</div>
               <span className="ml2-pill">ดูทั้งหมด</span>
             </div>
 
@@ -139,18 +148,28 @@ export default function MyLists2() {
             </div>
           </section>
 
-          {/* ===== Wanted ===== */}
+          {/* ===== Wanted (สินค้าจริงจาก localStorage) ===== */}
           <section className="ml2-box">
             <div className="ml2-boxHead">
-              <div className="ml2-boxTitle">รายการสินค้าที่ต้องการ</div>
-              <span className="ml2-pill">ดูทั้งหมด</span>
+              <div className="ml2-boxTitle">รายการสินค้าที่ต้องการ ({wanted.length})</div>
             </div>
 
-            <div className="ml2-cards">
-              {wanted.map((p) => (
-                <ProductCard key={p.id} name={p.name} img={p.img} sub={p.qty} />
-              ))}
-            </div>
+            {wanted.length > 0 ? (
+              <div className="ml2-cards">
+                {wanted.map((p, index) => (
+                  <ProductCard 
+                    key={`${p.id}-${index}`} 
+                    name={p.name} 
+                    img={p.img} 
+                    sub={`จำนวน ${p.qty} ชิ้น`} // แสดงจำนวนชิ้น
+                  />
+                ))}
+              </div>
+            ) : (
+               <div style={{ padding: '20px', color: '#999', textAlign: 'center' }}>
+                 ยังไม่มีสินค้าในรายการ
+               </div>
+            )}
           </section>
 
           {/* ===== Bottom two columns ===== */}
@@ -192,11 +211,11 @@ export default function MyLists2() {
             </section>
           </div>
 
-          {/* ===== Search Button (แก้ไขตรงนี้) ===== */}
+          {/* ===== Search Button ===== */}
           <div className="ml2-searchWrap">
             <button 
               className="ml2-searchBtn"
-              onClick={() => navigate("/mylists/mylists3")} // ✅ เพิ่ม onClick ตรงนี้
+              onClick={() => navigate("/mylists/mylists3")} 
             >
               <span className="ml2-searchIcon">🔍</span>
               เริ่มค้นหาร้านที่ถูกที่สุด
