@@ -70,7 +70,7 @@ const MyLists = () => {
                   <div className="card-footer">
                     <button 
                       className="btn-open" 
-                      onClick={() => navigate('/mylists/mylists2')}
+                      onClick={() => navigate(`/mylists/${list.id}`)}
                     >
                       เปิด
                     </button>
