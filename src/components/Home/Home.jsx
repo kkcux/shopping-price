@@ -9,7 +9,7 @@ import {
 // Import Snowfall เข้ามา
 import Snowfall from 'react-snowfall';
 
-import productsData from '../../data/big_c.json'; 
+import productsData from '../../data/bigC/big_c.json'; 
 import AddToListModal from './AddToListModal';
 
 function Home() { 

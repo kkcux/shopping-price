@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Check } from "lucide-react"; 
+// ✅ Import ChevronLeft เพิ่มเข้ามา
+import { Check, AlertCircle, ChevronLeft } from "lucide-react"; 
 
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
@@ -8,16 +9,25 @@ import "./lists-edit.css";
 
 export default function CreateMyList() {
   const navigate = useNavigate();
+
+  // Scroll to Top
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
-  // State ควบคุม Modal
+  // State ควบคุม Modal ยืนยัน (สีเขียว)
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-  // 1. ชื่อรายการ (โหลดจาก Draft ถ้ามี)
+  // State ควบคุม Modal แจ้งเตือน (สีส้ม)
+  const [showWarningModal, setShowWarningModal] = useState(false);
+  const [warningMsg, setWarningMsg] = useState("");
+
+  // 1. ชื่อรายการ
   const [listName, setListName] = useState(() => {
     return localStorage.getItem("myListDraft_Name") || "";
   });
 
-  // ===== catalog (สินค้าแนะนำให้เลือก) =====
+  // 2. สินค้าแนะนำ
   const [catalog, setCatalog] = useState([
     { id: "c1", name: "หมูแผ่นทอด x6", img: "https://o2o-static.lotuss.com/products/73889/51838953.jpg", qty: 1 },
     { id: "c2", name: "แอปเปิ้ล", img: "https://o2o-static.lotuss.com/products/73889/50845992.jpg", qty: 1 },
@@ -26,12 +36,13 @@ export default function CreateMyList() {
     { id: "c5", name: "ส้มแมนดาริน", img: "https://o2o-static.lotuss.com/products/73889/51635718.jpg", qty: 1 },
   ]);
 
-  // 2. รายการที่เลือก (โหลดจาก Draft ถ้ามี)
+  // 3. รายการที่เลือก
   const [selected, setSelected] = useState(() => {
     const saved = localStorage.getItem("myListDraft_Items");
     if (saved) {
       try {
         return JSON.parse(saved);
+      // eslint-disable-next-line no-unused-vars
       } catch (error) {
         return [];
       }
@@ -39,12 +50,11 @@ export default function CreateMyList() {
     return [];
   });
 
-  // 3. Effect: บันทึก Draft ชื่อรายการ
+  // Effect บันทึก Draft
   useEffect(() => {
     localStorage.setItem("myListDraft_Name", listName);
   }, [listName]);
 
-  // 4. Effect: บันทึก Draft สินค้า
   useEffect(() => {
     localStorage.setItem("myListDraft_Items", JSON.stringify(selected));
   }, [selected]);
@@ -53,25 +63,17 @@ export default function CreateMyList() {
   // ===== Handlers =====
 
   const increaseCatalogQty = (id) => {
-    setCatalog((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, qty: i.qty + 1 } : i))
-    );
+    setCatalog((prev) => prev.map((i) => (i.id === id ? { ...i, qty: i.qty + 1 } : i)));
   };
 
   const decreaseCatalogQty = (id) => {
-    setCatalog((prev) =>
-      prev.map((i) => (i.id === id && i.qty > 1 ? { ...i, qty: i.qty - 1 } : i))
-    );
+    setCatalog((prev) => prev.map((i) => (i.id === id && i.qty > 1 ? { ...i, qty: i.qty - 1 } : i)));
   };
 
   const handleSelectFromCatalog = (product) => {
     const existingItem = selected.find((item) => item.id === product.id);
     if (existingItem) {
-      setSelected((prev) =>
-        prev.map((item) =>
-          item.id === product.id ? { ...item, qty: item.qty + product.qty } : item
-        )
-      );
+      setSelected((prev) => prev.map((item) => item.id === product.id ? { ...item, qty: item.qty + product.qty } : item));
     } else {
       setSelected((prev) => [...prev, { ...product }]);
     }
@@ -81,45 +83,36 @@ export default function CreateMyList() {
     setSelected((prev) => prev.filter((i) => i.id !== id));
   };
 
+  // Check ก่อนบันทึก
   const handleSaveClick = () => {
     if (!listName.trim()) {
-      alert("กรุณาตั้งชื่อรายการก่อนบันทึก");
+      setWarningMsg("กรุณาตั้งชื่อรายการก่อนบันทึก");
+      setShowWarningModal(true);
       return;
     }
     if (selected.length === 0) {
-      alert("กรุณาเลือกสินค้าอย่างน้อย 1 รายการ");
+      setWarningMsg("กรุณาเลือกสินค้าอย่างน้อย 1 รายการ");
+      setShowWarningModal(true);
       return;
     }
     setShowConfirmModal(true);
   };
 
-  // ✅ ฟังก์ชันยืนยันการบันทึก (แก้ไขส่วนนี้)
   const handleConfirmSave = () => {
-    // 1. ดึงรายการเก่าที่มีอยู่แล้วออกมา (ถ้าไม่มีให้เป็น array ว่าง)
     const existingLists = JSON.parse(localStorage.getItem("myLists")) || [];
-
-    // 2. สร้างรายการใหม่
     const newList = {
-      id: Date.now(), // ใช้เวลาปัจจุบันเป็น ID
+      id: Date.now(),
       name: listName,
       items: selected,
       totalItems: selected.reduce((sum, item) => sum + item.qty, 0),
       createdAt: new Date().toLocaleDateString('th-TH')
     };
 
-    // 3. รวมรายการใหม่เข้าไป
-    const updatedLists = [...existingLists, newList];
-
-    // 4. บันทึกกลับลงไปใน localStorage ตัวจริง (Permanent)
-    localStorage.setItem("myLists", JSON.stringify(updatedLists));
-    
-    // 5. ลบข้อมูล Draft ทิ้ง (เพราะบันทึกเสร็จแล้ว)
+    localStorage.setItem("myLists", JSON.stringify([...existingLists, newList]));
     localStorage.removeItem("myListDraft_Name");
     localStorage.removeItem("myListDraft_Items");
 
     setShowConfirmModal(false);
-
-    // 6. กลับไปหน้า MyLists เพื่อดูผลลัพธ์
     navigate("/mylists"); 
   };
 
@@ -132,7 +125,10 @@ export default function CreateMyList() {
           
           <div className="le-top">
             <div className="le-topLeft">
-              <button className="le-back" onClick={() => navigate(-1)}>‹</button>
+              {/* ✅ เปลี่ยนปุ่มย้อนกลับให้เป็นไอคอน ChevronLeft */}
+              <button className="le-back-btn" onClick={() => navigate(-1)}>
+                <ChevronLeft size={28} strokeWidth={2.5} />
+              </button>
               <div>
                 <h1 className="le-title">CREATE NEW LIST</h1>
                 <p className="le-subtitle">สร้างรายการใหม่และเลือกสินค้าที่คุณต้องการเปรียบเทียบราคา</p>
@@ -151,7 +147,6 @@ export default function CreateMyList() {
             />
           </div>
 
-          {/* Catalog Section */}
           <section className="le-box">
             <div className="le-boxHead">
               <div className="le-boxTitle">เลือกสินค้าแนะนำ</div>
@@ -167,23 +162,16 @@ export default function CreateMyList() {
                     <span>{p.qty}</span>
                     <button onClick={() => increaseCatalogQty(p.id)}>+</button>
                   </div>
-                  <button 
-                    className="le-select"
-                    onClick={() => handleSelectFromCatalog(p)}
-                  >
-                    เลือก
-                  </button>
+                  <button className="le-select" onClick={() => handleSelectFromCatalog(p)}>เลือก</button>
                 </div>
               ))}
             </div>
           </section>
 
-          {/* Selected Items Section */}
           <section className="le-box">
             <div className="le-boxHead">
               <div className="le-boxTitle">รายการสินค้าของคุณ ({selected.length})</div>
             </div>
-            
             {selected.length === 0 ? (
               <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
                 ยังไม่มีสินค้าในรายการ เลือกสินค้าจากด้านบนได้เลย
@@ -210,28 +198,41 @@ export default function CreateMyList() {
         </div>
       </main>
 
-      {/* Modal */}
+      {/* Modal ยืนยัน (Confirm Save) */}
       {showConfirmModal && (
         <div className="modal-overlay">
-          <div className="modal-box">
-            <div className="modal-icon-circle">
+          <div className="modal-box fade-in">
+            <div className="modal-icon-circle success">
               <Check size={40} strokeWidth={3} />
             </div>
             <h3 className="modal-title">ยืนยันการสร้างรายการใหม่ ?</h3>
             <p className="modal-desc">คุณสามารถกลับมาแก้ไขรายการนี้ได้ภายหลัง</p>
             
             <div className="modal-actions">
-              <button 
-                className="modal-btn cancel" 
-                onClick={() => setShowConfirmModal(false)}
-              >
+              <button className="modal-btn cancel" onClick={() => setShowConfirmModal(false)}>
                 ยกเลิก
               </button>
-              <button 
-                className="modal-btn confirm" 
-                onClick={handleConfirmSave}
-              >
+              <button className="modal-btn confirm" onClick={handleConfirmSave}>
                 ยืนยัน
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal แจ้งเตือน (Warning) */}
+      {showWarningModal && (
+        <div className="modal-overlay">
+          <div className="modal-box fade-in">
+            <div className="modal-icon-circle warning">
+              <AlertCircle size={40} strokeWidth={2} />
+            </div>
+            <h3 className="modal-title">ข้อมูลไม่ครบถ้วน</h3>
+            <p className="modal-desc">{warningMsg}</p>
+            
+            <div className="modal-actions">
+              <button className="modal-btn close-warning" onClick={() => setShowWarningModal(false)}>
+                ตกลง
               </button>
             </div>
           </div>

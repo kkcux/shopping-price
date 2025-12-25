@@ -1,65 +1,76 @@
 import React, { useState, useEffect } from 'react';
-// 1. เพิ่ม Info icon เข้ามา
+import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, Plus, Minus, X, Check, Info } from 'lucide-react'; 
 import './Home.css';
 
 const AddToListModal = ({ isOpen, onClose, product }) => {
+  const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
-  
-  const [myLists, setMyLists] = useState([
-    { id: 1, name: "ของใช้รายสัปดาห์", count: 5, color: "white", bg: "black" },
-    { id: 2, name: "ขนมขบเคี้ยว", count: 10, color: "black", bg: "#86efac" },
-    { id: 3, name: "เครื่องใช้ไฟฟ้า", count: 1, color: "white", bg: "#0ea5e9" },
-    { id: 4, name: "โทรศัพท์มือถือ", count: 1, color: "black", bg: "#bfdbfe" },
-  ]);
 
-  const [isCreating, setIsCreating] = useState(false);
-  const [newListName, setNewListName] = useState("");
+  // Lazy Initialization: โหลดข้อมูลครั้งแรกครั้งเดียว จบ!
+  // (ข้อมูลจะสดใหม่เสมอ เพราะเมื่อเราเปลี่ยนหน้าไปสร้างรายการ Component นี้จะถูกรีเซ็ตใหม่เอง)
+  const [myLists, setMyLists] = useState(() => {
+    const savedData = localStorage.getItem("myLists");
+    return savedData ? JSON.parse(savedData) : [];
+  });
+
   const [addedListId, setAddedListId] = useState(null);
 
+  // useEffect เหลือหน้าที่แค่ "รีเซ็ตฟอร์ม" เมื่อเปิด Modal
+  // ลบโค้ด setMyLists(...) ออกไปเลย เพื่อแก้ปัญหาตัวแดงและการ Render วนซ้ำ
   useEffect(() => {
     if (isOpen) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setQuantity(1);
-        setIsCreating(false);
-        setNewListName("");
         setAddedListId(null);
     }
-  }, [isOpen, product]);
+  }, [isOpen]);
 
   const handleQuantity = (type) => {
     if (type === 'inc') setQuantity(prev => prev + 1);
     if (type === 'dec' && quantity > 1) setQuantity(prev => prev - 1);
   };
 
+  // ฟังก์ชันเพิ่มสินค้าลงใน List
   const handleAddToList = (listId) => {
-    setMyLists(prevLists => prevLists.map(list => {
+    const currentLists = JSON.parse(localStorage.getItem("myLists")) || [];
+    
+    const updatedLists = currentLists.map(list => {
       if (list.id === listId) {
-        return { ...list, count: list.count + quantity };
+        const newItem = {
+            id: product.id || `prod-${Date.now()}`,
+            name: product.data,
+            img: product.image,
+            qty: quantity
+        };
+
+        const existingItemIndex = (list.items || []).findIndex(item => item.name === newItem.name);
+        let newItems = list.items ? [...list.items] : [];
+
+        if (existingItemIndex > -1) {
+            newItems[existingItemIndex].qty += quantity;
+        } else {
+            newItems.push(newItem);
+        }
+
+        const newTotal = newItems.reduce((sum, item) => sum + item.qty, 0);
+
+        return { 
+            ...list, 
+            items: newItems,
+            totalItems: newTotal 
+        };
       }
       return list;
-    }));
+    });
 
+    localStorage.setItem("myLists", JSON.stringify(updatedLists));
+    setMyLists(updatedLists);
     setAddedListId(listId);
 
     setTimeout(() => {
       setAddedListId(null);
     }, 1500);
-  };
-
-  const handleCreateList = () => {
-    if (newListName.trim() === "") return;
-
-    const newList = {
-        id: Date.now(),
-        name: newListName,
-        count: 0,
-        color: "black",
-        bg: "#e2e8f0"
-    };
-
-    setMyLists([...myLists, newList]);
-    setNewListName("");
-    setIsCreating(false);
   };
 
   if (!isOpen || !product) return null;
@@ -68,7 +79,6 @@ const AddToListModal = ({ isOpen, onClose, product }) => {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         
-        {/* Header */}
         <div className="modal-header">
           <h3>เลือก List ที่ต้องการเพิ่ม</h3>
           <button className="close-btn" onClick={onClose}>
@@ -77,7 +87,6 @@ const AddToListModal = ({ isOpen, onClose, product }) => {
         </div>
 
         <div className="modal-body">
-          {/* ส่วนแสดงสินค้า */}
           <div className="product-summary-card">
             <div className="product-img-wrapper">
                <img src={product.image} alt={product.data} />
@@ -92,59 +101,51 @@ const AddToListModal = ({ isOpen, onClose, product }) => {
             </div>
           </div>
 
-          {/* 2. ส่วนหมายเหตุ (Note) ที่เพิ่มเข้ามา */}
           <div className="note-text">
              <Info size={16} color="#f59e0b" />
              <span>สามารถเพิ่มใส่ใน MyList ที่มีอยู่ได้ทันที</span>
           </div>
 
-          {/* รายการ List */}
           <div className="list-selection-container">
-            {myLists.map((list) => (
-              <div 
-                key={list.id} 
-                className="list-card-item"
-                onClick={() => handleAddToList(list.id)}
-              >
-                <div className="list-icon-box" style={{ backgroundColor: list.bg, color: list.color }}>
-                   <ShoppingCart size={20} />
-                </div>
-                <div className="list-text">
-                  <span className="list-name">{list.name}</span>
-                  <span className="list-count">{list.count} รายการ</span>
-                </div>
+            {myLists.length > 0 ? (
+                myLists.map((list) => (
+                <div 
+                    key={list.id} 
+                    className="list-card-item"
+                    onClick={() => handleAddToList(list.id)}
+                >
+                    <div className="list-icon-box" style={{ backgroundColor: list.bg || '#e2e8f0', color: list.color || 'black' }}>
+                    <ShoppingCart size={20} />
+                    </div>
+                    <div className="list-text">
+                    <span className="list-name">{list.name}</span>
+                    <span className="list-count">{list.totalItems || list.count || 0} รายการ</span>
+                    </div>
 
-                <div className={`action-icon ${addedListId === list.id ? 'success' : ''}`}>
-                   {addedListId === list.id ? (
-                     <Check size={20} color="white" /> 
-                   ) : (
-                     <Plus size={20} color="#94a3b8" />
-                   )}
+                    <div className={`action-icon ${addedListId === list.id ? 'success' : ''}`}>
+                    {addedListId === list.id ? (
+                        <Check size={20} color="white" /> 
+                    ) : (
+                        <Plus size={20} color="#94a3b8" />
+                    )}
+                    </div>
                 </div>
-
-              </div>
-            ))}
+                ))
+            ) : (
+                <div style={{ textAlign: 'center', color: '#999', padding: '10px' }}>
+                    ยังไม่มีรายการสินค้า
+                </div>
+            )}
 
             {/* ส่วนสร้างรายการใหม่ */}
             <div className="create-new-list-area">
-                {!isCreating ? (
-                    <button className="btn-start-create" onClick={() => setIsCreating(true)}>
-                        <Plus size={18} />
-                        <span>สร้างรายการใหม่</span>
-                    </button>
-                ) : (
-                    <div className="input-new-list-group">
-                        <input 
-                            type="text" 
-                            placeholder="ชื่อรายการ..." 
-                            value={newListName}
-                            onChange={(e) => setNewListName(e.target.value)}
-                            autoFocus
-                        />
-                        <button className="btn-confirm" onClick={handleCreateList}>ยืนยัน</button>
-                        <button className="btn-cancel" onClick={() => setIsCreating(false)}>ยกเลิก</button>
-                    </div>
-                )}
+                <button 
+                  className="btn-start-create" 
+                  onClick={() => navigate('/mylists/create')} 
+                >
+                    <Plus size={18} />
+                    <span>สร้างรายการใหม่</span>
+                </button>
             </div>
 
           </div>

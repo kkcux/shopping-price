@@ -341,3 +341,156 @@
 .modal-btn.confirm:hover {
   background-color: #366b28;
 }
+
+/* ... (CSS ส่วนอื่นๆ ของคุณ) ... */
+
+/* ✅ ปุ่มย้อนกลับดีไซน์ใหม่ */
+.le-back-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background-color: white; /* พื้นขาว */
+  color: #374151; /* ไอคอนสีเทาเข้ม */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* เงานุ่มๆ */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+  margin-right: 20px;
+}
+
+/* Effect ตอนเอาเมาส์ไปชี้ */
+.le-back-btn:hover {
+  background-color: #438438; /* เปลี่ยนเป็นสีเขียวหลัก */
+  color: white; /* ไอคอนเปลี่ยนเป็นสีขาว */
+  transform: translateX(-4px); /* ขยับไปทางซ้ายนิดนึง */
+  box-shadow: 0 8px 16px rgba(67, 132, 56, 0.25);
+}
+
+.le-back-btn:active {
+  transform: scale(0.95) translateX(-4px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.le-topLeft {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+/* --- Modal Styling --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+}
+
+.modal-box {
+  background: white;
+  width: 90%;
+  max-width: 380px;
+  padding: 30px 25px;
+  border-radius: 16px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+  text-align: center;
+}
+
+.fade-in {
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-icon-circle {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 20px;
+}
+
+.modal-icon-circle.success {
+  background-color: #dcfce7;
+  color: #22c55e;
+}
+
+/* ✅ สีส้ม (แจ้งเตือน) */
+.modal-icon-circle.warning {
+  background-color: #fef3c7;
+  color: #f59e0b;
+}
+
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #1f2937;
+}
+
+.modal-desc {
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin-bottom: 25px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-family: "Prompt", sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.modal-btn.cancel {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+.modal-btn.cancel:hover {
+  background-color: #e5e7eb;
+}
+
+.modal-btn.confirm {
+  background-color: #438438;
+  color: white;
+}
+.modal-btn.confirm:hover {
+  background-color: #366b2d;
+}
+
+.modal-btn.close-warning {
+  background-color: #f59e0b;
+  color: white;
+}
+.modal-btn.close-warning:hover {
+  background-color: #d97706;
+}
