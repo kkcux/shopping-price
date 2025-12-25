@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react'; // ❌ ลบ useEffect ออกจาก import
 import { ChevronLeft, MoreVertical } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../Home/Navbar';
@@ -7,14 +7,21 @@ import './MyLists.css';
 
 const MyLists = () => {
   const navigate = useNavigate();
-  const [savedLists, setSavedLists] = useState([]);
 
-  useEffect(() => {
+  // ✅ แก้ตรงนี้: ดึงข้อมูลจาก localStorage เข้าไปใน useState โดยตรงเลย
+  const [savedLists, setSavedLists] = useState(() => {
+    const data = localStorage.getItem("myLists");
+    return data ? JSON.parse(data) : [];
+  });
+
+  // ❌ ลบ useEffect ตัวเดิมทิ้งไปเลย (ไม่ต้องใช้แล้ว)
+  /* useEffect(() => {
     const data = localStorage.getItem("myLists");
     if (data) {
       setSavedLists(JSON.parse(data));
     }
-  }, []);
+  }, []); 
+  */
 
   const handleDeleteList = (id) => {
     if (window.confirm("ต้องการลบรายการนี้ใช่หรือไม่?")) {
@@ -28,7 +35,7 @@ const MyLists = () => {
     <div className="page-wrapper">
       <Navbar />
 
-      {/* ✅ ส่วนที่ 1: Header พื้นหลังสีขาว (White Bar) */}
+      {/* ... ส่วนอื่นเหมือนเดิม ... */}
       <div className="header-section">
         <div className="content-container">
           <div className="mylist-header">
@@ -42,7 +49,7 @@ const MyLists = () => {
               </div>
             </div>
 
-            <Link to="/mylists/createmylists" style={{ textDecoration: 'none' }}>
+            <Link to="/mylists/create" style={{ textDecoration: 'none' }}>
               <button className="btn-newlist">
                 + NEWLIST
               </button>
@@ -51,7 +58,6 @@ const MyLists = () => {
         </div>
       </div>
 
-      {/* ✅ ส่วนที่ 2: เนื้อหา Grid พื้นหลังสีเทา */}
       <div className="content-section">
         <div className="content-container">
           {savedLists.length > 0 ? (
@@ -81,7 +87,7 @@ const MyLists = () => {
           ) : (
             <div className="empty-state">
               <p>ยังไม่มีรายการสินค้า</p>
-              <Link to="/mylists/createmylists" className="link-create">สร้างรายการใหม่ +</Link>
+              <Link to="/mylists/create" className="link-create">สร้างรายการใหม่ +</Link>
             </div>
           )}
         </div>

@@ -1,8 +1,8 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState } from "react"; // ❌ ลบ useEffect ออก
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
 import "./mylists2.css";
-import { useNavigate, useParams } from "react-router-dom"; // ✅ 1. เพิ่ม useParams
+import { useNavigate, useParams } from "react-router-dom";
 
 const REGISTER_URL = {
   TOPS: "https://www.tops.co.th/th/register",
@@ -13,31 +13,23 @@ const REGISTER_URL = {
 
 export default function MyLists2() {
   const navigate = useNavigate();
-  const { id } = useParams(); // ✅ 2. รับ ID รายการจาก URL
+  const { id } = useParams();
 
-  // State สำหรับเก็บข้อมูลที่โหลดจาก localStorage
-  const [listName, setListName] = useState("กำลังโหลด...");
-  const [wanted, setWanted] = useState([]);
-
-  // ✅ 3. โหลดข้อมูลเมื่อเปิดหน้าเว็บ
-  useEffect(() => {
-    // ดึงข้อมูลทั้งหมดจาก localStorage
+  // ✅ 1. ดึงข้อมูลจาก localStorage ทันทีที่โหลด Component (Lazy Init)
+  // วิธีนี้จะช่วยแก้ปัญหา "Calling setState synchronously..." ได้ครับ
+  const [initialData] = useState(() => {
     const savedLists = JSON.parse(localStorage.getItem("myLists")) || [];
-    
-    // ค้นหารายการที่ ID ตรงกัน
-    const currentList = savedLists.find((list) => String(list.id) === String(id));
+    return savedLists.find((list) => String(list.id) === String(id));
+  });
 
-    if (currentList) {
-      setListName(currentList.name);
-      setWanted(currentList.items);
-    } else {
-      // ถ้าไม่เจอ ID นี้ (เช่น พิมพ์ URL มั่ว) ให้กลับไปหน้าหลัก
-      // navigate('/mylists'); // เปิดบรรทัดนี้ถ้าต้องการให้เด้งกลับอัตโนมัติ
-      setListName("ไม่พบรายการ");
-    }
-  }, [id]);
+  // ✅ 2. กำหนดค่าเริ่มต้นให้กับ State ทันที ไม่ต้องรอ useEffect
+  const [listName] = useState(initialData ? initialData.name : "ไม่พบรายการ");
+  const [wanted] = useState(initialData ? initialData.items : []);
 
-  // ===== catalog (สินค้าแนะนำ/Mock Data สำหรับตกแต่ง) =====
+  // ❌ ลบ useEffect เดิมทิ้งไปเลย
+  /* useEffect(() => { ... }, [id]); */
+
+  // ===== catalog (สินค้าแนะนำ/Mock Data) =====
   const catalog = useMemo(
     () => [
       { id: "p1", name: "KITO รองเท้าแตะสวมบุรุษ ดำ ไซส์ 42", img: "https://o2o-static.lotuss.com/products/73889/51838953.jpg" },
@@ -121,7 +113,6 @@ export default function MyLists2() {
 
             <button
               className="ml2-edit"
-              // ✅ 4. แก้ลิงก์ปุ่ม Edit ให้ส่ง ID ไปด้วย
               onClick={() => navigate(`/mylists/${id}/edit`)}
             >
               ✎ <span>EDITLIST</span>
@@ -134,7 +125,7 @@ export default function MyLists2() {
             <input className="ml2-input" value={listName} readOnly />
           </div>
 
-          {/* ===== Catalog (สินค้าแนะนำ - Mock Data) ===== */}
+          {/* ===== Catalog ===== */}
           <section className="ml2-box">
             <div className="ml2-boxHead">
               <div className="ml2-boxTitle">เลือกรายการสินค้าเพิ่มเติม</div>
@@ -148,7 +139,7 @@ export default function MyLists2() {
             </div>
           </section>
 
-          {/* ===== Wanted (สินค้าจริงจาก localStorage) ===== */}
+          {/* ===== Wanted (สินค้าจริง) ===== */}
           <section className="ml2-box">
             <div className="ml2-boxHead">
               <div className="ml2-boxTitle">รายการสินค้าที่ต้องการ ({wanted.length})</div>
@@ -161,7 +152,7 @@ export default function MyLists2() {
                     key={`${p.id}-${index}`} 
                     name={p.name} 
                     img={p.img} 
-                    sub={`จำนวน ${p.qty} ชิ้น`} // แสดงจำนวนชิ้น
+                    sub={`จำนวน ${p.qty} ชิ้น`}
                   />
                 ))}
               </div>
