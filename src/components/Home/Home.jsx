@@ -1,25 +1,71 @@
-import React, { useState, useRef } from 'react'; // เพิ่ม useRef
+import React, { useState, useEffect, useRef } from 'react';
 import './Home.css'; 
 import { 
   Heart, Plus, 
   Smartphone, Monitor, WashingMachine, Utensils, 
   Salad, Coffee, Cookie, Tag,
-  ChevronLeft, ChevronRight // เพิ่มไอคอนลูกศร
+  ChevronLeft, ChevronRight 
 } from 'lucide-react';
 
 import Snowfall from 'react-snowfall';
 import productsData from '../../data/bigC/big_c.json'; 
 import AddToListModal from './AddToListModal';
 
+// ✅ 1. สร้าง Custom Hook สำหรับลากเมาส์ (วางไว้นอก function Home)
+const useDraggableScroll = (ref) => {
+  const [isDragging, setIsDragging] = useState(false);
+  const [startX, setStartX] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
+
+  const onMouseDown = (e) => {
+    setIsDragging(true);
+    // บันทึกตำแหน่งเมาส์เริ่มต้น และตำแหน่ง Scroll ปัจจุบัน
+    setStartX(e.pageX - ref.current.offsetLeft);
+    setScrollLeft(ref.current.scrollLeft);
+    ref.current.style.cursor = 'grabbing'; // เปลี่ยนเมาส์เป็นรูปกำมือแน่น
+    ref.current.style.userSelect = 'none'; // ป้องกันการคลุมดำตัวหนังสือ
+  };
+
+  const onMouseUp = () => {
+    setIsDragging(false);
+    ref.current.style.cursor = 'grab'; // เปลี่ยนกลับเป็นรูปมือจับ
+    ref.current.style.removeProperty('user-select');
+  };
+
+  const onMouseLeave = () => {
+    // ถ้าเมาส์หลุดออกจากกรอบ ก็ให้หยุดลากเหมือนกัน
+    if (isDragging) {
+      setIsDragging(false);
+      ref.current.style.cursor = 'grab';
+      ref.current.style.removeProperty('user-select');
+    }
+  };
+
+  const onMouseMove = (e) => {
+    if (!isDragging) return; // ถ้าไม่ได้กดค้างอยู่ ก็ไม่ต้องทำอะไร
+    e.preventDefault();
+    const x = e.pageX - ref.current.offsetLeft;
+    const walk = (x - startX) * 2; // *2 คือความเร็วในการเลื่อน (ปรับเลขได้)
+    ref.current.scrollLeft = scrollLeft - walk;
+  };
+
+  return { onMouseDown, onMouseUp, onMouseLeave, onMouseMove };
+};
+
 function Home() { 
   
   const [showModal, setShowModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [favorites, setFavorites] = useState([]);
 
-  // --- 1. สร้าง Ref สำหรับแต่ละ Section เพื่อใช้อ้างอิงในการเลื่อน ---
   const recommendRef = useRef(null);
   const popularRef = useRef(null);
   const promoRef = useRef(null);
+
+  // ✅ 2. เรียกใช้ Hook กับแต่ละ Ref
+  const dragRecommend = useDraggableScroll(recommendRef);
+  const dragPopular = useDraggableScroll(popularRef);
+  const dragPromo = useDraggableScroll(promoRef);
 
   const categories = [
     { name: "มือถือ", icon: <Smartphone /> },
@@ -35,11 +81,30 @@ function Home() {
   const popularProducts = productsData.slice(50, 100); 
   const promoProducts = productsData.slice(100, 150); 
 
-  // --- 2. ฟังก์ชันเลื่อน Scroll ---
+  useEffect(() => {
+    const savedFavs = JSON.parse(localStorage.getItem('favoritesItems')) || [];
+    setFavorites(savedFavs);
+  }, []);
+
+  const isProductFavorite = (product) => {
+    return favorites.some(fav => fav.data === product.data);
+  };
+
+  const handleToggleFavorite = (product) => {
+    let updatedFavs;
+    const isFav = isProductFavorite(product);
+    if (isFav) {
+      updatedFavs = favorites.filter(item => item.data !== product.data);
+    } else {
+      updatedFavs = [...favorites, product];
+    }
+    setFavorites(updatedFavs);
+    localStorage.setItem('favoritesItems', JSON.stringify(updatedFavs));
+  };
+
   const scroll = (ref, direction) => {
     const { current } = ref;
     if (current) {
-      // เลื่อนทีละ 300px (ปรับได้ตามชอบ)
       const scrollAmount = direction === 'left' ? -300 : 300;
       current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
@@ -55,7 +120,6 @@ function Home() {
     setSelectedProduct(null);
   };
 
-  // Component ย่อยสำหรับปุ่มเลื่อน (เพื่อลดโค้ดซ้ำ)
   const ScrollButtons = ({ scrollRef }) => (
     <>
       <button className="scroll-btn left" onClick={() => scroll(scrollRef, 'left')}>
@@ -73,19 +137,13 @@ function Home() {
       <Snowfall 
         snowflakeCount={150} 
         style={{
-          position: 'fixed', 
-          width: '100vw',
-          height: '100vh',
-          top: 0,
-          left: 0,
-          zIndex: 90, 
-          pointerEvents: 'none', 
+          position: 'fixed', width: '100vw', height: '100vh', top: 0, left: 0, 
+          zIndex: 90, pointerEvents: 'none', 
         }}
       />
 
       <main className="container main-content">
         
-        {/* หมวดหมู่ (ยังคงเป็น Grid เหมือนเดิม หรือจะทำสไลด์ด้วยก็ได้) */}
         <div className="section-header">
           <h2>หมวดหมู่</h2>
           <a href="/CategorySection"><span className="badge">ดูทั้งหมด</span></a>
@@ -105,22 +163,34 @@ function Home() {
           <span className="badge">ดูทั้งหมด</span>
         </div>
         
-        {/* ครอบด้วย slider-wrapper เพื่อวางปุ่ม Relative */}
         <div className="slider-wrapper">
           <ScrollButtons scrollRef={recommendRef} />
-          
-          {/* เปลี่ยน class เป็น product-scroll-container และใส่ ref */}
-          <div className="product-scroll-container" ref={recommendRef}>
-            {recommendedProducts.map((item, index) => (
-              <div key={index} className="product-card min-w-card">
-                <div className="heart-icon"><Heart size={18} /></div>
-                <img src={item.image} alt={item.data} loading="lazy" />
-                <h3>{item.data}</h3>
-                <button className="add-btn" onClick={() => handleAddClick(item)}>
-                  <Plus size={16} /> เพิ่ม
-                </button>
-              </div>
-            ))}
+          {/* ✅ 3. ใส่ Spread Operator (...) เพื่อส่ง Event Handlers เข้าไป */}
+          <div 
+            className="product-scroll-container" 
+            ref={recommendRef}
+            {...dragRecommend} 
+          >
+            {recommendedProducts.map((item, index) => {
+              const isFav = isProductFavorite(item);
+              return (
+                <div key={index} className="product-card min-w-card">
+                  <div 
+                    className="heart-icon" 
+                    onClick={() => handleToggleFavorite(item)}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    <Heart size={18} color={isFav ? "#ef4444" : "#666"} fill={isFav ? "#ef4444" : "none"} />
+                  </div>
+                  <img src={item.image} alt={item.data} loading="lazy" style={{pointerEvents: 'none'}} /> 
+                  {/* style={{pointerEvents: 'none'}} ที่รูปช่วยให้ลากรูปแล้วไม่ติด Ghost Image */}
+                  <h3>{item.data}</h3>
+                  <button className="add-btn" onClick={() => handleAddClick(item)}>
+                    <Plus size={16} /> เพิ่ม
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -131,17 +201,27 @@ function Home() {
         </div>
         <div className="slider-wrapper">
           <ScrollButtons scrollRef={popularRef} />
-          <div className="product-scroll-container" ref={popularRef}>
-            {popularProducts.map((item, index) => (
-              <div key={index} className="product-card min-w-card">
-                <div className="heart-icon"><Heart size={18} /></div>
-                <img src={item.image} alt={item.data} loading="lazy" />
-                <h3>{item.data}</h3>
-                <button className="add-btn" onClick={() => handleAddClick(item)}>
-                  <Plus size={16} /> เพิ่ม
-                </button>
-              </div>
-            ))}
+          {/* ✅ ใส่ dragPopular */}
+          <div 
+            className="product-scroll-container" 
+            ref={popularRef}
+            {...dragPopular}
+          >
+            {popularProducts.map((item, index) => {
+              const isFav = isProductFavorite(item);
+              return (
+                <div key={index} className="product-card min-w-card">
+                  <div className="heart-icon" onClick={() => handleToggleFavorite(item)} style={{ cursor: 'pointer' }}>
+                    <Heart size={18} color={isFav ? "#ef4444" : "#666"} fill={isFav ? "#ef4444" : "none"} />
+                  </div>
+                  <img src={item.image} alt={item.data} loading="lazy" style={{pointerEvents: 'none'}} />
+                  <h3>{item.data}</h3>
+                  <button className="add-btn" onClick={() => handleAddClick(item)}>
+                    <Plus size={16} /> เพิ่ม
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -155,17 +235,27 @@ function Home() {
         </div>
         <div className="slider-wrapper">
           <ScrollButtons scrollRef={promoRef} />
-          <div className="product-scroll-container" ref={promoRef}>
-            {promoProducts.map((item, index) => (
-              <div key={index} className="product-card min-w-card">
-                <div className="heart-icon"><Heart size={18} /></div>
-                <img src={item.image} alt={item.data} loading="lazy" />
-                <h3>{item.data}</h3>
-                <button className="add-btn" onClick={() => handleAddClick(item)}>
-                  <Plus size={16} /> เพิ่ม
-                </button>
-              </div>
-            ))}
+          {/* ✅ ใส่ dragPromo */}
+          <div 
+            className="product-scroll-container" 
+            ref={promoRef}
+            {...dragPromo}
+          >
+            {promoProducts.map((item, index) => {
+              const isFav = isProductFavorite(item);
+              return (
+                <div key={index} className="product-card min-w-card">
+                  <div className="heart-icon" onClick={() => handleToggleFavorite(item)} style={{ cursor: 'pointer' }}>
+                    <Heart size={18} color={isFav ? "#ef4444" : "#666"} fill={isFav ? "#ef4444" : "none"} />
+                  </div>
+                  <img src={item.image} alt={item.data} loading="lazy" style={{pointerEvents: 'none'}} />
+                  <h3>{item.data}</h3>
+                  <button className="add-btn" onClick={() => handleAddClick(item)}>
+                    <Plus size={16} /> เพิ่ม
+                  </button>
+                </div>
+              );
+            })}
           </div>
         </div>
 
