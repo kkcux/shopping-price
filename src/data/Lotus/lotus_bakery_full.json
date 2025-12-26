@@ -1,0 +1,2948 @@
+[
+    {
+        "name": "อบสุข ขนมปังข้าวผัดสับปะรด 80 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75653459.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอ็มบีเอ คุกกี้เนย 70 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75610043.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "จอหงวน ข้าวแต๋นรสเนยสด 40 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50230227.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ปังไท พายสามเหลี่ยม 64 กรัม",
+        "price": "20.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52115465.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ยูยี ไดฟูกุรวมรส 160 กรัม",
+        "price": "45.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/71189491.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มารุนากะ ขนมปังรสชาเขียวมัทฉะ 75 กรัม",
+        "price": "26.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75615534.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บานเย็น ชิฟฟ่อนรวมรสยอดนิยม 8 ชิ้น 230 กรัม",
+        "price": "100.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592734.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คาร่า ซอร์ฟเค้กไส้คัสตาร์ดครีมรสกล้วย 65 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75591584.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "วรรณ 1999 ขนมเปี๊ยะซาลาเปา ไส้ถั่วไข่เค็ม 90 กรัม",
+        "price": "30.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75594523.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มารุ เค้กกล้วยหอมอัลม่อนด์ 70 กรัม",
+        "price": "28.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75622586.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ ครัวซองต์วานิลลาอัลมอนด์ 50 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75652397.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แฟม แฟม ปังเนยหนึบ รสออริจินัลเนยสด 100 กรัม",
+        "price": "45.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75651002.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แน็คเก็ต ขนมปั้นสิบ ไส้ไก่ 60 กรัม",
+        "price": "25.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75580837.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บราวนี่เฮ้าส์ มินิแครกเกอร์ ดาร์กช็อก 30 กรัม",
+        "price": "30.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52317923.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอแอนด์บี ขนมเปี๊ยะไส้ถั่วไข่เค็ม 100 กรัม",
+        "price": "42.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75609217.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บ้านสันติราษฎร์ ขนมเปี๊ยะไส้ถั่วไข่เค็ม 70 กรัม",
+        "price": "20.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75614032.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ชื่นกมล ขนมถั่วอัด 120 กรัม",
+        "price": "49.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75553037.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คอตต้อน แคนดี้ มินิมาการองคละรส 10 ชิ้น 35 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75610835.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิดเติ้ลเกิล เค้กกล้วยหอมไส้ช็อคโกแลต 125 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75604435.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บ้านขนมคุณภัทรา ขนมไดฟูกุ 120 กรัม",
+        "price": "37.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/72950943.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ซันเมอรี่ โรลคาปูชิโน 160 กรัม",
+        "price": "45.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50061444.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟู้ดส์พลัส เค้กกล้วยหอมหน้าธัญพืช 120 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75566591.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ตรามังกร ขนมตุ๊บตั๊บ 70 กรัม",
+        "price": "25.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75240092.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ศรีฟ้า ขนมปังเบอร์เกอร์ 300 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75598565.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แต้เซ่งเฮง ขนมเปี๊ยะลูกเต๋าใบเตย 70 กรัม",
+        "price": "16.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74919571.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ตังตัง ข้าวซอยตัด รสครีมนมและธัญพืช 30 กรัม",
+        "price": "8.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75616796.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แดรี่โด ไดฟูกุช็อคโกแลต รสดูไบพิสตาชิโอ 80 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75647190.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิตเติ้ลฟาร์ม ขนมปังเนยสด 35 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74739662.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คิวบิก ขนมปังโฮลวีตธัญพืช 19 ชนิด 120 กรัม",
+        "price": "43.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75020300.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "จีนี่ส์ โรลกล้วยหอมบลูเบอร์รี่ 120 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75553956.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิชชั่น แผ่นแป้ง ผสมธัญพืช 360 กรัม",
+        "price": "111.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50690183.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังโฮสวีท 250 กรัม (B)",
+        "price": "24.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/744980.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟรังซัว คุกกี้ฮาเซลนัท ผสมช็อกโกแลตนม 75 กรัม",
+        "price": "48.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75572485.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เค้กมาเนีย เครปโรลสตรอเบอรี่ 95 กรัม",
+        "price": "32.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51295839.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส ขนมปังไส้สังขยา 50 กรัม",
+        "price": "8.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/9968881.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โออิชิ อีทโตะ แซนวิช ไส้ปูอัดอลาสก้าไข่กุ้ง",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51101241.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟรังซัว คุกกี้มะม่วงหิมพานต์ ผสมแครนเบอร์รี่ 75 กรัม",
+        "price": "48.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75572483.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิชชั่น แผ่นแป้ง รสดั้งเดิม 360 กรัม",
+        "price": "111.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50690177.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ขนมปังแซนวิช 480 กรัม (DB)",
+        "price": "40.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/744921.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เค้กมาเนีย เค้กสตรอเบอรี่ 300 กรัม",
+        "price": "169.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51295874.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เบ๊บบี้ ทองม้วนกรอบรสมะม่วง 35 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75584206.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คุณอ้อ ทาร์ตเนยสด ไส้สตรอเบอร์รี่ 160 กรัม",
+        "price": "79.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75608140.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิงโก้ ขนมปังสอดไส้ถั่วดำ 70 กรัม",
+        "price": "10.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592596.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โอแรมปัง ครัวซองท์รสนม 120 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52682489.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอ็มบีเอ คุกกี้สิงคโปร์ 95 กรัม",
+        "price": "38.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75610039.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "จอหงวน ข้าวแต๋นรสพริกเผา 40 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50230248.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ยูมิยูมิ ชีสเค้ก 52 กรัม",
+        "price": "20.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75625205.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "อบสุข ขนมปังฟักทองหมูหยองหมาล่า 80 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75653462.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "วรรณ 1999 ขนมเปี๊ยะเนยสด ไส้ถั่วไข่เค็ม 180 กรัม",
+        "price": "55.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75594524.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ปังไท พายแท่งเนยน้ำตาล 70 กรัม",
+        "price": "20.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52382775.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอแอนด์บี เค้กผลไม้ 90 กรัม",
+        "price": "40.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75554547.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คอตต้อน แคนดี้ มาการอง กล่อง 3 ชิ้น 52.5 กรัม",
+        "price": "45.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75610876.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บานเย็น ชิฟฟ่อนนมสดฮอกไกโด 8 ชิ้น 230 กรัม",
+        "price": "100.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592739.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บ้านขนมคุณภัทรา เค้กนมสด 100 กรัม",
+        "price": "37.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/73081620.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มารุ มัฟฟินบลูเบอรี่ 70 กรัม",
+        "price": "28.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75622587.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มารุนากะ ขนมปังรสน้ำผึ้ง 75 กรัม",
+        "price": "26.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75615533.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ตังตัง ข้าวซอยตัด รสไก่หยอง 30 กรัม",
+        "price": "8.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75616795.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ชื่นกมล ขนมเปี๊ยะไส้ถั่วไข่เค็ม 100 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75623069.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บราวนี่เฮ้าส์ มินิแครกเกอร์ มิลค์ช็อก 30 กรัม",
+        "price": "30.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52317938.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แฟม แฟม ปังเนยหนึบ รสช็อคโกแลตบราวนี่ 100 กรัม",
+        "price": "45.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75651003.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แน็คเก็ต ขนมปังชีส ไส้สับปะรดสตรอเบอร์รี 90 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75580829.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟู้ดส์พลัส ขนมปังไส้ลูกเกด 180 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/70078459.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิดเติ้ลเกิล คุกกี้สิงคโปร์ 145 กรัม",
+        "price": "59.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75604433.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ ครัวซองต์ แพ็คคู่ 45 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75600600.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ศรีฟ้า ขนมปังหัวโต 480 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75598567.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บ้านสันติราษฎร์ ขนมเปี๊ยะไส้ถั่วฝักไข่เค็ม 70 กรัม",
+        "price": "20.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75614033.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ซันเมอรี่ โรลกลิ่นนมสด 150 กรัม",
+        "price": "45.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51279295.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แดรี่โด ไดฟูกุช็อคโกแลต รสดูไบเฮเซลนัท 80 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75647391.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิตเติ้ลฟาร์ม ขนมปังกระเทียม 50 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74739654.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แต้เซ่งเฮง ขนมเปี๊ยะลูกเต๋า 120 กรัม",
+        "price": "41.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/73001856.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "จีนี่ส์ เค้กฮอกไกโด 60 กรัม",
+        "price": "25.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75595771.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คาร่า ขนมปังพิซซ่าแฮม 65 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75579119.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส ขนมปังชนิดแผ่น 480 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75652795.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คิวบิก ขนมปังโฮลวีตดั้งเดิม 120 กรัม",
+        "price": "33.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50799101.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส ขนมปังไส้เผือก 50 กรัม",
+        "price": "8.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/9968865.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส ขนมปังชนิดแผ่น 240 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/9968814.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "จีนี่ส์ เค้กมะพร้าวน้ำหอม 120 กรัม",
+        "price": "49.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75578007.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เค้กมาเนีย เค้กชอคโกแลตฟัดจ์ 300 กรัม",
+        "price": "169.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51295851.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คาร่า ชิฟฟ่อนเค้ก รสใบเตย 85 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75650340.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แต้เซ่งเฮง ขนมเปี๊ยะลูกเต๋า 40 กรัม",
+        "price": "8.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74920901.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิงโก้ ขนมปังฮอตดอกไส้ไก่หยอง 75 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592597.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "วรรณ 1999 ขนมเปี๊ยะเนยสด ไส้ถั่วไข่เค็ม 280 กรัม",
+        "price": "80.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75594525.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอ็มบีเอ ขนมปังเนยกระเทียม อบกรอบ 80 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75610042.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มารุ ขนมปังช็อกโกแลต ลาวา 95 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75614203.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คอตต้อน แคนดี้ มาการอง กล่อง 4 ชิ้น 70 กรัม",
+        "price": "55.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75610877.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ชื่นกมล ขนมเปี๊ยะไส้ถั่วไข่เค็ม 200 กรัม",
+        "price": "69.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75562859.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟรังซัว คุกกี้แมคคาดาเมีย ผสมดาร์กช็อกโกแลต 75 กรัม",
+        "price": "48.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75572484.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิชชั่น แผ่นแป้งผสมธัญพืช 6 ชนิด 360 กรัม",
+        "price": "120.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51139323.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บ้านขนมคุณภัทรา พายกรอบอัลมอนด์ 75 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75609696.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บานเย็น ชิฟฟ่อนใบเตย 8 ชิ้น 230 กรัม",
+        "price": "100.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592738.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ยูยี ขนมเปี๊ยะไส้ไก่หยอง 504 กรัม",
+        "price": "65.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75609200.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มารุนากะ ขนมปังรสนมฮอกไกโด 75 กรัม",
+        "price": "26.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74512714.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บราวนี่เฮาส์ บราวนี่อบกรอบ รสดาร์กช็อก 45 กรัม",
+        "price": "40.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51199216.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แดรี่โด ไดฟูกุลาวา รสช็อคโกแลตเฮเซลนัท 140 กรัม",
+        "price": "100.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75651001.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บ้านสันติราษฎร์ ขนมเปี๊ยะไส้ถั่ว อบเทียน 50 กรัม",
+        "price": "10.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75614035.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิดเติ้ลเกิล ช็อคบอล 180 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75643602.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟู้ดส์พลัส ขนมปังหมูหยอง 180 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75537968.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ศรีฟ้า ขนมปังฮอตด็อก 300 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75598566.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ ครีมฮอร์น รสนม 60 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75574885.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิตเติ้ลฟาร์ม ขนมปังพริกไทยดำอบกรอบ 50 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50226066.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ยูมิยูมิ มิลค์เค้ก 46 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75625206.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แน็คเก็ต ขนมปั้นสิบ ไส้ปลา 60 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75580835.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังแซนวิช 240 กรัม",
+        "price": "21.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/744948.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ซันเมอรี่ แซนวิชโบโลน่าหมูหยองมายองเนส 65 กรัม",
+        "price": "16.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/70278407.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คิวบิก ขนมปังโฮลวีตแฟล็กซ์ซีดส์ข้าวโอ๊ต 120 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50799124.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คิวบิก ขนมปังโฮลวีตดั้งเดิม 360 กรัม",
+        "price": "69.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75020246.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ยูมิยูมิ เค้กไข่ชีส 78 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75625103.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังโฮลวีท 500 กรัม",
+        "price": "44.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/7824270.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คอตต้อน แคนดี้ เมอแรงคุกกี้ รูปโคนไอศกรีมจิ๋วคละรส 12 ชิ้น",
+        "price": "40.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75562624.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิงโก้ ขนมปังสอดไส้สังขยาชาไทย 70 กรัม",
+        "price": "10.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592603.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอ็มบีเอ คุกกี้สปันจ์ดรอป 40 กรัม",
+        "price": "33.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52640292.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เค้กมาเนีย เครปโรล ชอคโกแลต 75 กรัม",
+        "price": "32.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51295822.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มารุ ขนมปังเผือกลาวา 95 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75614202.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิดเติ้ลเกิล เค้กกล้วยหอมอบชีส 125 กรัม",
+        "price": "45.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75625055.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิตเติ้ลฟาร์ม ขนมปังกระเทียม 90 กรัม",
+        "price": "38.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75604557.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟรังซัว คุกกี้อัลมอนด์ ผสมไวท์ช็อกโกแลต 75 กรัม",
+        "price": "48.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75572486.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ยูยี ขนมเปี๊ยะไส้ไก่หยองพริกเผา 504 กรัม",
+        "price": "65.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75609201.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บราวนี่เฮาส์ บราวนี่อบกรอบรสดั้งเดิม 45 กรัม",
+        "price": "40.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51199208.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บ้านสันติราษฎร์ ขนมเปี๊ยะไส้เค็ม 50 กรัม",
+        "price": "10.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75614034.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ซันเมอรี่ ขนมปังพิซซ่าฮาวาเอี้ยน 75 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74991159.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "จีนี่ส์ ท๊อฟฟี่เค้ก 120 กรัม",
+        "price": "49.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75578008.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิชชั่น แผ่นแป้งสูตรลดคาโบไฮเดรต 270 กรัม",
+        "price": "135.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51139338.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส ขนมปังกรอบหน้าเนย 60 กรัม",
+        "price": "18.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/71004106.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แน็คเก็ต ขนมปังชีส ไส้สับปะรด 90 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75580828.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มารุนากะ ขนมปังไส้ถั่วแดง 75 กรัม",
+        "price": "26.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74512730.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คาร่า ขนมปังพิซซ่าปูอัด 65 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75579018.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ ครัวซองต์ช็อกโกแลต 50 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75652398.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แต้เซ่งเฮง ขนมเปี๊ยะลูกเต๋า 150 กรัม",
+        "price": "32.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/70074674.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟู้ดส์พลัส ขนมปังทวิส ไส้สังขยา 65 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75566587.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โออิชิ อีทโตะ แซนวิชไส้ทูน่าซีซ่าสลัด 79 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51101287.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บานเย็น ชิฟฟ่อนมะพร้าวน้ำหอม 8 ชิ้น 230 กรัม",
+        "price": "100.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592736.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แน็คเก็ต ขนมปั้นสิบ ไส้ปลา 500 กรัม",
+        "price": "175.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75580832.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คาร่า ชิฟฟ่อนเค้ก รสวนิลา 85 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75650341.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟู้ดส์พลัส ขนมปังทวิส ไส้ถั่วแดง 65 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75566589.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แต้เซ่งเฮง ขนมเปี๊ยะถั่วฟักไข่เค็ม 150 กรัม",
+        "price": "37.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/73001805.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิชชั่น แผ่นแป้งแรปส์ ผสมคีนัวร์ 360 กรัม",
+        "price": "111.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51139352.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เค้กมาเนีย เครปโรล มะพร้าว 80 กรัม",
+        "price": "32.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51299236.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิงโก้ ขนมปังสอดไส้คัสตาร์ด 70 กรัม",
+        "price": "10.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592590.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ยูยี พายตาข่ายรวมรส 300 กรัม",
+        "price": "75.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74530097.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บราวนี่เฮาส์ บราวนี่อบกรอบ รสมิกซ์นัท 40 กรัม",
+        "price": "40.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51199239.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บ้านสันติราษฎร์ คุกกี้อัลมอนด์ 80 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75586714.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โกลด์เบลด ขนมปังหมูหยองน้ำสลัดพริกเผา 70 กรัม",
+        "price": "18.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/73720399.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิตเติ้ลเกิล ขนมปังโลฟหน้าฝอยทอง 100 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75604431.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ บราวนี่อัลมอนด์ 50 กรัม",
+        "price": "14.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75543432.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "จีนี่ส์ เค้กโรลบลูเบอร์รี่ 120 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51279462.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บานเย็น ชิฟฟ่อนน้ำผึ้ง 8 ชิ้น 230 กรัม",
+        "price": "100.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592740.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ เค้กมะพร้าว 90 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75606075.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มารุนากะ ขนมปังรสช็อกโกแลต 75 กรัม",
+        "price": "26.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74512722.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส ขนมปังไส้ถั่วแดง 50 กรัม",
+        "price": "8.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/71004017.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ซันเมอรี่ แซนวิชไส้หมูหยองน้ำพริกเผา 60 กรัม",
+        "price": "16.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/73540056.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คิวบิก ขนมปังโฮลวีตสูตรนุ่มพิเศษ 120 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75567616.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ซันเมอรี่ ชูก้าแฟลตครัวซองท์ 35 กรัม",
+        "price": "32.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75598332.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บานเย็น ชิฟฟ่อนทุเรียน 8 ชิ้น 230 กรัม",
+        "price": "100.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592741.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มารุนากะ ขนมปังรสนมฮอกไกโดเอ็กซ์ตร้า 70 กรัม",
+        "price": "30.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75565387.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "จีนี่ส์ แยมโรลมะพร้าว 120 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51624117.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิดเติ้ลเกิล เค้กตรังกลิ่นส้ม 180 กรัม",
+        "price": "69.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75625046.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิตเติ้ลฟาร์ม ขนมปังเนยสดอบกรอบ 55 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50330132.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เค้กมาเนีย เครปโรลมาร์ชเมลโลว์ 70 กรัม",
+        "price": "32.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51295816.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิงโก้ ขนมปังฮอตดอกไส้ครีมช็อกโกแลต 75 กรัม",
+        "price": "10.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592598.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แน็คเก็ต ขนมปั้นสิบ ไส้ไก่ 500 กรัม",
+        "price": "175.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75580833.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บราวนี่เฮาส์ บราวนี่อบกรอบ รสมิกซ์ฟรุ๊ต 40 กรัม",
+        "price": "40.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51199245.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คาร่า ขนมปังคัสตาร์ดอัลมอนด์ 55 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75579121.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บ้านสันติราษฎร์ คุกกี้บลูเบอรี่ 80 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75586713.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟู้ดส์พลัส ขนมปังทวิส ไส้เผือก 65 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75566588.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิชชั่น แผ่นแป้งแรปส์ รสหัวหอมและกุยช่าย 360 กรัม",
+        "price": "119.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75562862.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แต้เซ่งเฮง ขนมเปี๊ยะเปาไข่ 40 กรัม",
+        "price": "8.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74920863.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส ขนมปังไส้ถั่วดำ 50 กรัม",
+        "price": "8.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75586126.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ ครัวซองต์ ไส้วานิลลาแยมสตรอว์เบอร์รี่ 45 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75601667.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คิวบิก ขนมปังโฮลวีตธัญพืช 120 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50799118.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮาส์ ขนมปังสอดไส้คัสตาร์ดครีม 50 กรัม",
+        "price": "6.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51412633.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส ขนมปังโฮลวีทชนิดแผ่น 250 กรัม",
+        "price": "23.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/71004009.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มารุนากะ ขนมปังรสเกลือและเนย 75 กรัม",
+        "price": "26.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74526839.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟู้ดส์พลัส ขนมปังไส้หมูหยองน้ำพริกเผา 100 กรัม",
+        "price": "24.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74089757.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิดเติ้ลเกิล เค้กตรังกลิ่นกาแฟ 120 กรัม",
+        "price": "45.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75625049.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แน็คเก็ต ขนมปังแครกเกอร์ กลมไส้สับปะรด 360 กรัม",
+        "price": "99.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75580830.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิตเติ้ลฟาร์ม ขนมปังเนยสด 60 กรัม",
+        "price": "34.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75604558.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คาร่า ขนมปังกล้วยหอมช็อกโกแลต 55 กรัม",
+        "price": "32.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75624491.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "จีนี่ส์ ขนมปังเนยน้ำตาล 80 กรัม",
+        "price": "25.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51168167.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บ้านสันติราษฎร์ คุกกี้เนย 80 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75586712.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิชชั่น แผ่นแป้งนาน เพลน 320 กรัม",
+        "price": "111.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50690198.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แต้เซ่งเฮง ขนมงาใบเตย 70 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74919547.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังโฮลวีตชนิดเนื้อละเอียด",
+        "price": "24.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/22181172.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ซันเมอรี่ แซนวิชไส้โบโลน่ามายองเนส 65 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/73540048.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ เค้กเผือก 90 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75606074.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บานเย็น ชิฟฟ่อน รวมรสยอดนิยม 4 ชิ้น 115 กรัม",
+        "price": "60.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75621398.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คิวบิก ขนมปังดาร์คโกโก้ 120 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75020335.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส ขนมปังชนิดแผ่น 480 กรัม",
+        "price": "37.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/9968792.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คิวบิก ขนมปังแซนด์วิชโฮลวีตดั้งเดิม 360 กรัม",
+        "price": "69.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50799084.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ รอยัลเบรด ขนมปังชนิดแผ่น 275 กรัม",
+        "price": "36.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/71438467.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิชชั่น แผ่นแป้งพิต้า เพลน 400 กรัม",
+        "price": "111.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50690200.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บ้านสันติราษฎร์ คุกกี้สอดไส้สับปะรด 6 ชิ้น",
+        "price": "65.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52641757.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ซันเมอรี่ ขนมปังหน้าเนยน้ำตาล 80 กรัม",
+        "price": "26.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75562890.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แต้เซ่งเฮง ขนมเปี๊ยะ ไส้ถั่วฟักไข่เค็ม 150 กรัม",
+        "price": "30.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/6846254.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แน็คเก็ต ขนมปังแครกเกอร์ ไส้สตรอเบอร์รี 360 กรัม",
+        "price": "109.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75580831.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คาร่า เลเยอร์เค้กช็อกโกแลต 70 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75622582.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิตเติ้ลฟาร์ม ขนมปังกระเทียมอบกรอบ 76 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50330118.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มารุนากะ ขนมปังรสช็อกโกแลตเอ็กซ์ตร้า 70 กรัม",
+        "price": "30.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75565388.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "จีนี่ส์ พายผีเสื้อน้ำตาล 100 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51788781.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิดเติ้ลเกิล เค้กตรังกลิ่นวานิลลา 120 กรัม",
+        "price": "45.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75625051.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บานเย็น ชิฟฟ่อนรวมรสแป้งข้าวหอมมะลิ 250 กรัม",
+        "price": "100.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592735.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ เค้กทีรามิสุ 60 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75605210.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โกลด์เบรด เค้กโรลใบเตย 50 กรัม",
+        "price": "12.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75640237.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส ขนมปังกรอบกระเทียม 50 กรัม",
+        "price": "18.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50869128.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ซันเมอรี่ โรลแฟนซี รสส้ม 160 กรัม",
+        "price": "45.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75604508.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คิวบิก ขนมปังโฮลวีตสูตรนุ่มพิเศษ 120 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52286025.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แน็คเก็ต กล้วยน้ำว้ากรอบ 120 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75580840.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คาร่า เลเยอร์เค้กวนิลา 70 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75622581.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บ้านสันติราษฎร์ คุกกี้สอดไส้บลูเบอรี่ 6 ชิ้น",
+        "price": "65.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52641740.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิชชั่น แผ่นแป้งแรปส์ ผักโขม 270 กรัม",
+        "price": "119.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75562863.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มารุนากะ ขนมปังรสคาราเมล 75 กรัม",
+        "price": "26.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75199521.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "จีนี่ส์ พายช็อคโก้สติ๊ก",
+        "price": "25.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51979221.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิดเติ้ลเกิล เค้กตรังกลิ่นใบเตย 180 กรัม",
+        "price": "69.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75625047.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิตเติ้ลฟาร์ม ขนมปังพริกไทย 100 กรัม",
+        "price": "38.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75604559.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บานเย็น ชิฟฟ่อนกาแฟสด 8 ชิ้น 230 กรัม",
+        "price": "100.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592737.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โออิชิ อีทโตะ แซนวิชแฮมไก่ชีส 77 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51101264.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แต้เซ่งเฮง เม่งทึ้งงาขาว 40 กรัม",
+        "price": "8.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74919644.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ ครัวซองต์ ไส้ครีม 50 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75586335.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังไส้สังขยา 50 กรัม",
+        "price": "6.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51443383.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิตเติ้ลฟาร์ม ขนมปังรสพิซซ่าอบกรอบ 58 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50330126.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "จีนี่ส์ เค้กกล้วยหอมผสมอัลมอนด์ 120 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592301.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มารุนากะ เค้กรสชีส 50 กรัม",
+        "price": "22.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50607785.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บ้านสันติราษฎร์ ขนมเปี๊ยะไส้ถั่วไข่เค็ม 140 กรัม",
+        "price": "49.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52472035.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิดเติ้ลเกิล บราวนี่ไอศกรีมรสช็อคโกแลต 75 กรัม",
+        "price": "24.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75604434.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ซันเมอรี่ ขนมปังช็อกโกแลตชิพ 125 กรัม",
+        "price": "22.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51305340.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แต้เซ่งเฮง ขนมเปี๊ยะนมสด ไส้เผือกฝอยทองใบเตย 70 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75595610.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บานเย็น ชิฟฟ่อน มะพร้าวน้ำหอม 4 ชิ้น 115 กรัม",
+        "price": "60.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75621399.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส ขนมปังไส้คัสตาร์ดกลิ่นวานิลลา 50 กรัม",
+        "price": "8.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50489284.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โกลด์เบรด ขนมปังไส้ช็อกโกแลต 60 กรัม",
+        "price": "10.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75605588.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ เค้กลอดช่อง 90 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75606073.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คิวบิก ขนมปังแซนด์วิชโฮลวีตธัญพืชสูตรวี 195 กรัม",
+        "price": "59.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75567617.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮาส์ ขนมปังไส้ถั่วดำ 50 กรัม",
+        "price": "6.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51412679.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คิวบิก ขนมปังโฮลวีตธัญพืช 360 กรัม",
+        "price": "79.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75020254.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ คุกกี้ เนยรสวานิลลา 500 กรัม",
+        "price": "139.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75584311.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บานเย็น ชิฟฟ่อนสอดไส้แยมส้ม 8 ชิ้น 230 กรัม",
+        "price": "100.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592924.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แต้เซ่งเฮง ขนมเปี๊ยะถั่วไข่เค็ม 150 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/73001813.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ซันเมอรี่ โรลแฟนซี กลิ่นเมล่อน 160 กรัม",
+        "price": "45.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75604510.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "จีนี่ส์ ขนมปังไส้กรอกซอสสไปร์ซี่ 65 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75564551.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส แซนด์วิชไส้ปูอัดมายองเนส 65 กรัม",
+        "price": "14.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75503352.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มารุนากะ เค้กรสเนย 50 กรัม",
+        "price": "22.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50852044.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิชชั่น แผ่นแป้งแรปส์มินิ โฮลวีต 300 กรัม",
+        "price": "129.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51479968.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โกลด์เบรด ขนมปังชนิดแผ่นโฮลวีต 145 กรัม",
+        "price": "16.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75640240.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิดเติ้ลเกิล เค้กตรังกลิ่นวานิลลา 180 กรัม",
+        "price": "69.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75625045.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เบบี้เนเชอร่า วาฟเฟิลรสน้ำเบอร์รี่รวม บีทรูท 20 กรัม",
+        "price": "79.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75620466.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โออิชิ อีทโตะ แซนวิชแฮมชีส 76 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75618728.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังไส้เผือก 50 กรัม",
+        "price": "6.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51443377.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บานเย็น ชิฟฟ่อนเนยสดสอดไส้คัตตาร์ด 230 กรัม",
+        "price": "100.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592923.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คิวบิก ขนมปังแซนด์วิชโฮลวีตธัญพืช 360 กรัม",
+        "price": "79.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50799090.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แต้เซ่งเฮง ขนมเปี๊ยะนมสด ไส้หมูหยอง 70 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75595607.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิตเติ้ลฟาร์ม ขนมปังหน้าพริกไทยดำอบกรอบ 76 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50330149.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มารุนากะ เค้กช็อกโกแลต 50 กรัม",
+        "price": "22.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50607802.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ซันเมอรี่ ขนมปังแฮมซอสพิซซ่า 100 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50553611.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส แซนด์วิชโฮลวีทไส้ปูอัดมายองเนส 65 กรัม",
+        "price": "14.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74482815.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิดเติ้ลเกิล เค้กตรังกลิ่นส้ม 120 กรัม",
+        "price": "45.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75625050.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โออิชิ อีทโตะ แซนวิชไส้แฮมไข่ 93 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75580842.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ ครีมฮอร์น รสช็อกโกแลต 60 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75574886.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮาส์ ขนมปังไส้สังขยานมสด 50 กรัม",
+        "price": "6.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51412656.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คิวบิก ขนมปังโฮลวีตธัญพืช 19 ชนิด 360 กรัม",
+        "price": "99.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75020270.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ คุกกี้เนย รสนมเนย 500 กรัม",
+        "price": "139.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52473800.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิดเติ้ลเกิล เค้กครีมวานิลลาคละลาย 175 กรัม",
+        "price": "99.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75621986.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังสไลด์ขอบ 220 กรัม",
+        "price": "30.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/745014.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บานเย็น ชิฟฟ่อนสอดไส้สตรอว์เบอรี่ 230 กรัม",
+        "price": "100.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592922.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส แซนด์วิชไส้หมูหยองน้ำสลัดโบราณ 65 กรัม",
+        "price": "14.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75586125.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิชชั่น แผ่นแป้งแรปส์ ผสมเมล็ดเซีย 360 กรัม",
+        "price": "119.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51139346.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เบบี้เนเชอร่า วาฟเฟิลรสน้ำผลไม้ ผักบล็อคโคลี่ 20 กรัม",
+        "price": "79.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75620467.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มารุนากะ ขนมปังสอดไส้รสบลูเบอร์รี่ 75 กรัม",
+        "price": "26.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74530216.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ซันเมอรี่ พิซซ่าหน้าปูอัด 75 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/25301225.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แต้เซ่งเฮง ขนมงารสส้ม 70 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74919555.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คิวบิก ขนมปังแซนด์วิซโฮลวีตธัญพืชนุ่ม 200 กรัม",
+        "price": "59.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75567615.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส ขนมปังฮอทดอก ไส้ครีมสตรอเบอร์รี่ลูกเกด 75 กรัม",
+        "price": "12.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75636807.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บานเย็น ชิฟฟ่อน น้ำผึ้ง 4 ชิ้น 115 กรัม",
+        "price": "60.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75621463.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ซันเมอรี่ ขนมปังไส้หมูหยองมายองเนส 110 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/72905956.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แต้เซ่งเฮง ขนมเปี๊ยะนมสด ไส้ถั่วมะพร้าวฝอยทอง 70 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75595609.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ เค้กช็อกโกแลต 65 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75605209.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังไส้ถั่วแดง 50 กรัม",
+        "price": "6.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51443360.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แต้เซ่งเฮง ขนมเปี๊ยะนมสด ไส้ไก่หยอง 70 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75595608.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิชชั่น แผ่นแป้งแรปส์ รสกระเทียม 360 กรัม",
+        "price": "119.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75562861.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิตเติ้ลฟาร์ม ขนมปังพิซซ่า 80 กรัม",
+        "price": "34.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75604560.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บานเย็น ชิฟฟ่อน มะพร้าวสอดไส้เนยสด 4 ชิ้น 115 กรัม",
+        "price": "60.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75621401.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ซันเมอรี่ โรลแฟนซี รสสตรอว์เบอรี่ 160 กรัม",
+        "price": "45.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75604509.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ บลูเบอรี่พาย 65 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75605211.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คิวบิก ขนมปังแซนด์วิซโฮลวีตกล้วยน้ำผึ้ง 195 กรัม",
+        "price": "59.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75567619.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส ขนมปังทาหน้า กลิ่นนมฮอกไกโด 50 กรัม",
+        "price": "8.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75636806.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โออิชิ อีทโตะ แซนวิชทูน่าคอร์นสลัด 72 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75618729.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โกลด์เบรด ขนมปังไส้ครีมสังขยาไข่ 60 กรัม",
+        "price": "10.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75605587.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮาส์ สอดไส้คัสตาร์ดช็อกโกแลต 50 กรัม",
+        "price": "6.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51412648.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ คุกกี้ ช็อกโกแลตชิพกล้วยหอม 400 กรัม",
+        "price": "139.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75600601.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิชชั่น แผ่นแป้งแรปส์มินิ ออริจินัล 300 กรัม",
+        "price": "111.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51479951.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แต้เซ่งเฮง ขนมเปี๊ยะกุ๊ยสือ 40 กรัม",
+        "price": "8.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74920871.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บานเย็น ชิฟฟ่อน นมสดฮอกไกโด 4 ชิ้น 115 กรัม",
+        "price": "60.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75621400.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส ขนมปังแพ รสใบเตย 130 กรัม",
+        "price": "18.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/72983981.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ซันเมอรี่ เค้กมอคค่าคาราเมล 75 กรัม",
+        "price": "40.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50259303.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คิวบิก ขนมปังดาร์คโกโก้บัน 80 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50799176.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โออิชิ อีทโตะ แซนวิชอบร้อนหมูหยองน้ำสลัด 72 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75618731.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ เค้กโรล กลิ่นนมฮอกไกโด 60 กรัม",
+        "price": "12.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74598945.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โกลด์เบรด ขนมปังไส้ครีมชาไทย 60 กรัม",
+        "price": "10.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75605589.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ อิงลิช เบรด 280 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75591599.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คิวบิก ขนมปังโฮลวีตแซนด์วิชธัญพืช 19 ชนิด 360 กรัม",
+        "price": "99.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75020289.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บานเย็น บัวหิมะ 160 กรัม",
+        "price": "60.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592928.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส ขนมปังหน้าเนยสด 50 กรัม",
+        "price": "8.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/71004084.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โกลด์เบรด ขนมปังชนิดแผ่น 145 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75605597.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ซันเมอรี่ เค้กสตรอเบอร์รี่วิปปิ้งครีม 75 กรัม",
+        "price": "40.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50259318.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ เค้กฝอยทอง 80 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75606356.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แต้เซ่งเฮง ขนมไหว้พระจันทร์ ไส้ทุเรียนงาดำเล็ก 40 กรัม",
+        "price": "8.00",
+        "image": "https://o2o-static.lotuss.com/products/107558/74919628.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังรอยัลธัญพืชข้าวงอก 280 กรัม",
+        "price": "50.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51054365.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คิวบิก ขนมปังโฮลวีตแฟล็กซ์ซีดส์ข้าวโอ๊ต 360 กรัม",
+        "price": "79.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75020262.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ซันเมอรี่ บีดักส์คิดดี้เค้ก 130 กรัม",
+        "price": "89.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/7546696.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส ขนมปังโฮลวีทชนิดแผ่น 500 กรัม",
+        "price": "43.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/18056482.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บานเย็น ชิฟฟ่อน เนยสดสอดไส้คัตตาร์ด 4 ชิ้น 115 กรัม",
+        "price": "60.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75621462.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แต้เซ่งเฮง ถั่วกระจก 80 กรัม",
+        "price": "25.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/6847404.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ มินิคุกกี้ นมไวท์ช็อก 32 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75581860.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บานเย็น ชิฟฟ่อน กาแฟสด 4 ชิ้น 115 กรัม",
+        "price": "60.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75621464.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส ขนมปังดับเบิ้ลช็อคชิพสเวิล 80 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75586129.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ซันเมอรี่ เค้กช็อกโกแลตคลาสสิค 75 กรัม",
+        "price": "40.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50061467.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ เดลี่แซนด์วิชไส้ปูอัดมายองเนส 50 กรัม",
+        "price": "10.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/28182499.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แต้เซ่งเฮง ขนมคอเป็ดงาขาว 40 กรัม",
+        "price": "8.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74919652.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ บานอฟฟี่ 65 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75605212.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แต้เซ่งเฮง ขนมถั่วทอด 400 กรัม",
+        "price": "139.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75538472.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ ขนมขาไก่ รสเชสด้าชีส 60 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75562411.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โกลด์เบรด ครัวซองต์ หมูหยองน้ำสลัด 60 กรัม",
+        "price": "20.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75640241.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส ขนมปังช็อกโกแลตชิพ 40 กรัม",
+        "price": "8.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51412627.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังเนยสด 50 กรัม",
+        "price": "9.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/7824181.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โกลด์เบรด ขนมปังชนิดแผ่น 480 กรัม",
+        "price": "40.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50457126.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แต้เซ่งเฮง ขนมถั่วทอด 120 กรัม",
+        "price": "49.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75538471.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส ขนมปังหน้าช็อกโกแลต 50 กรัม",
+        "price": "8.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50489290.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ มินิคุกกี้ วานิลลาอัลมอนด์ 32 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75581859.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังหน้าสังขยา 60 กรัม",
+        "price": "9.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/7824238.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ คุกกี้ เนยรสคาราเมลมะพร้าว 500 กรัม",
+        "price": "139.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75584312.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ พายไส้สับปะรด 80 กรัม",
+        "price": "17.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74336525.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โกลด์เบรด ขนมปังพิซซ่าฮาวายเอี้ยน 60 กรัม",
+        "price": "20.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75640242.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอพลัส ขนมปังหน้าสังขยา 50 กรัม",
+        "price": "8.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75586127.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังกรอบเนย 65 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/7824254.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ ขนมขาไก่ รสบาร์บีคิว 60 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75562412.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โกลด์เบรด ขนมโมจิไส้เผือก 50 กรัม",
+        "price": "12.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50220683.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ รอยัลโฮลวีตขนมปังโฮลวีต 285 กรัม",
+        "price": "40.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/72695749.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ มินิคุกกี้ คาราเมลช็อกชิพ 32 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75581858.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ พายไส้ช็อกโกแลต 60 กรัม",
+        "price": "17.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50706247.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โกลด์เบรด โมจิไส้ถั่ว 50 กรัม",
+        "price": "12.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/72448806.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ เค้กโรล รสวนิลา 60 กรัม",
+        "price": "12.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/14754851.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังกลิ่นนมฮอกไกโด 240 กรัม",
+        "price": "28.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/73517941.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โกลด์เบรด เค้กบัตเตอร์ 60 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/74521047.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โกลด์เบรด ขนมปังไส้ครีมสลัดพริกเผา 80 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75605594.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ เค้กโรล รสกาแฟ 60 กรัม",
+        "price": "12.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/14754878.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โกลด์เบรด ขนมปังโรลช็อกโกแลต 80 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75605591.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ เค้กโรล รสใบเตย 60 กรัม",
+        "price": "12.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/14754886.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ รอยัลขนมปังธัญพืช 12ชนิด 285 กรัม",
+        "price": "44.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/72917318.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แซงต์ คาราเมลคิ้วมิกซ์เซต 180 กรัม",
+        "price": "159.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75687902.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ คอร์นเฟรคเคลือบช็อกโกแลต 90 กรัม",
+        "price": "99.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75692144.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แซงต์ คาราเมลคิ้วเซต 180 กรัม",
+        "price": "159.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75687901.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แดรี่โดว์ ชุดของขวัญปีใหม่ ช็อกโกแลตดูไบ 240 กรัม",
+        "price": "139.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75692146.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แดรี่โดว์ ชุดของขวัญปีใหม่ ช็อกโกแลตดูไบ 630 กรัม",
+        "price": "399.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75692147.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ บราวนี่รสมัทฉะ 45 กรัม",
+        "price": "14.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75697061.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "อลิซ คุกกี้สไตล์ฮ่องกงรสออริจินัล 35 กรัม",
+        "price": "7.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75675770.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เค้กมาเนีย เครปเค้ก 60 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75679774.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "อลิซ ทาร์ตไต้หวันไส้สับปะรด 35 กรัม",
+        "price": "7.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75675772.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เค้กมาเนีย เครปช็อคโกแลต 60 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75679775.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เค้กมาเนีย เครปสายรุ้ง 60 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75679776.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "พายทูน่า ชิ้นละ",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75626750.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "พายกะหรี่ไก่ ชิ้นละ",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75626746.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ขนมปังช็อคโกแลตเมสซี่บัน ชิ้นละ",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75554579.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ โดนัทเค้กไส้คัสตาร์ดข้าวโพด 60 กรัม",
+        "price": "14.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75669453.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "DAIRY DOUGH ไดฟูกุ รสถั่วไข่เค็ม 100 กรัม",
+        "price": "45.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75670553.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ตังตัง ข้าวซอยตัดรสครีมนมและผลไม้รวม 30 กรัม",
+        "price": "8.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75676710.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ปังไท พายแท่งเนยน้ำตาล 50 กรัม",
+        "price": "20.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75665350.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังลูกเกด 100 กรัม",
+        "price": "17.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75669450.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "BSR ขนมไหว้พระจันทร์ไส้ทุเรียนไข่ 2 ชิ้น",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/23380063.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังบัตเตอร์สก็อต 100 กรัม",
+        "price": "17.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75669451.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังฮอตดอกไส้ทูน่าคอร์นสลัด 80 กรัม",
+        "price": "16.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75669452.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "DAIRY DOUGH ไดฟูกุคลาวดี้ออนเอิร์ท 200 กรัม",
+        "price": "100.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75677052.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังฮอตดอก ไส้กรอกซอสสไปซี่มาโย 80 กรัม",
+        "price": "16.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75682986.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คาร่า โรลส้ม 35 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75679710.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "BSR ขนมไหว้พระจันทร์ไส้ทุเรียน 2 ชิ้น",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/23380055.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "DAIRY DOUGH ไดฟูกุช็อคดูไบ รสพีนัทบัทเตอร์ 210 กรัม",
+        "price": "120.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75670550.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟู้ดส์พลัส ขนมปังไส้โมจิถั่วแดง 160 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75670571.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "DAIRY DOUGH ไดฟูกุช็อคดูไบ รสพีนัทบัทเตอร์ 80 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75670551.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "SAINT ครัวซองต์ 37 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75676709.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "BANYEN บัดดี้ชิฟฟอน 28 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75675711.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คาร่า โรลใบเตย 35 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75679711.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "DAIRY DOUGH ไดฟูกุ รสชาเขียว 100 กรัม",
+        "price": "45.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75670552.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "DAIRY DOUGH ไดฟูกุคลาวดี้ออนเอิร์ท 70 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75677053.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "คาร่า โรลกาแฟ 35 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75679712.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟู้ดส์พลัส ขนมปังไส้โมจิมันม่วง 160 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75670570.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โดนัทรวมรส 5 ชิ้น แพ็คละ",
+        "price": "70.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/24593621.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เค้กกล้วยหอมช็อกโกแลตชิพ 1 ชิ้น",
+        "price": "25.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50646703.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ขนมปังเบอร์เกอร์ 6 ชิ้น แพ็คละ",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52245570.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ขนมปังดินเนอร์โรล 8 ชิ้น แพ็คละ",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52245593.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มินิบันไส้กรอก 5 ชิ้น แพ็คละ",
+        "price": "69.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/1046500.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ขนมปังฮอทดอก 5 ชิ้น แพ็คละ",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52245587.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "พายไก่ 2 ชิ้น แพ็คละ",
+        "price": "59.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52668806.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โดนัทกลม ไส้บลูเบอรี่ 1 ชิ้น",
+        "price": "20.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/73540544.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ขนมปังเนยสด 6 ชิ้น แพ็คละ",
+        "price": "52.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/2050684.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มินิครัวซองท์เนยสด 6 ชิ้น แพ็คละ",
+        "price": "59.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51075991.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ขนมปังไส้ทะลักรสบลูเบอร์รี่ 3ชิ้น แพ็คละ",
+        "price": "32.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52486558.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ คิวบ์ปัง ขนมปังกรอบรสโนริสาหร่าย 50 กรัม",
+        "price": "18.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52382850.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ขนมปังชีสเลิฟเวอร์ 3 ชิ้น แพ็คละ",
+        "price": "69.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52668608.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เค้กกล้วยหอมช็อกโกแลตชิพ 8 ชิ้น แพ็คละ",
+        "price": "65.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52668841.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เลเยอร์โทสต์ ชิ้นละ",
+        "price": "49.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75545231.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ขนมปังไส้ทะลักรสสตรอว์เบอร์รี่ 3 ชิ้น",
+        "price": "32.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52486543.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โดนัทน้ำตาล เกลียว 1ชิ้น",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/11054298.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ครัวซองท์ เนยสด 1 ชิ้น",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51076016.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ครัวซองท์ เนยสด 3 ชิ้น แพ็คละ",
+        "price": "69.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/51076008.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "DAIRY DOUGH ไดฟูกุขนมเทียน 210 ก.",
+        "price": "120.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75675730.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ขนมปังซอฟสวีทเบรด 15 ชิ้น แพ็คละ",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52245489.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โดนัทกลม สอดไส้วนิลา 1 ชิ้น",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/73540552.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โดนัทกลม สอดไส้สตรอเบอรี 1 ชิ้น",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/73540560.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ครัวซองท์ มาการีน 4 ชิ้น แพ็คละ",
+        "price": "59.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/996149.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เค้กกล้วยหอม 9 ชิ้น แพ็คละ",
+        "price": "65.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52668835.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ดูโอ้ ฟิลลิ่งบัน ขนมปังไส้เผือกครีมกะทิ",
+        "price": "10.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75613081.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังทาหน้ามอคค่า 50 กรัม",
+        "price": "9.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75542586.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังแพมะพร้าวใบเตย 130 กรัม",
+        "price": "17.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/17330033.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส คุกกี้นิ่ม รสข้าวโอ๊ต 40 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75651217.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส คุกกี้นิ่ม รสกาแฟ 40 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75651218.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส คุกกี้นิ่ม รสช็อกชิพ 40 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75653446.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังแพเนยสด 130 กรัม",
+        "price": "17.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/7824327.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "บ้านสันติราษฎร์ ขนมไหว้พระจันทร์ไส้ทุเรียนเม็ดแตงโม 80 กรัม",
+        "price": "76.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75601617.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ คุ้กกี้รสผลไม้รวม 50 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/72734574.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "อบสุข ขนมปังข้าวหมูพะโล้ 80 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75653461.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "อบสุข ขนมปังข้าวคลุกกะปิ 80 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75653460.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส ขนมปังชนิดแผ่น 240 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75652796.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังไส้งาดำถั่วแดง 70 กรัม",
+        "price": "12.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/70096139.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ โดรายากิ คัสตาร์ดครีม 60 กรัม",
+        "price": "13.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/16857011.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส ไดฟูกุ โอวัลติน 85 กรัม",
+        "price": "49.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75642086.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ขนมบ้านนลิน เค้กครีมลาวามะม่วง 65 กรัม",
+        "price": "42.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75634693.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ขนมบ้านนลิน เลเยอร์เค้กครีมมะพร้าว 100 กรัม",
+        "price": "49.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75634695.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ขนมบ้านนลิน เลเยอร์เค้กครีมสตรอเบอรี่ 100 กรัม",
+        "price": "49.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75634696.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส บราวนี่ โอวัลติน 90 กรัม",
+        "price": "49.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75641830.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส ครีมฮอร์น ไส้ครีมรสโอวัลติน 60 กรัม",
+        "price": "49.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75643603.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ขนมบ้านนลิน เค้กครีมลาวาสตรอเบอรี่ 65 กรัม",
+        "price": "42.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75634694.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ขนมบ้านนลิน เค้กครีมลาวามะพร้าวอ่อน 65 กรัม",
+        "price": "42.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75634692.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ขนมบ้านนลิน เลเยอร์เค้กครีมมะม่วง 100 กรัม",
+        "price": "49.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75634697.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส เค้กช็อกโกแลตโอวัลติน 45 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75643616.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส ขนมปังไส้ไก่หวาน 60 กรัม",
+        "price": "55.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75646156.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังสำหรับเบอร์เกอร์ 270 กรัม",
+        "price": "33.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75649629.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส ขนมปังไส้ไก่ซอสน้ำจิ้มข้าวมันไก่ 60 กรัม",
+        "price": "55.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75646157.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส ครัวซองต์ ไส้ครีมคาราเมลซอสซีอื้ว 50 กรัม",
+        "price": "49.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75646515.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส เค้กกล้วยหอมหน้ากล้วย 120 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75635109.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส ท๊อฟฟี่เค้ก คาราเมลซอสซีอิ้ว 85 กรัม",
+        "price": "55.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75646158.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แดรี่โด ไดฟูกุช็อคโกแลต รสดูไบเฮเซลนัท 210 กรัม",
+        "price": "120.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75647189.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิดเติ้ลเกิล เค้กนมครีมมะพร้าวอ่อน 70 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75628134.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ขนมบ้านนลิน ทาร์ตไส้สตรอเบอรี่ 120 กรัม",
+        "price": "49.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75634746.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "แดรี่โด ไดฟูกุช็อคโกแลต รสดูไบพิสตาชิโอ 210 กรัม",
+        "price": "120.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75647188.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส สตรอว์เบอร์รีเดนิชเบรด 100 กรัม",
+        "price": "26.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75617524.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส ช็อกโกแลตเดนิชเบรด 100 กรัม",
+        "price": "26.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75617525.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "เอ็มบีเอ คุกกี้สปันจ์รสช็อกโกแลต 40 กรัม",
+        "price": "35.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75600840.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิสซิสบราวน์ คุกกี้กุ้งแห้ง 170 กรัม",
+        "price": "119.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75642085.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "จีนี่ส์ พายผีเสื้อ ผลไม้รวม 80 กรัม",
+        "price": "69.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75643374.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิดเติ้ลเกิล เค้กส้มสอด ไส้ครีมส้ม 110 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75643601.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิดเติ้ลเกิล ทาร์ตดอกไม้ ไส้สับปะรด 75 กรัม",
+        "price": "39.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75628155.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "จีนี่ส์ เค้กมะพร้าวน้ำหอม น้ำตาลมะพร้าว 120 กรัม",
+        "price": "79.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75643375.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โกลด์เบรด แพนเบรดไส้ถั่วแดง 60 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75640239.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โกลด์เบรด แพนเบรดไส้เผือก 60 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75640238.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิงโก้ ขนมปังฮอตดอกไส้ไก่หยองพริกเผา 75 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592605.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิงโก้ ขนมปังสอดไส้ช็อกโกแลต 70 กรัม",
+        "price": "10.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592591.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิงโก้ ขนมปังสอดไส้มะพร้าว 70 กรัม",
+        "price": "10.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592592.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิงโก้ ขนมปังกรอบเนยกระเทียม 65 กรัม",
+        "price": "17.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592606.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิงโก้ ขนมปังสอดไส้สังขยา 70 กรัม",
+        "price": "10.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592595.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิงโก้ ขนมปังแพรสสังขยาใบเตย 135 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592604.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิงโก้ ขนมปังสอดไส้เผือก 70 กรัม",
+        "price": "10.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592593.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิงโก้ ขนมปังแพรสช็อกโกแลต 135 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592599.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิงโก้ ขนมปังแพรสนม 135 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592600.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิงโก้ ขนมปังกรอบอบเนย 70 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75592602.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิงโก้ ขนมปังหิมะสอดไส้ช็อคโกแลต 70 กรัม",
+        "price": "12.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75640202.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "มิงโก้ ขนมปังแผ่นขาว 210 กรัม",
+        "price": "16.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75640201.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ สวีทแซนด์วิช ไส้สังขยาใบเตย 50 กรัม",
+        "price": "12.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/73720402.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิตเติ้ลฟาร์ม ขนมปังต้มยำ 80 กรัม",
+        "price": "38.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75604561.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังโลฟ รสมอคค่าบัตเตอร์สก็อต 130 กรัม",
+        "price": "20.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/52146969.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮ้าส์ ขนมปังมินิโลฟลูกเกด 115 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/18715427.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "จอหงวน ข้าวแต๋นรสปูทะเล 40 กรัม",
+        "price": "19.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/50230233.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ฟาร์มเฮาส์ โดนัทเค้ก ไส้สังขยา 60 กรัม",
+        "price": "14.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/71714383.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส ขนมปังธัญพืช 12 ชนิด",
+        "price": "42.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75579636.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส ขนมปังชนิดแผ่น 480 กรัม",
+        "price": "40.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/11467398.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส พายไส้สับปะรด 90 กรัม",
+        "price": "22.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75590947.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส พายไส้ไก่และเห็ดทรัฟเฟิล 75 กรัม",
+        "price": "22.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75591625.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โกลด์เบรด ขนมปังโรลเผือก 80 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75605592.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส ขนมปังไส้ถั่วแดง 80 กรัม",
+        "price": "12.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75621390.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส ขนมปังไส้สังขยา 80 กรัม",
+        "price": "12.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75621393.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โกลด์เบรด ขนมปังไก่หยองน้ำสลัดมินิ 55 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75605593.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โออิชิ อีทโตะ แซนวิชหมูหยองน้ำพริกเผา 60 กรัม",
+        "price": "29.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75618730.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โกลด์เบรด ขนมปังโรลมันม่วง 80 กรัม",
+        "price": "15.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75605590.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส ขนมปังไส้ทูน่าน้ำสลัด 80 กรัม",
+        "price": "12.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75621395.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส ขนมปังไส้ปูอัดน้ำสลัด 80 กรัม",
+        "price": "12.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75621396.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส ขนมปังไส้เผือก 80 กรัม",
+        "price": "12.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75621391.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โลตัส ขนมปังไส้คัสตาร์ดครีม 80 กรัม",
+        "price": "12.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75621394.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ซันเมอรี่ เค้กชิ้นแฟนซี วาเลนไทน์ 100 กรัม",
+        "price": "55.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75634686.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "สยามบานาน่า คุกกี้ไส้ครีมผสมไวท์ช็อก กลิ่นกล้วย 100 กรัม",
+        "price": "58.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75617313.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "สยามบานาน่า คุกกี้ไส้ครีมผสมไวท์ช็อก กลิ่นมะม่วง 100 กรัม",
+        "price": "58.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75617315.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ซันเมอรี่ เค้กชิ้นแฟนซีช็อกโกแลต วาเลนไทน์ 100 กรัม",
+        "price": "55.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75634687.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "โกลด์เบรด พายไส้มะพร้าว 60 กรัม",
+        "price": "20.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75566857.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "จีนี่ส์ คุกกี้วาเลนไทน์ 80 กรัม",
+        "price": "49.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75635627.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "จีนี่ส์ คุกกี้เสี่ยงทาย 70 กรัม",
+        "price": "49.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75635628.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "ลิดเติ้ลเกิล โดนัทเคลือบช็อกโกแลต 60 กรัม",
+        "price": "49.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75628154.jpg",
+        "category": "เบเกอรี่"
+    },
+    {
+        "name": "สยามบานาน่า คุกกี้ไส้ครีมผสมไวท์ช็อก กลิ่นทุเรียน 100 กรัม",
+        "price": "58.00",
+        "image": "https://o2o-static.lotuss.com/products/130217/75617314.jpg",
+        "category": "เบเกอรี่"
+    }
+]
