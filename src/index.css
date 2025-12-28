@@ -1,25 +1,24 @@
-/* --- 1. นำเข้าฟอนต์ Sarabun อย่างเดียว --- */
-@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&display=swap');
+/* index.css */
+@import url("https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap");
 
-/* --- Reset & Global --- */
+/* ตั้งค่าให้ทุกอย่างใช้ Kanit */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+/* ✅ เพิ่มบรรทัดนี้: บังคับให้ Body, ปุ่ม, และช่องกรอกข้อมูล ใช้ Kanit */
+body,
+button,
+input,
+select,
+textarea {
+  font-family: "Kanit", sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+}
+
 body {
-  /* กำหนดฟอนต์หลักเป็น Sarabun ทั้งเว็บ */
-  font-family: 'Sarabun', sans-serif;
   background-color: #f8fafc;
   color: #333;
 }
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-ul { list-style: none; }
-a { text-decoration: none; color: inherit; }
