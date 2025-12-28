@@ -1,6 +1,6 @@
 import React from 'react';
-import { ShoppingCart, Bell, ArrowLeft } from 'lucide-react'; // เพิ่ม ArrowLeft
-import { Link, useLocation, useNavigate } from 'react-router-dom'; // เพิ่ม useLocation, useNavigate
+import { ShoppingCart, Bell, ArrowLeft } from 'lucide-react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 
 function Navbar() {
@@ -30,13 +30,14 @@ function Navbar() {
           <Link to="/" style={{textDecoration:'none', color:'inherit'}}>
             <div className="brand">
               <div className="logo-circle-nav">
-                <ShoppingCart size={22} color="#22c55e" strokeWidth={2.5} />
+                {/* ✅ แก้สีไอคอนเป็น #10B77E */}
+                <ShoppingCart size={22} color="#10B77E" strokeWidth={2.5} />
               </div>
               PriceFinder
             </div>
           </Link>
 
-          {/* ปุ่มย้อนกลับ (ทรงแคปซูลสีเทา) */}
+          {/* ปุ่มย้อนกลับ */}
           <button className="btn-nav-back" onClick={() => navigate(backConfig.path)}>
             <ArrowLeft size={20} />
             <span>{backConfig.text}</span>
@@ -53,7 +54,8 @@ function Navbar() {
         <Link to="/" style={{textDecoration:'none', color:'inherit'}}>
           <div className="brand">
             <div className="logo-circle-nav">
-              <ShoppingCart size={22} color="#22c55e" strokeWidth={2.5} />
+              {/* ✅ แก้สีไอคอนเป็น #10B77E */}
+              <ShoppingCart size={22} color="#10B77E" strokeWidth={2.5} />
             </div>
             PriceFinder
           </div>
