@@ -3,15 +3,17 @@ import './Home.css';
 import { 
   Heart, Plus, 
   Smartphone, Monitor, WashingMachine, Utensils, 
-  Salad, Coffee, Cookie, Tag,
-  ChevronLeft, ChevronRight 
+  Salad, Coffee, Cookie, 
+  ChevronLeft, ChevronRight,
+  // ✅ ใช้ไอคอนชุดนี้
+  Star, Flame, BadgePercent, LayoutGrid 
 } from 'lucide-react';
 
 import Snowfall from 'react-snowfall';
 import productsData from '../../data/bigC/big_c.json'; 
 import AddToListModal from './AddToListModal';
 
-// ✅ 1. สร้าง Custom Hook สำหรับลากเมาส์ (วางไว้นอก function Home)
+// Custom Hook สำหรับลากเมาส์
 const useDraggableScroll = (ref) => {
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -19,21 +21,19 @@ const useDraggableScroll = (ref) => {
 
   const onMouseDown = (e) => {
     setIsDragging(true);
-    // บันทึกตำแหน่งเมาส์เริ่มต้น และตำแหน่ง Scroll ปัจจุบัน
     setStartX(e.pageX - ref.current.offsetLeft);
     setScrollLeft(ref.current.scrollLeft);
-    ref.current.style.cursor = 'grabbing'; // เปลี่ยนเมาส์เป็นรูปกำมือแน่น
-    ref.current.style.userSelect = 'none'; // ป้องกันการคลุมดำตัวหนังสือ
+    ref.current.style.cursor = 'grabbing';
+    ref.current.style.userSelect = 'none';
   };
 
   const onMouseUp = () => {
     setIsDragging(false);
-    ref.current.style.cursor = 'grab'; // เปลี่ยนกลับเป็นรูปมือจับ
+    ref.current.style.cursor = 'grab';
     ref.current.style.removeProperty('user-select');
   };
 
   const onMouseLeave = () => {
-    // ถ้าเมาส์หลุดออกจากกรอบ ก็ให้หยุดลากเหมือนกัน
     if (isDragging) {
       setIsDragging(false);
       ref.current.style.cursor = 'grab';
@@ -42,10 +42,10 @@ const useDraggableScroll = (ref) => {
   };
 
   const onMouseMove = (e) => {
-    if (!isDragging) return; // ถ้าไม่ได้กดค้างอยู่ ก็ไม่ต้องทำอะไร
+    if (!isDragging) return;
     e.preventDefault();
     const x = e.pageX - ref.current.offsetLeft;
-    const walk = (x - startX) * 2; // *2 คือความเร็วในการเลื่อน (ปรับเลขได้)
+    const walk = (x - startX) * 2;
     ref.current.scrollLeft = scrollLeft - walk;
   };
 
@@ -62,7 +62,6 @@ function Home() {
   const popularRef = useRef(null);
   const promoRef = useRef(null);
 
-  // ✅ 2. เรียกใช้ Hook กับแต่ละ Ref
   const dragRecommend = useDraggableScroll(recommendRef);
   const dragPopular = useDraggableScroll(popularRef);
   const dragPromo = useDraggableScroll(promoRef);
@@ -144,8 +143,13 @@ function Home() {
 
       <main className="container main-content">
         
+        {/* --- หมวดหมู่ --- */}
         <div className="section-header">
-          <h2>หมวดหมู่</h2>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#000' }}>
+            {/* หมวดหมู่: ใช้ LayoutGrid สีดำ */}
+            <LayoutGrid size={28} color="#000000" strokeWidth={2} /> 
+            หมวดหมู่
+          </h2>
           <a href="/CategorySection"><span className="badge">ดูทั้งหมด</span></a>
         </div>
         <div className="category-grid">
@@ -159,13 +163,16 @@ function Home() {
 
         {/* --- แถวที่ 1: สินค้าแนะนำ --- */}
         <div className="section-header">
-          <h2>⭐ สินค้าแนะนำ</h2>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#000' }}>
+            {/* ✅ สินค้าแนะนำ: ใช้ Star สีดำ (ไม่เทพื้น) */}
+            <Star size={28} color="#000000" strokeWidth={2} /> 
+            สินค้าแนะนำ
+          </h2>
           <span className="badge">ดูทั้งหมด</span>
         </div>
         
         <div className="slider-wrapper">
           <ScrollButtons scrollRef={recommendRef} />
-          {/* ✅ 3. ใส่ Spread Operator (...) เพื่อส่ง Event Handlers เข้าไป */}
           <div 
             className="product-scroll-container" 
             ref={recommendRef}
@@ -183,7 +190,6 @@ function Home() {
                     <Heart size={18} color={isFav ? "#ef4444" : "#666"} fill={isFav ? "#ef4444" : "none"} />
                   </div>
                   <img src={item.image} alt={item.data} loading="lazy" style={{pointerEvents: 'none'}} /> 
-                  {/* style={{pointerEvents: 'none'}} ที่รูปช่วยให้ลากรูปแล้วไม่ติด Ghost Image */}
                   <h3>{item.data}</h3>
                   <button className="add-btn" onClick={() => handleAddClick(item)}>
                     <Plus size={16} /> เพิ่ม
@@ -196,12 +202,15 @@ function Home() {
 
         {/* --- แถวที่ 2: สินค้ายอดนิยม --- */}
         <div className="section-header">
-          <h2>🔥 สินค้ายอดนิยม</h2>
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#000' }}>
+            {/* ✅ สินค้ายอดนิยม: ใช้ Flame สีดำ (ไม่เทพื้น) */}
+            <Flame size={28} color="#000000" strokeWidth={2} /> 
+            สินค้ายอดนิยม
+          </h2>
           <span className="badge">ดูทั้งหมด</span>
         </div>
         <div className="slider-wrapper">
           <ScrollButtons scrollRef={popularRef} />
-          {/* ✅ ใส่ dragPopular */}
           <div 
             className="product-scroll-container" 
             ref={popularRef}
@@ -227,15 +236,15 @@ function Home() {
 
         {/* --- แถวที่ 3: สินค้าโปรโมชั่น --- */}
         <div className="section-header">
-          <h2>
-            <Tag size={24} color="#ef4444" fill="#ef4444" style={{marginRight:'8px'}}/> 
+          <h2 style={{ display: 'flex', alignItems: 'center', gap: '10px', color: '#000' }}>
+            {/* ✅ สินค้าโปรโมชั่น: ใช้ BadgePercent (ป้าย %) สีดำ */}
+            <BadgePercent size={28} color="#000000" strokeWidth={2} /> 
             สินค้าโปรโมชั่น
           </h2>
           <span className="badge">ดูทั้งหมด</span>
         </div>
         <div className="slider-wrapper">
           <ScrollButtons scrollRef={promoRef} />
-          {/* ✅ ใส่ dragPromo */}
           <div 
             className="product-scroll-container" 
             ref={promoRef}
