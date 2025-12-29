@@ -4,18 +4,20 @@ import {
   Search, Plus, Heart, 
   Smartphone, Monitor, WashingMachine, Utensils, 
   Salad, Coffee, Cookie,
-  ChevronLeft, ChevronRight // เพิ่มไอคอนลูกศร
+  ChevronLeft, ChevronRight 
 } from 'lucide-react';
 
-// --- Component ย่อย: ProductSection (แยกออกมาเพื่อประสิทธิภาพ) ---
-const ProductSection = ({ title, icon, items, badgeColor, favorites, toggleFav, loading }) => {
-  const scrollRef = useRef(null); // ตัวอ้างอิงสำหรับกล่องที่จะเลื่อน
+// ✅ 1. Import Modal เข้ามา (ต้องมั่นใจว่าไฟล์ AddToListModal.js อยู่ที่เดียวกัน)
+import AddToListModal from './AddToListModal'; 
 
-  // ฟังก์ชันคำนวณการเลื่อนซ้าย-ขวา
+// --- Component ย่อย: ProductSection ---
+// ✅ รับ prop ชื่อ onAddToCart เพิ่มเข้ามา
+const ProductSection = ({ title, icon, items, badgeColor, favorites, toggleFav, loading, onAddToCart }) => {
+  const scrollRef = useRef(null); 
+
   const scroll = (direction) => {
     const { current } = scrollRef;
     if (current) {
-      // เลื่อนทีละ 300px (ประมาณขนาดการ์ด + ช่องว่าง)
       const scrollAmount = direction === 'left' ? -300 : 300;
       current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
@@ -36,15 +38,12 @@ const ProductSection = ({ title, icon, items, badgeColor, favorites, toggleFav, 
           กำลังโหลดสินค้าจำนวนมาก...
         </div>
       ) : (
-        // Wrapper สำหรับ Slider และปุ่มลอย
         <div className="slider-container-relative">
           
-          {/* ปุ่มลูกศรซ้าย */}
           <button className="scroll-btn prev-btn" onClick={() => scroll('left')}>
             <ChevronLeft size={24} />
           </button>
 
-          {/* Grid สินค้า (ใส่ ref เพื่อสั่งงาน Scroll) */}
           <div className="product-grid" ref={scrollRef}>
             {items.map((item, index) => (
               <div key={item.id || index} className="product-card">
@@ -66,7 +65,8 @@ const ProductSection = ({ title, icon, items, badgeColor, favorites, toggleFav, 
                 
                 <div className="product-info">
                   <h3>{item.name}</h3>
-                  <button className="btn-add-cart">
+                  {/* ✅ เมื่อกดปุ่มนี้ ให้เรียกฟังก์ชัน onAddToCart พร้อมส่งข้อมูลสินค้า (item) ไป */}
+                  <button className="btn-add-cart" onClick={() => onAddToCart(item)}>
                     <Plus size={18} /> เพิ่ม
                   </button>
                 </div>
@@ -74,7 +74,6 @@ const ProductSection = ({ title, icon, items, badgeColor, favorites, toggleFav, 
             ))}
           </div>
 
-          {/* ปุ่มลูกศรขวา */}
           <button className="scroll-btn next-btn" onClick={() => scroll('right')}>
             <ChevronRight size={24} />
           </button>
@@ -91,8 +90,18 @@ const Home = () => {
   const [allProducts, setAllProducts] = useState([]); 
   const [loading, setLoading] = useState(true); 
 
+  // ✅ 2. สร้าง State สำหรับจัดการ Modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+
   const toggleFav = (id) => {
     setFavorites(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  // ✅ 3. ฟังก์ชันเปิด Modal เมื่อกดปุ่มเพิ่ม
+  const handleOpenAddModal = (product) => {
+    setSelectedProduct(product); // เก็บสินค้าที่กดไว้
+    setIsModalOpen(true);        // สั่งเปิด Modal
   };
 
   useEffect(() => {
@@ -174,7 +183,7 @@ const Home = () => {
           </div>
         </section>
 
-        {/* เรียกใช้ ProductSection พร้อมส่ง Props */}
+        {/* ✅ ส่ง prop onAddToCart={handleOpenAddModal} ไปให้ทุก Section */}
         
         <ProductSection 
           title="สินค้าแนะนำ" 
@@ -188,6 +197,7 @@ const Home = () => {
           favorites={favorites}
           toggleFav={toggleFav}
           loading={loading}
+          onAddToCart={handleOpenAddModal} 
         />
 
         <ProductSection 
@@ -202,6 +212,7 @@ const Home = () => {
           favorites={favorites}
           toggleFav={toggleFav}
           loading={loading}
+          onAddToCart={handleOpenAddModal}
         />
 
         <ProductSection 
@@ -217,9 +228,18 @@ const Home = () => {
           favorites={favorites}
           toggleFav={toggleFav}
           loading={loading}
+          onAddToCart={handleOpenAddModal}
         />
 
       </main>
+
+      {/* ✅ 4. วาง Component Modal ไว้ตรงนี้ */}
+      <AddToListModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        product={selectedProduct}
+      />
+
     </div>
   );
 };
