@@ -1,109 +1,112 @@
-.footer {
-  /* ✨ เปลี่ยนมาใช้สีเขียวเข้ม Deep Forest เพื่อความหรูหราและดูนิ่งขึ้น */
-  background: #062c1e;
-  color: #ffffff !important;
-  padding: 80px 0 40px 0; /* เพิ่มพื้นที่ด้านบนและล่างให้ดูโปร่ง */
-  margin-top: 100px;
-  width: 100%;
-}
+@import url("https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap");
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 24px;
+.footer {
+  /* ✨ ใช้สีเขียวเข้ม Deep Charcoal Green เพื่อความหรูหรา */
+  background: #041d14;
+  color: #ffffff;
+  padding: 100px 0 40px 0;
+  width: 100%;
+  font-family: "Prompt", sans-serif;
 }
 
 .footer-grid {
   display: grid;
-  /* ✨ ปรับสัดส่วน 4 คอลัมน์ให้กระจายตัวเต็มหน้าจอ ไม่ไปกองทางซ้าย */
-  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  /* ✨ กำหนดสัดส่วนคอลัมน์ให้ Brand เด่นกว่า และที่เหลือกระจายตัวสวยงาม */
+  grid-template-columns: 1.8fr 1fr 1.2fr 1.2fr;
   gap: 60px;
-  padding-bottom: 3rem;
+  margin-bottom: 60px;
 }
 
-.footer-col-brand {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.brand {
+/* --- Brand Section --- */
+.footer-logo {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 1.6rem;
-  font-weight: 800;
-  letter-spacing: -0.8px;
-  margin-bottom: 1.2rem;
-  color: #ffffff !important;
+  gap: 15px;
+  margin-bottom: 25px;
 }
 
-.logo-circle-footer {
-  background: #000000;
-  border-radius: 12px; /* ทรง Squircle ให้เข้ากับ Navbar */
-  width: 44px;
-  height: 44px;
+.logo-squircle {
+  background: #10b77e; /* สีเขียวแบรนด์สว่าง */
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 10px 20px rgba(16, 183, 126, 0.2);
 }
 
-.footer-desc {
-  font-size: 0.95rem;
+.brand-name {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.footer-tagline {
+  font-size: 1rem;
   line-height: 1.8;
-  font-weight: 400;
-  /* ✨ ใช้สีขาวโปร่งแสงเพื่อสร้าง Hierarchy ให้หัวข้อเด่นกว่าเนื้อหา */
-  color: rgba(255, 255, 255, 0.7) !important;
-  max-width: 320px;
+  color: rgba(255, 255, 255, 0.6); /* ขาวจางๆ ดูสบายตาและแพง */
+  max-width: 340px;
 }
 
+/* --- Columns Styling --- */
 .footer-col h3 {
-  /* ✨ ใช้สีเขียวแบรนด์เน้นหัวข้อให้ดูมีจุดสนใจ */
-  color: #10b77e !important;
   font-size: 1.1rem;
   font-weight: 700;
+  color: #10b77e; /* ใช้สีเขียวแบรนด์เป็นสีหัวข้อ */
+  margin-bottom: 30px;
+  letter-spacing: 1px;
   text-transform: uppercase;
-  letter-spacing: 1.2px;
-  margin-bottom: 1.8rem;
+}
+
+.footer-col.hidden-title h3 {
+  visibility: hidden; /* ซ่อนหัวข้อในคอลัมน์ที่ 4 เพื่อให้ดูเป็นกลุ่มเดียวกันกับคอลัมน์ 3 */
 }
 
 .footer-col ul {
+  list-style: none;
   padding: 0;
   margin: 0;
-  list-style: none;
 }
 
 .footer-col ul li {
-  margin-bottom: 12px;
+  margin-bottom: 15px;
   font-size: 0.95rem;
-  font-weight: 400;
+  color: rgba(255, 255, 255, 0.75);
   cursor: pointer;
-  transition: all 0.3s ease;
-  color: rgba(255, 255, 255, 0.8) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ✨ เอฟเฟกต์เวลาชี้เมนู ให้ดู Interactive */
 .footer-col ul li:hover {
-  color: #ffffff !important;
-  transform: translateX(8px);
+  color: #ffffff;
+  transform: translateX(10px); /* เอฟเฟกต์เลื่อนนุ่มนวลเวลา Hover */
 }
 
-.footer-bottom {
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  margin-top: 60px;
-  padding-top: 30px;
-  text-align: center;
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.4) !important;
-  letter-spacing: 0.5px;
+/* --- Bottom Section --- */
+.footer-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  margin-bottom: 30px;
 }
 
-/* การจัดการหน้าจอขนาดเล็ก */
-@media (max-width: 900px) {
+.footer-bottom-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
   .footer-grid {
     grid-template-columns: 1fr 1fr;
-    gap: 3rem;
+    gap: 50px;
   }
 }
 
@@ -112,7 +115,13 @@
     grid-template-columns: 1fr;
     text-align: center;
   }
-  .footer-col-brand {
-    align-items: center;
+  .footer-logo {
+    justify-content: center;
+  }
+  .footer-tagline {
+    margin: 0 auto;
+  }
+  .footer-col.hidden-title h3 {
+    display: none;
   }
 }
