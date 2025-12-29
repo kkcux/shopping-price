@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import './Home.css'; // ตรวจสอบว่าไฟล์ CSS ของคุณชื่อ Home.css
+import './Home.css'; 
 import { 
   Search, Plus, Heart, Beef, PackageSearch, Home as HomeIcon, 
   Sparkles, Baby, Tv, Hammer, Dog, ChevronLeft, ChevronRight,
@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import AddToListModal from './AddToListModal'; 
 
-const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onAddToCart, badgeColor }) => {
+const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onAddToCart }) => {
   const scrollRef = useRef(null); 
   const scroll = (direction) => {
     if (scrollRef.current) {
@@ -31,39 +31,42 @@ const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onA
           กำลังโหลดสินค้า...
         </div>
       ) : (
-        /* --- 5. FLOATING SLIDER BUTTONS --- */
         <div className="slider-container-relative">
           <button className="scroll-btn prev-btn" onClick={() => scroll('left')}>
             <ChevronLeft size={24} />
           </button>
           
-          {/* --- 4. PRODUCT CARDS (Horizontal Slider) --- */}
           <div className="product-grid" ref={scrollRef}>
-            {items.map((item, index) => (
-              <div key={item.id || index} className="product-card">
-                <button 
-                  className={`fav-btn ${favorites[item.id] ? 'active' : ''}`} 
-                  onClick={() => toggleFav(item.id)}
-                >
-                  <Heart size={20} fill={favorites[item.id] ? "#ef4444" : "none"} />
-                </button>
-                
-                <div className="product-img-wrap">
-                  <img 
-                    src={item.image || "https://placehold.co/300x300?text=No+Image"} 
-                    alt={item.name} 
-                    loading="lazy" 
-                  />
-                </div>
-                
-                <div className="product-info">
-                  <h3>{item.name}</h3>
-                  <button className="btn-add-cart" onClick={() => onAddToCart(item)}>
-                    <Plus size={18} /> เพิ่มลงรายการ
+            {items.map((item, index) => {
+              // เช็คว่าสินค้านี้ถูกใจหรือยัง (ใช้ชื่อสินค้าเป็น Key)
+              const isFav = favorites[item.name];
+              return (
+                <div key={item.id || index} className="product-card">
+                  <button 
+                    className={`fav-btn ${isFav ? 'active' : ''}`} 
+                    onClick={() => toggleFav(item)}
+                  >
+                    {/* ถ้าชอบแล้วให้เติมสีแดง */}
+                    <Heart size={20} fill={isFav ? "#ef4444" : "none"} stroke={isFav ? "#ef4444" : "currentColor"} />
                   </button>
+                  
+                  <div className="product-img-wrap">
+                    <img 
+                      src={item.image || "https://placehold.co/300x300?text=No+Image"} 
+                      alt={item.name} 
+                      loading="lazy" 
+                    />
+                  </div>
+                  
+                  <div className="product-info">
+                    <h3>{item.name}</h3>
+                    <button className="btn-add-cart" onClick={() => onAddToCart(item)}>
+                      <Plus size={18} /> เพิ่มลงรายการ
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
           
           <button className="scroll-btn next-btn" onClick={() => scroll('right')}>
@@ -76,14 +79,68 @@ const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onA
 };
 
 const Home = () => {
+  // เก็บสถานะหัวใจเป็น Object { "ชื่อสินค้า": true/false } เพื่อให้ค้นหาเร็ว
   const [favorites, setFavorites] = useState({});
   const [allProducts, setAllProducts] = useState([]); 
   const [loading, setLoading] = useState(true); 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  const toggleFav = (id) => setFavorites(prev => ({ ...prev, [id]: !prev[id] }));
+  // ✅ 1. โหลดข้อมูล Favorites จากเครื่องเมื่อเปิดเว็บ
+  useEffect(() => {
+    const savedFavs = JSON.parse(localStorage.getItem('favoritesItems')) || [];
+    const favMap = {};
+    savedFavs.forEach(item => {
+      // ใช้ field 'data' (ชื่อสินค้า) เป็น key ตามที่หน้า Favorites ใช้งาน
+      if (item.data) favMap[item.data] = true;
+    });
+    setFavorites(favMap);
+  }, []);
 
+  // ... (code ส่วนบนเหมือนเดิม)
+
+  // ✅ 2. ฟังก์ชันกดหัวใจ (แก้ไขป้องกันการเพิ่มซ้ำ)
+  const toggleFav = (product) => {
+    const productName = product.name;
+    
+    setFavorites(prev => {
+      const isCurrentlyFav = !!prev[productName];
+      const newFavState = { ...prev, [productName]: !isCurrentlyFav };
+
+      // อัปเดต LocalStorage
+      const currentSavedFavs = JSON.parse(localStorage.getItem('favoritesItems')) || [];
+      
+      let newSavedFavs;
+      if (isCurrentlyFav) {
+        // กรณี: ยกเลิกหัวใจ -> ลบออก
+        newSavedFavs = currentSavedFavs.filter(item => item.data !== productName);
+      } else {
+        // กรณี: กดหัวใจ -> เพิ่มเข้าไป
+        
+        // ⭐ เพิ่มการตรวจสอบว่ามีของชิ้นนี้อยู่แล้วหรือยัง? เพื่อกันการเบิ้ล
+        const alreadyExists = currentSavedFavs.some(item => item.data === productName);
+        
+        if (!alreadyExists) {
+          const favItem = {
+            image: product.image,
+            data: product.name, 
+            price: product.price 
+          };
+          newSavedFavs = [...currentSavedFavs, favItem];
+        } else {
+          // ถ้ามีอยู่แล้ว ให้ใช้รายการเดิม (ไม่เพิ่มซ้ำ)
+          newSavedFavs = currentSavedFavs;
+        }
+      }
+      
+      localStorage.setItem('favoritesItems', JSON.stringify(newSavedFavs));
+      return newFavState;
+    });
+  };
+
+// ... (code ส่วนล่างเหมือนเดิม)
+
+  // โหลดสินค้า (ส่วนเดิม)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -125,7 +182,7 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      {/* --- 1. HERO SECTION --- */}
+      {/* HERO SECTION */}
       <header className="hero-banner">
         <div className="hero-content">
           <h1>
@@ -138,7 +195,6 @@ const Home = () => {
             รายการ เพื่อดีลที่คุ้มที่สุด
           </p>
           
-          {/* Search Box */}
           <div className="search-box-wrapper">
             <input type="text" placeholder="ค้นหาชื่อสินค้าที่ต้องการ..." />
             <button className="search-btn">
@@ -148,9 +204,8 @@ const Home = () => {
         </div>
       </header>
 
-      {/* --- 2. LAYOUT / CONTENT --- */}
+      {/* CONTENT */}
       <main className="content-wrapper">
-        {/* --- 3. CATEGORIES --- */}
         <section className="section-container">
           <div className="section-header">
             <h2 className="section-title">หมวดหมู่ยอดนิยม</h2>
@@ -165,7 +220,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Product Sections */}
         <ProductSection 
           title="สินค้าแนะนำ" 
           icon={<Star size={24} color="var(--primary)" />} 
