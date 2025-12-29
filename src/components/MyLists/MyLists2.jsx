@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ChevronLeft, Pencil, Trash2, Search, Check, AlertTriangle } from "lucide-react"; // ✅ เพิ่ม AlertTriangle
+import { ChevronLeft, Pencil, Trash2, Search, Check, AlertTriangle } from "lucide-react";
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
 import "./MyLists2.css";
@@ -15,7 +15,6 @@ export default function MyLists2() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  // ✅ 1. เพิ่ม State สำหรับควบคุม Modal ลบ
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   /* ===== LOAD FROM LOCAL STORAGE ===== */
@@ -68,12 +67,10 @@ export default function MyLists2() {
     setSelectedStores(next);
   };
 
-  // ✅ 2. เปลี่ยนปุ่มกดให้แค่เปิด Modal
   const handleDeleteClick = () => {
     setShowDeleteModal(true);
   };
 
-  // ✅ 3. ฟังก์ชันลบจริงๆ (ทำงานเมื่อกด "ยืนยัน" ใน Modal)
   const confirmDelete = () => {
     const newLists = allLists.filter((l) => String(l.id) !== String(id));
     localStorage.setItem("myLists", JSON.stringify(newLists));
@@ -100,7 +97,7 @@ export default function MyLists2() {
               </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+            <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
               <button
                 className="ml2-edit"
                 onClick={() => navigate(`/mylists/edit/${id}`)}
@@ -108,16 +105,15 @@ export default function MyLists2() {
                 <Pencil size={18} strokeWidth={2.5} />
                 <span>แก้ไขรายการ</span>
               </button>
-              
+
               <button
                 className="ml2-btn-delete"
-                onClick={handleDeleteClick} // ✅ เรียกฟังก์ชันเปิด Modal
+                onClick={handleDeleteClick}
                 title="ลบรายการ"
               >
                 <Trash2 size={20} strokeWidth={2} />
               </button>
             </div>
-
           </div>
         </section>
 
@@ -146,7 +142,10 @@ export default function MyLists2() {
                 ))}
               </div>
             ) : (
-              <div className="ml2-empty" style={{textAlign: 'center', padding: '40px', color: '#999'}}>
+              <div
+                className="ml2-empty"
+                style={{ textAlign: "center", padding: "40px", color: "#999" }}
+              >
                 ยังไม่มีสินค้าในรายการ
               </div>
             )}
@@ -154,9 +153,7 @@ export default function MyLists2() {
 
           <div className="ml2-bottomGrid">
             <section className="ml2-box ml2-boxTall">
-              <div className="ml2-boxTitleLg">
-                เลือกร้านค้าที่ต้องการเปรียบเทียบ
-              </div>
+              <div className="ml2-boxTitleLg">เลือกร้านค้าที่ต้องการเปรียบเทียบ</div>
               <div className="ml2-checkRow" onClick={toggleAll}>
                 <span className={`ml2-check ${selectedStores.ALL ? "on" : ""}`} />
                 <span className="ml2-checkText">ทั้งหมด</span>
@@ -167,11 +164,7 @@ export default function MyLists2() {
                   className="ml2-checkRow"
                   onClick={() => toggleStore(s.key)}
                 >
-                  <span
-                    className={`ml2-check ${
-                      selectedStores[s.key] ? "on" : ""
-                    }`}
-                  />
+                  <span className={`ml2-check ${selectedStores[s.key] ? "on" : ""}`} />
                   <span className="ml2-checkText">{s.label}</span>
                 </div>
               ))}
@@ -180,11 +173,7 @@ export default function MyLists2() {
             <section className="ml2-box ml2-boxTall">
               <div className="ml2-boxTitleLg">สถานะสมาชิก</div>
               {stores.map((s) => (
-                <MemberRow
-                  key={s.key}
-                  brand={s.key}
-                  isMember={membership[s.key]}
-                />
+                <MemberRow key={s.key} brand={s.key} isMember={membership[s.key]} />
               ))}
             </section>
           </div>
@@ -192,7 +181,8 @@ export default function MyLists2() {
           <div className="ml2-searchWrap">
             <button
               className="ml2-searchBtn"
-              onClick={() => navigate("/mylists/mylists3")}
+              // ✅ แก้ตรงนี้: ส่ง id ไป MyLists3
+              onClick={() => navigate(`/mylists3/${id}`)}
             >
               <Search size={22} strokeWidth={2.5} />
               เริ่มค้นหาร้านที่ถูกที่สุด
@@ -201,32 +191,29 @@ export default function MyLists2() {
         </div>
       </main>
 
-      {/* ✅ 4. ส่วนแสดงผล Modal แจ้งเตือนลบ */}
+      {/* Modal ลบ */}
       {showDeleteModal && (
         <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
           <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-            {/* ไอคอนสีแดง */}
             <div className="modal-icon-circle danger">
               <AlertTriangle size={36} strokeWidth={2} />
             </div>
-            
+
             <h3 className="modal-title">ยืนยันการลบรายการ?</h3>
             <p className="modal-desc">
-              คุณต้องการลบรายการ "{listName}" ใช่หรือไม่?<br/>
+              คุณต้องการลบรายการ "{listName}" ใช่หรือไม่?
+              <br />
               การกระทำนี้ไม่สามารถย้อนกลับได้
             </p>
-            
+
             <div className="modal-actions">
-              <button 
-                className="modal-btn cancel" 
+              <button
+                className="modal-btn cancel"
                 onClick={() => setShowDeleteModal(false)}
               >
                 ยกเลิก
               </button>
-              <button 
-                className="modal-btn delete" 
-                onClick={confirmDelete}
-              >
+              <button className="modal-btn delete" onClick={confirmDelete}>
                 ลบรายการ
               </button>
             </div>
