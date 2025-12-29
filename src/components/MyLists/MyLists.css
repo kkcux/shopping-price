@@ -1,5 +1,4 @@
-/* MyLists.css */
-@import url("https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap");
+/* MyLists.css (Theme: PriceFinder #10B77E + Fixed Layout) */
 
 /* Global Reset */
 * {
@@ -10,24 +9,29 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f5f5f5;
-  font-family: "Prompt", sans-serif;
+  background-color: #f8f9fa; /* พื้นหลังสีเทาอ่อน */
+  font-family: "Sarabun", "Prompt", sans-serif;
 }
 
-/* --- Container กลาง --- */
+/* --- Container กลาง (แก้เป็น 1200px ให้ตรงกับ Navbar) --- */
 .content-container {
-  max-width: 1440px;
+  max-width: 1200px; /* ✅ ปรับจาก 1440px เป็น 1200px */
   margin: 0 auto;
-  padding: 0 40px;
+  padding: 0 20px;
   width: 100%;
 }
 
 /* --- ส่วน Header (สีขาว) --- */
 .header-section {
   background-color: #ffffff;
-  padding: 30px 0;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 24px 0;
+  border-bottom: 1px solid #e2e8f0;
   width: 100%;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+
+  /* ✅ เพิ่ม Flex เพื่อจัด Content ให้อยู่กึ่งกลางเสมอ */
+  display: flex;
+  justify-content: center;
 }
 
 .mylist-header {
@@ -36,97 +40,115 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 20px;
+  width: 100%; /* เต็มพื้นที่ Container */
 }
 
 .header-left {
   display: flex;
-  align-items: flex-start;
+  align-items: center; /* ✅ จัดให้อยู่กึ่งกลางแนวตั้ง */
   gap: 15px;
 }
 
 .back-circle {
   width: 40px;
   height: 40px;
-  background-color: #f3f4f6;
+  background-color: #f1f5f9;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  margin-top: 5px;
-  transition: background 0.2s;
+  margin-top: 0; /* ✅ เอา margin ออกเพื่อให้ตรงกับตัวหนังสือ */
+  transition: all 0.2s;
+  color: #64748b;
 }
 
 .back-circle:hover {
-  background-color: #e5e7eb;
+  background-color: #e2e8f0;
+  color: #10b77e; /* Hover สีธีม */
 }
 
 .header-title {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #438438;
+
+  /* ✅ สีเขียวธีม */
+  color: #10b77e;
+
   margin: 0;
   line-height: 1.2;
   text-transform: uppercase;
 }
 
 .header-subtitle {
-  font-size: 0.85rem;
-  color: #6b7280;
+  font-size: 0.9rem;
+  color: #64748b;
   margin: 4px 0 0 0;
 }
 
 .btn-newlist {
-  background-color: #438438;
+  /* ✅ ปุ่มสีธีม */
+  background-color: #10b77e;
   color: white;
   border: none;
   padding: 10px 24px;
-  border-radius: 6px;
-  font-family: "Prompt", sans-serif;
+  border-radius: 50px;
+  font-family: "Sarabun", sans-serif;
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px rgba(16, 183, 126, 0.2);
 }
 
 .btn-newlist:hover {
-  background-color: #366b2d;
+  background-color: #0d9668;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(16, 183, 126, 0.3);
 }
 
 /* --- ส่วนเนื้อหา (สีเทา) --- */
 .content-section {
-  background-color: #f5f5f5;
+  background-color: #f8f9fa;
   padding-top: 40px;
   padding-bottom: 100px;
   flex: 1;
+
+  /* ✅ จัด Content ให้อยู่กึ่งกลาง */
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .lists-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 24px;
+  width: 100%;
 }
 
 .list-card {
   background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
-  min-height: 200px;
+  min-height: 220px;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .list-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border-color: #10b77e; /* ขอบเขียว */
 }
 
 .card-body {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -134,15 +156,15 @@
 }
 
 .card-title {
-  font-size: 1.25rem;
+  font-size: 1.3rem;
   font-weight: 700;
-  margin: 0 0 5px 0;
+  margin: 0 0 8px 0;
   color: #1f2937;
 }
 
 .card-count {
-  font-size: 0.9rem;
-  color: #9ca3af;
+  font-size: 0.95rem;
+  color: #94a3b8;
   margin: 0;
 }
 
@@ -152,38 +174,49 @@
 
 .btn-open {
   width: 100%;
-  background-color: #438438;
+  /* ✅ ปุ่มเปิดสีธีม */
+  background-color: #10b77e;
   color: white;
   border: none;
-  padding: 10px;
-  border-radius: 8px;
-  font-family: "Prompt", sans-serif;
+  padding: 12px;
+  border-radius: 10px;
+  font-family: "Sarabun", sans-serif;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px rgba(16, 183, 126, 0.2);
 }
 
 .btn-open:hover {
-  background-color: #366b2d;
+  background-color: #0d9668;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(16, 183, 126, 0.3);
 }
 
 .empty-state {
   text-align: center;
   padding: 80px;
-  color: #9ca3af;
+  color: #94a3b8;
+  width: 100%;
 }
 
 .link-create {
-  color: #438438;
+  color: #10b77e;
   font-weight: 600;
   text-decoration: none;
   margin-top: 10px;
   display: inline-block;
+  border-bottom: 1px dashed transparent;
+  transition: border 0.2s;
+}
+
+.link-create:hover {
+  border-bottom-color: #10b77e;
 }
 
 /* ========================================= */
-/* ✅ ส่วน Menu Dropdown (3 จุด) - แก้กระตุก */
+/* ✅ ส่วน Menu Dropdown (3 จุด) */
 /* ========================================= */
 .card-top-menu {
   width: 100%;
@@ -195,8 +228,8 @@
 
 .menu-icon-btn {
   background: transparent;
-  border: 1px solid transparent; /* กันขอบขยับ */
-  outline: none; /* ปิดเส้นขอบเวลาคลิก */
+  border: 1px solid transparent;
+  outline: none;
   cursor: pointer;
   padding: 8px;
   border-radius: 50%;
@@ -204,18 +237,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  -webkit-tap-highlight-color: transparent; /* แก้ปัญหามือถือ */
+  -webkit-tap-highlight-color: transparent;
+  color: #94a3b8;
 }
 
 .menu-icon-btn:hover {
-  background-color: #f3f4f6;
+  background-color: #f1f5f9;
+  color: #64748b;
 }
 
 .menu-icon-btn:active {
-  background-color: #e5e7eb;
+  background-color: #e2e8f0;
 }
 
-/* 🔥 ตัวแก้กระตุกที่สำคัญที่สุด: ให้คลิกทะลุไอคอนไปโดนปุ่ม */
 .menu-icon-btn svg {
   pointer-events: none;
   display: block;
@@ -223,14 +257,15 @@
 
 .menu-dropdown {
   position: absolute;
-  top: 40px; /* ล็อกตำแหน่งให้แน่นอน */
+  top: 40px;
   right: 0;
   background: white;
-  min-width: 140px;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  border: 1px solid #f3f4f6;
-  padding: 5px;
+  min-width: 150px;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
+    0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #f1f5f9;
+  padding: 6px;
   z-index: 20;
   transform-origin: top right;
   animation: scaleIn 0.1s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
@@ -251,16 +286,16 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 8px 12px;
-  font-size: 0.9rem;
+  padding: 10px 12px;
+  font-size: 0.95rem;
   color: #374151;
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: 8px;
   transition: background 0.1s;
 }
 
 .menu-item:hover {
-  background-color: #f9fafb;
+  background-color: #f8f9fa;
 }
 
 .menu-item.delete {
@@ -280,20 +315,20 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(4px);
 }
 
 .modal-box {
   background: white;
-  width: 280px;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  width: 300px;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
   text-align: center;
   animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
@@ -310,49 +345,52 @@
 }
 
 .modal-title-small {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 700;
-  margin: 0 0 5px 0;
+  margin: 0 0 8px 0;
   color: #1f2937;
 }
 
 .modal-desc-small {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: #6b7280;
-  margin: 0 0 20px 0;
+  margin: 0 0 24px 0;
 }
 
 .modal-actions-small {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   justify-content: center;
 }
 
 .btn-small {
   flex: 1;
-  padding: 8px;
+  padding: 10px;
   border: none;
-  border-radius: 6px;
-  font-family: "Prompt", sans-serif;
-  font-size: 0.9rem;
-  font-weight: 500;
+  border-radius: 8px;
+  font-family: "Sarabun", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s;
 }
 
 .btn-small.cancel {
-  background-color: #f3f4f6;
-  color: #4b5563;
+  background-color: #f1f5f9;
+  color: #475569;
 }
 .btn-small.cancel:hover {
-  background-color: #e5e7eb;
+  background-color: #e2e8f0;
 }
 
 .btn-small.confirm {
   background-color: #ef4444;
   color: white;
+  box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
 }
 .btn-small.confirm:hover {
   background-color: #dc2626;
+  transform: translateY(-1px);
 }
 
 @media (max-width: 600px) {

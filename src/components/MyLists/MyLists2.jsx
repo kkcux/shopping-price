@@ -1,9 +1,9 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, Pencil, Trash2, Search, Check, AlertTriangle } from "lucide-react"; // ✅ เพิ่ม AlertTriangle
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
-import "./mylists2.css";
+import "./MyLists2.css";
 
 const REGISTER_URL = {
   MAKRO: "https://www.makro.pro/",
@@ -14,6 +14,9 @@ const REGISTER_URL = {
 export default function MyLists2() {
   const navigate = useNavigate();
   const { id } = useParams();
+
+  // ✅ 1. เพิ่ม State สำหรับควบคุม Modal ลบ
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   /* ===== LOAD FROM LOCAL STORAGE ===== */
   const allLists = useMemo(
@@ -29,7 +32,7 @@ export default function MyLists2() {
   const listName = initialData?.name || "ไม่พบรายการ";
   const wanted = initialData?.items || [];
 
-  /* ===== STORES (ไม่มี TOPS) ===== */
+  /* ===== STORES ===== */
   const stores = [
     { key: "LOTUS", label: "LOTUS’s" },
     { key: "BIGC", label: "BIG C" },
@@ -37,7 +40,7 @@ export default function MyLists2() {
   ];
 
   const membership = {
-    LOTUS: false,
+    LOTUS: true,
     BIGC: false,
     MAKRO: false,
   };
@@ -65,6 +68,18 @@ export default function MyLists2() {
     setSelectedStores(next);
   };
 
+  // ✅ 2. เปลี่ยนปุ่มกดให้แค่เปิด Modal
+  const handleDeleteClick = () => {
+    setShowDeleteModal(true);
+  };
+
+  // ✅ 3. ฟังก์ชันลบจริงๆ (ทำงานเมื่อกด "ยืนยัน" ใน Modal)
+  const confirmDelete = () => {
+    const newLists = allLists.filter((l) => String(l.id) !== String(id));
+    localStorage.setItem("myLists", JSON.stringify(newLists));
+    navigate("/mylists");
+  };
+
   return (
     <>
       <Navbar />
@@ -85,23 +100,33 @@ export default function MyLists2() {
               </div>
             </div>
 
-            <button
-              className="ml2-edit"
-              onClick={() => navigate(`/mylists/${id}/edit`)}
-            >
-              EDITLIST
-            </button>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <button
+                className="ml2-edit"
+                onClick={() => navigate(`/mylists/edit/${id}`)}
+              >
+                <Pencil size={18} strokeWidth={2.5} />
+                <span>แก้ไขรายการ</span>
+              </button>
+              
+              <button
+                className="ml2-btn-delete"
+                onClick={handleDeleteClick} // ✅ เรียกฟังก์ชันเปิด Modal
+                title="ลบรายการ"
+              >
+                <Trash2 size={20} strokeWidth={2} />
+              </button>
+            </div>
+
           </div>
         </section>
 
         <div className="ml2-container">
-          {/* NAME */}
           <div className="ml2-nameBlock">
             <div className="ml2-label">ชื่อรายการ</div>
             <input className="ml2-input" value={listName} readOnly />
           </div>
 
-          {/* WANTED ITEMS */}
           <section className="ml2-box">
             <div className="ml2-boxHead">
               <div className="ml2-boxTitle">
@@ -121,22 +146,21 @@ export default function MyLists2() {
                 ))}
               </div>
             ) : (
-              <div className="ml2-empty">ยังไม่มีสินค้าในรายการ</div>
+              <div className="ml2-empty" style={{textAlign: 'center', padding: '40px', color: '#999'}}>
+                ยังไม่มีสินค้าในรายการ
+              </div>
             )}
           </section>
 
-          {/* STORES + MEMBERS */}
           <div className="ml2-bottomGrid">
             <section className="ml2-box ml2-boxTall">
               <div className="ml2-boxTitleLg">
                 เลือกร้านค้าที่ต้องการเปรียบเทียบ
               </div>
-
               <div className="ml2-checkRow" onClick={toggleAll}>
                 <span className={`ml2-check ${selectedStores.ALL ? "on" : ""}`} />
-                ทั้งหมด
+                <span className="ml2-checkText">ทั้งหมด</span>
               </div>
-
               {stores.map((s) => (
                 <div
                   key={s.key}
@@ -148,14 +172,13 @@ export default function MyLists2() {
                       selectedStores[s.key] ? "on" : ""
                     }`}
                   />
-                  {s.label}
+                  <span className="ml2-checkText">{s.label}</span>
                 </div>
               ))}
             </section>
 
             <section className="ml2-box ml2-boxTall">
               <div className="ml2-boxTitleLg">สถานะสมาชิก</div>
-
               {stores.map((s) => (
                 <MemberRow
                   key={s.key}
@@ -171,11 +194,45 @@ export default function MyLists2() {
               className="ml2-searchBtn"
               onClick={() => navigate("/mylists/mylists3")}
             >
-              🔍 เริ่มค้นหาร้านที่ถูกที่สุด
+              <Search size={22} strokeWidth={2.5} />
+              เริ่มค้นหาร้านที่ถูกที่สุด
             </button>
           </div>
         </div>
       </main>
+
+      {/* ✅ 4. ส่วนแสดงผล Modal แจ้งเตือนลบ */}
+      {showDeleteModal && (
+        <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
+          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+            {/* ไอคอนสีแดง */}
+            <div className="modal-icon-circle danger">
+              <AlertTriangle size={36} strokeWidth={2} />
+            </div>
+            
+            <h3 className="modal-title">ยืนยันการลบรายการ?</h3>
+            <p className="modal-desc">
+              คุณต้องการลบรายการ "{listName}" ใช่หรือไม่?<br/>
+              การกระทำนี้ไม่สามารถย้อนกลับได้
+            </p>
+            
+            <div className="modal-actions">
+              <button 
+                className="modal-btn cancel" 
+                onClick={() => setShowDeleteModal(false)}
+              >
+                ยกเลิก
+              </button>
+              <button 
+                className="modal-btn delete" 
+                onClick={confirmDelete}
+              >
+                ลบรายการ
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </>
@@ -198,9 +255,10 @@ function ProductCard({ name, img, sub }) {
 
 function MemberRow({ brand, isMember }) {
   return (
-    <div className={`ml2-memberRow ${isMember ? "ok" : "no"}`}>
+    <div className={`ml2-memberRow ${isMember ? "ok" : ""}`}>
+      <div className={`ml2-brand ${brand.toLowerCase()}`}>{brand}</div>
       <div className="ml2-memberText">
-        {brand} {isMember ? "เป็นสมาชิก" : "ไม่เป็นสมาชิก"}
+        {isMember ? "เป็นสมาชิกแล้ว" : "ไม่ได้เป็นสมาชิก"}
       </div>
       {!isMember && (
         <a
@@ -212,6 +270,7 @@ function MemberRow({ brand, isMember }) {
           สมัคร
         </a>
       )}
+      {isMember && <Check size={18} color="#10b77e" />}
     </div>
   );
 }

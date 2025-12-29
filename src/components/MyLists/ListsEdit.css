@@ -1,0 +1,512 @@
+/* =========================
+   PAGE LAYOUT (Theme: PriceFinder #10B77E)
+========================= */
+
+/* (ลบ @import ออก เพราะโหลดใน index.css แล้ว) */
+
+* {
+  box-sizing: border-box;
+}
+
+.le-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f8f9fa; /* ปรับพื้นหลังให้อ่อนลงนิดนึง */
+
+  /* ✅ ตั้งค่าเป็น 0 เพื่อให้ Header ชนกับ Navbar ด้านบน */
+  padding-top: 0;
+  padding-bottom: 100px;
+  font-family: "Sarabun", "Prompt", sans-serif;
+}
+
+/* =========================
+   HEADER SECTION (FULL WIDTH)
+========================= */
+.le-header-section {
+  width: 100%;
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 24px 0;
+  margin-bottom: 30px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); /* เพิ่มเงาบางๆ */
+
+  /* ✅ เพิ่ม Flex Center ให้ Header container อยู่ตรงกลางเสมอ */
+  display: flex;
+  justify-content: center;
+}
+
+/* จัดกึ่งกลางเนื้อหาภายใน Header */
+.le-header-inner {
+  width: 100%;
+  max-width: 1200px; /* ✅ ปรับเป็น 1200px ให้ตรง Navbar */
+  margin: 0 auto;
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.le-topLeft {
+  display: flex;
+  align-items: center; /* ✅ จัดกึ่งกลางแนวตั้ง */
+  gap: 15px;
+}
+
+/* ปุ่มย้อนกลับ */
+.le-back-btn {
+  width: 40px;
+  height: 40px;
+  background-color: #f1f5f9;
+  color: #64748b;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  margin-top: 0; /* ✅ เอา margin ออก */
+}
+
+.le-back-btn:hover {
+  background-color: #e2e8f0;
+  color: #10b77e; /* Hover แล้วเป็นสีธีม */
+  border-color: #10b77e;
+}
+
+.le-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+
+  /* ✅ สีเขียวธีม */
+  color: #10b77e;
+
+  margin: 0;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.le-subtitle {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin: 4px 0 0 0;
+  font-weight: 400;
+}
+
+/* =========================
+   CONTENT CONTAINER
+========================= */
+.le-container {
+  width: 100%;
+  max-width: 1200px; /* ✅ ปรับเป็น 1200px ให้ตรง Navbar */
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* LIST NAME BLOCK */
+.le-nameBlock {
+  background: #ffffff;
+  border-radius: 16px; /* มนขึ้น */
+  padding: 30px;
+  margin-bottom: 24px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+.le-label {
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #1f2937;
+  font-size: 1.1rem;
+  display: block;
+}
+.le-input {
+  width: 100%;
+  max-width: 100%; /* ปรับให้เต็ม */
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-family: "Sarabun", sans-serif;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+.le-input:focus {
+  outline: none;
+  border-color: #10b77e;
+  box-shadow: 0 0 0 3px rgba(16, 183, 126, 0.1); /* เงาสีเขียวจางๆ */
+}
+
+/* BOX & CARDS */
+.le-box {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+.le-boxHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.le-boxTitle {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1f2937;
+}
+.le-pill {
+  /* ✅ แก้สี Pill เป็นเขียวธีม */
+  background: #10b77e;
+  color: #fff;
+  font-size: 0.85rem;
+  padding: 6px 16px;
+  border-radius: 50px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.le-pill:hover {
+  background: #0d9668;
+}
+
+.le-cards {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(160px, 1fr)
+  ); /* ขยายการ์ดนิดนึง */
+  gap: 20px;
+  align-items: stretch;
+}
+
+/* PRODUCT CARD */
+.le-card {
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding-bottom: 12px;
+  transition: all 0.2s ease;
+}
+.le-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border-color: #10b77e; /* ขอบเขียวตอน Hover */
+}
+.le-imgWrap {
+  height: 140px; /* เพิ่มความสูงรูป */
+  width: 100%;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 15px;
+  background-color: #fff;
+}
+.le-imgWrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s;
+}
+.le-card:hover .le-imgWrap img {
+  transform: scale(1.05); /* รูปขยายตอน Hover */
+}
+
+.le-cardName {
+  margin-top: 8px;
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: center;
+  padding: 0 10px;
+  color: #334155;
+  height: 40px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+}
+.le-cardSub {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  text-align: center;
+  margin-top: auto;
+  padding-bottom: 8px;
+}
+
+/* QTY Control */
+.le-qty {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.le-qty button {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: none;
+  background: #f1f5f9;
+  color: #334155;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.le-qty button:hover {
+  background: #e2e8f0;
+  color: #10b77e;
+}
+.le-qty span {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #1f2937;
+}
+
+/* Select Button */
+.le-select {
+  display: block;
+  margin: 0 auto 10px;
+  /* ✅ แก้สีปุ่มเลือก */
+  background: #10b77e;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 6px 24px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 2px 4px rgba(16, 183, 126, 0.2);
+}
+.le-select:hover {
+  background: #0d9668;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(16, 183, 126, 0.3);
+}
+
+.le-remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  border: 1px solid #fee2e2;
+  color: #ef4444;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  z-index: 10;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+.le-remove:hover {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+}
+
+/* SAVE BUTTON */
+.le-saveWrap {
+  margin-top: 50px;
+  display: flex;
+  justify-content: center;
+}
+.le-saveBtn {
+  width: 100%;
+  max-width: 400px;
+  height: 52px;
+  /* ✅ แก้สีปุ่มบันทึก */
+  background: #10b77e;
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(16, 183, 126, 0.3);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.le-saveBtn:hover {
+  background: #0d9668;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(16, 183, 126, 0.4);
+}
+.le-saveBtn:active {
+  transform: scale(0.98);
+}
+
+/* =========================
+   MODAL ALERT DESIGN (All Green Theme)
+========================= */
+
+/* พื้นหลังจางๆ เบลอๆ */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(6px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* กล่องโมดอล */
+.modal-box {
+  background: white;
+  width: 90%;
+  max-width: 360px;
+  padding: 32px 24px;
+  border-radius: 24px; /* มุมโค้งมน */
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  border: 1px solid #f3f4f6;
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* วงกลมไอคอน */
+.modal-icon-circle {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 20px;
+  font-size: 36px;
+}
+
+/* ✅ สีเขียว (ใช้เหมือนกันทั้ง Success และ Warning) */
+.modal-icon-circle.success,
+.modal-icon-circle.warning {
+  background-color: #d1fae5; /* เขียวอ่อน */
+  color: #10b77e; /* เขียว PriceFinder */
+  box-shadow: 0 0 0 8px #f0fdf4;
+}
+
+/* หัวข้อ */
+.modal-title {
+  font-family: "Sarabun", sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 8px;
+}
+
+/* คำอธิบาย */
+.modal-desc {
+  font-family: "Sarabun", sans-serif;
+  font-size: 0.95rem;
+  color: #6b7280;
+  margin-bottom: 28px;
+  line-height: 1.5;
+}
+
+/* จัดปุ่ม */
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.modal-btn {
+  flex: 1;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 50px;
+  font-family: "Sarabun", sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* ปุ่มยกเลิก */
+.modal-btn.cancel {
+  background-color: #f1f5f9;
+  color: #475569;
+}
+.modal-btn.cancel:hover {
+  background-color: #e2e8f0;
+}
+
+/* ✅ ปุ่มยืนยัน/ตกลง (สีเขียวทั้งหมด) */
+.modal-btn.confirm,
+.modal-btn.close-warning {
+  background-color: #10b77e;
+  color: white;
+  box-shadow: 0 4px 10px rgba(16, 183, 126, 0.3);
+}
+
+.modal-btn.confirm:hover,
+.modal-btn.close-warning:hover {
+  background-color: #0d9668;
+  transform: translateY(-2px);
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes popIn {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+@media (max-width: 600px) {
+  .le-header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .le-container,
+  .le-header-inner {
+    padding: 0 20px;
+  }
+}

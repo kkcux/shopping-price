@@ -1,629 +1,444 @@
-/* =========================================
-    Filename: home.css
-    Theme Color: #10B77E (Green)
-    Description: Styles specific to the Homepage
-    ========================================= */
+@import url("https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap");
 
-/* --- Hero Section (แก้ไขตาม Figma: สีเขียวมิ้นต์ทึบ เข้มขึ้น) --- */
-.hero {
-  /* ✅ ใช้สีพื้นหลังแบบทึบ (Solid Color) แทนการไล่สี */
-  /* สีนี้จะออกเขียวมิ้นต์ที่ชัดเจนขึ้น ตรงตามสไตล์ Figma */
-  background-color: #c2f0dd;
+:root {
+  /* --- THEME: Premium Sage --- */
+  --primary: #5c9c73;
+  --primary-hover: #4a8b60;
+  --primary-soft: #eaf4ef;
 
-  padding: 4rem 0;
-  text-align: center;
-  font-family: "Sarabun", sans-serif;
+  --bg-page: #f9fafb;
+  --card-bg: #ffffff;
 
-  /* เพิ่มขอบล่างสีเขียวเข้มอีกนิด เพื่อตัดกับส่วนเนื้อหา */
-  border-bottom: 1px solid #a7f3d0;
+  --text-dark: #1f2937;
+  --text-main: #4b5563;
+  --text-light: #9ca3af;
+
+  --radius-sm: 12px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-pill: 50px;
+
+  /* Shadow */
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.02),
+    0 2px 4px -1px rgba(0, 0, 0, 0.02);
+  --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.05),
+    0 8px 10px -6px rgba(0, 0, 0, 0.01);
 }
 
-/* ปรับสีหัวข้อให้เข้มขึ้นอีกนิด เพื่อให้ตัดกับพื้นหลังใหม่ */
-.hero h1 {
-  font-size: 2.2rem;
-  color: #043f2f; /* เขียวเข้มจัด */
-  margin-bottom: 1rem;
-  line-height: 1.4;
-  font-weight: 700;
-  text-align: center;
+* {
+  box-sizing: border-box;
 }
 
-/* ปรับสีคำบรรยายให้เข้มขึ้นตาม */
-.hero p {
-  color: #2d4f46; /* เขียวอมเทาเข้ม */
-  margin-bottom: 2rem;
-  font-size: 1rem;
-  text-align: center;
-}
-/* --- Search Bar --- */
-.search-bar {
-  background: white;
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 6px;
-  border-radius: 8px;
-  display: flex;
-  border: 1px solid #ccece6; /* ขอบเขียวอ่อน */
-  box-shadow: 0 4px 15px -1px rgba(16, 183, 126, 0.15);
+body {
+  margin: 0;
+  font-family: "Prompt", sans-serif;
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
 }
 
-.search-bar input {
-  flex: 1;
+button {
+  cursor: pointer;
   border: none;
   outline: none;
-  padding: 0 1rem;
-  font-family: "Sarabun", sans-serif;
+  font-family: "Prompt", sans-serif;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.home-container {
+  width: 100%;
+  padding-bottom: 120px;
+}
+
+/* --- 1. HERO SECTION (แก้เรื่องซ้อนทับ) --- */
+.hero-banner {
+  background-color: #f0fdf4;
+  background-image: radial-gradient(#378b43 0.5px, transparent 0.5px),
+    radial-gradient(#378b43 0.5px, #f0fdf4 0.5px);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+
+  /* ลบ Mask Image ออกก่อน เพราะบางทีทำให้ดูเหมือนซ้อนกัน */
+  /* mask-image: ...; (เอาออกเพื่อความชัวร์) */
+
+  padding: 80px 20px 60px; /* ลด Padding ล่าง */
+  text-align: center;
+  position: relative;
+  z-index: 10; /* ให้ Hero อยู่ชั้นบน */
+
+  /* ดันเนื้อหาด้านล่างออกไปให้ห่าง */
+  margin-bottom: 60px;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 11;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #14532d;
+  margin-bottom: 12px;
+  letter-spacing: -1px;
+  line-height: 1.2;
+}
+
+.hero-content h1 span {
+  display: inline-block;
+  background: linear-gradient(135deg, #166534 0%, #22c55e 50%, #f59e0b 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 4px rgba(34, 197, 94, 0.2));
+}
+
+.hero-content p {
+  font-size: 1.1rem;
+  color: #374151;
+  margin-bottom: 40px;
+}
+
+/* Search Box (ปรับให้ไม่ลอยกินที่) */
+.search-box-wrapper {
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 15px 35px -5px rgba(92, 156, 115, 0.15);
+  border-radius: var(--radius-pill);
+  padding: 10px;
+  max-width: 650px;
+  margin: 0 auto; /* จัดกึ่งกลางปกติ ไม่ใช้ margin-top เยอะเกิน */
+  display: flex;
+  transition: transform 0.3s;
+
+  /* สำคัญ: ให้กล่องค้นหาอยู่ภายใน Hero ชัดเจน */
+  position: relative;
+  z-index: 20;
+}
+
+.search-box-wrapper:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -5px rgba(92, 156, 115, 0.25);
+}
+
+.search-box-wrapper input {
+  flex: 1;
+  border: none;
+  padding: 0 20px;
   font-size: 1rem;
-  color: #333;
+  color: var(--text-dark);
+  outline: none;
+  background: transparent;
 }
 
 .search-btn {
-  background: #10b77e;
-  border: none;
-  width: 40px;
-  height: 40px;
-  border-radius: 6px;
+  width: 48px;
+  height: 48px;
+  background-color: var(--primary);
   color: white;
-  cursor: pointer;
+  border-radius: 50%;
   display: flex;
-  justify-content: center;
   align-items: center;
-  transition: background 0.2s;
+  justify-content: center;
 }
-
 .search-btn:hover {
-  background: #0d9668;
+  background-color: var(--primary-hover);
+}
+.search-btn:active {
+  transform: scale(0.9);
 }
 
-/* --- Sections Layout --- */
-.main-content {
-  padding-bottom: 4rem;
+/* --- 2. LAYOUT (แก้จุดที่ทำให้ซ้อน) --- */
+.content-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+
+  /* สำคัญมาก: ลบ margin ติดลบออก และเพิ่ม margin-top */
+  margin-top: 40px;
+  position: relative;
+  z-index: 5; /* เนื้อหาอยู่ชั้นล่างกว่า Hero */
 }
 
+.section-container {
+  margin-bottom: 70px;
+}
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 2.5rem 0 1.5rem 0;
+  margin-bottom: 24px;
 }
-
-.section-header h2 {
-  font-size: 1.25rem;
-  color: #1e293b;
+.section-title {
+  font-size: 1.5rem;
   font-weight: 600;
-}
-
-/* ลบขีดเส้นใต้ของลิงก์ในหัวข้อ (ปุ่มดูทั้งหมด) */
-.section-header a {
-  text-decoration: none;
-}
-.badge {
-  background: #10b77e;
-  color: white;
-  font-size: 0.75rem;
-  padding: 4px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-family: "Sarabun", sans-serif;
-  transition: background 0.2s;
-}
-
-.badge:hover {
-  background: #0d9668;
-}
-
-/* --- Categories Grid --- */
-.category-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 1rem;
-}
-
-.cat-card {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 1.5rem 1rem;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  cursor: pointer;
-  transition: all 0.2s;
-  min-height: 110px;
-}
-
-.cat-card:hover {
-  transform: translateY(-3px);
-  border-color: #10b77e;
-  box-shadow: 0 4px 12px rgba(16, 183, 126, 0.1);
-}
-
-.cat-card span {
-  font-size: 0.9rem;
-  color: #64748b;
-  font-weight: 500;
-}
-
-.cat-icon {
-  color: #0f172a;
+  color: var(--text-dark);
   display: flex;
   align-items: center;
-}
-
-/* --- Product Grid --- */
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 15px;
-}
-
-/* --- Product Card --- */
-.product-card {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 1rem;
-  text-align: center;
-  position: relative;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
-  transition: box-shadow 0.2s, transform 0.2s;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  height: 100%;
-}
-
-.product-card:hover {
-  box-shadow: 0 10px 20px -3px rgba(16, 183, 126, 0.15);
-  transform: translateY(-4px);
-  border-color: #10b77e;
-}
-
-.heart-icon {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  color: #ef4444;
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.8);
-  border-radius: 50%;
-  padding: 4px;
-  display: flex;
-}
-
-.product-card img {
-  width: 100%;
-  height: 120px;
-  object-fit: contain;
-  margin: 0.5rem 0;
-}
-
-.product-card h3 {
-  font-size: 1rem;
-  font-weight: 500;
-  margin-bottom: 1rem;
-  color: #1e293b;
-  line-height: 1.4rem;
-  height: 2.8rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* ปุ่ม Add Button */
-.add-btn {
-  margin-top: auto;
-  /* ✅ ใช้สีเขียวเดียวกับ Theme หลัก */
-  background: #10b77e !important;
-  color: white;
-  border: none;
-  width: 100%;
-  padding: 8px;
-  border-radius: 50px; /* ความมนของปุ่ม */
-  cursor: pointer;
-  font-family: "Sarabun", sans-serif;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  font-weight: 600;
-  transition: all 0.2s ease; /* เพิ่มความสมูทเวลาเอาเมาส์ชี้ */
-}
-
-/* เพิ่มลูกเล่นตอนเอาเมาส์ชี้ (Hover) ให้เข้มขึ้นนิดหน่อย หรือมีเงา */
-.add-btn:hover {
-  background: #0d9668 !important; /* สีเขียวที่เข้มขึ้นเล็กน้อย */
-  transform: translateY(-2px); /* ลอยขึ้นนิดนึงให้ดูมีมิติ */
-  box-shadow: 0 4px 6px rgba(16, 183, 126, 0.3); /* ใส่เงาสีเขียวจางๆ */
-}
-
-/* =========================================
-    Modal Popup Theme
-    ========================================= */
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2000;
-  backdrop-filter: blur(3px);
-}
-
-.modal-content {
-  background: white;
-  width: 90%;
-  max-width: 450px;
-  border-radius: 16px;
-  overflow: hidden;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-@keyframes modalPop {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.modal-header {
-  background-color: #10b77e;
-  color: white;
-  padding: 16px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.modal-header h3 {
-  margin: 0;
-  font-size: 1.1rem;
-  font-weight: 500;
-}
-
-.close-btn {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
-.close-btn:hover {
-  opacity: 0.8;
-}
-
-.modal-body {
-  padding: 20px;
-}
-
-.product-summary-card {
-  background-color: #f0fdf4;
-  border-radius: 12px;
-  padding: 10px 16px;
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
-  border: 1px solid #dcfce7;
-}
-
-.product-img-wrapper img {
-  width: 50px;
-  height: 50px;
-  object-fit: contain;
-  mix-blend-mode: multiply;
-}
-
-.product-info {
-  flex-grow: 1;
-  padding: 0 12px;
-}
-
-.product-info h4 {
-  margin: 0;
-  font-size: 1rem;
-  color: #333;
-}
-
-.quantity-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.quantity-controls button {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: none;
-  background-color: #10b77e;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.quantity-controls button:hover {
-  background-color: #0d9668;
-}
-
-.quantity-controls span {
-  min-width: 20px;
-  text-align: center;
-  font-weight: 600;
-  font-size: 1rem;
-  color: #333;
-}
-
-/* List Selection */
-.list-selection-container {
-  display: flex;
-  flex-direction: column;
   gap: 12px;
-  max-height: 280px;
-  overflow-y: auto;
-  padding-right: 6px;
+  margin: 0;
 }
 
-.list-selection-container::-webkit-scrollbar {
-  width: 4px;
-}
-.list-selection-container::-webkit-scrollbar-track {
-  background: #f1f5f9;
-  border-radius: 4px;
-}
-.list-selection-container::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border-radius: 4px;
-}
-
-.list-card-item {
-  display: flex;
-  align-items: center;
-  padding: 12px;
-  border: 1px solid #eee;
-  border-radius: 12px;
-  background: white;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.list-card-item:hover {
-  border-color: #10b77e;
-  background-color: #f0fdf4;
-  box-shadow: 0 2px 8px rgba(16, 183, 126, 0.15);
-  transform: translateY(-2px);
-}
-
-.list-icon-box {
-  width: 42px;
-  height: 42px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 14px;
-  background-color: #f1f5f9;
-  color: #64748b;
-}
-
-.list-card-item:hover .list-icon-box {
-  background-color: #dcfce7;
-  color: #10b77e;
-}
-
-.list-text {
-  display: flex;
-  flex-direction: column;
-}
-
-.list-name {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #333;
-}
-
-.list-count {
-  font-size: 0.8rem;
-  color: #888;
-  margin-top: 2px;
-}
-
-/* Create New List */
-.create-new-list-area {
-  margin-top: 8px;
-  border-top: 1px dashed #ddd;
-  padding-top: 12px;
-}
-
-.btn-start-create {
-  width: 100%;
-  background: transparent;
-  border: 1px dashed #ccc;
-  color: #666;
-  padding: 10px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  cursor: pointer;
-  font-family: "Sarabun", sans-serif;
+.btn-view-all {
+  background-color: var(--primary);
+  color: white;
+  padding: 8px 20px;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
   font-weight: 500;
-  transition: all 0.2s;
+  box-shadow: 0 2px 10px rgba(92, 156, 115, 0.2);
+}
+.btn-view-all:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(92, 156, 115, 0.3);
+}
+.btn-view-all:active {
+  transform: scale(0.95);
 }
 
-.btn-start-create:hover {
-  border-color: #10b77e;
-  color: #10b77e;
-  background-color: #f0fdf4;
-}
-
-.input-new-list-group {
+/* --- 3. CATEGORIES (คละสี) --- */
+/* ค้นหา .category-scroll แล้วแก้เป็นตัวนี้ครับ */
+.category-scroll {
   display: flex;
-  gap: 8px;
-  align-items: center;
-}
-
-.input-new-list-group input {
-  flex-grow: 1;
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  outline: none;
-  font-family: "Sarabun", sans-serif;
-}
-
-.input-new-list-group input:focus {
-  border-color: #10b77e;
-}
-
-.btn-confirm {
-  background-color: #10b77e;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 600;
-  white-space: nowrap;
-}
-.btn-confirm:hover {
-  background-color: #0d9668;
-}
-
-.btn-cancel {
-  background-color: #f1f5f9;
-  color: #64748b;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  white-space: nowrap;
-}
-
-.btn-cancel:hover {
-  background-color: #e2e8f0;
-}
-
-.action-icon {
-  margin-left: auto;
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #f1f5f9;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.list-card-item:hover .action-icon {
-  background-color: #e2e8f0;
-  transform: scale(1.1);
-}
-
-.action-icon.success {
-  background-color: #10b77e;
-  color: white;
-  transform: scale(1.1);
-  box-shadow: 0 0 10px rgba(16, 183, 126, 0.4);
-}
-
-.note-text {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 10px;
-  margin-left: 4px;
-  font-size: 0.75rem;
-  color: #94a3b8;
-  background-color: transparent;
-  border: none;
-  padding: 0;
-}
-
-.note-text span {
-  font-weight: 400;
-}
-
-/* Slider */
-.slider-wrapper {
-  position: relative;
-  width: 100%;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-.product-scroll-container {
-  display: flex;
-  gap: 0.6rem;
+  gap: 16px;
   overflow-x: auto;
-  scroll-behavior: smooth;
-  padding: 15px 5px;
+
+  /* ✨ แก้ตรงนี้: เพิ่ม padding ด้านบนและล่างให้กว้างขึ้น 
+     เพื่อให้มีที่ว่างตอนปุ่มลอยขึ้น (Hover) และเงาไม่โดนตัด */
+  padding: 20px 5px;
+
+  /* ซ่อน Scrollbar แต่ยังเลื่อนได้ */
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 
-.product-scroll-container::-webkit-scrollbar {
+.category-scroll::-webkit-scrollbar {
   display: none;
 }
 
-.product-card.min-w-card {
-  min-width: 200px;
-  max-width: 200px;
-  flex-shrink: 0;
+.cat-item {
+  min-width: 100px;
+  background: white;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-card);
+}
+.cat-item:hover {
+  transform: translateY(-4px);
 }
 
-.scroll-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: rgba(255, 255, 255, 0.95);
-  border: 1px solid #e2e8f0;
-  border-radius: 50%;
-  width: 44px;
-  height: 44px;
+/* สุ่มสี */
+.cat-item:nth-child(1n) {
+  background-color: #fff7ed;
+  color: #ea580c;
+}
+.cat-item:nth-child(1n):hover {
+  border-color: #fdba74;
+  background-color: #ffedd5;
+}
+.cat-item:nth-child(2n) {
+  background-color: #eff6ff;
+  color: #2563eb;
+}
+.cat-item:nth-child(2n):hover {
+  border-color: #93c5fd;
+  background-color: #dbeafe;
+}
+.cat-item:nth-child(3n) {
+  background-color: #f0fdf4;
+  color: #16a34a;
+}
+.cat-item:nth-child(3n):hover {
+  border-color: #86efac;
+  background-color: #dcfce7;
+}
+.cat-item:nth-child(4n) {
+  background-color: #fdf2f8;
+  color: #db2777;
+}
+.cat-item:nth-child(4n):hover {
+  border-color: #f9a8d4;
+  background-color: #fce7f3;
+}
+.cat-item:nth-child(5n) {
+  background-color: #faf5ff;
+  color: #9333ea;
+}
+.cat-item:nth-child(5n):hover {
+  border-color: #d8b4fe;
+  background-color: #f3e8ff;
+}
+
+.cat-text,
+.cat-icon-box {
+  color: inherit;
+}
+.cat-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* --- 4. PRODUCT CARDS --- */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 24px;
+}
+
+.product-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid #f0fdf4;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05),
+    0 8px 10px -6px rgba(0, 0, 0, 0.01);
+  border-color: #dcfce7;
+}
+
+.product-img-wrap {
+  width: 100%;
+  height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  z-index: 20;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+.product-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.4s ease;
+  filter: none;
+}
+.product-card:hover .product-img-wrap img {
+  transform: scale(1.08);
+}
+
+.product-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.product-info h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+  text-align: center;
+  margin: 15px 0 25px;
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 3.2em;
+}
+
+.fav-btn {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: white;
+  border: 1px solid #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d1d5db;
+  z-index: 5;
   transition: all 0.2s;
-  color: #333;
+}
+.fav-btn:hover {
+  transform: scale(1.1);
+  border-color: #fecaca;
+  color: #ef4444;
+}
+.fav-btn.active {
+  color: #ef4444;
+  border-color: #fecaca;
+  background: #fef2f2;
 }
 
-.scroll-btn:hover {
-  background-color: #10b77e;
-  color: white;
-  border-color: #10b77e;
-  transform: translateY(-50%) scale(1.1);
+/* ปุ่มเพิ่ม */
+.btn-add-cart {
+  width: 100%;
+  padding: 14px;
+  background-color: var(--primary);
+  color: white !important;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: auto;
+  box-shadow: 0 4px 10px rgba(92, 156, 115, 0.15);
+}
+.btn-add-cart:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(92, 156, 115, 0.3);
+}
+.btn-add-cart:active {
+  transform: scale(0.96);
+  box-shadow: none;
 }
 
-.scroll-btn.left {
-  left: -60px;
-}
-.scroll-btn.right {
-  right: -60px;
+/* Mobile */
+@media (max-width: 768px) {
+  .hero-banner {
+    padding: 60px 20px 40px;
+    margin-bottom: 40px;
+  }
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+
+  /* แก้ให้มือถือไม่ซ้อน */
+  .content-wrapper {
+    margin-top: 20px;
+  }
+
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+  .product-card {
+    padding: 12px;
+    border-radius: 16px;
+  }
+  .product-img-wrap {
+    height: 130px;
+  }
+  .btn-add-cart {
+    padding: 10px;
+    font-size: 0.9rem;
+    border-radius: 12px;
+  }
 }

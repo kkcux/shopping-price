@@ -10,7 +10,7 @@ import {
 
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
-import "./lists-edit.css";
+import "./ListsEdit.css";
 
 // ===== ข้อมูลจริง =====
 import productsData from "../../data/bigC/big_c.json";

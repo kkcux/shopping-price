@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { ChevronLeft, Check, X, Trash2 } from "lucide-react";
+import { 
+  ChevronLeft, 
+  Check, 
+  Trash2, 
+  Plus, 
+  Minus,
+  Save
+} from "lucide-react"; // ✅ นำเข้าไอคอนที่ต้องใช้
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
-import "./lists-edit.css";
+import "./ListsEdit.css";
 
-export default function EditMyList() {
+export default function ListsEdit() {
   const navigate = useNavigate();
   const { id } = useParams();
   
@@ -57,18 +64,15 @@ export default function EditMyList() {
   };
 
   const handleSelectFromCatalog = (product) => {
-    // เช็คว่ามีสินค้านี้ในลิสต์หรือยัง
-    const existingIndex = items.findIndex((item) => item.name === product.name); // เช็คจากชื่อหรือ ID
+    const existingIndex = items.findIndex((item) => item.name === product.name); 
     
     if (existingIndex !== -1) {
-      // ถ้ามีแล้ว ให้บวกจำนวนเพิ่ม
       setItems((prev) => {
         const next = [...prev];
         next[existingIndex].qty += product.qty;
         return next;
       });
     } else {
-      // ถ้ายังไม่มี ให้เพิ่มใหม่
       setItems((prev) => [...prev, { ...product }]);
     }
   };
@@ -100,7 +104,7 @@ export default function EditMyList() {
       <Navbar />
 
       <main className="le-page">
-        {/* Header Section (Full Width) */}
+        {/* Header Section */}
         <section className="le-header-section">
           <div className="le-header-inner">
             <div className="le-topLeft">
@@ -128,11 +132,10 @@ export default function EditMyList() {
             />
           </div>
 
-          {/* ✅ ส่วน Catalog (เพิ่มกลับมาแล้ว) */}
+          {/* ✅ ส่วน Catalog (เพิ่มสินค้า) */}
           <section className="le-box">
             <div className="le-boxHead">
               <div className="le-boxTitle">เลือกรายการสินค้าเพิ่มเติม</div>
-              <span className="le-pill">ดูทั้งหมด</span>
             </div>
             <div className="le-cards">
               {catalog.map((p) => (
@@ -142,19 +145,25 @@ export default function EditMyList() {
                   </div>
                   <div className="le-cardName">{p.name}</div>
                   <div className="le-qty">
-                    <button onClick={() => decreaseCatalogQty(p.id)}>−</button>
+                    <button onClick={() => decreaseCatalogQty(p.id)}>
+                      <Minus size={14} strokeWidth={3} />
+                    </button>
                     <span>{p.qty}</span>
-                    <button onClick={() => increaseCatalogQty(p.id)}>+</button>
+                    <button onClick={() => increaseCatalogQty(p.id)}>
+                      <Plus size={14} strokeWidth={3} />
+                    </button>
                   </div>
+                  {/* ✅ เปลี่ยนปุ่มเลือกเป็นไอคอน + เพิ่ม */}
                   <button className="le-select" onClick={() => handleSelectFromCatalog(p)}>
-                    เลือก
+                    <Plus size={16} strokeWidth={3} style={{ marginRight: 4 }} /> 
+                    เพิ่ม
                   </button>
                 </div>
               ))}
             </div>
           </section>
 
-          {/* ส่วนรายการสินค้าที่มีอยู่แล้ว */}
+          {/* ✅ ส่วนรายการสินค้าที่มีอยู่แล้ว (In List) */}
           <section className="le-box">
             <div className="le-boxHead">
               <div className="le-boxTitle">รายการสินค้าในลิสต์ ({items.length})</div>
@@ -164,16 +173,28 @@ export default function EditMyList() {
               <div className="le-cards">
                 {items.map((item, idx) => (
                   <div key={idx} className="le-card">
+                    
+                    {/* ✅ ปุ่มลบมุมขวาบน (ใช้ไอคอนถังขยะ) */}
                     <button className="le-remove" onClick={() => removeItem(idx)}>
-                      <X size={16} strokeWidth={3} />
+                      <Trash2 size={14} />
                     </button>
+
                     <div className="le-imgWrap">
                       <img src={item.img} alt={item.name} />
                     </div>
                     <div className="le-cardName">{item.name}</div>
+                    
+                    {/* ✅ ปุ่มเพิ่มลดจำนวน (ใช้ไอคอน) */}
                     <div className="le-qty">
-                      
+                      <button onClick={() => updateQty(idx, -1)}>
+                        <Minus size={14} strokeWidth={3} />
+                      </button>
+                      <span>{item.qty}</span>
+                      <button onClick={() => updateQty(idx, 1)}>
+                        <Plus size={14} strokeWidth={3} />
+                      </button>
                     </div>
+
                   </div>
                 ))}
               </div>
@@ -186,7 +207,7 @@ export default function EditMyList() {
 
           <div className="le-saveWrap">
             <button className="le-saveBtn" onClick={handleSave}>
-              <Check size={20} strokeWidth={3} style={{ marginRight: 8 }} />
+              <Save size={20} style={{ marginRight: 8 }} />
               บันทึกการแก้ไข
             </button>
           </div>
