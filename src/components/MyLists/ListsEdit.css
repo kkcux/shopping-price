@@ -73,7 +73,6 @@
 .le-back-btn:hover {
   background-color: #e2e8f0;
   color: #10b77e; /* Hover แล้วเป็นสีธีม */
-  border-color: #10b77e;
 }
 
 .le-title {
@@ -509,4 +508,81 @@
   .le-header-inner {
     padding: 0 20px;
   }
+}
+
+/* =========================================
+   ส่วนที่เพิ่ม: แก้ไข "เลือกสินค้าแนะนำ" ให้เป็นแนวนอน
+   ========================================= */
+
+/* คุมพื้นที่ Slider */
+.slider-wrapper {
+  position: relative;
+  width: 100%;
+  margin-top: 15px;
+}
+
+/* ✨ จุดสำคัญ: บังคับให้การ์ดเรียงแถวเดียว แนวนอน และไม่ตกบรรทัด */
+.product-scroll-container {
+  display: flex !important; /* บังคับเป็นแนวนอน */
+  flex-direction: row !important; /* เรียงซ้ายไปขวา */
+  flex-wrap: nowrap !important; /* ⚠️ ห้ามตกบรรทัดเด็ดขาด เพื่อกันการกองเป็นแนวตั้ง */
+  overflow-x: auto; /* เปิดการเลื่อนแนวนอน */
+  scrollbar-width: none; /* ซ่อนแถบเลื่อน */
+}
+
+.product-scroll-container::-webkit-scrollbar {
+  display: none; /* ซ่อน scrollbar สำหรับ Chrome/Safari */
+}
+
+/* ล็อคขนาดการ์ดสินค้าแนะนำให้คงที่และเท่ากันทุกใบ */
+.product-card.min-w-card {
+  min-width: 240px !important; /* ขยายให้กว้างขึ้นนิดนึงดูเต็มตา */
+  height: 420px;
+  background: #ffffff;
+  border-radius: 24px; /* มนขึ้นให้ดูพรีเมียม */
+  padding: 24px;
+  border: 1px solid #f1f5f9; /* ใช้สีขอบที่อ่อนลง */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); /* เงาบางๆ แบบมีระดับ */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.product-card.min-w-card:hover {
+  transform: translateY(-8px); /* ลอยสูงขึ้นตอน Hover */
+  border-color: #10b77e;
+  box-shadow: 0 12px 30px rgba(16, 183, 126, 0.15); /* เงาสีเขียวจางๆ */
+}
+
+/* ล็อคชื่อสินค้า 2 บรรทัด เพื่อให้ปุ่มทุกใบอยู่ระดับเดียวกันเป๊ะ */
+.product-card.min-w-card h3 {
+  height: 2.8em; /* ✨ ล็อคความสูงชื่อสินค้า */
+  line-height: 1.4; /* ระยะห่างบรรทัด */
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* แสดงชื่อแค่ 2 บรรทัดพอ */
+  -webkit-box-orient: vertical;
+  overflow: hidden; /* ตัดส่วนที่เกินทิ้ง */
+}
+
+/* ปุ่มเลื่อน (Chevron) */
+.scroll-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.scroll-btn.left {
+  left: -20px;
+}
+.scroll-btn.right {
+  right: -20px;
 }

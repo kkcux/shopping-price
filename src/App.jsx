@@ -22,41 +22,43 @@ function App() {
   return (
     <div className="App">
       <Routes>
-        
-        {/* หน้า Home (path "/") */}
-        <Route path="/" element={
-          <>
-            <Navbar />
-            <Home />
-            <Footer />
-          </>
-        } />
 
-        {/* Auth */}
+        {/* ===== HOME ===== */}
+        <Route
+          path="/"
+          element={
+            <>
+              <Navbar />
+              <Home />
+              <Footer />
+            </>
+          }
+        />
+
+        {/* ===== AUTH ===== */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
 
-        {/* Features */}
+        {/* ===== FEATURES ===== */}
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/profile" element={<Profile />} />
 
-        {/* ===== MyLists Routes (เรียงลำดับใหม่เพื่อความถูกต้อง) ===== */}
-        
-        {/* 1. หน้าหลัก แสดงรายการทั้งหมด */}
+        {/* ===== MYLISTS ===== */}
+
+        {/* 1. หน้ารวมรายการ */}
         <Route path="/mylists" element={<MyLists />} />
 
-        {/* 2. หน้าสร้างรายการใหม่ (Static Path ต้องมาก่อน Dynamic Path) */}
+        {/* 2. สร้างรายการใหม่ (static มาก่อน dynamic) */}
         <Route path="/mylists/create" element={<CreateMyList />} />
 
-        {/* 3. หน้าผลลัพธ์การเปรียบเทียบ (Static Path) */}
-        <Route path="/mylists/mylists3" element={<MyLists3 />} />
-
-        {/* 4. หน้าแก้ไขรายการ (แก้ Path ให้ตรงกับ navigate ใน MyLists2) */}
-        {/* จากเดิม /mylists/:id/edit เปลี่ยนเป็น /mylists/edit/:id */}
+        {/* 3. แก้ไขรายการ */}
         <Route path="/mylists/edit/:id" element={<ListsEdit />} />
 
-        {/* 5. หน้ารายละเอียด (Dynamic Path :id ไว้ท้ายสุดของกลุ่มนี้) */}
+        {/* 4. หน้ารายละเอียดรายการ (MyLists2) */}
         <Route path="/mylists/:id" element={<MyLists2 />} />
+
+        {/* 5. หน้าเปรียบเทียบราคา (MyLists3) ✅ ใช้ id */}
+        <Route path="/mylists3/:id" element={<MyLists3 />} />
 
       </Routes>
     </div>
