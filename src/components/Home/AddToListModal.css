@@ -7,246 +7,203 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(15, 23, 42, 0.4);
-  backdrop-filter: blur(8px);
+  background-color: rgba(0, 0, 0, 0.5); /* สีดำจาง */
+  backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  animation: fadeIn 0.3s ease;
+  animation: fadeIn 0.2s ease;
 }
 
-/* Modal Content */
+/* Modal Box */
 .modal-content {
   background: #ffffff;
   width: 90%;
   max-width: 420px;
-  border-radius: 28px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  overflow: hidden;
+  border-radius: 20px; /* โค้งมน */
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  overflow: hidden; /* เพื่อให้ Header สีเขียวเข้ามุมโค้ง */
   display: flex;
   flex-direction: column;
   font-family: "Prompt", sans-serif;
   animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Header */
-.modal-header {
-  padding: 24px 28px 16px;
+/* --- Header สีเขียว (ตามรูปตัวอย่าง) --- */
+.modal-header-green {
+  background-color: #5c9c73; /* สีเขียว Theme */
+  padding: 18px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-.header-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.modal-header h3 {
+.modal-header-green h3 {
   margin: 0;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #1e293b;
-  letter-spacing: -0.5px;
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
-/* ปุ่มปิด: เขียวอ่อน */
-.close-btn {
-  background: #f0fdf4;
-  border: 1px solid #dcfce7;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
+/* ปุ่มปิดสีขาวโปร่งใส */
+.close-btn-white {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  color: #166534;
-  transition: all 0.2s;
+  opacity: 0.8;
+  transition: opacity 0.2s;
 }
 
-.close-btn:hover {
-  background: #fee2e2;
-  border-color: #fecaca;
-  color: #ef4444;
-  transform: rotate(90deg);
+.close-btn-white:hover {
+  opacity: 1;
 }
 
 /* Body */
 .modal-body {
-  padding: 0 28px 28px;
-  overflow-y: auto;
-  max-height: 75vh;
-}
-
-/* Product Hero Card */
-.product-hero-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 16px;
   padding: 24px;
-  background: #f8fafc;
-  border-radius: 20px;
-  border: 1px solid #e2e8f0;
-  margin-bottom: 28px;
 }
 
-.product-hero-img {
-  width: 100px;
-  height: 100px;
-  background: white;
+/* --- Product Row Card (แนวนอน) --- */
+.product-row-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #f9fafb; /* พื้นหลังเทาอ่อนๆ */
+  border: 1px solid #f3f4f6;
   border-radius: 16px;
-  padding: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.prod-img {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+  background: white;
+  border-radius: 8px;
+  padding: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e5e7eb;
 }
 
-.product-hero-img img {
+.prod-img img {
   width: 100%;
   height: 100%;
   object-fit: contain;
   mix-blend-mode: multiply;
 }
 
-.product-hero-info {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-}
-
-.product-hero-info h4 {
-  margin: 0;
-  font-size: 1.1rem;
-  color: #0f172a;
+.prod-name {
+  flex: 1; /* ขยายเต็มพื้นที่ */
   font-weight: 600;
+  color: #1f2937;
+  font-size: 1rem;
   line-height: 1.4;
+  /* ตัดคำยาวๆ */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-/* ✨ Quantity Controls (ฉบับปรับปรุง: เล็ก กะทัดรัด สวย) */
-.quantity-wrapper {
+/* --- Quantity Controls (ปุ่มกลม) --- */
+.qty-control-group {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-top: 8px;
-  background: white;
-  padding: 4px 12px; /* บางลง */
-  border-radius: 50px;
-  border: 1px solid #dcfce7;
-  box-shadow: 0 2px 4px -1px rgba(92, 156, 115, 0.1);
-  width: fit-content;
+  gap: 10px;
 }
 
-.qty-label {
-  font-size: 0.85rem;
-  color: #64748b;
-  font-weight: 500;
-}
-
-.quantity-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* ปุ่ม - และ + (ขนาด 26px ตามที่ขอ) */
-.quantity-controls button {
-  width: 26px;
-  height: 26px;
+.qty-control-group button {
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  border: 1px solid #86efac;
-  background: #ffffff;
-  color: #166534;
+  border: 1px solid #e5e7eb; /* ขอบเทาอ่อน */
+  background: white;
+  color: #374151;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s;
-  padding: 0;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-/* ปรับขนาด icon ในปุ่มให้พอดี */
-.quantity-controls button svg {
-  width: 14px;
-  height: 14px;
-}
-
-.quantity-controls button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  border-color: #e2e8f0;
-  color: #cbd5e1;
-}
-
-.quantity-controls button:hover:not(:disabled) {
-  background: #5c9c73;
+.qty-control-group button:hover:not(:disabled) {
   border-color: #5c9c73;
-  color: white;
-  transform: scale(1.1);
+  color: #5c9c73;
+  background: #f0fdf4;
 }
 
-.qty-value {
-  width: 20px;
-  text-align: center;
+.qty-control-group button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.qty-control-group span {
   font-weight: 600;
-  font-size: 1rem;
-  color: #5c9c73;
+  font-size: 1.1rem;
+  color: #1f2937;
+  min-width: 20px;
+  text-align: center;
+}
+
+/* Info Note */
+.info-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #d97706; /* สีเหลืองส้ม */
+  font-size: 0.85rem;
+  margin-bottom: 24px;
 }
 
 /* List Selection */
-.list-section-title {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #94a3b8;
-  margin-bottom: 16px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
 .list-selection-container {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: 220px;
+  max-height: 250px;
   overflow-y: auto;
-  padding: 4px;
 }
 
+.empty-state {
+  text-align: center;
+  color: #9ca3af;
+  padding: 20px;
+}
+
+/* List Item */
 .list-card-item {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 16px;
+  padding: 12px 16px;
   background: white;
-  border: 1px solid #f1f5f9;
-  border-radius: 18px;
+  border: 1px solid #f3f4f6; /* เส้นบางๆ */
+  border-radius: 12px;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.2s;
 }
 
 .list-card-item:hover {
-  transform: translateY(-3px);
   border-color: #5c9c73;
-  background: #f0fdf4;
-  box-shadow: 0 10px 20px -5px rgba(92, 156, 115, 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .list-icon-box {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
   background: #dcfce7 !important;
   color: #166534 !important;
 }
@@ -255,79 +212,53 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 2px;
 }
 .list-name {
   font-weight: 600;
-  color: #334155;
-  font-size: 1rem;
+  color: #374155;
 }
 .list-count {
-  font-size: 0.85rem;
-  color: #94a3b8;
+  font-size: 0.8rem;
+  color: #9ca3af;
 }
 
-/* ปุ่ม Action ท้ายรายการ: เขียวมิ้นต์ */
 .action-arrow {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: #dcfce7;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #166534;
-  transition: all 0.2s;
+  color: #d1d5db;
 }
-
 .list-card-item:hover .action-arrow {
-  background: #5c9c73;
-  color: white;
-  transform: scale(1.1);
+  color: #5c9c73;
 }
 
-/* Selected State */
-.list-card-item.selected {
-  background-color: #f0fdf4;
-  border-color: #5c9c73;
-}
-.list-card-item.selected .action-arrow {
-  background: #22c55e;
-  color: white;
-}
-
-/* Create New List Area */
+/* Create New Button */
 .create-new-list-area {
   margin-top: 24px;
   padding-top: 24px;
-  border-top: 1px solid #f1f5f9;
+  border-top: 1px dashed #e5e7eb;
 }
 
-/* ปุ่มสร้างใหม่: เส้นประสีเขียว */
 .btn-start-create {
   width: 100%;
-  padding: 16px;
+  padding: 14px;
+  background: white;
+  border: 1px dashed #9ca3af;
+  border-radius: 12px;
+  color: #6b7280;
+  font-size: 0.95rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  background: #f0fdf4;
-  border: 2px dashed #86efac;
-  border-radius: 16px;
-  color: #166534;
-  font-weight: 600;
-  font-family: "Prompt", sans-serif;
+  gap: 8px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .btn-start-create:hover {
   border-color: #5c9c73;
-  background-color: #dcfce7;
-  transform: translateY(-2px);
+  color: #5c9c73;
+  background: #f0fdf4;
 }
 
-/* Animations */
+/* Animation */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -344,26 +275,5 @@
   to {
     transform: scale(1);
     opacity: 1;
-  }
-}
-
-/* Mobile */
-@media (max-width: 480px) {
-  .modal-content {
-    width: 100%;
-    max-width: 100%;
-    border-radius: 24px 24px 0 0;
-    position: absolute;
-    bottom: 0;
-    margin: 0;
-    animation: slideUpMobile 0.3s ease-out;
-  }
-  @keyframes slideUpMobile {
-    from {
-      transform: translateY(100%);
-    }
-    to {
-      transform: translateY(0);
-    }
   }
 }
