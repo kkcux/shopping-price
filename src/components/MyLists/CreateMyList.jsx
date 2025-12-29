@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; // ✅ เพิ่ม useLocation
 import {
   Check,
   AlertCircle,
@@ -17,7 +17,11 @@ import productsData from "../../data/bigC/big_c.json";
 
 export default function CreateMyList() {
   const navigate = useNavigate();
+  const location = useLocation(); // ✅ เรียกใช้ hook
   const scrollRef = useRef(null);
+
+  // ✅ รับข้อมูลสินค้าเริ่มต้นที่ส่งมาจาก Modal (ถ้ามี)
+  const initialItem = location.state?.initialItem;
 
   /* ================= STATE ================= */
   const [showConfirmModal, setShowConfirmModal] = useState(false);
@@ -45,6 +49,25 @@ export default function CreateMyList() {
     window.scrollTo(0, 0);
   }, []);
 
+  // ✅ EFFECT ใหม่: เช็คว่ามีสินค้าส่งมาจากหน้าแรกไหม ถ้ามีให้เพิ่มเลย
+  useEffect(() => {
+    if (initialItem) {
+      setSelected((prev) => {
+        // เช็คกันซ้ำ (เผื่อมีอยู่แล้วใน draft)
+        const exists = prev.find((i) => i.id === initialItem.id);
+        if (exists) {
+            // ถ้ามีอยู่แล้ว อาจจะบวกจำนวนเพิ่ม หรือไม่ทำอะไรก็ได้ (ที่นี่เลือกไม่ทำอะไร)
+            return prev; 
+        }
+        // ถ้ายังไม่มี ให้เพิ่มต่อท้าย
+        return [...prev, initialItem];
+      });
+
+      // ล้าง state ของ location เพื่อไม่ให้เพิ่มซ้ำเวลากด refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [initialItem]);
+
   useEffect(() => {
     localStorage.setItem("myListDraft_Name", listName);
   }, [listName]);
@@ -56,11 +79,11 @@ export default function CreateMyList() {
   /* ================= DATA ================= */
   const catalog = productsData.slice(0, 10).map((p, index) => ({
     id: `bigc-${index}`,
-    name: p.data,      // ชื่อสินค้า
-    img: p.image,      // ✅ รูปสินค้า (สำคัญมาก)
+    name: p.data,      
+    img: p.image,      
   }));
 
-  /* ================= SCROLL (เหมือน Home) ================= */
+  /* ================= SCROLL ================= */
   const scroll = (ref, direction) => {
     const { current } = ref;
     if (current) {
@@ -98,7 +121,6 @@ export default function CreateMyList() {
         )
       );
     } else {
-      // ✅ เก็บ img ไปด้วย
       setSelected((prev) => [...prev, { ...product, qty }]);
     }
   };
@@ -219,7 +241,7 @@ export default function CreateMyList() {
             </div>
           </section>
 
-          {/* ===== SELECTED LIST (รูปไม่หายแล้ว) ===== */}
+          {/* ===== SELECTED LIST ===== */}
           <section className="le-box">
             <div className="le-boxHead">
               <div className="le-boxTitle">
@@ -242,7 +264,6 @@ export default function CreateMyList() {
                       ✕
                     </button>
 
-                    {/* ✅ รูปอยู่ตรงนี้ */}
                     <div className="le-imgWrap">
                       <img src={p.img} alt={p.name} />
                     </div>
