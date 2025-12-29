@@ -355,14 +355,16 @@ button {
   font-size: 1rem;
   font-weight: 600;
   color: #374151;
-  text-align: center;
-  margin: 15px 0 25px;
-  line-height: 1.6;
+  text-align: left; /* หรือ center ตามดีไซน์คุณ */
+  margin: 15px 0;
+  line-height: 1.5;
+
+  /* ✨ ส่วนสำคัญ: ล็อคความสูงไว้ที่ 2 บรรทัด */
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 2; /* แสดงแค่ 2 บรรทัด */
   -webkit-box-orient: vertical;
   overflow: hidden;
-  height: 3.2em;
+  height: 3em; /* บังคับความสูงให้เท่ากันทุกการ์ด (1.5 line-height * 2) */
 }
 
 .fav-btn {
