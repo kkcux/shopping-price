@@ -1,142 +1,118 @@
-/* Footer.css - Updated: Gradient Background + Black Text */
-
 .footer {
-  /* ❌ ลบอันเก่า: background-color: #10b77e; */
-
-  /* ✅ อันใหม่: ไล่สีจากเขียวเดิม ลงไปเขียวเข้มขึ้นนิดนึง (ดูมีมิติ) */
-  background: linear-gradient(180deg, #10b77e 0%, #0d9668 100%);
-
-  color: #000000 !important; /* บังคับตัวหนังสือหลักสีดำ */
-  padding-top: 3rem;
-  padding-bottom: 1.5rem;
-  margin-top: 2rem;
+  /* ✨ เปลี่ยนมาใช้สีเขียวเข้ม Deep Forest เพื่อความหรูหราและดูนิ่งขึ้น */
+  background: #062c1e;
+  color: #ffffff !important;
+  padding: 80px 0 40px 0; /* เพิ่มพื้นที่ด้านบนและล่างให้ดูโปร่ง */
+  margin-top: 100px;
   width: 100%;
-  font-family: "Sarabun", sans-serif;
 }
 
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
 }
 
 .footer-grid {
   display: grid;
-  grid-template-columns: 1.5fr 0.8fr 0.8fr 0.8fr;
-  gap: 1rem;
-  padding-bottom: 0.5rem;
+  /* ✨ ปรับสัดส่วน 4 คอลัมน์ให้กระจายตัวเต็มหน้าจอ ไม่ไปกองทางซ้าย */
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 60px;
+  padding-bottom: 3rem;
 }
 
 .footer-col-brand {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding-right: 20px;
 }
 
 .brand {
   display: flex;
   align-items: center;
   gap: 12px;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   font-weight: 800;
-  letter-spacing: -0.5px;
-  margin-bottom: 1rem;
-
-  /* ✅ บังคับสีดำ (รวมถึงถ้ามันเป็น Link หรือ H1) */
-  color: #000000 !important;
-}
-
-/* ✅ แก้โลโก้ PriceFinder ที่เป็น Link ไม่ให้ขาว */
-.brand a,
-.brand h1,
-.brand span {
-  color: #000000 !important;
-  text-decoration: none;
+  letter-spacing: -0.8px;
+  margin-bottom: 1.2rem;
+  color: #ffffff !important;
 }
 
 .logo-circle-footer {
-  background: #000000; /* พื้นหลังวงกลมสีดำ */
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  background: #000000;
+  border-radius: 12px; /* ทรง Squircle ให้เข้ากับ Navbar */
+  width: 44px;
+  height: 44px;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #10b77e; /* ไอคอนสีเขียว */
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* เพิ่มเงาให้วงกลมนิดนึง */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .footer-desc {
-  font-size: 0.9rem;
-  line-height: 1.6;
-  font-weight: 500;
-  color: #000000 !important; /* บังคับดำ */
-  width: 100%;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  font-weight: 400;
+  /* ✨ ใช้สีขาวโปร่งแสงเพื่อสร้าง Hierarchy ให้หัวข้อเด่นกว่าเนื้อหา */
+  color: rgba(255, 255, 255, 0.7) !important;
+  max-width: 320px;
 }
 
 .footer-col h3 {
-  color: #000000 !important; /* บังคับดำ */
+  /* ✨ ใช้สีเขียวแบรนด์เน้นหัวข้อให้ดูมีจุดสนใจ */
+  color: #10b77e !important;
   font-size: 1.1rem;
   font-weight: 700;
-  margin-bottom: 1.5rem;
-  min-height: 27px;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.1); /* ใส่เงาขาวจางๆ ให้ตัวหนังสือดำดูนูนขึ้น */
-}
-
-.invisible-header {
-  visibility: hidden;
-  pointer-events: none;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-bottom: 1.8rem;
 }
 
 .footer-col ul {
   padding: 0;
   margin: 0;
+  list-style: none;
 }
 
 .footer-col ul li {
-  list-style: none;
-  margin-bottom: 0.8rem;
+  margin-bottom: 12px;
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 400;
   cursor: pointer;
-  transition: all 0.2s;
-  color: #000000 !important; /* บังคับดำ */
-  display: flex;
-  align-items: center;
+  transition: all 0.3s ease;
+  color: rgba(255, 255, 255, 0.8) !important;
 }
 
+/* ✨ เอฟเฟกต์เวลาชี้เมนู ให้ดู Interactive */
 .footer-col ul li:hover {
-  color: #000000 !important;
-  text-decoration: underline;
-  transform: translateX(3px); /* ขยับขวานิดนึงตอนชี้ */
+  color: #ffffff !important;
+  transform: translateX(8px);
 }
 
-.footer-divider {
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  width: 100%;
+.footer-bottom {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 60px;
+  padding-top: 30px;
   text-align: center;
   font-size: 0.85rem;
-
-  /* ✅ บังคับสีดำ สำหรับ Copyright ด้านล่างสุด */
-  color: #000000 !important;
-  opacity: 1 !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+  letter-spacing: 0.5px;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
+/* การจัดการหน้าจอขนาดเล็ก */
+@media (max-width: 900px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+}
+
+@media (max-width: 600px) {
   .footer-grid {
     grid-template-columns: 1fr;
     text-align: center;
-    gap: 2rem;
   }
   .footer-col-brand {
     align-items: center;
-    padding-right: 0;
-  }
-  .invisible-header {
-    display: none;
   }
 }
