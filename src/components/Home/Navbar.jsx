@@ -1,45 +1,38 @@
 import React from 'react';
 import { ShoppingCart, Bell, ArrowLeft } from 'lucide-react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom'; // ✅ ใช้ NavLink
 import './Navbar.css';
 
 function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // เช็คว่าตอนนี้อยู่หน้า Login หรือ Register หรือไม่
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
 
-  // กำหนดข้อความและลิงก์ของปุ่มย้อนกลับตามหน้า
   const getBackBtnConfig = () => {
     if (location.pathname === '/register') {
       return { text: 'กลับหน้าเข้าสู่ระบบ', path: '/login' };
     }
-    // กรณีหน้า Login หรือหน้าอื่นๆ ให้กลับหน้าหลัก
     return { text: 'กลับหน้าหลัก', path: '/' };
   };
 
   const backConfig = getBackBtnConfig();
 
-  // --- กรณีเป็นหน้า Login/Register (แสดงแบบ Simple) ---
+  // --- กรณีหน้า Login/Register ---
   if (isAuthPage) {
     return (
       <nav className="navbar">
-        <div className="container nav-content">
-          {/* Logo (กดแล้วกลับหน้าหลักเสมอ) */}
-          <Link to="/" style={{textDecoration:'none', color:'inherit'}}>
-            <div className="brand">
-              <div className="logo-circle-nav">
-                {/* ✅ แก้สีไอคอนเป็น #10B77E */}
-                <ShoppingCart size={22} color="#10B77E" strokeWidth={2.5} />
-              </div>
-              PriceFinder
+        <div className="nav-content">
+          <Link to="/" className="brand">
+            <div className="logo-circle-nav">
+              {/* ✨ เปลี่ยนไอคอนเป็นสีขาวเพื่อให้เด่นบนพื้นโลโก้สีดำ */}
+              <ShoppingCart size={20} color="#FFFFFF" strokeWidth={2.5} />
             </div>
+            PriceFinder
           </Link>
 
-          {/* ปุ่มย้อนกลับ */}
           <button className="btn-nav-back" onClick={() => navigate(backConfig.path)}>
-            <ArrowLeft size={20} />
+            <ArrowLeft size={18} />
             <span>{backConfig.text}</span>
           </button>
         </div>
@@ -47,31 +40,31 @@ function Navbar() {
     );
   }
 
-  // --- กรณีเป็นหน้าทั่วไป (แสดงเมนูเต็มรูปแบบ) ---
+  // --- กรณีหน้าทั่วไป ---
   return (
     <nav className="navbar">
-      <div className="container nav-content">
-        <Link to="/" style={{textDecoration:'none', color:'inherit'}}>
-          <div className="brand">
-            <div className="logo-circle-nav">
-              {/* ✅ แก้สีไอคอนเป็น #10B77E */}
-              <ShoppingCart size={22} color="#10B77E" strokeWidth={2.5} />
-            </div>
-            PriceFinder
+      <div className="nav-content">
+        <Link to="/" className="brand">
+          <div className="logo-circle-nav">
+            <ShoppingCart size={20} color="#FFFFFF" strokeWidth={2.5} />
           </div>
+          PriceFinder
         </Link>
         
         <ul className="menu">
-          <Link to="/" style={{textDecoration:'none', color:'inherit'}}><li>HOME</li></Link>
-          <Link to="/favorites" style={{textDecoration:'none', color:'inherit'}}><li>FAVORITES</li></Link>
-          <Link to="/mylists" style={{textDecoration:'none', color:'inherit'}}><li>MYLISTS</li></Link>
+          {/* ✅ ใช้ NavLink เพื่อให้ CSS จัดการสถานะ active ได้สวยงาม */}
+          <li><NavLink to="/" end>HOME</NavLink></li>
+          <li><NavLink to="/favorites">FAVORITES</NavLink></li>
+          <li><NavLink to="/mylists">MYLISTS</NavLink></li>
         </ul>
 
         <div className="nav-actions">
           <Link to="/login">
             <button className="login-btn">LOGIN</button>
           </Link>
-          <Bell className="bell-icon" size={24} />
+          <div className="bell-icon">
+            <Bell size={22} />
+          </div>
         </div>
       </div>
     </nav>
