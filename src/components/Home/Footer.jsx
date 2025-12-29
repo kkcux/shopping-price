@@ -8,7 +8,7 @@ const Footer = () => {
       <div className="container">
         <div className="footer-grid">
           
-          {/* Column 1: Brand & Info */}
+          {/* คอลัมน์ที่ 1: แบรนด์และรายละเอียด */}
           <div className="footer-col-brand">
             <div className="brand">
               <div className="logo-circle-footer">
@@ -21,7 +21,7 @@ const Footer = () => {
             </p>
           </div>
 
-          {/* Column 2: บริการของเรา */}
+          {/* คอลัมน์ที่ 2: บริการหลัก */}
           <div className="footer-col">
             <h3>บริการ</h3>
             <ul>
@@ -31,7 +31,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Column 3: หมวดหมู่สินค้า (กลุ่มที่ 1) */}
+          {/* คอลัมน์ที่ 3: หมวดหมู่หลัก (ชุดที่ 1) */}
           <div className="footer-col">
             <h3>หมวดหมู่</h3>
             <ul>
@@ -42,7 +42,7 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Column 4: หมวดหมู่สินค้า (กลุ่มที่ 2) */}
+          {/* คอลัมน์ที่ 4: หมวดหมู่เพิ่มเติม (ชุดที่ 2) */}
           <div className="footer-col">
             <h3 className="invisible-header">หมวดหมู่เพิ่มเติม</h3>
             <ul>
@@ -55,13 +55,14 @@ const Footer = () => {
 
         </div>
         
+        {/* ส่วนลิขสิทธิ์ด้านล่างสุด จัดให้อยู่กึ่งกลาง */}
+        <div className="footer-divider"></div>
         <div className="footer-bottom-content">
-          © 2025 PriceFinder. All rights reserved.
+          <p>© 2025 PriceFinder. All rights reserved.</p>
         </div>
       </div>
     </footer>
   );
 };
 
-// ✨ ส่วนสำคัญ: ต้องมีบรรทัดนี้ล่างสุดเสมอ เพื่อแก้ปัญหา Uncaught SyntaxError
 export default Footer;
