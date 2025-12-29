@@ -7,7 +7,6 @@ import Login from './components/Login/Login';
 import Register from './components/Register/register';
 import Navbar from './components/Home/Navbar';
 import Footer from './components/Home/Footer';
-import Hero from './components/Home/hero';
 import Home from './components/Home/Home'; 
 import Profile from './components/Profile/Profile';
 import Favorites from './components/Favorites/Favorites';
