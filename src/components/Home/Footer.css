@@ -94,12 +94,20 @@
   margin-bottom: 30px;
 }
 
+/* --- Bottom Section --- */
 .footer-bottom-content {
   display: flex;
-  justify-content: space-between;
+
+  /* ✨ แก้ตรงนี้: จาก space-between เป็น center */
+  justify-content: center;
+
   align-items: center;
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.4);
+
+  /* ✨ เพิ่มตรงนี้: เพื่อความมั่นใจว่าตัวหนังสือจะอยู่กลางแน่ๆ */
+  text-align: center;
+  width: 100%;
 }
 
 /* Responsive */
