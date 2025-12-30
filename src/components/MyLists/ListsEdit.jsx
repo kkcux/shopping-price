@@ -1,206 +1,241 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { 
+  ChevronLeft, 
+  Check, 
+  Trash2, 
+  Plus, 
+  Minus,
+  Save
+} from "lucide-react"; // ✅ นำเข้าไอคอนที่ต้องใช้
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
-import "./lists-edit.css";
+import "./ListsEdit.css";
 
 export default function ListsEdit() {
   const navigate = useNavigate();
-  // const { id } = useParams();
+  const { id } = useParams();
+  
+  const [listName, setListName] = useState("");
+  const [items, setItems] = useState([]); // รายการสินค้าในลิสต์ (Selected)
+  const [showModal, setShowModal] = useState(false);
 
-  const [listName] = useState("ของใช้รายสัปดาห์");
-
-  // ===== catalog (ด้านบน เลือกรายการสินค้า) =====
+  // ✅ 1. เพิ่ม State สำหรับ Catalog สินค้าแนะนำ
   const [catalog, setCatalog] = useState([
-    {
-      id: "c1",
-      name: "หมูแผ่นทอด x6",
-      img: "https://o2o-static.lotuss.com/products/73889/51838953.jpg",
-      qty: 1,
-    },
-    {
-      id: "c2",
-      name: "แอปเปิ้ล",
-      img: "https://o2o-static.lotuss.com/products/73889/50845992.jpg",
-      qty: 1,
-    },
-    {
-      id: "c3",
-      name: "ไก่ย่างรสดั้งเดิม",
-      img: "https://o2o-static.lotuss.com/products/73889/52358592.jpg",
-      qty: 1,
-    },
-    {
-      id: "c4",
-      name: "กล้วยหอม",
-      img: "https://o2o-static.lotuss.com/products/73889/75640245.jpg",
-      qty: 1,
-    },
-    {
-      id: "c5",
-      name: "ส้มแมนดาริน",
-      img: "https://o2o-static.lotuss.com/products/73889/51635718.jpg",
-      qty: 1,
-    },
+    { id: "c1", name: "อินโนวีเนส อาหารทางการแพทย์ 300ก.", img: "https://o2o-static.lotuss.com/products/105727/51921065.jpg", qty: 1 },
+    { id: "c2", name: "อันอัน แผ่นรองซึมซับ ไซส์ XXL 10 ชิ้น", img: "https://o2o-static.lotuss.com/products/105727/75583866.jpg", qty: 1 },
+    { id: "c3", name: "เนสท์เล่ บู๊สท์ ออฟติมัม 800 กรัม", img: "https://o2o-static.lotuss.com/products/105727/75009552.jpg", qty: 1 },
+    { id: "c4", name: "ฟีลฟรีแผ่นรองซึมซับใหญ่พิเศษXXL 8 ชิ้น", img: "https://o2o-static.lotuss.com/products/105727/51165406.jpg", qty: 1 },
+    { id: "c5", name: "ซอฟเท็กซ์ แผ่นรองซับ ขนาดใหญ่ 10 ชิ้น", img: "https://o2o-static.lotuss.com/products/105727/791156.jpg", qty: 1 },
   ]);
 
-  // ===== selected items (รายการสินค้าที่ต้องการ) =====
-  const [selected, setSelected] = useState([
-    {
-      id: "s1",
-      name: "แอปเปิ้ล",
-      img: "https://o2o-static.lotuss.com/products/73889/50845992.jpg",
-      qty: 1,
-    },
-    {
-      id: "s2",
-      name: "หมูแผ่นทอด",
-      img: "https://o2o-static.lotuss.com/products/73889/51838953.jpg",
-      qty: 1,
-    },
-    {
-      id: "s3",
-      name: "น้ำดื่มแพ็ค x12",
-      img: "https://o2o-static.lotuss.com/products/105727/51921065.jpg",
-      qty: 1,
-    },
-    {
-      id: "s4",
-      name: "ซอสหอยนางรม",
-      img: "https://o2o-static.lotuss.com/products/105727/51165406.jpg",
-      qty: 1,
-    },
-    {
-      id: "s5",
-      name: "ผักกาดหอม",
-      img: "https://o2o-static.lotuss.com/products/105727/791156.jpg",
-      qty: 1,
-    },
-  ]);
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    const savedLists = JSON.parse(localStorage.getItem("myLists")) || [];
+    const found = savedLists.find((l) => String(l.id) === String(id));
+    if (found) {
+      setListName(found.name);
+      setItems(found.items || []);
+    } else {
+      navigate("/mylists");
+    }
+  }, [id, navigate]);
 
-  // ===== handlers =====
-  const increase = (id, type) => {
-    const setter = type === "catalog" ? setCatalog : setSelected;
-    setter((prev) =>
-      prev.map((i) =>
-        i.id === id ? { ...i, qty: i.qty + 1 } : i
-      )
+  // ===== Handlers สำหรับรายการที่เลือกแล้ว (In List) =====
+  const updateQty = (index, delta) => {
+    setItems((prev) => {
+      const next = [...prev];
+      next[index].qty = Math.max(1, next[index].qty + delta);
+      return next;
+    });
+  };
+
+  const removeItem = (index) => {
+    setItems((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // ===== Handlers สำหรับ Catalog (เลือกเพิ่มสินค้า) =====
+  const increaseCatalogQty = (id) => {
+    setCatalog((prev) => prev.map((i) => (i.id === id ? { ...i, qty: i.qty + 1 } : i)));
+  };
+
+  const decreaseCatalogQty = (id) => {
+    setCatalog((prev) => prev.map((i) => (i.id === id && i.qty > 1 ? { ...i, qty: i.qty - 1 } : i)));
+  };
+
+  const handleSelectFromCatalog = (product) => {
+    const existingIndex = items.findIndex((item) => item.name === product.name); 
+    
+    if (existingIndex !== -1) {
+      setItems((prev) => {
+        const next = [...prev];
+        next[existingIndex].qty += product.qty;
+        return next;
+      });
+    } else {
+      setItems((prev) => [...prev, { ...product }]);
+    }
+  };
+
+  // ===== Save Logic =====
+  const handleSave = () => {
+    if (!listName.trim()) {
+      alert("กรุณากรอกชื่อรายการ");
+      return;
+    }
+    if (items.length === 0) {
+      setShowModal(true);
+      return;
+    }
+    saveAndExit();
+  };
+
+  const saveAndExit = () => {
+    const savedLists = JSON.parse(localStorage.getItem("myLists")) || [];
+    const updatedLists = savedLists.map((l) =>
+      String(l.id) === String(id) ? { ...l, name: listName, items: items, totalItems: items.reduce((sum, i) => sum + i.qty, 0) } : l
     );
-  };
-
-  const decrease = (id, type) => {
-    const setter = type === "catalog" ? setCatalog : setSelected;
-    setter((prev) =>
-      prev.map((i) =>
-        i.id === id && i.qty > 1 ? { ...i, qty: i.qty - 1 } : i
-      )
-    );
-  };
-
-  const removeItem = (id) => {
-    setSelected((prev) => prev.filter((i) => i.id !== id));
-  };
-
-  const saveList = () => {
-    console.log("SAVE LIST:", selected);
-    // navigate(`/mylists/${id}`); // ถ้ายังไม่ได้ทำหน้า detail ให้ redirect ไป mylists เฉยๆ ก่อนได้
-    navigate("/mylists/mylists2");
+    localStorage.setItem("myLists", JSON.stringify(updatedLists));
+    navigate(`/mylists/${id}`);
   };
 
   return (
     <>
-      {/* ✅ 3. เรียกใช้ Navbar แทน Header */}
       <Navbar />
 
       <main className="le-page">
-        <div className="le-container">
-
-          {/* ===== TOP ===== */}
-          <div className="le-top">
+        {/* Header Section */}
+        <section className="le-header-section">
+          <div className="le-header-inner">
             <div className="le-topLeft">
-              <button className="le-back" onClick={() => navigate(-1)}>
-                ‹
+              <button className="le-back-btn" onClick={() => navigate(-1)}>
+                <ChevronLeft size={28} strokeWidth={2.5} />
               </button>
               <div>
                 <h1 className="le-title">EDIT MYLISTS</h1>
-                <p className="le-subtitle">
-                  เพิ่มสินค้าในรายการของคุณและเราจะค้นหาราคาที่ถูกที่สุดจากทุกร้านค้า
-                </p>
+                <p className="le-subtitle">แก้ไขรายการสินค้าของคุณ</p>
               </div>
             </div>
           </div>
+        </section>
 
-          {/* ===== LIST NAME ===== */}
+        {/* Content Container */}
+        <div className="le-container">
+          
           <div className="le-nameBlock">
             <div className="le-label">ชื่อรายการ</div>
-            <input className="le-input" value={listName} readOnly />
+            <input 
+              className="le-input" 
+              value={listName} 
+              onChange={(e) => setListName(e.target.value)}
+              placeholder="ตั้งชื่อรายการ..."
+            />
           </div>
 
-          {/* ===== CATALOG ===== */}
+          {/* ✅ ส่วน Catalog (เพิ่มสินค้า) */}
           <section className="le-box">
             <div className="le-boxHead">
-              <div className="le-boxTitle">เลือกรายการสินค้า</div>
-              <span className="le-pill">ดูทั้งหมด</span>
+              <div className="le-boxTitle">เลือกรายการสินค้าเพิ่มเติม</div>
             </div>
-
             <div className="le-cards">
               {catalog.map((p) => (
                 <div key={p.id} className="le-card">
                   <div className="le-imgWrap">
                     <img src={p.img} alt={p.name} />
                   </div>
-
                   <div className="le-cardName">{p.name}</div>
-
                   <div className="le-qty">
-                    <button onClick={() => decrease(p.id, "catalog")}>−</button>
+                    <button onClick={() => decreaseCatalogQty(p.id)}>
+                      <Minus size={14} strokeWidth={3} />
+                    </button>
                     <span>{p.qty}</span>
-                    <button onClick={() => increase(p.id, "catalog")}>+</button>
+                    <button onClick={() => increaseCatalogQty(p.id)}>
+                      <Plus size={14} strokeWidth={3} />
+                    </button>
                   </div>
-
-                  <button className="le-select">เลือก</button>
+                  {/* ✅ เปลี่ยนปุ่มเลือกเป็นไอคอน + เพิ่ม */}
+                  <button className="le-select" onClick={() => handleSelectFromCatalog(p)}>
+                    <Plus size={16} strokeWidth={3} style={{ marginRight: 4 }} /> 
+                    เพิ่ม
+                  </button>
                 </div>
               ))}
             </div>
           </section>
 
-          {/* ===== SELECTED ===== */}
+          {/* ✅ ส่วนรายการสินค้าที่มีอยู่แล้ว (In List) */}
           <section className="le-box">
             <div className="le-boxHead">
-              <div className="le-boxTitle">รายการสินค้าที่ต้องการ</div>
-              <span className="le-pill">ดูทั้งหมด</span>
+              <div className="le-boxTitle">รายการสินค้าในลิสต์ ({items.length})</div>
             </div>
 
-            <div className="le-cards">
-              {selected.map((p) => (
-                <div key={p.id} className="le-card">
-                  <button
-                    className="le-remove"
-                    onClick={() => removeItem(p.id)}
-                  >
-                    ✕
-                  </button>
+            {items.length > 0 ? (
+              <div className="le-cards">
+                {items.map((item, idx) => (
+                  <div key={idx} className="le-card">
+                    
+                    {/* ✅ ปุ่มลบมุมขวาบน (ใช้ไอคอนถังขยะ) */}
+                    <button className="le-remove" onClick={() => removeItem(idx)}>
+                      <Trash2 size={14} />
+                    </button>
 
-                  <div className="le-imgWrap">
-                    <img src={p.img} alt={p.name} />
+                    <div className="le-imgWrap">
+                      <img src={item.img} alt={item.name} />
+                    </div>
+                    <div className="le-cardName">{item.name}</div>
+                    
+                    {/* ✅ ปุ่มเพิ่มลดจำนวน (ใช้ไอคอน) */}
+                    <div className="le-qty">
+                      <button onClick={() => updateQty(idx, -1)}>
+                        <Minus size={14} strokeWidth={3} />
+                      </button>
+                      <span>{item.qty}</span>
+                      <button onClick={() => updateQty(idx, 1)}>
+                        <Plus size={14} strokeWidth={3} />
+                      </button>
+                    </div>
+
                   </div>
-
-                  <div className="le-cardName">{p.name}</div>
-                  <div className="le-cardSub">จำนวน {p.qty} ชิ้น</div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{ padding: '40px', color: '#999', textAlign: 'center', width: '100%' }}>
+                ไม่มีสินค้าในรายการ
+              </div>
+            )}
           </section>
 
-          {/* ===== SAVE ===== */}
           <div className="le-saveWrap">
-            <button className="le-saveBtn" onClick={saveList}>
-              Save
+            <button className="le-saveBtn" onClick={handleSave}>
+              <Save size={20} style={{ marginRight: 8 }} />
+              บันทึกการแก้ไข
             </button>
           </div>
 
         </div>
+
+        {/* Modal */}
+        {showModal && (
+          <div className="modal-overlay" onClick={() => setShowModal(false)}>
+            <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-icon-circle warning">
+                <Trash2 size={36} />
+              </div>
+              <h3 className="modal-title">ไม่มีสินค้าในรายการ</h3>
+              <p className="modal-desc">
+                คุณต้องการบันทึกรายการว่างเปล่าหรือไม่?
+              </p>
+              <div className="modal-actions">
+                <button className="modal-btn cancel" onClick={() => setShowModal(false)}>
+                  ยกเลิก
+                </button>
+                <button className="modal-btn confirm" onClick={saveAndExit}>
+                  บันทึก
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       <Footer />

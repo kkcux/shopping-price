@@ -1,153 +1,218 @@
-/* --- Import Font Prompt --- */
 @import url("https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap");
 
-/* --- Navbar Container --- */
 .navbar {
-  background: #ffffff;
-  height: 70px; /* ความสูงของบาร์ */
+  background: rgba(16, 183, 126, 0.85);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  height: 72px;
   width: 100%;
-
-  /* ให้ Navbar ติดอยู่ด้านบนเสมอเวลาเลื่อนหน้าจอ */
   position: sticky;
   top: 0;
   z-index: 1000;
-
-  /* เส้นขอบล่างและเงาบางๆ */
-  border-bottom: 1px solid #f1f5f9;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
-
-  font-family: "Prompt", sans-serif;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* จัดกึ่งกลางเนื้อหา */
-.container {
+.navbar .nav-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
   height: 100%;
-}
-
-.nav-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 100%;
 }
 
 /* --- Brand / Logo --- */
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 1.5rem;
-  color: #0f172a;
-  font-weight: 700;
-  letter-spacing: -0.5px;
-  cursor: pointer;
+  gap: 12px;
+  font-size: 1.6rem;
+  color: #ffffff;
+  font-weight: 800;
+  text-decoration: none;
+  letter-spacing: -0.8px;
+  transition: all 0.3s ease;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.brand:hover {
+  transform: scale(1.02);
+  filter: brightness(1.1);
 }
 
 .logo-circle-nav {
-  background: #000000; /* พื้นหลังวงกลมสีดำ */
+  background: #000000;
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
-  /* icon สีเขียวจะถูกกำหนดใน component อยู่แล้ว */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease;
 }
 
-/* --- Menu Links --- */
+.brand:hover .logo-circle-nav {
+  transform: rotate(-10deg) scale(1.1);
+}
+
+/* --- Menu (จัดให้อยู่ตรงกลางระหว่าง Logo และ Actions) --- */
 .menu {
   display: flex;
-  gap: 40px; /* ระยะห่างระหว่างเมนู */
+  align-items: center;
+  gap: 32px;
   list-style: none;
   margin: 0;
   padding: 0;
+  /* ✨ ปรับให้ยืดหยุ่นและอยู่ชิดกลุ่มขวามากขึ้น */
+  margin-left: auto;
+  margin-right: 48px;
 }
 
-.menu li {
-  font-size: 0.95rem;
-  font-weight: 500;
-  color: #64748b; /* สีเทากลางๆ */
-  cursor: pointer;
-  transition: color 0.2s ease;
+.menu li a {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
   position: relative;
+  padding: 8px 0;
+  transition: all 0.3s ease;
 }
 
-/* Effect ตอนเอาเมาส์ชี้เมนู */
-.menu li:hover {
-  color: #22c55e; /* เปลี่ยนเป็นสีเขียว */
+.menu li a:hover {
+  color: #ffffff;
 }
 
-/* --- Nav Actions (Login & Bell) --- */
+/* เส้นใต้ Active / Hover */
+.menu li a::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: #ffffff;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+  border-radius: 10px;
+}
+
+.menu li a:hover::after,
+.menu li a.active::after {
+  width: 20px;
+}
+
+/* --- Right Actions (จัดลำดับใหม่) --- */
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px; /* ระยะห่างระหว่างปุ่ม */
 }
 
+/* ปุ่ม LOGIN มาก่อน */
 .login-btn {
-  background-color: #22c55e;
-  color: white;
+  background: #000000;
+  color: #ffffff;
   border: none;
-  padding: 8px 24px;
-  border-radius: 50px; /* ทรงแคปซูล */
-  font-family: "Prompt", sans-serif;
-  font-weight: 600;
-  font-size: 0.95rem;
+  padding: 8px 22px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 6px -1px rgba(34, 197, 94, 0.2);
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  /* บังคับลำดับ */
+  order: 1;
 }
 
 .login-btn:hover {
-  background-color: #16a34a; /* เขียวเข้มขึ้นตอน Hover */
-  transform: translateY(-1px);
+  background: #222222;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
+/* ไอคอนแจ้งเตือน ไว้ขวาสุด */
 .bell-icon {
-  color: #94a3b8;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 8px;
+  border-radius: 12px;
   cursor: pointer;
-  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  /* บังคับลำดับ */
+  order: 2;
 }
 
 .bell-icon:hover {
-  color: #0f172a; /* สีเข้มขึ้นตอน Hover */
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
 }
 
-/* --- Responsive (ซ่อนเมนูเมื่อจอเล็กกว่า 768px) --- */
-@media (max-width: 768px) {
-  .menu {
-    display: none;
-  }
-}
-
-/* --- ปุ่มย้อนกลับ (สไตล์ใหม่แบบแคปซูลสีเทา) --- */
+/* --- Back Button สำหรับหน้า Login/Register --- */
 .btn-nav-back {
-  background-color: #e0e1e2; /* สีพื้นหลังเทาอ่อน */
-  color: #1f2937; /* สีตัวอักษรเทาเข้ม */
+  background: #000000;
+  color: #ffffff;
   border: none;
-  padding: 8px 16px; /* ระยะห่างภายใน */
-  border-radius: 9999px; /* ทรงแคปซูล */
+  padding: 8px 22px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px; /* ระยะห่างไอคอนกับข้อความ */
-  cursor: pointer;
-
+  gap: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   font-family: "Prompt", sans-serif;
-  font-size: 0.9rem;
-  font-weight: 500;
-
-  transition: all 0.2s ease;
 }
 
 .btn-nav-back:hover {
-  background-color: #ccd1d8; /* เข้มขึ้นตอนชี้ */
-  color: #111827;
+  background: #222222;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 .btn-nav-back:active {
-  background-color: #b5b9be; /* เข้มขึ้นอีกตอนกด */
-  transform: scale(0.98);
+  transform: translateY(0);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-nav-back svg {
+  transition: transform 0.3s ease;
+}
+
+.btn-nav-back:hover svg {
+  transform: translateX(-3px);
+}
+
+/* Mobile */
+@media (max-width: 900px) {
+  .menu {
+    display: none;
+  }
+  .navbar {
+    height: 64px;
+  }
+  
+  .btn-nav-back {
+    padding: 10px;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    justify-content: center;
+  }
+  
+  .btn-nav-back span {
+    display: none; /* ซ่อนข้อความในมือถือ เหลือแค่ไอคอน */
+  }
 }

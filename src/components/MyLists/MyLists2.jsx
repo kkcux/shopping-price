@@ -1,11 +1,11 @@
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { ChevronLeft, Pencil, Trash2, Search, Check, AlertTriangle } from "lucide-react";
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
-import "./mylists2.css";
-import { useNavigate } from "react-router-dom";
+import "./MyLists2.css";
 
 const REGISTER_URL = {
-  TOPS: "https://www.tops.co.th/th/register",
   MAKRO: "https://www.makro.pro/",
   LOTUS: "https://www.lotuss.com/th/register",
   BIGC: "https://www.bigc.co.th/register",
@@ -13,80 +13,68 @@ const REGISTER_URL = {
 
 export default function MyLists2() {
   const navigate = useNavigate();
-  // const { id } = useParams();
+  const { id } = useParams();
 
-  // ===== mock data =====
-  const catalog = useMemo(
-    () => [
-      { id: "p1", name: "KITO รองเท้าแตะสวมบุรุษ ดำ ไซส์ 42", img: "https://o2o-static.lotuss.com/products/73889/51838953.jpg" },
-      { id: "p2", name: "CANIA รองเท้าแตะบุรุษ สีน้ำตาล ไซส์ 44", img: "https://o2o-static.lotuss.com/products/73889/50845992.jpg" },
-      { id: "p3", name: "CLICK รองเท้าCLOGชาย เขียว ไซส์ 44", img: "https://o2o-static.lotuss.com/products/73889/52358592.jpg" },
-      { id: "p4", name: "MESTYLE DISNEY เสื้อเชิ้ตริ้วมิคกี้ สีเหลือง ไซซ์ F", img: "https://o2o-static.lotuss.com/products/73889/75640245.jpg" },
-      { id: "p5", name: "BREAKER รองเท้าผ้าใบ BK4P/L สีดำ ไซซ์ 44", img: "https://o2o-static.lotuss.com/products/73889/51635718.jpg" },
-    ],
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  /* ===== LOAD FROM LOCAL STORAGE ===== */
+  const allLists = useMemo(
+    () => JSON.parse(localStorage.getItem("myLists")) || [],
     []
   );
 
-  const wanted = useMemo(
-    () => [
-      { id: "w1", name: "อินโนวีเนส อาหารทางการแพทย์ 300ก.", img: "https://o2o-static.lotuss.com/products/105727/51921065.jpg", qty: "จำนวน 300ก." },
-      { id: "w2", name: "อันอัน แผ่นรองซึมซับ ไซส์ XXL 10 ชิ้น", img: "https://o2o-static.lotuss.com/products/105727/75583866.jpg", qty: "จำนวน 10 ชิ้น" },
-      { id: "w3", name: "เนสท์เล่ บู๊สท์ ออฟติมัม 800 กรัม", img: "https://o2o-static.lotuss.com/products/105727/75009552.jpg", qty: "จำนวน 800 กรัม" },
-      { id: "w4", name: "ฟีลฟรีแผ่นรองซึมซับใหญ่พิเศษXXL 8 ชิ้น", img: "https://o2o-static.lotuss.com/products/105727/51165406.jpg", qty: "จำนวน 8 ชิ้น" },
-      { id: "w5", name: "ซอฟเท็กซ์ แผ่นรองซับ ขนาดใหญ่ 10 ชิ้น", img: "https://o2o-static.lotuss.com/products/105727/791156.jpg", qty: "จำนวน 10 ชิ้น" },
-    ],
-    []
+  const initialData = useMemo(
+    () => allLists.find((l) => String(l.id) === String(id)),
+    [allLists, id]
   );
 
-  const [listName] = useState("ของใช้รายสัปดาห์");
+  const listName = initialData?.name || "ไม่พบรายการ";
+  const wanted = initialData?.items || [];
 
-  // ===== compare stores =====
-  const stores = useMemo(
-    () => [
-      { key: "TOPS", label: "TOPS" },
-      { key: "LOTUS", label: "LOTUS’s" },
-      { key: "BIGC", label: "BIG C" },
-      { key: "MAKRO", label: "MAKRO" },
-    ],
-    []
-  );
+  /* ===== STORES ===== */
+  const stores = [
+    { key: "LOTUS", label: "LOTUS’s" },
+    { key: "BIGC", label: "BIG C" },
+    { key: "MAKRO", label: "MAKRO" },
+  ];
 
-  // membership status
-  const membership = useMemo(
-    () => ({
-      TOPS: { isMember: false, brand: "tops" },
-      MAKRO: { isMember: false, brand: "makro" },
-      LOTUS: { isMember: false, brand: "lotus" },
-      BIGC: { isMember: false, brand: "bigc" },
-    }),
-    []
-  );
+  const membership = {
+    LOTUS: true,
+    BIGC: false,
+    MAKRO: false,
+  };
 
   const [selectedStores, setSelectedStores] = useState({
     ALL: true,
-    TOPS: false,
     LOTUS: false,
     BIGC: false,
     MAKRO: false,
   });
 
   const toggleAll = () => {
-    const next = !selectedStores.ALL;
+    const v = !selectedStores.ALL;
     setSelectedStores({
-      ALL: next,
-      TOPS: next,
-      LOTUS: next,
-      BIGC: next,
-      MAKRO: next,
+      ALL: v,
+      LOTUS: v,
+      BIGC: v,
+      MAKRO: v,
     });
   };
 
   const toggleStore = (k) => {
     const next = { ...selectedStores, [k]: !selectedStores[k], ALL: false };
-    const allPicked =
-      next.TOPS && next.LOTUS && next.BIGC && next.MAKRO;
-    if (allPicked) next.ALL = true;
+    if (next.LOTUS && next.BIGC && next.MAKRO) next.ALL = true;
     setSelectedStores(next);
+  };
+
+  const handleDeleteClick = () => {
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = () => {
+    const newLists = allLists.filter((l) => String(l.id) !== String(id));
+    localStorage.setItem("myLists", JSON.stringify(newLists));
+    navigate("/mylists");
   };
 
   return (
@@ -94,14 +82,13 @@ export default function MyLists2() {
       <Navbar />
 
       <main className="ml2-page">
-        <div className="ml2-container">
-          {/* ===== Top Title Row ===== */}
-          <div className="ml2-top">
+        {/* HEADER */}
+        <section className="ml2-header-section">
+          <div className="ml2-header-inner">
             <div className="ml2-topLeft">
-              <button className="ml2-back" aria-label="back" onClick={() => navigate('/mylists')}>
-                ‹
+              <button className="ml2-back" onClick={() => navigate("/mylists")}>
+                <ChevronLeft size={24} strokeWidth={2.5} />
               </button>
-
               <div>
                 <div className="ml2-title">MYLISTS</div>
                 <div className="ml2-subtitle">
@@ -110,67 +97,72 @@ export default function MyLists2() {
               </div>
             </div>
 
-            <button
-              className="ml2-edit"
-              // onClick={() => navigate(`/mylists/${id}/listsedit`)
-              onClick={() => navigate(`/mylists/listsedit`)}
+            <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+              <button
+                className="ml2-edit"
+                onClick={() => navigate(`/mylists/edit/${id}`)}
               >
-              ✎ <span>EDITLIST</span>
-            </button>
-          </div>
+                <Pencil size={18} strokeWidth={2.5} />
+                <span>แก้ไขรายการ</span>
+              </button>
 
-          {/* ===== Name ===== */}
+              <button
+                className="ml2-btn-delete"
+                onClick={handleDeleteClick}
+                title="ลบรายการ"
+              >
+                <Trash2 size={20} strokeWidth={2} />
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <div className="ml2-container">
           <div className="ml2-nameBlock">
             <div className="ml2-label">ชื่อรายการ</div>
             <input className="ml2-input" value={listName} readOnly />
           </div>
 
-          {/* ===== Catalog ===== */}
           <section className="ml2-box">
             <div className="ml2-boxHead">
-              <div className="ml2-boxTitle">เลือกรายการสินค้า</div>
-              <span className="ml2-pill">ดูทั้งหมด</span>
+              <div className="ml2-boxTitle">
+                รายการสินค้าที่ต้องการ ({wanted.length})
+              </div>
             </div>
 
-            <div className="ml2-cards">
-              {catalog.map((p) => (
-                <ProductCard key={p.id} name={p.name} img={p.img} />
-              ))}
-            </div>
+            {wanted.length > 0 ? (
+              <div className="ml2-cards">
+                {wanted.map((p, index) => (
+                  <ProductCard
+                    key={`${p.id}-${index}`}
+                    name={p.name}
+                    img={p.img}
+                    sub={`จำนวน ${p.qty} ชิ้น`}
+                  />
+                ))}
+              </div>
+            ) : (
+              <div
+                className="ml2-empty"
+                style={{ textAlign: "center", padding: "40px", color: "#999" }}
+              >
+                ยังไม่มีสินค้าในรายการ
+              </div>
+            )}
           </section>
 
-          {/* ===== Wanted ===== */}
-          <section className="ml2-box">
-            <div className="ml2-boxHead">
-              <div className="ml2-boxTitle">รายการสินค้าที่ต้องการ</div>
-              <span className="ml2-pill">ดูทั้งหมด</span>
-            </div>
-
-            <div className="ml2-cards">
-              {wanted.map((p) => (
-                <ProductCard key={p.id} name={p.name} img={p.img} sub={p.qty} />
-              ))}
-            </div>
-          </section>
-
-          {/* ===== Bottom two columns ===== */}
           <div className="ml2-bottomGrid">
-            {/* left: compare */}
             <section className="ml2-box ml2-boxTall">
               <div className="ml2-boxTitleLg">เลือกร้านค้าที่ต้องการเปรียบเทียบ</div>
-
-              <div className="ml2-checkRow" onClick={toggleAll} role="button" tabIndex={0}>
+              <div className="ml2-checkRow" onClick={toggleAll}>
                 <span className={`ml2-check ${selectedStores.ALL ? "on" : ""}`} />
                 <span className="ml2-checkText">ทั้งหมด</span>
               </div>
-
               {stores.map((s) => (
                 <div
                   key={s.key}
                   className="ml2-checkRow"
                   onClick={() => toggleStore(s.key)}
-                  role="button"
-                  tabIndex={0}
                 >
                   <span className={`ml2-check ${selectedStores[s.key] ? "on" : ""}`} />
                   <span className="ml2-checkText">{s.label}</span>
@@ -178,62 +170,86 @@ export default function MyLists2() {
               ))}
             </section>
 
-            {/* right: membership */}
             <section className="ml2-box ml2-boxTall">
-              <div className="ml2-membersHead">
-                <div className="ml2-boxTitleLg">สถานะสมาชิก</div>
-                <span className="ml2-info">i</span>
-              </div>
-
-              <MemberRow brand="tops" title="TOPS" isMember={membership.TOPS.isMember} />
-              <MemberRow brand="makro" title="MAKRO" isMember={membership.MAKRO.isMember} />
-              <MemberRow brand="lotus" title="LOTUS’s" isMember={membership.LOTUS.isMember} />
-              <MemberRow brand="bigc" title="BIG C" isMember={membership.BIGC.isMember} />
+              <div className="ml2-boxTitleLg">สถานะสมาชิก</div>
+              {stores.map((s) => (
+                <MemberRow key={s.key} brand={s.key} isMember={membership[s.key]} />
+              ))}
             </section>
           </div>
 
-          {/* ===== Search Button (แก้ไขตรงนี้) ===== */}
           <div className="ml2-searchWrap">
-            <button 
+            <button
               className="ml2-searchBtn"
-              onClick={() => navigate("/mylists/mylists3")} // ✅ เพิ่ม onClick ตรงนี้
+              // ✅ แก้ตรงนี้: ส่ง id ไป MyLists3
+              onClick={() => navigate(`/mylists3/${id}`)}
             >
-              <span className="ml2-searchIcon">🔍</span>
+              <Search size={22} strokeWidth={2.5} />
               เริ่มค้นหาร้านที่ถูกที่สุด
             </button>
           </div>
         </div>
       </main>
 
+      {/* Modal ลบ */}
+      {showDeleteModal && (
+        <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
+          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-icon-circle danger">
+              <AlertTriangle size={36} strokeWidth={2} />
+            </div>
+
+            <h3 className="modal-title">ยืนยันการลบรายการ?</h3>
+            <p className="modal-desc">
+              คุณต้องการลบรายการ "{listName}" ใช่หรือไม่?
+              <br />
+              การกระทำนี้ไม่สามารถย้อนกลับได้
+            </p>
+
+            <div className="modal-actions">
+              <button
+                className="modal-btn cancel"
+                onClick={() => setShowDeleteModal(false)}
+              >
+                ยกเลิก
+              </button>
+              <button className="modal-btn delete" onClick={confirmDelete}>
+                ลบรายการ
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Footer />
     </>
   );
 }
 
+/* ===== SUB COMPONENTS ===== */
+
 function ProductCard({ name, img, sub }) {
   return (
     <div className="ml2-card">
       <div className="ml2-imgWrap">
-        {img ? <img src={img} alt={name} /> : <div className="ml2-imgPh" />}
+        <img src={img} alt={name} />
       </div>
       <div className="ml2-cardName">{name}</div>
-      {sub ? <div className="ml2-cardSub">{sub}</div> : <div className="ml2-cardSubSpacer" />}
+      <div className="ml2-cardSub">{sub}</div>
     </div>
   );
 }
 
-function MemberRow({ brand, title, isMember }) {
+function MemberRow({ brand, isMember }) {
   return (
-    <div className={`ml2-memberRow ${isMember ? "ok" : "no"}`}>
-      <div className={`ml2-brand ${brand}`}>{brand === "tops" ? "Tops" : title}</div>
-
+    <div className={`ml2-memberRow ${isMember ? "ok" : ""}`}>
+      <div className={`ml2-brand ${brand.toLowerCase()}`}>{brand}</div>
       <div className="ml2-memberText">
-        {title} {isMember ? "เป็นสมาชิก" : "ไม่เป็นสมาชิก"}
+        {isMember ? "เป็นสมาชิกแล้ว" : "ไม่ได้เป็นสมาชิก"}
       </div>
-
       {!isMember && (
         <a
-          href={REGISTER_URL[brand.toUpperCase()]}
+          href={REGISTER_URL[brand]}
           target="_blank"
           rel="noopener noreferrer"
           className="ml2-join"
@@ -241,6 +257,7 @@ function MemberRow({ brand, title, isMember }) {
           สมัคร
         </a>
       )}
+      {isMember && <Check size={18} color="#10b77e" />}
     </div>
   );
 }
