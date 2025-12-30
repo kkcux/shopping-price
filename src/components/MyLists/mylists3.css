@@ -1,7 +1,6 @@
 /* =========================
    PAGE LAYOUT (Theme: PriceFinder #10B77E + Fixed Layout 1200px)
 ========================= */
-
 * {
   box-sizing: border-box;
 }
@@ -28,7 +27,7 @@
   margin-bottom: 30px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); /* เพิ่มเงา */
 
-  /* ✅ เพิ่ม Flex Center ให้ Header container อยู่ตรงกลางเสมอ */
+  /* เพิ่ม Flex Center ให้ Header container อยู่ตรงกลางเสมอ */
   display: flex;
   justify-content: center;
 }
