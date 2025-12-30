@@ -176,7 +176,7 @@ button {
 }
 
 .section-title {
-  font-size: 1.75rem;
+  font-size: 1.4rem; /* Reduced from 1.75rem */
   font-weight: 700;
   color: var(--text-dark);
   display: flex;
@@ -308,13 +308,13 @@ button {
 }
 
 .product-card {
-  min-width: calc((100% - 72px) / 4);
-  max-width: calc((100% - 72px) / 4);
-  flex: 0 0 calc((100% - 72px) / 4);
+  min-width: calc((100% - 96px) / 5); /* 5 items per row (4 gaps of 24px) */
+  max-width: calc((100% - 96px) / 5);
+  flex: 0 0 calc((100% - 96px) / 5);
   scroll-snap-align: start;
   background: white;
   border-radius: var(--radius-lg);
-  padding: 24px;
+  padding: 12px; /* Smaller padding */
   position: relative;
   transition: all 0.3s ease;
   border: 1px solid #f3f4f6;
@@ -334,7 +334,7 @@ button {
 .product-img-wrap {
   position: relative;
   width: 100%;
-  height: 180px;
+  height: 160px; /* Reduced content size */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -349,9 +349,6 @@ button {
   max-height: 100%;
   object-fit: contain;
   transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-.product-card:hover .product-img-wrap img {
-  transform: scale(1.12) translateY(-2px);
 }
 
 /* Favorite Button */
@@ -390,38 +387,44 @@ button {
   flex: 1;
   display: flex;
   flex-direction: column;
+  align-items: center; /* Center content */
+  text-align: center; /* Center text */
+  justify-content: space-between; /* Push button to bottom */
+  gap: 12px; /* Better spacing */
 }
 
 .product-info h3 {
-  font-size: 1rem;
+  font-size: 0.85rem; /* Smaller text */
   font-weight: 500;
   color: var(--text-dark);
-  line-height: 1.5;
-  margin: 0 0 8px;
+  line-height: 1.4;
+  margin: 0;
   /* Limit lines */
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  height: 3em; /* 2 lines fixed height */
+  height: 2.8em; /* Adjusted roughly for 2 lines */
 }
 
 /* Add Button */
 .btn-add-cart {
   width: 100%;
-  padding: 12px;
+  padding: 8px 12px; /* Compact & refined */
   background-color: #10b981; /* Emerald Green */
   color: white;
-  border-radius: var(--radius-md);
-  font-size: 0.95rem;
-  font-weight: 600;
+  border-radius: var(--radius-pill); /* Pill shape looks better centered */
+  font-size: 0.85rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   margin-top: auto;
   transition: all 0.2s;
-  box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.15);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
 }
 .btn-add-cart:hover {
   background-color: #059669;

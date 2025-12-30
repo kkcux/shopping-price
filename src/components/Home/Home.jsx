@@ -13,7 +13,7 @@ const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onA
   const scrollRef = useRef(null);
   const scroll = (direction) => {
     if (scrollRef.current) {
-      const scrollAmount = direction === 'left' ? -300 : 300;
+      const scrollAmount = direction === 'left' ? -240 : 240; // Adjusted for 5 items/row
       scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
