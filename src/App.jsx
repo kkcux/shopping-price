@@ -1,44 +1,65 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom'; // ลบ Navigate ออกเพราะไม่ได้ใช้แล้ว
-import Login from './components/Login/Login';
-import Register from './components/Register/register';
+import { Routes, Route } from 'react-router-dom'; 
 import './App.css';
 
+// Components Imports
+import Login from './components/Login/Login';
+import Register from './components/Register/register';
 import Navbar from './components/Home/Navbar';
 import Footer from './components/Home/Footer';
-import Hero from './components/Home/hero';
 import Home from './components/Home/Home'; 
-import MyLists from './components/MyLists/MyLists'; 
 import Profile from './components/Profile/Profile';
-import ListsEdit from './components/MyLists/ListsEdit';
+import Favorites from './components/Favorites/Favorites';
+
+// MyLists Components
+import MyLists from './components/MyLists/MyLists'; 
+import CreateMyList from './components/MyLists/CreateMyList';
 import MyLists2 from './components/MyLists/MyLists2';
 import MyLists3 from './components/MyLists/MyLists3';
-import Favorites from './components/Favorites/Favorites';
+import ListsEdit from './components/MyLists/ListsEdit';
 
 function App() {
   return (
     <div className="App">
       <Routes>
-        
-        {/* หน้า Home (path "/") : รวม Navbar, Hero, Home, Footer ไว้ด้วยกัน */}
-        <Route path="/" element={
-          <>
-            <Navbar />
-            <Hero />
-            <Home />
-            <Footer />
-          </>
-        } />
 
-        {/* หน้า Login และ Register (แยกออกมาต่างหาก ไม่ติด Navbar มาด้วย) */}
+        {/* ===== HOME ===== */}
+        <Route
+          path="/"
+          element={
+            <>
+              <Navbar />
+              <Home />
+              <Footer />
+            </>
+          }
+        />
+
+        {/* ===== AUTH ===== */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/mylists" element={<MyLists />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/mylists/listsedit" element={<ListsEdit />} />
-        <Route path="/mylists/mylists2" element={<MyLists2 />} />
-        <Route path="/mylists/mylists3" element={<MyLists3 />} />
+
+        {/* ===== FEATURES ===== */}
         <Route path="/favorites" element={<Favorites />} />
+        <Route path="/profile" element={<Profile />} />
+
+        {/* ===== MYLISTS ===== */}
+
+        {/* 1. หน้ารวมรายการ */}
+        <Route path="/mylists" element={<MyLists />} />
+
+        {/* 2. สร้างรายการใหม่ (static มาก่อน dynamic) */}
+        <Route path="/mylists/create" element={<CreateMyList />} />
+
+        {/* 3. แก้ไขรายการ */}
+        <Route path="/mylists/edit/:id" element={<ListsEdit />} />
+
+        {/* 4. หน้ารายละเอียดรายการ (MyLists2) */}
+        <Route path="/mylists/:id" element={<MyLists2 />} />
+
+        {/* 5. หน้าเปรียบเทียบราคา (MyLists3) ✅ ใช้ id */}
+        <Route path="/mylists3/:id" element={<MyLists3 />} />
+
       </Routes>
     </div>
   );
