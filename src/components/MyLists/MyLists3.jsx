@@ -4,7 +4,7 @@ import { ChevronLeft } from "lucide-react";
 
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
-import "./MyLists3.css";
+import "./myLists3.css";
 
 /* ================= helpers ================= */
 
