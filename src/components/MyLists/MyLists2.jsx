@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft, Pencil, Trash2, Search, Check, AlertTriangle } from "lucide-react";
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
-import "./MyLists2.css";
+import "./mylists2.css";
 
 const REGISTER_URL = {
   MAKRO: "https://www.makro.pro/",
