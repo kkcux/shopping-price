@@ -4,7 +4,7 @@
   /* ✨ ใช้สีเขียวเข้ม Deep Charcoal Green เพื่อความหรูหรา */
   background: #041d14;
   color: #ffffff;
-  padding: 100px 0 40px 0;
+  padding: 48px 0 24px 0; /* ลดความสูงลงอีกเล็กน้อย */
   width: 100%;
   font-family: "Prompt", sans-serif;
 }
@@ -13,8 +13,8 @@
   display: grid;
   /* ✨ กำหนดสัดส่วนคอลัมน์ให้ Brand เด่นกว่า และที่เหลือกระจายตัวสวยงาม */
   grid-template-columns: 1.8fr 1fr 1.2fr 1.2fr;
-  gap: 60px;
-  margin-bottom: 60px;
+  gap: 32px; /* ลดช่องว่างแนวตั้ง/แนวนอนลงอีกนิด */
+  margin-bottom: 32px; /* ลดพื้นที่ด้านล่างของ grid อีกเล็กน้อย */
 }
 
 /* --- Brand Section --- */
