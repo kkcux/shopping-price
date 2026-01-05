@@ -1,98 +1,152 @@
-/* --- Global Font & Reset --- */
-@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap");
 
+/* Reset & Fonts */
 * {
   box-sizing: border-box;
 }
 
-body {
-  margin: 0;
-  font-family: 'Sarabun', sans-serif;
-  background-color: #f9f9f9;
+:root {
+  --primary: #10b981;
+  --primary-hover: #059669;
+  --text-dark: #1f2937;
+  --text-gray: #6b7280;
+  --bg-page: #f9fafb;
 }
 
-/* --- Layout --- */
-.profile-page-container {
+body {
+  margin: 0;
+  font-family: "Prompt", sans-serif;
+  background-color: var(--bg-page);
+}
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.profile-content-section {
+  flex: 1;
   display: flex;
   justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 40px 20px;
+  padding: 60px 20px;
+  background-color: var(--bg-page);
 }
 
 .profile-card {
   background: white;
   width: 100%;
-  max-width: 600px;
-  padding: 40px 50px;
-  border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-  border: 1px solid #eee;
+  max-width: 680px;
+  padding: 40px;
+  border-radius: 24px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+  border: 1px solid #f3f4f6;
+  position: relative;
+}
+
+/* Animation */
+.fade-in-up {
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* --- Header --- */
 .profile-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 }
 
 .profile-header h1 {
   font-size: 1.8rem;
   font-weight: 700;
-  margin-bottom: 10px;
-  color: #000;
+  margin: 0 0 8px 0;
+  color: var(--text-dark);
 }
 
 .profile-header p {
-  color: #666;
-  font-size: 0.95rem;
-  font-weight: 300;
+  color: var(--text-gray);
+  font-size: 1rem;
+  margin: 0;
 }
 
 /* --- Image Upload --- */
 .profile-image-section {
   display: flex;
   justify-content: center;
-  margin-bottom: 30px;
+  margin-bottom: 40px;
 }
 
-.image-upload-circle {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  border: 1px solid #ccc;
+.image-upload-wrapper {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.image-circle {
+  width: 140px; 
+  height: 140px;
+  border-radius: 50%;
+  border: 2px solid #e2e8f0; 
+  background-color: white;
+  display: flex;
   justify-content: center;
   align-items: center;
-  cursor: pointer;
-  background-color: #fff;
+  position: relative;
   transition: all 0.2s;
+  overflow: hidden;
 }
 
-.image-upload-circle:hover {
-  background-color: #f8f8f8;
-  border-color: #aaa;
+.image-upload-wrapper:hover .image-circle {
+  border-color: var(--primary);
+  background-color: #f0fdf4;
 }
 
-.image-upload-circle span {
-  margin-top: 8px;
-  font-size: 0.8rem;
-  color: #999;
+.placeholder-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #94a3b8; 
+  transition: color 0.2s;
 }
 
-/* --- Form Inputs --- */
+.image-upload-wrapper:hover .placeholder-content {
+  color: var(--primary); 
+}
+
+.placeholder-icon {
+  color: inherit; 
+}
+
+.profile-preview {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.upload-text {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: inherit; 
+}
+
+/* --- Form --- */
 .form-group {
-  margin-bottom: 25px;
+  margin-bottom: 24px;
 }
 
-.form-group label,
-.membership-section label {
+.form-group label {
   display: block;
   font-weight: 500;
   margin-bottom: 8px;
-  color: #555;
-  font-size: 1rem;
+  color: #374151;
+  font-size: 0.95rem;
 }
 
 .input-wrapper {
@@ -103,98 +157,136 @@ body {
 
 .input-icon {
   position: absolute;
-  left: 15px;
-  color: #999;
+  left: 16px;
+  color: #9ca3af;
+  pointer-events: none;
 }
 
 .input-wrapper input {
   width: 100%;
-  padding: 12px 15px 12px 45px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  padding: 12px 16px 12px 48px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
   font-size: 1rem;
-  font-family: 'Sarabun', sans-serif;
-  color: #333;
+  font-family: 'Prompt', sans-serif;
+  color: #1f2937;
+  background: #f9fafb;
   outline: none;
-}
-
-.input-wrapper input::placeholder {
-  color: #bbb;
+  transition: all 0.2s;
 }
 
 .input-wrapper input:focus {
-  border-color: #333;
+  background: white;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
 }
 
-/* --- Membership Section --- */
-.membership-section {
-  margin-bottom: 40px;
+.divider {
+  height: 1px;
+  background-color: #f3f4f6;
+  margin: 10px 0 30px 0;
+}
+
+/* --- Membership --- */
+.section-label {
+  display: block;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 16px;
 }
 
 .membership-list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 16px;
 }
 
 .membership-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 1px solid #ccc;
-  border-radius: 12px;
-  padding: 12px 20px;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 16px;
   background: white;
-  position: relative; /* สำคัญ: เพื่อให้ Popup อ้างอิงจากตรงนี้ได้ถ้าต้องการ */
+  transition: border-color 0.2s;
+}
+
+.membership-item:hover {
+  border-color: var(--primary);
 }
 
 .membership-left {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 16px;
 }
 
-.membership-logo {
+/* --- Logo Box Updated (ปรับให้เห็นครบ) --- */
+/* Profile.css ส่วนจัดการโลโก้ */
+.membership-logo-box {
   font-weight: 800;
   font-size: 0.9rem;
-  border: 2px solid;
-  padding: 4px 10px;
-  border-radius: 6px;
-  min-width: 70px;
-  text-align: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 36px;
+  text-align: center;
+  overflow: hidden; 
+  padding: 0; /* ไม่ต้องมี padding เพราะเราจะใช้ contain จัดการ */
 }
 
-.membership-status {
+.membership-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* ปรับเป็น contain เพื่อให้เห็นโลโก้ครบ ไม่โดนตัด */
+  display: block;
+}
+
+.membership-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.ms-name {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text-dark);
+}
+
+.ms-status-row {
   display: flex;
   align-items: center;
-  gap: 10px;
-  color: #777;
-  font-size: 1rem;
-  font-weight: 500;
+  gap: 8px;
+  margin-top: 4px;
 }
 
-.apply-link {
-  background: none;
-  border: none;
-  color: #00b0f0;
+.status-text {
+  font-size: 0.85rem;
+  color: var(--text-gray);
+}
+
+.btn-apply-member {
+  background: white;
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  padding: 8px 16px;
+  border-radius: 50px;
   font-weight: 600;
-  font-family: 'Sarabun', sans-serif;
+  font-size: 0.85rem;
   cursor: pointer;
-  font-size: 1rem;
-  padding: 5px 10px;
+  transition: all 0.2s;
 }
 
-.apply-link:hover {
-  text-decoration: underline;
+.btn-apply-member:hover {
+  background: var(--primary);
+  color: white;
 }
 
-/* --- Tooltip / Popup Styles (แก้ไขให้เหมือนรูปเป๊ะๆ) --- */
-
-/* Wrapper ของไอคอน (i) */
+/* --- Tooltip Popup --- */
 .info-tooltip-wrapper {
   position: relative;
   display: flex;
@@ -203,78 +295,80 @@ body {
 }
 
 .info-icon {
-  color: #999;
+  color: #cbd5e1;
   transition: color 0.2s;
 }
 
 .info-tooltip-wrapper:hover .info-icon {
-  color: #00b050; /* เปลี่ยนสีไอคอนเมื่อ Hover */
+  color: var(--primary);
 }
 
-/* ตัว Popup หลัก */
 .benefit-popup {
-  display: none; /* ซ่อนไว้ก่อน */
+  display: none;
   position: absolute;
-  bottom: 160%; /* ดันขึ้นไปด้านบน */
+  bottom: 200%; 
   left: 50%;
-  transform: translateX(-12%); /* จัดตำแหน่งซ้ายขวาให้ตรงกับไอคอน */
-  
-  width: 380px; /* ขยายความกว้างให้พอดี */
-  background-color: #00b050; /* สีเขียวหลัก */
+  transform: translateX(-15%);
+  width: 320px;
+  background-color: #10b981; 
   color: white;
-  padding: 25px; /* เพิ่ม padding ภายใน */
-  border-radius: 16px; /* มุมมน */
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3); /* เงาชัดๆ */
-  z-index: 1000;
-  font-family: 'Sarabun', sans-serif;
-  text-align: left;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  z-index: 100;
+  font-family: 'Prompt', sans-serif;
 }
 
-/* แสดง Popup เมื่อ Hover */
 .info-tooltip-wrapper:hover .benefit-popup {
   display: block;
-  animation: fadeIn 0.2s ease-in-out;
+  animation: popUp 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* สามเหลี่ยมชี้ลงด้านล่าง */
+@keyframes popUp {
+  from { opacity: 0; transform: translateX(-15%) scale(0.9); }
+  to { opacity: 1; transform: translateX(-15%) scale(1); }
+}
+
 .benefit-popup::after {
   content: "";
   position: absolute;
   top: 100%;
-  left: 12%; /* ตำแหน่งให้ตรงกับไอคอน i */
+  left: 15%;
   margin-left: -8px;
-  border-width: 10px;
+  border-width: 8px;
   border-style: solid;
-  border-color: #00b050 transparent transparent transparent;
+  border-color: #10b981 transparent transparent transparent;
 }
 
-/* เนื้อหา Header (มงกุฎ + ชื่อ) */
 .popup-header {
   display: flex;
   align-items: center;
-  gap: 15px;
-  margin-bottom: 20px;
+  gap: 12px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  padding-bottom: 12px;
 }
 
 .crown-icon-bg {
-  background-color: rgba(255, 255, 255, 0.2); /* วงกลมโปร่งแสง */
-  width: 48px;
-  height: 48px;
+  background: rgba(255, 255, 255, 0.2);
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-shrink: 0;
 }
 
-.popup-header h3 {
+.popup-title-text h3 {
   margin: 0;
-  font-size: 1.1rem; /* ขนาดตัวอักษรหัวข้อใหญ่ขึ้น */
+  font-size: 1rem;
   font-weight: 700;
-  line-height: 1.4;
+}
+.popup-title-text span {
+  font-size: 0.8rem;
+  opacity: 0.9;
 }
 
-/* รายการสิทธิประโยชน์ */
 .benefit-list {
   list-style: none;
   padding: 0;
@@ -285,100 +379,146 @@ body {
   display: flex;
   align-items: flex-start;
   gap: 10px;
-  font-size: 0.95rem; /* ขนาดตัวอักษรรายการ */
-  margin-bottom: 12px;
-  line-height: 1.4;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+  opacity: 0.95;
 }
 
-.benefit-list li svg {
-  flex-shrink: 0;
-  margin-top: 3px; /* จัดไอคอน Check ให้ตรงบรรทัด */
-  stroke-width: 3px; /* ทำให้เส้นไอคอนหนาขึ้น */
-}
-
-/* ลิงก์สมัครสมาชิก */
-.popup-footer-link {
-  font-size: 0.95rem;
-  margin-bottom: 20px;
-  font-weight: 500;
-}
-
-.popup-footer-link a {
-  color: white;
-  text-decoration: underline;
-  font-weight: 700;
-  margin-left: 5px;
-}
-
-/* ปุ่ม "เข้าใจแล้ว" */
 .popup-btn-ok {
   width: 100%;
-  background-color: white;
-  color: #006020; /* สีเขียวเข้มสำหรับตัวหนังสือ */
+  background: white;
+  color: #059669;
   border: none;
-  padding: 12px;
+  padding: 8px;
   border-radius: 8px;
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   cursor: pointer;
-  font-family: 'Sarabun', sans-serif;
-  transition: transform 0.1s;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-.popup-btn-ok:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 8px rgba(0,0,0,0.15);
-}
-
-.popup-btn-ok:active {
-  transform: translateY(1px);
-}
-
-/* Animation */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateX(-12%) translateY(10px); }
-  to { opacity: 1; transform: translateX(-12%) translateY(0); }
-}
-
-/* --- Buttons (Action) --- */
+/* --- Buttons Action --- */
 .form-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.btn-save {
-  background-color: #2e7d32;
-  color: white;
-  border: none;
-  padding: 10px 30px;
-  border-radius: 6px;
-  font-size: 1rem;
-  font-weight: 600;
-  font-family: 'Sarabun', sans-serif;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-.btn-save:hover {
-  background-color: #1b5e20;
+  gap: 12px;
+  margin-top: 40px;
 }
 
 .btn-cancel {
-  background-color: #dcdcdc;
-  color: #333;
-  border: 1px solid #ccc;
-  padding: 10px 30px;
-  border-radius: 6px;
+  background: white;
+  color: var(--text-gray);
+  border: 1px solid #e5e7eb;
+  padding: 12px 24px;
+  border-radius: 50px;
   font-size: 1rem;
   font-weight: 600;
-  font-family: 'Sarabun', sans-serif;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.2s;
 }
 
 .btn-cancel:hover {
-  background-color: #cfcfcf;
+  background: #f9fafb;
+  border-color: #d1d5db;
+}
+
+.btn-save {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  transition: all 0.2s;
+}
+
+.btn-save:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+}
+
+/* --- Modal Overlay --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  width: 90%;
+  max-width: 400px;
+  padding: 32px 24px;
+  border-radius: 24px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.fade-in-scale {
+  animation: fadeInScale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes fadeInScale {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.modal-icon-wrapper {
+  width: 80px;
+  height: 80px;
+  background-color: #d1fae5;
+  border: 2px solid #34d399;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 20px auto;
+}
+
+.modal-check-icon {
+  color: #10b981;
+  stroke-width: 3px;
+}
+
+.modal-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0 0 8px 0;
+}
+
+.modal-subtitle {
+  color: var(--text-gray);
+  font-size: 1rem;
+  margin: 0 0 24px 0;
+}
+
+.modal-btn-close {
+  width: 100%;
+  background-color: #15803d;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.modal-btn-close:hover {
+  background-color: #166534;
 }
