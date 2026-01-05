@@ -116,7 +116,7 @@ const AddToListModal = ({ isOpen, onClose, product }) => {
                 </div>
                 ))
             ) : (
-                <div className="empty-state"><p>ยังไม่มีรายการสินค้า</p></div>
+                <div className="empty-state"><p>You haven't created a list yet</p></div>
             )}
           </div>
 
