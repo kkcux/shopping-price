@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, Heart, Trash2, ShoppingCart } from 'lucide-react';
+import { ChevronLeft, Heart, Trash2, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Home/Navbar'; 
 import Footer from '../Home/Footer'; 
+import AddToListModal from '../Home/AddToListModal'; // ✅ 1. Import Modal เข้ามา (เช็ค Path ให้ถูกต้อง)
 import './Favorites.css'; 
 
 const Favorites = () => {
   const navigate = useNavigate();
   const [favItems, setFavItems] = useState([]);
+
+  // ✅ 2. เพิ่ม State สำหรับ Modal และสินค้าที่เลือก
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
   // โหลดข้อมูลจาก LocalStorage
   useEffect(() => {
@@ -15,23 +20,31 @@ const Favorites = () => {
     setFavItems(savedFavs);
   }, []);
 
-  // (ส่วนหนึ่งของ Favorites.jsx)
-// ...
   // ฟังก์ชันลบสินค้า
   const handleRemove = (itemToRemove) => {
-    // กรองเอาเฉพาะสินค้าที่ไม่ใช่ตัวที่จะลบ (เทียบจากชื่อ data)
     const newItems = favItems.filter(item => item.data !== itemToRemove.data);
     setFavItems(newItems);
-    // บันทึกค่าใหม่ลงเครื่อง หน้า Home จะได้รับรู้ด้วยถ้ารีเฟรช
     localStorage.setItem('favoritesItems', JSON.stringify(newItems));
   };
-// ...
+
+  // ✅ 3. สร้างฟังก์ชันเปิด Modal (เลียนแบบหน้า Home)
+  const handleAddToCart = (item) => {
+    // ⚠️ หมายเหตุ: ใน Favorites เก็บชื่อสินค้าใน field 'data' 
+    // แต่ Modal (ที่มาจากหน้า Home) น่าจะคาดหวัง field 'name'
+    // เราจึงต้องแปลงข้อมูลเล็กน้อยก่อนส่งไป
+    const productToPass = {
+      ...item,
+      name: item.data // map 'data' ให้เป็น 'name' เพื่อให้ Modal แสดงชื่อถูก
+    };
+
+    setSelectedProduct(productToPass);
+    setIsModalOpen(true);
+  };
 
   return (
     <div className="page-wrapper">
       <Navbar />
 
-      {/* --- Header Section (แบบเดียวกับ MyLists) --- */}
       <div className="header-section">
         <div className="content-container">
           <div className="fav-header">
@@ -48,7 +61,6 @@ const Favorites = () => {
         </div>
       </div>
 
-      {/* --- Content Section --- */}
       <div className="content-section">
         <div className="content-container">
           {favItems.length > 0 ? (
@@ -72,14 +84,17 @@ const Favorites = () => {
                     <h3 className="fav-name">{item.data}</h3>
                   </div>
                   
-                  <button className="btn-add-cart">
-                    <ShoppingCart size={18} /> เพิ่มลงตะกร้า
+                  {/* ✅ 4. ผูกฟังก์ชัน handleAddToCart เข้ากับปุ่ม */}
+                  <button 
+                    className="btn-add-cart"
+                    onClick={() => handleAddToCart(item)}
+                  >
+                    <Plus size={18} /> เพิ่มลง My List
                   </button>
                 </div>
               ))}
             </div>
           ) : (
-            /* Empty State */
             <div className="empty-state">
               <div className="empty-icon-box">
                 <Heart size={48} color="#cbd5e1" />
@@ -93,6 +108,13 @@ const Favorites = () => {
           )}
         </div>
       </div>
+
+      {/* ✅ 5. แสดง Modal (วางไว้ก่อน Footer เหมือนหน้า Home) */}
+      <AddToListModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        product={selectedProduct} 
+      />
 
       <Footer />
     </div>
