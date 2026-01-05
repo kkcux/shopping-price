@@ -1,48 +1,114 @@
-import React from 'react';
-// เพิ่ม import Crown และ Check เข้ามาใช้งานใน Popup
+import React, { useRef, useState } from 'react';
 import { Camera, User, Mail, Info, Crown, Check } from 'lucide-react';
 import Navbar from '../Home/Navbar';
 import Footer from '../Home/Footer';
 import './Profile.css';
 
-
 const Profile = () => {
-  // ข้อมูลสมมติสำหรับแสดงในส่วนสมาชิก
+  const fileInputRef = useRef(null);
+  const [profileImage, setProfileImage] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
+
+  const handleImageClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setProfileImage(imageUrl);
+    }
+  };
+
+  const handleSave = (e) => {
+    e.preventDefault();
+    setShowPopup(true);
+  };
+
+  const closePopup = () => {
+    setShowPopup(false);
+  };
+
+  // ฟังก์ชันเปิดลิงก์ภายนอก
+  const handleRegisterClick = (url) => {
+    if (url) {
+      window.open(url, '_blank', 'noopener,noreferrer');
+    }
+  };
+
   const memberships = [
-    { id: 1, name: 'Tops', label: 'TOPS ไม่เป็นสมาชิก', color: '#ff0000', bgColor: '#fff0f0' },
-    { id: 2, name: "Lotus's", label: "LOTUS's ไม่เป็นสมาชิก", color: '#00b050', bgColor: '#f0fff0' },
-    { id: 3, name: 'Big C', label: 'BIG C ไม่เป็นสมาชิก', color: '#8dc63f', bgColor: '#f9fff0' },
-    { id: 4, name: 'Makro', label: 'MAKRO ไม่เป็นสมาชิก', color: '#ed1c24', bgColor: '#fff0f0' },
+    { 
+      id: 1, 
+      name: "Lotus's", 
+      label: "Lotus's ไม่เป็นสมาชิก", 
+      bgIcon: '#eafff0',
+      color: '#00b050',
+      logo: 'https://corporate.lotuss.com/images/2023/02/cover-logo-lotuss-060323.jpg',
+      registerUrl: 'https://www.lotuss.com/th' // ลิงก์สมัคร Lotus's
+    },
+    { 
+      id: 2, 
+      name: 'Big C', 
+      label: 'Big C ไม่เป็นสมาชิก', 
+      bgIcon: '#f4ffe0',
+      color: '#8dc63f',
+      logo: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSlLdbffklYPCCfrhKihAv0yGlVjV__NwsYG36F-_hdtTqDGQ97Y3ur0jEvPsFNYH-_CPZQ9Ynu',
+      registerUrl: 'https://www.bigc.co.th/auth/register' // ลิงก์สมัคร Big C
+    },
+    { 
+      id: 3, 
+      name: 'Makro', 
+      label: 'Makro ไม่เป็นสมาชิก', 
+      bgIcon: '#fff0f0',
+      color: '#ed1c24',
+      logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1weBQ9rq_nOC5CSMa2dFW9Ez5CFXKKy4Q3Q&s',
+      registerUrl: 'https://www.makro.pro/register' // ลิงก์สมัคร Makro
+    },
   ];
 
   return (
-    <>
+    <div className="page-wrapper">
       <Navbar />
-      <div className="profile-page-container">
-        <div className="profile-card">
+      
+      <div className="profile-content-section">
+        <div className="profile-card fade-in-up">
           
-          {/* Header */}
           <div className="profile-header">
-            <h1>ข้อมูลโปรไฟล์</h1>
-            <p>กรอกข้อมูลโปรไฟล์ของคุณเพื่อให้ข้อมูลออกมามีประสิทธิภาพ</p>
+            <h1>ตั้งค่าโปรไฟล์</h1>
+            <p>จัดการข้อมูลส่วนตัวและการเป็นสมาชิกของคุณ</p>
           </div>
 
-          {/* Profile Image Upload */}
           <div className="profile-image-section">
-            <div className="image-upload-circle">
-              <Camera size={40} color="#666" strokeWidth={1.5} />
-              <span>เลือกรูปโปรไฟล์</span>
+            <div className="image-upload-wrapper" onClick={handleImageClick}>
+              <div className="image-circle">
+                {profileImage ? (
+                  <img src={profileImage} alt="Profile" className="profile-preview" />
+                ) : (
+                  <div className="placeholder-content">
+                    <Camera size={40} className="placeholder-icon" strokeWidth={1.5} />
+                    <span className="upload-text">เปลี่ยนรูปโปรไฟล์</span>
+                  </div>
+                )}
+              </div>
+              
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={handleFileChange} 
+                style={{ display: 'none' }} 
+                accept="image/*"
+              />
             </div>
           </div>
 
-          {/* Form Inputs */}
-          <form className="profile-form">
+          <form className="profile-form" onSubmit={handleSave}>
             
             <div className="form-group">
-              <label>ชื่อโปรไฟล์</label>
+              <label>ชื่อที่ใช้แสดง</label>
               <div className="input-wrapper">
                 <User className="input-icon" size={20} />
-                <input type="text" placeholder="กรอกชื่อโปรไฟล์" />
+                <input type="text" placeholder="เช่น Somchai Jaidee" defaultValue="" />
               </div>
             </div>
 
@@ -50,72 +116,97 @@ const Profile = () => {
               <label>อีเมล</label>
               <div className="input-wrapper">
                 <Mail className="input-icon" size={20} />
-                <input type="email" placeholder="กรอกอีเมลของคุณ" />
+                <input type="email" placeholder="name@example.com" />
               </div>
             </div>
 
-            {/* Membership Section */}
+            <div className="divider"></div>
+
             <div className="membership-section">
-              <label>การเป็นสมาชิก</label>
+              <label className="section-label">สถานะสมาชิกร้านค้า</label>
               <div className="membership-list">
                 {memberships.map((item) => (
                   <div key={item.id} className="membership-item">
                     <div className="membership-left">
-                      {/* ส่วนแสดงโลโก้ */}
-                      <div className="membership-logo" style={{ color: item.color, borderColor: item.color }}>
-                        {item.name}
+                      
+                      <div className="membership-logo-box" style={{ color: item.color, backgroundColor: item.bgIcon }}>
+                        {item.logo ? (
+                          <img src={item.logo} alt={item.name} className="membership-logo-img" />
+                        ) : (
+                          item.name
+                        )}
                       </div>
                       
-                      <div className="membership-status">
-                        {/* --- ส่วน Tooltip เริ่มตรงนี้ --- */}
-                        <div className="info-tooltip-wrapper">
-                          <Info size={18} color="#999" className="info-icon" />
+                      <div className="membership-info">
+                        <span className="ms-name">{item.name}</span>
+                        <div className="ms-status-row">
+                          <span className="status-text">{item.label}</span>
                           
-                          {/* Popup Content */}
-                          <div className="benefit-popup">
-                            <div className="popup-header">
-                              <div className="crown-icon-bg">
-                                <Crown size={24} color="white" />
+                          <div className="info-tooltip-wrapper">
+                            <Info size={16} className="info-icon" />
+                            <div className="benefit-popup">
+                              <div className="popup-header">
+                                <div className="crown-icon-bg">
+                                  <Crown size={24} color="white" />
+                                </div>
+                                <div className="popup-title-text">
+                                  <h3>สิทธิประโยชน์</h3>
+                                  <span>สมาชิก {item.name}</span>
+                                </div>
                               </div>
-                              <h3>สิทธิประโยชน์ของสมาชิก {item.name}</h3>
+                              <ul className="benefit-list">
+                                <li><Check size={16} /> สะสมคะแนนทุกยอดการใช้จ่าย</li>
+                                <li><Check size={16} /> แลกคะแนนเป็นส่วนลดเงินสด</li>
+                                <li><Check size={16} /> สินค้าราคาพิเศษเฉพาะสมาชิก</li>
+                              </ul>
+                              <div className="popup-footer">
+                                <button type="button" className="popup-btn-ok">เข้าใจแล้ว</button>
+                              </div>
                             </div>
-                            
-                            <ul className="benefit-list">
-                              <li><Check size={16} /> สะสมคะแนน {item.name} ทุกการซื้อ</li>
-                              <li><Check size={16} /> แลกคะแนนเป็นคูปองส่วนลดได้</li>
-                              <li><Check size={16} /> ส่วนลดพิเศษเฉพาะสมาชิกในหมวดสินค้าต่าง ๆ</li>
-                              <li><Check size={16} /> สิทธิ์แลกซื้อสินค้าราคาพิเศษเฉพาะสมาชิก</li>
-                            </ul>
-
-                            <div className="popup-footer-link">
-                              สนใจ <a href="#">สมัครสมาชิก</a>
-                            </div>
-
-                            <button type="button" className="popup-btn-ok">เข้าใจแล้ว</button>
                           </div>
-                        </div>
-                        {/* --- ส่วน Tooltip จบตรงนี้ --- */}
 
-                        <span>{item.label}</span>
+                        </div>
                       </div>
                     </div>
-                    <button type="button" className="apply-link">สมัคร</button>
+                    {/* แก้ไขตรงนี้: เพิ่ม onClick ให้เปิดหน้าเว็บ */}
+                    <button 
+                      type="button" 
+                      className="btn-apply-member"
+                      onClick={() => handleRegisterClick(item.registerUrl)}
+                    >
+                      สมัคร
+                    </button>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Action Buttons */}
             <div className="form-actions">
-              <button type="submit" className="btn-save">บันทึก</button>
+              <button type="submit" className="btn-save">บันทึกข้อมูล</button>
               <button type="button" className="btn-cancel">ยกเลิก</button>
             </div>
 
           </form>
         </div>
       </div>
+
+      {showPopup && (
+        <div className="modal-overlay">
+          <div className="modal-content fade-in-scale">
+            <div className="modal-icon-wrapper">
+              <Check size={40} className="modal-check-icon" />
+            </div>
+            <h2 className="modal-title">บันทึกข้อมูลแล้ว</h2>
+            <p className="modal-subtitle">ข้อมูลถูกอัปเดตเรียบร้อยแล้ว</p>
+            <button className="modal-btn-close" onClick={closePopup}>
+              เข้าใจแล้ว
+            </button>
+          </div>
+        </div>
+      )}
+
       <Footer />
-    </>
+    </div>
   );
 };
 
