@@ -63,7 +63,7 @@ const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onA
                   <div className="product-info">
                     <h3>{item.name}</h3>
                     <button className="btn-add-cart" onClick={() => onAddToCart(item)}>
-                      <Plus size={18} /> เพิ่มลงรายการ
+                      <Plus size={18} /> เพิ่มลง My List
                     </button>
                   </div>
                 </div>

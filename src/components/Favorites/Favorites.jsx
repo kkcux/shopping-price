@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, Heart, Trash2, ShoppingCart } from 'lucide-react';
+import { ChevronLeft, Heart, Trash2, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Home/Navbar'; 
 import Footer from '../Home/Footer'; 
@@ -89,7 +89,7 @@ const Favorites = () => {
                     className="btn-add-cart"
                     onClick={() => handleAddToCart(item)}
                   >
-                    <ShoppingCart size={18} /> เพิ่มลงตะกร้า
+                    <Plus size={18} /> เพิ่มลง My List
                   </button>
                 </div>
               ))}
