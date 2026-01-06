@@ -203,7 +203,7 @@
   .navbar {
     height: 64px;
   }
-  
+
   .btn-nav-back {
     padding: 10px;
     border-radius: 50%;
@@ -211,7 +211,7 @@
     height: 40px;
     justify-content: center;
   }
-  
+
   .btn-nav-back span {
     display: none; /* ซ่อนข้อความในมือถือ เหลือแค่ไอคอน */
   }

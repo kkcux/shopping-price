@@ -3,7 +3,13 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft, Pencil, Trash2, Search, Check, AlertTriangle } from "lucide-react";
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
-import "./MyLists2.css";
+import "./mylists2.css";
+
+const STORE_LOGOS = {
+  MAKRO: "https://scontent.fbkk22-8.fna.fbcdn.net/v/t39.30808-6/480657626_681170814244941_7835255767097779908_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=a5f93a&_nc_eui2=AeEuZWsDXX_D8WKS9ATOuANpUbxuZqIADWRRvG5mogANZBG47EMrpkrOTT8a1rAi7gyHwRJoJ0MoQ2XNHp7S-9yh&_nc_ohc=ckci-jAoGkEQ7kNvwGCQC7i&_nc_oc=AdkvmER3vbZnLe3LeyYsxsPrAt9q5IstrK8vmhucN7k8X1DTnAIfKhKuPxjYdcU6m8k&_nc_zt=23&_nc_ht=scontent.fbkk22-8.fna&_nc_gid=FLKyR7X10A2oGTH-RI2qGw&oh=00_AfqC1JxrI5BVKAw6QZ-SV_93b4xLbw2hMV6r1ZHYJziRNQ&oe=696115A7",
+  LOTUS: "https://upload.wikimedia.org/wikipedia/commons/1/14/Lotus-2021-logo.png",
+  BIGC: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Big_C_Logo.svg/500px-Big_C_Logo.svg.png",
+};
 
 const REGISTER_URL = {
   MAKRO: "https://www.makro.pro/",
@@ -243,7 +249,15 @@ function ProductCard({ name, img, sub }) {
 function MemberRow({ brand, isMember }) {
   return (
     <div className={`ml2-memberRow ${isMember ? "ok" : ""}`}>
-      <div className={`ml2-brand ${brand.toLowerCase()}`}>{brand}</div>
+      {/* --- ลบส่วนนี้ออก --- */}
+      {/* <div className={`ml2-brand ${brand.toLowerCase()}`}>{brand}</div> */}
+
+      {/* --- แสดงรูปภาพโลโก้ในตัวห่อที่มี class ตามแบรนด์ --- */}
+      <div className={`ml2-brand-logo ${brand.toLowerCase()}`}>
+        <img src={STORE_LOGOS[brand]} alt={brand} />
+      </div>
+      {/* ------------------------------------------ */}
+
       <div className="ml2-memberText">
         {isMember ? "เป็นสมาชิกแล้ว" : "ไม่ได้เป็นสมาชิก"}
       </div>
@@ -257,7 +271,11 @@ function MemberRow({ brand, isMember }) {
           สมัคร
         </a>
       )}
-      {isMember && <Check size={18} color="#10b77e" />}
+      {isMember && (
+        <div className="ml2-check-icon">
+          <Check size={18} color="#10b77e" />
+        </div>
+      )}
     </div>
   );
 }
