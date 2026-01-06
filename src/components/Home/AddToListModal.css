@@ -1,12 +1,12 @@
 @import url("https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap");
 
 /* =========================================
-   Variables (Fallbacks in case global vars are missing)
+   Variables
    ========================================= */
 :root {
-  --primary: #10b981; /* เขียวหลัก */
-  --primary-dark: #047857; /* เขียวเข้ม */
-  --primary-soft: #ecfdf5; /* เขียวอ่อนพาสเทล */
+  --primary: #10b981;
+  --primary-dark: #047857;
+  --primary-soft: #ecfdf5;
   --text-main: #374151;
   --text-muted: #9ca3af;
   --bg-card: #ffffff;
@@ -16,7 +16,7 @@
 }
 
 /* =========================================
-   Modal Structure & Animation
+   Modal Structure
    ========================================= */
 .modal-overlay {
   position: fixed;
@@ -37,7 +37,7 @@
   background: var(--bg-card);
   width: 90%;
   max-width: 420px;
-  max-height: 90vh; /* ป้องกันทะลุจอ */
+  max-height: 90vh;
   display: flex;
   flex-direction: column;
   border-radius: 20px;
@@ -106,6 +106,7 @@
   padding: 16px;
   margin-bottom: 20px;
   flex-shrink: 0;
+  overflow: hidden; /* ป้องกันทะลุ */
 }
 
 .prod-img {
@@ -130,14 +131,15 @@
 
 .prod-name {
   flex: 1;
+  min-width: 0; /* ✅ สำคัญมาก! ต้องใส่เพื่อให้ Flexbox ยอมตัดคำ */
   font-weight: 600;
   color: var(--text-main);
   font-size: 1rem;
   line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  display: block;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Quantity Controls */
@@ -145,6 +147,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0; /* ห้ามหดปุ่ม */
 }
 
 .qty-control-group button {
@@ -186,7 +189,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #f59e0b; /* Amber color for info */
+  color: #f59e0b;
   font-size: 0.85rem;
   margin-bottom: 16px;
   padding: 0 4px;
@@ -196,16 +199,18 @@
    List Selection Area
    ========================================= */
 .list-selection-container {
-  display: flex;
+  display: flex !important;
   flex-direction: column;
+  min-height: 250px !important;
+
+  /* ✅ ลบ max-height ที่ขัดแย้งออก เพื่อแก้ Scrollbar ซ้อน */
+  max-height: none !important;
+
   gap: 12px;
-  max-height: 240px;
   overflow-y: auto;
-  padding: 2px; /* กันเงาแหว่ง */
-  padding-right: 6px; /* เผื่อที่ให้ Scrollbar */
+  padding: 2px 6px 2px 2px;
 }
 
-/* Custom Scrollbar */
 .list-selection-container::-webkit-scrollbar {
   width: 6px;
 }
@@ -222,17 +227,22 @@
 
 /* Empty State */
 .empty-state {
-  text-align: center;
-  color: var(--text-muted);
-  padding: 24px;
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
   background: #f9fafb;
+  border: 2px dashed #e5e7eb;
   border-radius: 12px;
-  border: 1px dashed #e5e7eb;
+  color: #9ca3af;
+  margin: 0;
 }
 
 .empty-state p {
   margin: 0;
   font-size: 0.9rem;
+  white-space: nowrap;
 }
 
 /* =========================================
@@ -249,6 +259,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
+  overflow: hidden; /* กันทะลุ */
 }
 
 .list-card-item:hover {
@@ -258,14 +269,12 @@
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
-/* --- Selected State (Important Logic) --- */
 .list-card-item.selected {
   border-color: var(--primary);
   background: var(--primary-soft);
-  pointer-events: none; /* ห้ามกดซ้ำ */
+  pointer-events: none;
 }
 
-/* Icon Box */
 .list-icon-box {
   width: 44px;
   height: 44px;
@@ -274,7 +283,6 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  /* ไม่ใส่ !important ตรงนี้ เพื่อให้ React inline style ทำงานได้ */
   background: #ecfdf5;
   color: #059669;
   transition: all 0.3s;
@@ -282,6 +290,7 @@
 
 .list-text {
   flex: 1;
+  min-width: 0; /* ✅ เพิ่มตรงนี้เพื่อให้ชื่อ List ตัดคำได้เหมือนกัน */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -291,6 +300,11 @@
   font-weight: 600;
   color: var(--text-main);
   font-size: 0.95rem;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%; /* สั่งให้เต็มพื้นที่พ่อ (ที่โดน min-width บังคับแล้ว) */
 }
 
 .list-count {
@@ -303,13 +317,13 @@
   transition: color 0.2s;
   display: flex;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .list-card-item:hover .action-arrow {
   color: var(--primary);
 }
 
-/* ซ่อนลูกศรเมื่อถูกเลือก (เพราะ React จะโชว์เครื่องหมายถูกที่ Icon ซ้ายแทน) */
 .list-card-item.selected .action-arrow {
   opacity: 0;
 }
@@ -346,7 +360,6 @@
   background: var(--primary-soft);
 }
 
-/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;

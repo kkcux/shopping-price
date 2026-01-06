@@ -65,11 +65,13 @@ button {
 
 /* --- 1. HERO SECTION --- */
 .hero-banner {
-  background-color: #f0fdf4;
-  background-image: radial-gradient(#378b43 0.5px, transparent 0.5px),
-    radial-gradient(#378b43 0.5px, #f0fdf4 0.5px);
-  background-size: 20px 20px;
-  background-position: 0 0, 10px 10px;
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+
+  /* เพิ่มความโค้งด้านล่าง ซ้ายและขวา */
+
+  /* ดัน Content ด้านล่างให้ห่างออกมาหน่อย */
+  margin-bottom: 80px;
+
   padding: 80px 20px 60px;
   text-align: center;
   position: relative;
