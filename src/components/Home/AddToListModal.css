@@ -1,14 +1,31 @@
 @import url("https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap");
 
-/* Overlay */
+/* =========================================
+   Variables (Fallbacks in case global vars are missing)
+   ========================================= */
+:root {
+  --primary: #10b981; /* เขียวหลัก */
+  --primary-dark: #047857; /* เขียวเข้ม */
+  --primary-soft: #ecfdf5; /* เขียวอ่อนพาสเทล */
+  --text-main: #374151;
+  --text-muted: #9ca3af;
+  --bg-card: #ffffff;
+  --bg-page: #f3f4f6;
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* =========================================
+   Modal Structure & Animation
+   ========================================= */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* สีดำจาง */
-  backdrop-filter: blur(5px);
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -16,27 +33,31 @@
   animation: fadeIn 0.2s ease;
 }
 
-/* Modal Box */
 .modal-content {
-  background: #ffffff;
+  background: var(--bg-card);
   width: 90%;
   max-width: 420px;
-  border-radius: 20px; /* โค้งมน */
-  box-shadow: var(--shadow-xl);
-  overflow: hidden; /* เพื่อให้ Header สีเขียวเข้ามุมโค้ง */
+  max-height: 90vh; /* ป้องกันทะลุจอ */
   display: flex;
   flex-direction: column;
+  border-radius: 20px;
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
   font-family: "Prompt", sans-serif;
   animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 0 !important;
 }
 
-/* --- Header สีเขียว (ตามรูปตัวอย่าง) --- */
+/* =========================================
+   Header
+   ========================================= */
 .modal-header-green {
-  background-color: var(--primary); /* Theme primary from Home.css */
-  padding: 18px 24px;
+  background-color: var(--primary);
+  padding: 16px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
 }
 
 .modal-header-green h3 {
@@ -46,7 +67,6 @@
   font-weight: 600;
 }
 
-/* ปุ่มปิดสีขาวโปร่งใส */
 .close-btn-white {
   background: transparent;
   border: none;
@@ -55,29 +75,37 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 4px;
+  border-radius: 50%;
   opacity: 0.8;
-  transition: opacity 0.2s;
+  transition: all 0.2s;
 }
 
 .close-btn-white:hover {
   opacity: 1;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* Body */
+/* =========================================
+   Body & Product Card
+   ========================================= */
 .modal-body {
   padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
-/* --- Product Row Card (แนวนอน) --- */
 .product-row-card {
   display: flex;
   align-items: center;
   gap: 16px;
-  background: #f9fafb; /* พื้นหลังเทาอ่อนๆ */
-  border: 1px solid #f3f4f6;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
   border-radius: 16px;
   padding: 16px;
   margin-bottom: 20px;
+  flex-shrink: 0;
 }
 
 .prod-img {
@@ -101,32 +129,31 @@
 }
 
 .prod-name {
-  flex: 1; /* ขยายเต็มพื้นที่ */
+  flex: 1;
   font-weight: 600;
-  color: var(--text-dark);
+  color: var(--text-main);
   font-size: 1rem;
   line-height: 1.4;
-  /* ตัดคำยาวๆ */
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
-/* --- Quantity Controls (ปุ่มกลม) --- */
+/* Quantity Controls */
 .qty-control-group {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .qty-control-group button {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  border: 1px solid #e5e7eb; /* ขอบเทาอ่อน */
+  border: 1px solid #e5e7eb;
   background: white;
-  color: #374151;
+  color: var(--text-main);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -143,13 +170,14 @@
 .qty-control-group button:disabled {
   opacity: 0.3;
   cursor: not-allowed;
+  background: #f3f4f6;
 }
 
 .qty-control-group span {
   font-weight: 600;
   font-size: 1.1rem;
-  color: #1f2937;
-  min-width: 20px;
+  color: var(--text-main);
+  min-width: 24px;
   text-align: center;
 }
 
@@ -158,75 +186,113 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: var(--accent); /* Accent from Home.css */
+  color: #f59e0b; /* Amber color for info */
   font-size: 0.85rem;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
+  padding: 0 4px;
 }
 
-/* List Selection */
+/* =========================================
+   List Selection Area
+   ========================================= */
 .list-selection-container {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: 250px;
+  max-height: 240px;
   overflow-y: auto;
+  padding: 2px; /* กันเงาแหว่ง */
+  padding-right: 6px; /* เผื่อที่ให้ Scrollbar */
 }
 
-.list-selection-container:has(.empty-state) {
-  max-height: none;
-  overflow-y: hidden;
+/* Custom Scrollbar */
+.list-selection-container::-webkit-scrollbar {
+  width: 6px;
+}
+.list-selection-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+.list-selection-container::-webkit-scrollbar-thumb {
+  background-color: #d1d5db;
+  border-radius: 10px;
+}
+.list-selection-container::-webkit-scrollbar-thumb:hover {
+  background-color: #9ca3af;
 }
 
+/* Empty State */
 .empty-state {
   text-align: center;
-  color: #9ca3af;
-  padding: 20px;
+  color: var(--text-muted);
+  padding: 24px;
+  background: #f9fafb;
+  border-radius: 12px;
+  border: 1px dashed #e5e7eb;
 }
 
 .empty-state p {
-  white-space: nowrap;
-  font-size: 0.9rem;
   margin: 0;
+  font-size: 0.9rem;
 }
 
-/* List Item */
+/* =========================================
+   List Item Card
+   ========================================= */
 .list-card-item {
   display: flex;
   align-items: center;
   gap: 16px;
   padding: 12px 16px;
   background: var(--bg-card);
-  border: 1px solid var(--bg-page); /* เส้นบางๆ */
+  border: 1px solid var(--bg-page);
   border-radius: 12px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s ease;
+  position: relative;
 }
 
 .list-card-item:hover {
   border-color: var(--primary);
-  box-shadow: var(--shadow-md);
+  background: var(--primary-soft);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
+/* --- Selected State (Important Logic) --- */
+.list-card-item.selected {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  pointer-events: none; /* ห้ามกดซ้ำ */
+}
+
+/* Icon Box */
 .list-icon-box {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--primary-soft) !important;
-  color: var(--primary-dark) !important;
+  flex-shrink: 0;
+  /* ไม่ใส่ !important ตรงนี้ เพื่อให้ React inline style ทำงานได้ */
+  background: #ecfdf5;
+  color: #059669;
+  transition: all 0.3s;
 }
 
 .list-text {
   flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
+
 .list-name {
   font-weight: 600;
   color: var(--text-main);
+  font-size: 0.95rem;
 }
+
 .list-count {
   font-size: 0.8rem;
   color: var(--text-muted);
@@ -234,26 +300,38 @@
 
 .action-arrow {
   color: #d1d5db;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
 }
+
 .list-card-item:hover .action-arrow {
   color: var(--primary);
 }
 
-/* Create New Button */
+/* ซ่อนลูกศรเมื่อถูกเลือก (เพราะ React จะโชว์เครื่องหมายถูกที่ Icon ซ้ายแทน) */
+.list-card-item.selected .action-arrow {
+  opacity: 0;
+}
+
+/* =========================================
+   Create New Button Area
+   ========================================= */
 .create-new-list-area {
-  margin-top: 24px;
-  padding-top: 24px;
+  margin-top: 20px;
+  padding-top: 20px;
   border-top: 1px dashed #e5e7eb;
 }
 
 .btn-start-create {
   width: 100%;
   padding: 14px;
-  background: var(--bg-card);
-  border: 1px dashed var(--text-muted);
+  background: #ffffff;
+  border: 1px dashed #d1d5db;
   border-radius: 12px;
   color: var(--text-muted);
   font-size: 0.95rem;
+  font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -268,7 +346,7 @@
   background: var(--primary-soft);
 }
 
-/* Animation */
+/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -277,6 +355,7 @@
     opacity: 1;
   }
 }
+
 @keyframes scaleUp {
   from {
     transform: scale(0.95);
