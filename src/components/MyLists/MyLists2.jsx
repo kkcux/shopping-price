@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft, Pencil, Trash2, Search, Check, AlertTriangle } from "lucide-react";
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
-import "./MyLists2.css";
+import "./mylists2.css";
 
 const STORE_LOGOS = {
   MAKRO: "https://scontent.fbkk22-8.fna.fbcdn.net/v/t39.30808-6/480657626_681170814244941_7835255767097779908_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=a5f93a&_nc_eui2=AeEuZWsDXX_D8WKS9ATOuANpUbxuZqIADWRRvG5mogANZBG47EMrpkrOTT8a1rAi7gyHwRJoJ0MoQ2XNHp7S-9yh&_nc_ohc=ckci-jAoGkEQ7kNvwGCQC7i&_nc_oc=AdkvmER3vbZnLe3LeyYsxsPrAt9q5IstrK8vmhucN7k8X1DTnAIfKhKuPxjYdcU6m8k&_nc_zt=23&_nc_ht=scontent.fbkk22-8.fna&_nc_gid=FLKyR7X10A2oGTH-RI2qGw&oh=00_AfqC1JxrI5BVKAw6QZ-SV_93b4xLbw2hMV6r1ZHYJziRNQ&oe=696115A7",
