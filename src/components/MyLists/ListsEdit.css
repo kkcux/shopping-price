@@ -153,6 +153,27 @@
   padding-bottom: 15px;
   border-bottom: 1px solid #f1f5f9;
 }
+
+/* ตกแต่งปุ่ม "ดูสินค้าทั้งหมด" */
+.le-seeAllBtn {
+  background: none;
+  border: none;
+  color: #4285f4; /* สีฟ้าตามรูปตัวอย่าง */
+  font-family: "Sarabun", "Prompt", sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px; /* ระยะห่างระหว่างตัวหนังสือกับลูกศร */
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.le-seeAllBtn:hover {
+  opacity: 0.6;
+  text-decoration: none; /* เพิ่มเส้นใต้ตอนเอาเมาส์ชี้ */
+}
 .le-boxTitle {
   font-size: 1.2rem;
   font-weight: 700;
