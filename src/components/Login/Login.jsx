@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useGoogleLogin } from '@react-oauth/google';
+import axios from 'axios';
 import "./Login.css";
 
 import Navbar from "../Home/Navbar";
@@ -12,19 +14,45 @@ const Login = () => {
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  // --- ส่วนจัดการ Google Login ---
+  const loginWithGoogle = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        // 1. ดึงข้อมูล User จาก Google
+        const userInfo = await axios.get(
+          'https://www.googleapis.com/oauth2/v3/userinfo',
+          { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } }
+        );
+
+        console.log("User Info:", userInfo.data);
+
+        // 2. บันทึกข้อมูลลงเครื่อง (เพื่อให้หน้าอื่นรู้ว่าล็อกอินแล้ว)
+        localStorage.setItem('user', JSON.stringify(userInfo.data));
+        localStorage.setItem('token', tokenResponse.access_token);
+
+        // 3. ไปหน้าแรกทันที
+        navigate("/"); 
+
+      } catch (error) {
+        console.error("Error fetching user info:", error);
+      }
+    },
+    onError: error => console.log('Login Failed:', error)
+  });
+  // -----------------------------
+
   const handleLogin = (e) => {
     e.preventDefault();
     console.log("Login submitted");
-    // navigate("/"); // ตัวอย่าง: ล็อกอินเสร็จไปหน้าแรก
+    // ตัวอย่าง: ล็อกอินแบบปกติเสร็จ ก็ให้ไปหน้าแรกเหมือนกัน
+    // navigate("/"); 
   };
 
   return (
     <div className="page-container">
       
-      {/* Navbar ตรงนี้ */}
       <Navbar />
 
-      {/* ================= Main Content (Card) ================= */}
       <main className="main-content">
         <div className="auth-card">
           <div className="auth-header">
@@ -78,10 +106,15 @@ const Login = () => {
               <span>หรือเข้าสู่ระบบด้วย</span>
             </div>
 
-            <button type="button" className="btn-google">
+            {/* ปุ่ม Google Custom ที่แก้ไขแล้ว */}
+            <button 
+                type="button" 
+                className="btn-google" 
+                onClick={() => loginWithGoogle()}
+            >
               <FcGoogle size={22} />
               เข้าสู่ระบบด้วย Google
-            </button>
+            </button>   
           </form>
 
           <div className="auth-footer-text">
@@ -90,7 +123,6 @@ const Login = () => {
         </div>
       </main>
 
-      {/* ใส่ Footer ตรงนี้ */}
       <Footer />
       
     </div>
