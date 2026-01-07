@@ -22,6 +22,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: relative;
 }
 
 /* --- Brand / Logo --- */
@@ -65,11 +66,16 @@
   align-items: center;
   gap: 32px;
   list-style: none;
-  margin: 0;
   padding: 0;
-  /* ✨ ปรับให้ยืดหยุ่นและอยู่ชิดกลุ่มขวามากขึ้น */
-  margin-left: auto;
-  margin-right: 48px;
+
+  /* --- แก้ไขตรงนี้ (ลบอันเก่าที่เป็น position: absolute ออก) --- */
+
+  position: static; /* ยกเลิกการลอยตัว */
+  transform: none; /* ยกเลิกการจัดกึ่งกลาง */
+
+  margin: 0; /* ลบ margin เดิม */
+  margin-left: auto; /* ✨ คำสั่งนี้จะดันเมนูไปชิดขวาสุด (ติดกับปุ่ม Login) */
+  margin-right: -15px;
 }
 
 .menu li a {
@@ -112,6 +118,8 @@
   display: flex;
   align-items: center;
   gap: 16px; /* ระยะห่างระหว่างปุ่ม */
+  min-width: 200px;
+  justify-content: flex-end;
 }
 
 /* ปุ่ม LOGIN มาก่อน */
@@ -214,3 +222,80 @@
     display: none; /* ซ่อนข้อความในมือถือ เหลือแค่ไอคอน */
   }
 }
+
+/* ================= User Profile (Glassy Green Style - Compact Version) ================= */
+.user-profile {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+
+  /* ✅ ปรับแก้: ลดระยะห่างระหว่างไอเทม */
+  gap: 6px; /* จากเดิม 8px */
+
+  height: 40px;
+  padding: 4px; /* Padding รอบๆ */
+
+  /* ✅ ปรับแก้: ลด padding ด้านขวาลงเยอะๆ */
+  padding-right: 6px; /* จากเดิม 12px */
+
+  transition: all 0.3s ease;
+  order: 1;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* ================= User Profile (Avatar Fix) ================= */
+
+.user-avatar {
+  width: 30px;
+  height: 30px;
+
+  /* ✅ เพิ่ม 2 บรรทัดนี้ครับ: */
+  border-radius: 50%; /* สั่งให้กรอบรูปเป็นวงกลม */
+  overflow: hidden; /* สั่งให้ตัดส่วนที่ล้นออกจากวงกลมทิ้งไป */
+
+  /* ของเดิม (อาจจะลบออกหรือเก็บไว้ก็ได้ ถ้าบรรทัดบนทำงานแล้ว) */
+  border: 2px solid rgba(255, 255, 255, 0.8);
+  object-fit: cover;
+}
+
+/* ชื่อคน */
+.user-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  /* ✅ ปรับแก้: ลดความกว้างสูงสุดของชื่อลง */
+  max-width: 70px; /* จากเดิม 100px */
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* ปุ่ม Logout */
+.btn-logout {
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+
+  /* ✅ ปรับแก้: ลดขนาดปุ่ม logout ลงนิดนึงให้สมดุล */
+  width: 22px; /* จากเดิม 24px */
+  height: 22px; /* จากเดิม 24px */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+
+  /* ✅ ปรับแก้: ลดระยะห่างจากชื่อ */
+  margin-left: 0px; /* จากเดิม 2px */
+
+  transition: all 0.2s ease;
+}
+/* ... (ส่วน .btn-logout:hover เหมือนเดิม) ... */

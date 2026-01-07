@@ -233,7 +233,7 @@ body {
 }
 
 .btn-google {
-  width: 100%;
+  width: 100%; /* นี่คือสิ่งที่ทำให้มันเต็มจอเท่ากับปุ่มอื่น */
   padding: 12px;
   background: #fff;
   border: 1px solid #ddd;
@@ -245,9 +245,11 @@ body {
   font-family: "Prompt";
   font-size: 1rem;
   cursor: pointer;
+  transition: 0.2s; /* เพิ่มให้กดแล้วนุ่มขึ้น */
 }
 .btn-google:hover {
   background: #f9f9f9;
+  border-color: #ccc;
 }
 
 .auth-footer-text {
@@ -336,3 +338,17 @@ body {
     justify-content: center;
   }
 }
+
+/* ================= Google Login Wrapper ================= */
+/* เพิ่มต่อท้ายไฟล์ Login.css ได้เลยครับ */
+
+.google-login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  width: 100%;
+  /* ถ้าต้องการให้ปุ่ม Google มีเงาเหมือนปุ่ม Submit ให้แก้ที่ตัว Component ใน JS */
+}
+
+/* ถ้าต้องการซ่อนปุ่มเดิมที่ไม่ได้ใช้แล้ว ก็ลบ .btn-google ออกได้เลยครับ หรือเก็บไว้ก็ได้ไม่มีผลเสีย */

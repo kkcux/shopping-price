@@ -1,21 +1,38 @@
-import React, { useState, useRef, useEffect } from 'react'; // เพิ่ม useState, useRef, useEffect
-import { ShoppingCart, Bell, ArrowLeft } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { ShoppingCart, Bell, ArrowLeft, LogOut } from 'lucide-react'; // เพิ่ม Icon LogOut
 import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
+import { googleLogout } from '@react-oauth/google'; // ✅ เพิ่ม import googleLogout
 import './Navbar.css';
-import NotificationList from '../Notification/NotificationList'; // ✅ 1. นำเข้า Component
+import NotificationList from '../Notification/NotificationList';
 
 function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // ✅ 2. เพิ่ม State ควบคุมการแสดงผล
   const [showNotif, setShowNotif] = useState(false);
-  
-  // ✅ 3. เพิ่ม Ref สำหรับตรวจจับการคลิกนอกกล่อง (เพื่อให้ปิดอัตโนมัติ)
   const notifRef = useRef(null);
 
+  // ✅ 1. เพิ่ม State สำหรับเก็บข้อมูล User
+  const [user, setUser] = useState(null);
+
+  // ✅ 2. เช็คข้อมูลใน LocalStorage เมื่อโหลดหน้าเว็บ
   useEffect(() => {
-    // ฟังก์ชันปิดเมื่อคลิกที่อื่น
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser)); // แปลง JSON กลับเป็น Object
+    }
+  }, [location]); // ใส่ location เพื่อให้เช็คใหม่ทุกครั้งที่เปลี่ยนหน้า
+
+  // ✅ 3. ฟังก์ชันสำหรับ Logout
+  const handleLogout = () => {
+    googleLogout(); // เคลียร์ session ของ Google
+    localStorage.removeItem('user'); // ลบข้อมูล user
+    localStorage.removeItem('token'); // ลบ token
+    setUser(null); // เคลียร์ state
+    navigate('/'); // เด้งไปหน้า Login
+  };
+
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (notifRef.current && !notifRef.current.contains(event.target)) {
         setShowNotif(false);
@@ -36,7 +53,6 @@ function Navbar() {
 
   const backConfig = getBackBtnConfig();
 
-  // --- กรณีหน้า Login/Register ---
   if (isAuthPage) {
     return (
       <nav className="navbar">
@@ -57,7 +73,6 @@ function Navbar() {
     );
   }
 
-  // --- กรณีหน้าทั่วไป ---
   return (
     <nav className="navbar">
       <div className="nav-content">
@@ -75,11 +90,34 @@ function Navbar() {
         </ul>
 
         <div className="nav-actions">
-          <Link to="/login">
-            <button className="login-btn">LOGIN</button>
-          </Link>
+          
+          {/* ✅ 4. เปลี่ยนปุ่ม LOGIN เป็น Profile Google แบบมีเงื่อนไข */}
+          {user ? (
+            <div className="user-profile">
+              <img 
+                src={user.picture} 
+                alt="Profile" 
+                className="user-avatar" 
+              />
+              
+              <span className="user-name">
+                {/* แก้เป็นแบบนี้ครับ: เอาชื่อมาแบ่งวรรค แล้วเลือกตัวแรกสุด */}
+                {(user.given_name || user.name).split(' ')[0]}
+              </span>
+              <button 
+                onClick={handleLogout}
+                className="btn-logout"
+                title="ออกจากระบบ"
+              >
+                <LogOut size={12} /> {/* ลดขนาดไอคอนลงนิดนึงให้สมดุล */}
+              </button>
+            </div>
+          ) : (
+            <Link to="/login">
+              <button className="login-btn">LOGIN</button>
+            </Link>
+          )}
 
-          {/* ✅ 4. ห่อหุ้มไอคอนกระดิ่งด้วย Wrapper เพื่อจัดตำแหน่ง Popup */}
           <div className="notif-wrapper" ref={notifRef} style={{ position: 'relative', order: 2 }}>
             <div 
               className={`bell-icon ${showNotif ? 'active' : ''}`} 
@@ -88,7 +126,6 @@ function Navbar() {
               <Bell size={22} />
             </div>
 
-            {/* ✅ 5. แสดง NotificationList เมื่อ showNotif = true */}
             {showNotif && (
               <div style={{ position: 'absolute', top: '55px', right: '-10px', zIndex: 1000 }}>
                 <NotificationList />
