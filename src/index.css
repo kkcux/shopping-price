@@ -2,6 +2,31 @@
 @import url("https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap");
 
 /* ตั้งค่าให้ทุกอย่างใช้ Kanit */
+
+/* 1. ป้องกันการคลุมดำ (Select Text) ทั้งเว็บ */
+* {
+  -webkit-user-select: none; /* สำหรับ Chrome / Safari */
+  -moz-user-select: none; /* สำหรับ Firefox */
+  -ms-user-select: none; /* สำหรับ IE / Edge */
+  user-select: none; /* มาตรฐาน */
+}
+
+/* 2. ป้องกันการลากรูปภาพ (Drag Image) */
+img {
+  -webkit-user-drag: none; /* ป้องกันลากรูปใน Chrome/Safari */
+  user-drag: none; /* มาตรฐาน (บางเบราว์เซอร์อาจยังไม่รองรับเต็มที่) */
+  pointer-events: none; /* ป้องกันการคลิกรูป (ถ้าต้องการให้คลิกได้ ลบบรรทัดนี้ออก) */
+}
+
+/* ⚠️ สำคัญ: ต้องเปิดให้ Input / Textarea ยังพิมพ์และเลือกข้อความได้ */
+input,
+textarea,
+[contenteditable="true"] {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
+}
 * {
   box-sizing: border-box;
   margin: 0;
