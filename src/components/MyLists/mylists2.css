@@ -100,9 +100,9 @@
 
 /* ปุ่ม Edit List (สีเขียวทึบ เด่นชัด) */
 .ml2-edit {
-  background-color: #10b77e;
+  background-color: #3b82f6; /* สีน้ำเงิน */
   color: white;
-  border: 1px solid #10b77e;
+  border: 1px solid #3b82f6; /* แก้ขอบให้เป็นสีน้ำเงินเหมือนกัน */
   padding: 10px 24px;
   border-radius: 50px;
   font-family: "Sarabun", sans-serif;
@@ -112,14 +112,13 @@
   align-items: center;
   gap: 8px;
   transition: all 0.2s;
-  box-shadow: 0 4px 6px rgba(16, 183, 126, 0.25);
+  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.25); /* แก้เงาให้เป็นโทนน้ำเงิน */
 }
 
 .ml2-edit:hover {
-  background-color: #0d9668;
-  border-color: #0d9668;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 12px rgba(16, 183, 126, 0.4);
+  background-color: #2563eb; /* เปลี่ยนสีตอนเมาส์ชี้เป็นน้ำเงินเข้ม */
+  border-color: #2563eb;
+  box-shadow: 0 6px 12px rgba(59, 130, 246, 0.4); /* แก้เงาตอน hover */
 }
 
 /* ปุ่ม Delete List (วงกลมขอบแดง) */
@@ -140,9 +139,9 @@
 
 .ml2-btn-delete:hover {
   background-color: #fff1f2;
-  border-color: #ef4444;
-  color: #dc2626;
-  transform: translateY(-2px);
+  border-color: #cf7676;
+  color: #d62f2f;
+
   box-shadow: 0 4px 8px rgba(239, 68, 68, 0.2);
 }
 
@@ -252,7 +251,7 @@
 }
 
 .ml2-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   border-color: #10b77e; /* ขอบเขียว */
 }

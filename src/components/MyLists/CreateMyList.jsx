@@ -1,26 +1,28 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useNavigate, useLocation } from "react-router-dom"; // ✅ เพิ่ม useLocation
+import { useNavigate, useLocation } from "react-router-dom"; 
 import {
   Check,
   AlertCircle,
   ChevronLeft,
   ChevronRight,
   Plus,
+  Minus, // ✅ ต้องมีตรงนี้ ไม่งั้นหน้าขาว
 } from "lucide-react";
 
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
 import "./CreateMyList.css";
 
-// ===== ข้อมูลจริง =====
+// ===== ข้อมูลสินค้า (Mockup) =====
+// ⚠️ ตรวจสอบ path นี้ให้ถูกต้องตามโปรเจคจริงของคุณนะครับ
 import productsData from "../../data/bigC/big_c.json";
 
 export default function CreateMyList() {
   const navigate = useNavigate();
-  const location = useLocation(); // ✅ เรียกใช้ hook
+  const location = useLocation();
   const scrollRef = useRef(null);
 
-  // ✅ รับข้อมูลสินค้าเริ่มต้นที่ส่งมาจาก Modal (ถ้ามี)
+  // รับข้อมูลสินค้าเริ่มต้น (ถ้ามีส่งมาจากหน้าอื่น)
   const initialItem = location.state?.initialItem;
 
   /* ================= STATE ================= */
@@ -49,21 +51,16 @@ export default function CreateMyList() {
     window.scrollTo(0, 0);
   }, []);
 
-  // ✅ EFFECT ใหม่: เช็คว่ามีสินค้าส่งมาจากหน้าแรกไหม ถ้ามีให้เพิ่มเลย
   useEffect(() => {
     if (initialItem) {
       setSelected((prev) => {
-        // เช็คกันซ้ำ (เผื่อมีอยู่แล้วใน draft)
         const exists = prev.find((i) => i.id === initialItem.id);
         if (exists) {
-            // ถ้ามีอยู่แล้ว อาจจะบวกจำนวนเพิ่ม หรือไม่ทำอะไรก็ได้ (ที่นี่เลือกไม่ทำอะไร)
             return prev; 
         }
-        // ถ้ายังไม่มี ให้เพิ่มต่อท้าย
-        return [...prev, initialItem];
+        return [...prev, { ...initialItem, qty: 1 }];
       });
-
-      // ล้าง state ของ location เพื่อไม่ให้เพิ่มซ้ำเวลากด refresh
+      // ล้าง state เพื่อป้องกันการเพิ่มซ้ำเมื่อ refresh
       window.history.replaceState({}, document.title);
     }
   }, [initialItem]);
@@ -76,26 +73,27 @@ export default function CreateMyList() {
     localStorage.setItem("myListDraft_Items", JSON.stringify(selected));
   }, [selected]);
 
-  /* ================= DATA ================= */
+  /* ================= DATA PREP ================= */
+  // แปลงข้อมูลให้พร้อมโชว์ใน Catalog
   const catalog = productsData.slice(0, 10).map((p, index) => ({
     id: `bigc-${index}`,
     name: p.data,      
     img: p.image,      
   }));
 
-  /* ================= SCROLL ================= */
+  /* ================= HANDLERS: SCROLL ================= */
   const scroll = (ref, direction) => {
     const { current } = ref;
     if (current) {
-      const scrollAmount = direction === "left" ? -300 : 300;
+      const scrollAmount = 300;
       current.scrollBy({
-        left: scrollAmount,
+        left: direction === "left" ? -scrollAmount : scrollAmount,
         behavior: "smooth",
       });
     }
   };
 
-  /* ================= HANDLERS ================= */
+  /* ================= HANDLERS: QTY ================= */
   const increaseQty = (id) => {
     setCatalogQty((prev) => ({
       ...prev,
@@ -129,7 +127,16 @@ export default function CreateMyList() {
     setSelected((prev) => prev.filter((i) => i.id !== id));
   };
 
-  /* ================= SAVE ================= */
+  const updateSelectedQty = (id, delta) => {
+    setSelected((prev) => prev.map(item => {
+      if (item.id === id) {
+        return { ...item, qty: Math.max(1, item.qty + delta) };
+      }
+      return item;
+    }));
+  };
+
+  /* ================= SAVE LOGIC ================= */
   const handleSaveClick = () => {
     if (!listName.trim()) {
       setWarningMsg("กรุณาตั้งชื่อรายการก่อนบันทึก");
@@ -161,7 +168,7 @@ export default function CreateMyList() {
     navigate("/mylists");
   };
 
-  /* ================= UI ================= */
+  /* ================= UI RENDER ================= */
   return (
     <>
       <Navbar />
@@ -171,6 +178,7 @@ export default function CreateMyList() {
         <section className="le-header-section">
           <div className="le-header-inner">
             <div className="le-topLeft">
+              {/* ปุ่มย้อนกลับ */}
               <button className="le-back-btn" onClick={() => navigate(-1)}>
                 <ChevronLeft size={28} strokeWidth={2.5} />
               </button>
@@ -185,35 +193,32 @@ export default function CreateMyList() {
         </section>
 
         <div className="le-container">
-          {/* NAME */}
+          {/* NAME INPUT */}
           <div className="le-nameBlock">
             <div className="le-label">ชื่อรายการ</div>
             <input
               className="le-input"
               value={listName}
               onChange={(e) => setListName(e.target.value)}
-              placeholder="ตั้งชื่อรายการ..."
+              placeholder="ตั้งชื่อรายการ... (เช่น ของใช้ประจำเดือน)"
             />
           </div>
 
-          {/* ===== PRODUCT SLIDER ===== */}
+          {/* ===== PRODUCT SLIDER (CATALOG) ===== */}
           <section className="le-box">
             <div className="le-boxHead">
               <div className="le-boxTitle">เลือกสินค้าแนะนำ</div>
+              <button className="le-seeAllBtn" onClick={() => navigate('/products')}>
+                ดูสินค้าทั้งหมด <ChevronRight size={20} />
+              </button>
             </div>
 
             <div className="slider-wrapper">
-              <button
-                className="scroll-btn left"
-                onClick={() => scroll(scrollRef, "left")}
-              >
+              <button className="scroll-btn left" onClick={() => scroll(scrollRef, "left")}>
                 <ChevronLeft size={24} />
               </button>
 
-              <button
-                className="scroll-btn right"
-                onClick={() => scroll(scrollRef, "right")}
-              >
+              <button className="scroll-btn right" onClick={() => scroll(scrollRef, "right")}>
                 <ChevronRight size={24} />
               </button>
 
@@ -223,25 +228,26 @@ export default function CreateMyList() {
                     <img src={p.img} alt={p.name} />
                     <h3>{p.name}</h3>
 
-                    <div className="le-qty">
-                      <button onClick={() => decreaseQty(p.id)}>−</button>
-                      <span>{catalogQty[p.id] || 1}</span>
-                      <button onClick={() => increaseQty(p.id)}>+</button>
+                    {/* ✅ ส่วนควบคุม: เพิ่ม Wrapper เพื่อให้ CSS ดันปุ่มลงล่างได้ */}
+                    <div className="control-wrap" style={{ marginTop: 'auto', width: '100%' }}>
+                      <div className="le-qty">
+                        <button onClick={() => decreaseQty(p.id)}><Minus size={12} /></button>
+                        <span>{catalogQty[p.id] || 1}</span>
+                        <button onClick={() => increaseQty(p.id)}><Plus size={12} /></button>
+                      </div>
+
+                      <button className="add-btn" onClick={() => handleSelectProduct(p)}>
+                        <Plus size={14} /> เพิ่มลง My List
+                      </button>
                     </div>
 
-                    <button
-                      className="add-btn"
-                      onClick={() => handleSelectProduct(p)}
-                    >
-                      <Plus size={16} /> เพิ่ม
-                    </button>
                   </div>
                 ))}
               </div>
             </div>
           </section>
 
-          {/* ===== SELECTED LIST ===== */}
+          {/* ===== SELECTED LIST (รายการที่เลือกแล้ว) ===== */}
           <section className="le-box">
             <div className="le-boxHead">
               <div className="le-boxTitle">
@@ -250,17 +256,15 @@ export default function CreateMyList() {
             </div>
 
             {selected.length === 0 ? (
-              <div style={{ padding: 40, textAlign: "center", color: "#999" }}>
-                ยังไม่มีสินค้าในรายการ
+              <div style={{ padding: '60px', textAlign: "center", color: "#94a3b8" }}>
+                <p>ยังไม่มีสินค้าในรายการ</p>
+                <small>เลือกสินค้าจากด้านบนได้เลย</small>
               </div>
             ) : (
               <div className="le-cards">
                 {selected.map((p) => (
                   <div key={p.id} className="le-card">
-                    <button
-                      className="le-remove"
-                      onClick={() => removeItem(p.id)}
-                    >
+                    <button className="le-remove" onClick={() => removeItem(p.id)}>
                       ✕
                     </button>
 
@@ -269,14 +273,20 @@ export default function CreateMyList() {
                     </div>
 
                     <div className="le-cardName">{p.name}</div>
-                    <div className="le-cardSub">จำนวน {p.qty} ชิ้น</div>
+                    
+                    {/* ปุ่มปรับจำนวนในรายการที่เลือกแล้ว */}
+                    <div className="le-qty">
+                        <button onClick={() => updateSelectedQty(p.id, -1)}><Minus size={12} /></button>
+                        <span>{p.qty}</span>
+                        <button onClick={() => updateSelectedQty(p.id, 1)}><Plus size={12} /></button>
+                    </div>
                   </div>
                 ))}
               </div>
             )}
           </section>
 
-          {/* SAVE */}
+          {/* SAVE BUTTON */}
           <div className="le-saveWrap">
             <button className="le-saveBtn" onClick={handleSaveClick}>
               <Plus size={20} style={{ marginRight: 8 }} />
@@ -321,7 +331,7 @@ export default function CreateMyList() {
             <p className="modal-desc">{warningMsg}</p>
             <div className="modal-actions">
               <button
-                className="modal-btn close-warning"
+                className="modal-btn confirm"
                 onClick={() => setShowWarningModal(false)}
               >
                 ตกลง

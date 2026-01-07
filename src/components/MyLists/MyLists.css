@@ -102,7 +102,7 @@
 
 .btn-newlist:hover {
   background-color: #0d9668;
-  transform: translateY(-2px);
+  /* transform: translateY(-2px); */
   box-shadow: 0 6px 10px rgba(16, 183, 126, 0.3);
 }
 
@@ -141,7 +141,7 @@
 }
 
 .list-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-1px);
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   border-color: #10b77e; /* ขอบเขียว */
 }
