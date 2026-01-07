@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { 
   ChevronLeft, 
-  Check, 
+  ChevronRight, 
   Trash2, 
   Plus, 
   Minus,
@@ -136,6 +136,9 @@ export default function ListsEdit() {
           <section className="le-box">
             <div className="le-boxHead">
               <div className="le-boxTitle">เลือกรายการสินค้าเพิ่มเติม</div>
+              <button className="le-seeAllBtn" onClick={() => navigate('/producs')}>
+                ดูสินค้าทั้งหมด <ChevronRight size={20} />
+              </button>
             </div>
             <div className="le-cards">
               {catalog.map((p) => (
