@@ -125,7 +125,7 @@ button {
 }
 
 .search-box-wrapper:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
   box-shadow: 0 20px 40px -5px rgba(92, 156, 115, 0.25);
 }
 
@@ -148,7 +148,12 @@ button {
   display: flex;
   align-items: center;
   justify-content: center;
+  border: none; /* เพิ่มเพื่อลบขอบ default ของปุ่ม */
+  cursor: pointer; /* เพิ่มเพื่อให้เมาส์เปลี่ยนรูปมือ */
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* เพิ่มเงาเล็กน้อยให้ดูมีมิติ */
 }
+
 .search-btn:hover {
   background-color: var(--primary-dark);
 }
@@ -241,7 +246,7 @@ button {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
 }
 .cat-item:hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
 }
 
 /* Category Colors */
@@ -327,7 +332,7 @@ button {
 
 /* Card Hover Effect */
 .product-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-xl);
   border-color: transparent;
 }
