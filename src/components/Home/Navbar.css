@@ -132,8 +132,7 @@
 }
 
 .login-btn:hover {
-  background: #222222;
-  transform: translateY(-2px);
+  background: #494949;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
@@ -177,8 +176,7 @@
 }
 
 .btn-nav-back:hover {
-  background: #222222;
-  transform: translateY(-2px);
+  background: #494949;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 

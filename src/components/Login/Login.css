@@ -196,7 +196,7 @@ body {
 .btn-submit {
   width: 100%;
   padding: 14px;
-  background: #4a7f35;
+  background: #10b77e;
   color: white;
   border: none;
   border-radius: 10px;
@@ -207,7 +207,7 @@ body {
   transition: 0.2s;
 }
 .btn-submit:hover {
-  background: #3f6d2e;
+  background: #11966c;
 }
 
 .divider {
