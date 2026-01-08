@@ -58,7 +58,7 @@ function App() {
         <Route path="/mylists/:id" element={<MyLists2 />} />
 
         {/* 5. หน้าเปรียบเทียบราคา (MyLists3) ✅ ใช้ id */}
-        <Route path="/mylists3/:id" element={<MyLists3 />} />
+        <Route path="/mylists/compare/:id" element={<MyLists3 />} />
 
       </Routes>
     </div>
