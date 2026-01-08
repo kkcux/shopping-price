@@ -37,7 +37,7 @@ const Categories = () => {
 
   // --- State สำหรับ Pagination ---
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 30; // แสดง 30 ชิ้นต่อหน้า
+  const itemsPerPage = 30;
 
   const sortRef = useRef(null);
   const filterRef = useRef(null);
@@ -147,10 +147,10 @@ const Categories = () => {
     }
   };
 
-  // Helper สร้างปุ่มตัวเลข (แสดงแค่หน้าใกล้เคียง)
+  // Helper สร้างปุ่มตัวเลข
   const renderPaginationButtons = () => {
     const buttons = [];
-    const maxButtons = 5; // จำนวนปุ่มตัวเลขที่จะแสดง
+    const maxButtons = 5;
     let startPage = Math.max(1, currentPage - 2);
     let endPage = Math.min(totalPages, startPage + maxButtons - 1);
 
@@ -167,7 +167,7 @@ const Categories = () => {
           style={{
             width: '40px', height: '40px', borderRadius: '50%',
             border: '1px solid #e5e7eb',
-            background: currentPage === i ? '#10b981' : 'white', // สีเขียวเมื่อเลือก
+            background: currentPage === i ? '#10b981' : 'white',
             color: currentPage === i ? 'white' : '#374151',
             fontWeight: '600', cursor: 'pointer',
             transition: 'all 0.2s',
@@ -317,8 +317,10 @@ const Categories = () => {
                                     </div>
                                     <div className="info-std">
                                         <h3 title={item.name}>{item.name}</h3>
-                                        <div className="price-std">{item.price ? `฿${item.price.toLocaleString()}` : 'เช็คราคา'}</div>
-                                        <button className="btn-add-std" onClick={() => { setSelectedProduct(item); setIsModalOpen(true); }}>
+                                        {/* ❌ ลบส่วนแสดงราคาออกตามที่ขอ */}
+                                        {/* <div className="price-std">{item.price ? `฿${item.price.toLocaleString()}` : 'เช็คราคา'}</div> */}
+                                        
+                                        <button className="btn-add-std" onClick={() => { setSelectedProduct(item); setIsModalOpen(true); }} style={{marginTop: 'auto'}}>
                                             เพิ่มลงรายการ
                                         </button>
                                     </div>
@@ -327,7 +329,7 @@ const Categories = () => {
                         })}
                     </div>
 
-                    {/* ✅ ส่วน Pagination แบบตัวเลข สวยงาม */}
+                    {/* Pagination Buttons */}
                     {totalPages > 1 && (
                         <div style={{
                             display: 'flex', 
@@ -337,7 +339,6 @@ const Categories = () => {
                             marginTop: '40px',
                             padding: '20px'
                         }}>
-                            {/* ปุ่มย้อนกลับ */}
                             <button 
                                 onClick={() => changePage(currentPage - 1)}
                                 disabled={currentPage === 1}
@@ -352,10 +353,8 @@ const Categories = () => {
                                 <ChevronLeft size={20} />
                             </button>
 
-                            {/* ปุ่มตัวเลข */}
                             {renderPaginationButtons()}
 
-                            {/* ปุ่มถัดไป */}
                             <button 
                                 onClick={() => changePage(currentPage + 1)}
                                 disabled={currentPage === totalPages}
