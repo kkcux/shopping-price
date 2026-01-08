@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
-import { useNavigate } from 'react-router-dom'; // 1. อย่าลืม import นี้
+import { useNavigate } from 'react-router-dom';
 import './Home.css';
 import {
   Search, Plus, Heart, Beef, PackageSearch, Home as HomeIcon,
@@ -9,9 +9,7 @@ import {
 
 import AddToListModal from './AddToListModal';
 
-// ... (ProductSection Component ยังเหมือนเดิม ไม่ต้องแก้) ...
 const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onAddToCart }) => {
-  // ... (โค้ดภายใน ProductSection เหมือนเดิม) ...
   const scrollRef = useRef(null);
   const scroll = (direction) => {
     if (scrollRef.current) {
@@ -62,10 +60,12 @@ const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onA
 
                   <div className="product-info">
                     <h3>{item.name}</h3>
-                    {/* แสดงราคาถ้ามี */}
-                    <div style={{fontWeight: 'bold', color: 'var(--primary)', marginBottom: '8px'}}>
+                    
+                    {/* ❌ ลบส่วนแสดงราคาออกตามที่ขอ */}
+                    {/* <div style={{fontWeight: 'bold', color: 'var(--primary)', marginBottom: '8px'}}>
                         {item.price ? `฿${item.price.toLocaleString()}` : ''}
-                    </div>
+                    </div> */}
+
                     <button className="btn-add-cart" onClick={() => onAddToCart(item)}>
                       <Plus size={18} /> เพิ่มลง My List
                     </button>
@@ -86,14 +86,13 @@ const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onA
 
 
 const Home = () => {
-  const navigate = useNavigate(); // 2. เรียกใช้ Hook
+  const navigate = useNavigate();
   const [favorites, setFavorites] = useState({});
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // ... (useEffect ส่วนโหลด Favorites และ Products เหมือนเดิม) ...
   useEffect(() => {
     const savedFavs = JSON.parse(localStorage.getItem('favoritesItems')) || [];
     const favMap = {};
@@ -104,7 +103,6 @@ const Home = () => {
   }, []);
 
   const toggleFav = (product) => {
-     // ... (Logic toggleFav เหมือนเดิม) ...
      const productName = product.name;
     setFavorites(prev => {
       const isCurrentlyFav = !!prev[productName];
@@ -137,8 +135,12 @@ const Home = () => {
         setLoading(true);
         const response = await fetch('/data/all_retailers_products_merged_v1.jsonl');
         const text = await response.text();
-        const lines = text.trim().split('\n').slice(0, 500); // โหลดตัวอย่างหน้าแรก
-        const products = lines.map(line => JSON.parse(line));
+        // โหลดแค่ 500 รายการแรกเพื่อสุ่มโชว์หน้า Home
+        const lines = text.trim().split('\n').slice(0, 500); 
+        const products = lines.map(line => {
+            try { return JSON.parse(line); } catch(e) { return null; }
+        }).filter(item => item !== null);
+        
         setAllProducts(products);
       } catch (error) {
         console.error("Error loading products:", error);
@@ -159,7 +161,6 @@ const Home = () => {
     };
   }, [allProducts]);
 
-  // 3. ตั้งชื่อให้ตรงกับ Keywords ใน Categories.jsx เป๊ะๆ
   const categories = [
     { name: "อาหารสด & แช่แข็ง", icon: <Beef size={28} /> },
     { name: "อาหารแห้ง", icon: <PackageSearch size={28} /> },
@@ -171,9 +172,7 @@ const Home = () => {
     { name: "สัตว์เลี้ยง", icon: <Dog size={28} /> },
   ];
 
-  // 4. ฟังก์ชันสำหรับกดแล้วไปหน้า Categories
   const handleCategoryClick = (categoryName) => {
-    // ส่ง state ไปด้วย เพื่อให้หน้าปลายทางรู้ว่าเราเลือกอะไรมา
     navigate('/categories', { state: { selectedCategory: categoryName } });
   };
 
@@ -188,7 +187,7 @@ const Home = () => {
           </h1>
           <p>
             เปรียบเทียบราคาจากสินค้ากว่า
-            <strong> {allProducts.length.toLocaleString()} </strong>
+            <strong> {allProducts.length > 0 ? '5,000+' : '...'} </strong>
             รายการ เพื่อดีลที่คุ้มที่สุด
           </p>
           <div className="search-box-wrapper">
@@ -215,7 +214,6 @@ const Home = () => {
               <div 
                 key={idx} 
                 className="cat-item"
-                // 5. ผูก event onClick ตรงนี้
                 onClick={() => handleCategoryClick(cat.name)}
               >
                 <div className="cat-icon-box">{cat.icon}</div>
