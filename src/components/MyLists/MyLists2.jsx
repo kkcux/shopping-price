@@ -188,7 +188,7 @@ export default function MyLists2() {
             <button
               className="ml2-searchBtn"
               // ✅ แก้ตรงนี้: ส่ง id ไป MyLists3
-              onClick={() => navigate(`/mylists3/${id}`)}
+              onClick={() => navigate(`/mylists/compare/${id}`)}
             >
               <Search size={22} strokeWidth={2.5} />
               เริ่มค้นหาร้านที่ถูกที่สุด
