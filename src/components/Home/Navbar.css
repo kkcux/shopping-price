@@ -247,6 +247,12 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
+.user-profile:active {
+  transform: scale(0.95); /* ย่อขนาดลงเหลือ 95% ให้ความรู้สึกเหมือนถูกกด */
+  background: rgba(255, 255, 255, 0.05); /* เปลี่ยนสีพื้นหลังนิดหน่อย */
+  transition: transform 0.1s, background 0.1s; /* เปลี่ยนอย่างรวดเร็ว (0.1วิ) ให้รู้สึกกระชับ */
+}
+
 /* ================= User Profile (Avatar Fix) ================= */
 
 .user-avatar {
@@ -298,4 +304,110 @@
 
   transition: all 0.2s ease;
 }
-/* ... (ส่วน .btn-logout:hover เหมือนเดิม) ... */
+.btn-logout:hover {
+  background-color: #ff4d4d; /* เปลี่ยนพื้นหลังเป็นสีแดง (หรือสีที่คุณชอบ) */
+  color: #ffffff; /* เปลี่ยนไอคอนเป็นสีขาวชัดๆ */
+
+  transform: scale(1.15); /* ขยายใหญ่ขึ้นนิดนึงให้ดูเด้งสู้มือ */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* ใส่เงาให้ดูลอยออกมา */
+}
+
+.btn-logout:active {
+  transform: scale(0.9); /*กดยุบลง */
+  background-color: #e60000; /* สีแดงเข้มขึ้น */
+}
+/* ================= Logout Confirmation Modal ================= */
+.logout-confirm-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* พื้นหลังสีดำจางๆ */
+  backdrop-filter: blur(4px); /* เบลอฉากหลังนิดๆ */
+  z-index: 2000; /* ต้องสูงกว่า Navbar (1000) */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.2s ease;
+}
+
+.logout-confirm-modal {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  transform: scale(1);
+  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.logout-confirm-modal h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 1.2rem;
+}
+
+.logout-confirm-modal p {
+  color: #666;
+  margin-bottom: 25px;
+  font-size: 0.95rem;
+}
+
+.logout-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.btn-cancel,
+.btn-confirm {
+  padding: 10px 24px;
+  border-radius: 50px;
+  border: none;
+  font-family: "Prompt", sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 0.9rem;
+}
+
+.btn-cancel {
+  background: #f0f0f0;
+  color: #555;
+}
+.btn-cancel:hover {
+  background: #e0e0e0;
+}
+
+.btn-confirm {
+  background: #ff4d4d; /* สีแดงสำหรับปุ่มยืนยันออก */
+  color: white;
+  box-shadow: 0 4px 12px rgba(255, 77, 77, 0.3);
+}
+.btn-confirm:hover {
+  background: #e60000;
+  transform: translateY(-2px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes popIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
