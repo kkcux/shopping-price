@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useNavigate } from 'react-router-dom'; // ✅ 1. เพิ่ม import
 import './Home.css';
 import {
   Search, Plus, Heart, Beef, PackageSearch, Home as HomeIcon,
@@ -6,14 +7,13 @@ import {
   Flame, Star, Tag, LayoutGrid
 } from 'lucide-react';
 
-
 import AddToListModal from './AddToListModal';
 
 const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onAddToCart }) => {
   const scrollRef = useRef(null);
   const scroll = (direction) => {
     if (scrollRef.current) {
-      const scrollAmount = direction === 'left' ? -240 : 240; // Adjusted for 5 items/row
+      const scrollAmount = direction === 'left' ? -240 : 240;
       scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
     }
   };
@@ -40,7 +40,6 @@ const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onA
 
           <div className="product-grid" ref={scrollRef}>
             {items.map((item, index) => {
-              // เช็คว่าสินค้านี้ถูกใจหรือยัง (ใช้ชื่อสินค้าเป็น Key)
               const isFav = favorites[item.name];
               return (
                 <div key={item.id || index} className="product-card">
@@ -48,7 +47,6 @@ const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onA
                     className={`fav-btn ${isFav ? 'active' : ''}`}
                     onClick={() => toggleFav(item)}
                   >
-                    {/* ถ้าชอบแล้วให้เติมสีแดง */}
                     <Heart size={20} fill={isFav ? "#ef4444" : "none"} stroke={isFav ? "#ef4444" : "currentColor"} />
                   </button>
 
@@ -81,47 +79,35 @@ const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onA
 };
 
 const Home = () => {
-  // เก็บสถานะหัวใจเป็น Object { "ชื่อสินค้า": true/false } เพื่อให้ค้นหาเร็ว
+  const navigate = useNavigate(); // ✅ 2. เรียกใช้ hook navigate
   const [favorites, setFavorites] = useState({});
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // ✅ 1. โหลดข้อมูล Favorites จากเครื่องเมื่อเปิดเว็บ
+  // โหลด Favorites
   useEffect(() => {
     const savedFavs = JSON.parse(localStorage.getItem('favoritesItems')) || [];
     const favMap = {};
     savedFavs.forEach(item => {
-      // ใช้ field 'data' (ชื่อสินค้า) เป็น key ตามที่หน้า Favorites ใช้งาน
       if (item.data) favMap[item.data] = true;
     });
     setFavorites(favMap);
   }, []);
 
-  // ... (code ส่วนบนเหมือนเดิม)
-
-  // ✅ 2. ฟังก์ชันกดหัวใจ (แก้ไขป้องกันการเพิ่มซ้ำ)
+  // ฟังก์ชันจัดการ Favorites
   const toggleFav = (product) => {
     const productName = product.name;
-
     setFavorites(prev => {
       const isCurrentlyFav = !!prev[productName];
       const newFavState = { ...prev, [productName]: !isCurrentlyFav };
-
-      // อัปเดต LocalStorage
       const currentSavedFavs = JSON.parse(localStorage.getItem('favoritesItems')) || [];
-
       let newSavedFavs;
       if (isCurrentlyFav) {
-        // กรณี: ยกเลิกหัวใจ -> ลบออก
         newSavedFavs = currentSavedFavs.filter(item => item.data !== productName);
       } else {
-        // กรณี: กดหัวใจ -> เพิ่มเข้าไป
-
-        // ⭐ เพิ่มการตรวจสอบว่ามีของชิ้นนี้อยู่แล้วหรือยัง? เพื่อกันการเบิ้ล
         const alreadyExists = currentSavedFavs.some(item => item.data === productName);
-
         if (!alreadyExists) {
           const favItem = {
             image: product.image,
@@ -130,19 +116,15 @@ const Home = () => {
           };
           newSavedFavs = [...currentSavedFavs, favItem];
         } else {
-          // ถ้ามีอยู่แล้ว ให้ใช้รายการเดิม (ไม่เพิ่มซ้ำ)
           newSavedFavs = currentSavedFavs;
         }
       }
-
       localStorage.setItem('favoritesItems', JSON.stringify(newSavedFavs));
       return newFavState;
     });
   };
 
-  // ... (code ส่วนล่างเหมือนเดิม)
-
-  // โหลดสินค้า (ส่วนเดิม)
+  // โหลดสินค้า
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -182,9 +164,14 @@ const Home = () => {
     { name: "สัตว์เลี้ยง", icon: <Dog size={28} /> },
   ];
 
+  // ✅ 3. ฟังก์ชันคลิกหมวดหมู่
+  const handleCategoryClick = (categoryName) => {
+    navigate('/categories', { state: { selectedCategory: categoryName } });
+  };
+
   return (
     <div className="home-container">
-      {/* HERO SECTION */}
+      {/* HERO */}
       <header className="hero-banner">
         <div className="hero-content">
           <h1>
@@ -196,7 +183,6 @@ const Home = () => {
             <strong> {allProducts.length.toLocaleString()} </strong>
             รายการ เพื่อดีลที่คุ้มที่สุด
           </p>
-
           <div className="search-box-wrapper">
             <input type="text" placeholder="ค้นหาชื่อสินค้าที่ต้องการ..." />
             <button className="search-btn">
@@ -217,7 +203,11 @@ const Home = () => {
           </div>
           <div className="category-scroll">
             {categories.map((cat, idx) => (
-              <div key={idx} className="cat-item">
+              <div 
+                key={idx} 
+                className="cat-item"
+                onClick={() => handleCategoryClick(cat.name)} /* ✅ 4. ใส่ Event Click */
+              >
                 <div className="cat-icon-box">{cat.icon}</div>
                 <span className="cat-text">{cat.name}</span>
               </div>
@@ -234,7 +224,6 @@ const Home = () => {
           loading={loading}
           onAddToCart={(p) => { setSelectedProduct(p); setIsModalOpen(true); }}
         />
-
         <ProductSection
           title="สินค้ายอดนิยม"
           icon={<Flame size={24} color="#ea580c" />}
@@ -244,7 +233,6 @@ const Home = () => {
           loading={loading}
           onAddToCart={(p) => { setSelectedProduct(p); setIsModalOpen(true); }}
         />
-
         <ProductSection
           title="สินค้าโปรโมชั่น"
           icon={<Tag size={24} color="var(--primary)" />}
