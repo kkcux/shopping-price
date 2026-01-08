@@ -5,7 +5,8 @@ import Footer from '../Home/Footer';
 import './Categories.css';
 import {
   Heart, Check,
-  SlidersHorizontal, ChevronDown
+  SlidersHorizontal, ChevronDown,
+  ChevronLeft, ChevronRight
 } from 'lucide-react';
 
 import AddToListModal from '../Home/AddToListModal';
@@ -34,10 +35,14 @@ const Categories = () => {
   const [sortOption, setSortOption] = useState('popular');
   const [priceFilter, setPriceFilter] = useState({ min: '', max: '' });
 
+  // --- State สำหรับ Pagination ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 30; // แสดง 30 ชิ้นต่อหน้า
+
   const sortRef = useRef(null);
   const filterRef = useRef(null);
 
-  // ✅ 1. ตารางจับคู่ชื่อปุ่ม (UI) -> ชื่อหมวดหมู่ในไฟล์ (Database)
+  // ตารางจับคู่ชื่อปุ่ม -> ชื่อหมวดหมู่ในไฟล์
   const categoryMapping = {
     "อาหารสด & แช่แข็ง": ["อาหารสดและแช่แข็ง", "ผักและผลไม้", "เบเกอรี่"],
     "อาหารแห้ง": ["อาหารแห้งและเครื่องปรุง", "เครื่องดื่ม"],
@@ -71,7 +76,7 @@ const Categories = () => {
     setFavorites(favMap);
   }, []);
 
-  // ✅ 2. โหลดข้อมูลสินค้า (จำกัด 500 รายการ)
+  // โหลดข้อมูลสินค้า
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -79,28 +84,18 @@ const Categories = () => {
         console.log("Start fetching data...");
         const response = await fetch('/data/all_retailers_products_merged_v1.jsonl');
         
-        if (!response.ok) {
-            console.error("Failed to fetch file:", response.status);
-            throw new Error('Network response was not ok');
-        }
+        if (!response.ok) throw new Error('Network response was not ok');
 
         const text = await response.text();
-        
-        // แยกบรรทัดและตัดเอาแค่ 500 รายการแรก
-        const lines = text.trim().split('\n').slice(0, 9000); 
+        const lines = text.trim().split('\n').slice(0, 500); // จำกัด 500
         
         const products = lines
           .filter(line => line.trim() !== '') 
           .map(line => {
-            try {
-              return JSON.parse(line);
-            } catch (e) {
-              return null;
-            }
+            try { return JSON.parse(line); } catch (e) { return null; }
           })
           .filter(item => item !== null && item.name);
 
-        console.log(`Loaded ${products.length} products.`);
         setAllProducts(products);
       } catch (error) {
         console.error("Error loading products:", error);
@@ -111,22 +106,17 @@ const Categories = () => {
     fetchData();
   }, []);
 
-  // ✅ 3. Logic การกรองสินค้า
+  // Logic กรองสินค้า
   useEffect(() => {
     let processed = [...allProducts];
 
-    // A. กรองตามหมวดหมู่
     if (activeCategory !== 'ทั้งหมด') {
         const targetCategories = categoryMapping[activeCategory] || [];
-        
         if (targetCategories.length > 0) {
-            processed = processed.filter(item => {
-                return item.category && targetCategories.includes(item.category);
-            });
+            processed = processed.filter(item => item.category && targetCategories.includes(item.category));
         }
     }
 
-    // B. Filter ราคา
     if (priceFilter.min !== '') {
         processed = processed.filter(p => (p.price || 0) >= Number(priceFilter.min));
     }
@@ -134,7 +124,6 @@ const Categories = () => {
         processed = processed.filter(p => (p.price || 0) <= Number(priceFilter.max));
     }
 
-    // C. Sort
     if (sortOption === 'price_asc') {
         processed.sort((a, b) => (a.price || 0) - (b.price || 0));
     } else if (sortOption === 'price_desc') {
@@ -142,7 +131,55 @@ const Categories = () => {
     }
 
     setDisplayProducts(processed);
+    setCurrentPage(1);
   }, [allProducts, activeCategory, sortOption, priceFilter]);
+
+  // --- Pagination Logic ---
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = displayProducts.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(displayProducts.length / itemsPerPage);
+
+  const changePage = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  // Helper สร้างปุ่มตัวเลข (แสดงแค่หน้าใกล้เคียง)
+  const renderPaginationButtons = () => {
+    const buttons = [];
+    const maxButtons = 5; // จำนวนปุ่มตัวเลขที่จะแสดง
+    let startPage = Math.max(1, currentPage - 2);
+    let endPage = Math.min(totalPages, startPage + maxButtons - 1);
+
+    if (endPage - startPage < maxButtons - 1) {
+      startPage = Math.max(1, endPage - maxButtons + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      buttons.push(
+        <button
+          key={i}
+          onClick={() => changePage(i)}
+          className={`pagination-number ${currentPage === i ? 'active' : ''}`}
+          style={{
+            width: '40px', height: '40px', borderRadius: '50%',
+            border: '1px solid #e5e7eb',
+            background: currentPage === i ? '#10b981' : 'white', // สีเขียวเมื่อเลือก
+            color: currentPage === i ? 'white' : '#374151',
+            fontWeight: '600', cursor: 'pointer',
+            transition: 'all 0.2s',
+            display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }}
+        >
+          {i}
+        </button>
+      );
+    }
+    return buttons;
+  };
 
   const resetFilter = () => {
       setPriceFilter({ min: '', max: '' });
@@ -187,7 +224,6 @@ const Categories = () => {
 
       <div className="cat-container">
         
-        {/* Toolbar */}
         <div className="results-toolbar">
             <h2>
                 {activeCategory === 'ทั้งหมด' ? 'สินค้าทั้งหมด' : `รายการ: ${activeCategory}`} 
@@ -195,7 +231,6 @@ const Categories = () => {
             </h2>
             
             <div className="filter-tools">
-
                 <div className="tool-wrapper" ref={filterRef}>
                     <button 
                         className={`tool-btn ${showFilterMenu || (priceFilter.min || priceFilter.max) ? 'active' : ''}`}
@@ -268,38 +303,78 @@ const Categories = () => {
              <div className="loading-state">กำลังค้นหาสินค้า...</div>
         ) : (
             displayProducts.length > 0 ? (
-                <div className="cat-product-grid">
-                    {displayProducts.map((item, index) => {
-                        const isFav = favorites[item.name];
-                        return (
-                            <div key={index} className="product-card-std">
-                                <button className={`fav-btn-std ${isFav ? 'active' : ''}`} onClick={() => toggleFav(item)}>
-                                    <Heart size={20} fill={isFav ? "#ef4444" : "none"} stroke={isFav ? "#ef4444" : "currentColor"} />
-                                </button>
-                                <div className="img-wrapper-std">
-                                    <img src={item.image || "https://placehold.co/300x300?text=No+Image"} alt={item.name} loading="lazy" />
-                                </div>
-                                <div className="info-std">
-                                    <h3 title={item.name}>{item.name}</h3>
-                                    <div className="price-std">{item.price ? `฿${item.price.toLocaleString()}` : 'เช็คราคา'}</div>
-                                    <button className="btn-add-std" onClick={() => { setSelectedProduct(item); setIsModalOpen(true); }}>
-                                        เพิ่มลงรายการ
+                <>
+                    <div className="cat-product-grid">
+                        {currentItems.map((item, index) => { 
+                            const isFav = favorites[item.name];
+                            return (
+                                <div key={index} className="product-card-std">
+                                    <button className={`fav-btn-std ${isFav ? 'active' : ''}`} onClick={() => toggleFav(item)}>
+                                        <Heart size={20} fill={isFav ? "#ef4444" : "none"} stroke={isFav ? "#ef4444" : "currentColor"} />
                                     </button>
+                                    <div className="img-wrapper-std">
+                                        <img src={item.image || "https://placehold.co/300x300?text=No+Image"} alt={item.name} loading="lazy" />
+                                    </div>
+                                    <div className="info-std">
+                                        <h3 title={item.name}>{item.name}</h3>
+                                        <div className="price-std">{item.price ? `฿${item.price.toLocaleString()}` : 'เช็คราคา'}</div>
+                                        <button className="btn-add-std" onClick={() => { setSelectedProduct(item); setIsModalOpen(true); }}>
+                                            เพิ่มลงรายการ
+                                        </button>
+                                    </div>
                                 </div>
-                            </div>
-                        );
-                    })}
-                </div>
+                            );
+                        })}
+                    </div>
+
+                    {/* ✅ ส่วน Pagination แบบตัวเลข สวยงาม */}
+                    {totalPages > 1 && (
+                        <div style={{
+                            display: 'flex', 
+                            justifyContent: 'center', 
+                            alignItems: 'center', 
+                            gap: '8px', 
+                            marginTop: '40px',
+                            padding: '20px'
+                        }}>
+                            {/* ปุ่มย้อนกลับ */}
+                            <button 
+                                onClick={() => changePage(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                style={{
+                                    width: '40px', height: '40px', borderRadius: '50%',
+                                    border: '1px solid #e5e7eb', background: 'white',
+                                    cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                                    color: currentPage === 1 ? '#d1d5db' : '#374151',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                }}
+                            >
+                                <ChevronLeft size={20} />
+                            </button>
+
+                            {/* ปุ่มตัวเลข */}
+                            {renderPaginationButtons()}
+
+                            {/* ปุ่มถัดไป */}
+                            <button 
+                                onClick={() => changePage(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                style={{
+                                    width: '40px', height: '40px', borderRadius: '50%',
+                                    border: '1px solid #e5e7eb', background: 'white',
+                                    cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                                    color: currentPage === totalPages ? '#d1d5db' : '#374151',
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                                }}
+                            >
+                                <ChevronRight size={20} />
+                            </button>
+                        </div>
+                    )}
+                </>
             ) : (
                 <div className="no-results" style={{textAlign: 'center', padding: '40px', color: '#666'}}>
                     <p style={{fontSize: '1.2rem', marginBottom: '10px'}}>ไม่พบสินค้าในหมวดหมู่นี้</p>
-                    <div style={{background: '#f3f4f6', padding: '15px', borderRadius: '8px', display: 'inline-block', fontSize: '0.9rem', textAlign: 'left'}}>
-                        <strong>Debug Info:</strong><br/>
-                        • โหลดมาได้: {allProducts.length} รายการ (จำกัด 500)<br/>
-                        • หมวดที่เลือก: "{activeCategory}"<br/>
-                        {allProducts.length > 0 && <span>• ตัวอย่างหมวดในไฟล์: "{allProducts[0]?.category}"</span>}
-                    </div>
-                    <br/><br/>
                     <button className="btn-reset-all" onClick={() => { setPriceFilter({min:'', max:''}); setActiveCategory('ทั้งหมด'); }}>
                         กลับไปดูสินค้าทั้งหมด
                     </button>
