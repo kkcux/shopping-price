@@ -4,10 +4,8 @@ import Navbar from '../Home/Navbar';
 import Footer from '../Home/Footer';
 import './Categories.css';
 import {
-  Beef, PackageSearch, Home as HomeIcon,
-  Sparkles, Baby, Tv, Hammer, Dog,
-  Filter, SlidersHorizontal, ChevronDown, Heart, Check,
-  LayoutGrid
+  Heart, Check,
+  SlidersHorizontal, ChevronDown
 } from 'lucide-react';
 
 import AddToListModal from '../Home/AddToListModal';
@@ -39,29 +37,19 @@ const Categories = () => {
   const sortRef = useRef(null);
   const filterRef = useRef(null);
 
-  const categoryList = [
-    { id: 'fresh', name: "อาหารสด & แช่แข็ง", icon: <Beef size={24} /> },
-    { id: 'dry', name: "อาหารแห้ง", icon: <PackageSearch size={24} /> },
-    { id: 'home', name: "ของใช้ในบ้าน", icon: <HomeIcon size={24} /> },
-    { id: 'beauty', name: "สุขภาพ & ความงาม", icon: <Sparkles size={24} /> },
-    { id: 'baby', name: "แม่และเด็ก", icon: <Baby size={24} /> },
-    { id: 'electric', name: "เครื่องใช้ไฟฟ้า", icon: <Tv size={24} /> },
-    { id: 'tools', name: "เครื่องมือช่าง", icon: <Hammer size={24} /> },
-    { id: 'pet', name: "สัตว์เลี้ยง", icon: <Dog size={24} /> },
-  ];
-
-  // ✅ 1. กำหนดคีย์เวิร์ดสำหรับแต่ละหมวดหมู่ (ใช้กรองสินค้า)
-  const categoryKeywords = {
-    "อาหารสด & แช่แข็ง": ["หมู", "ไก่", "เนื้อ", "ปลา", "กุ้ง", "ผัก", "ผลไม้", "สด", "แช่แข็ง", "ไข่"],
-    "อาหารแห้ง": ["ข้าว", "เส้น", "น้ำมัน", "ซอส", "น้ำตาล", "กาแฟ", "ขนม", "บะหมี่", "กระป๋อง", "ปรุงรส"],
-    "ของใช้ในบ้าน": ["น้ำยา", "ซัก", "ล้าง", "ปรับผ้านุ่ม", "ทิชชู่", "ไม้กวาด", "ถู", "ห้องน้ำ", "ครัว"],
-    "สุขภาพ & ความงาม": ["สบู่", "แชมพู", "ครีม", "โลชั่น", "แป้ง", "ยาสีฟัน", "โฟม", "บำรุง"],
-    "แม่และเด็ก": ["นมผง", "ผ้าอ้อม", "เด็ก", "ทารก", "baby", "kid"],
-    "เครื่องใช้ไฟฟ้า": ["ทีวี", "ตู้เย็น", "พัดลม", "เตา", "หม้อ", "ไฟฟ้า", "แอร์", "ไมโครเวฟ"],
-    "เครื่องมือช่าง": ["สว่าน", "ค้อน", "เลื่อย", "เครื่องมือ", "ช่าง", "หลอดไฟ", "สี"],
-    "สัตว์เลี้ยง": ["สุนัข", "แมว", "หมา", "ทรายแมว", "สัตว์เลี้ยง"]
+  // ✅ 1. ตารางจับคู่ชื่อปุ่ม (UI) -> ชื่อหมวดหมู่ในไฟล์ (Database)
+  const categoryMapping = {
+    "อาหารสด & แช่แข็ง": ["อาหารสดและแช่แข็ง", "ผักและผลไม้", "เบเกอรี่"],
+    "อาหารแห้ง": ["อาหารแห้งและเครื่องปรุง", "เครื่องดื่ม"],
+    "ของใช้ในบ้าน": ["ของใช้ในบ้าน", "เครื่องเขียนและอุปกรณ์สำนักงาน", "อุปกรณ์สำนักงาน"],
+    "สุขภาพ & ความงาม": ["สุขภาพและความงาม", "ของใช้ส่วนตัว", "เสื้อผ้าและเครื่องแต่งกาย"],
+    "แม่และเด็ก": ["แม่และเด็ก"],
+    "เครื่องใช้ไฟฟ้า": ["เครื่องใช้ไฟฟ้า"],
+    "เครื่องมือช่าง": ["เครื่องมือช่างและอุปกรณ์ปรับปรุงบ้าน", "ยานยนต์"],
+    "สัตว์เลี้ยง": ["สัตว์เลี้ยง"]
   };
 
+  // ปิดเมนูเมื่อคลิกข้างนอก
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (sortRef.current && !sortRef.current.contains(event.target)) {
@@ -75,6 +63,7 @@ const Categories = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // โหลด Favorites
   useEffect(() => {
     const savedFavs = JSON.parse(localStorage.getItem('favoritesItems')) || [];
     const favMap = {};
@@ -82,17 +71,36 @@ const Categories = () => {
     setFavorites(favMap);
   }, []);
 
+  // ✅ 2. โหลดข้อมูลสินค้า (จำกัด 500 รายการ)
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
+        console.log("Start fetching data...");
         const response = await fetch('/data/all_retailers_products_merged_v1.jsonl');
+        
+        if (!response.ok) {
+            console.error("Failed to fetch file:", response.status);
+            throw new Error('Network response was not ok');
+        }
+
         const text = await response.text();
         
-        // โหลดข้อมูลจำนวนมาก (5000 รายการ) เพื่อให้ครอบคลุมทุกหมวด
-        const lines = text.trim().split('\n').slice(0, 500);
+        // แยกบรรทัดและตัดเอาแค่ 500 รายการแรก
+        const lines = text.trim().split('\n').slice(0, 9000); 
         
-        const products = lines.map(line => JSON.parse(line));
+        const products = lines
+          .filter(line => line.trim() !== '') 
+          .map(line => {
+            try {
+              return JSON.parse(line);
+            } catch (e) {
+              return null;
+            }
+          })
+          .filter(item => item !== null && item.name);
+
+        console.log(`Loaded ${products.length} products.`);
         setAllProducts(products);
       } catch (error) {
         console.error("Error loading products:", error);
@@ -103,26 +111,22 @@ const Categories = () => {
     fetchData();
   }, []);
 
-  // ✅ 3. Logic การกรองสินค้า (Filter Logic)
+  // ✅ 3. Logic การกรองสินค้า
   useEffect(() => {
     let processed = [...allProducts];
 
-    // A. กรองตามหมวดหมู่ (ใช้ Keywords Matching)
+    // A. กรองตามหมวดหมู่
     if (activeCategory !== 'ทั้งหมด') {
-        const keywords = categoryKeywords[activeCategory] || [];
+        const targetCategories = categoryMapping[activeCategory] || [];
         
-        if (keywords.length > 0) {
+        if (targetCategories.length > 0) {
             processed = processed.filter(item => {
-                // รวมข้อความที่จะค้นหา (ชื่อสินค้า + หมวดหมู่ใน data ถ้ามี)
-                const textToSearch = `${item.name} ${item.category || ''}`.toLowerCase();
-                
-                // ตรวจสอบว่ามีคีย์เวิร์ดคำใดคำหนึ่งอยู่ในชื่อสินค้าหรือไม่
-                return keywords.some(kw => textToSearch.includes(kw));
+                return item.category && targetCategories.includes(item.category);
             });
         }
     }
 
-    // B. กรองตามราคา (Price Filter)
+    // B. Filter ราคา
     if (priceFilter.min !== '') {
         processed = processed.filter(p => (p.price || 0) >= Number(priceFilter.min));
     }
@@ -130,7 +134,7 @@ const Categories = () => {
         processed = processed.filter(p => (p.price || 0) <= Number(priceFilter.max));
     }
 
-    // C. เรียงลำดับ (Sorting)
+    // C. Sort
     if (sortOption === 'price_asc') {
         processed.sort((a, b) => (a.price || 0) - (b.price || 0));
     } else if (sortOption === 'price_desc') {
@@ -182,23 +186,8 @@ const Categories = () => {
       </header>
 
       <div className="cat-container">
-        {/* ส่วนเลือกหมวดหมู่ */}
-        <section className="cat-selection-section">
-            <div className="cat-grid-large">
-                {categoryList.map((cat) => (
-                    <button 
-                        key={cat.id} 
-                        className={`cat-card-large ${activeCategory === cat.name ? 'active' : ''}`}
-                        onClick={() => setActiveCategory(cat.name)}
-                    >
-                        <div className="cat-icon-wrapper">{cat.icon}</div>
-                        <span>{cat.name}</span>
-                    </button>
-                ))}
-            </div>
-        </section>
-
-        {/* ส่วน Toolbar (แสดงจำนวนและปุ่ม Filter) */}
+        
+        {/* Toolbar */}
         <div className="results-toolbar">
             <h2>
                 {activeCategory === 'ทั้งหมด' ? 'สินค้าทั้งหมด' : `รายการ: ${activeCategory}`} 
@@ -206,15 +195,6 @@ const Categories = () => {
             </h2>
             
             <div className="filter-tools">
-                <div className="tool-wrapper">
-                   <button 
-                        className={`tool-btn ${activeCategory === 'ทั้งหมด' ? 'active' : ''}`}
-                        onClick={() => setActiveCategory('ทั้งหมด')}
-                    >
-                        <LayoutGrid size={18}/> 
-                        ทั้งหมด
-                    </button>
-                </div>
 
                 <div className="tool-wrapper" ref={filterRef}>
                     <button 
@@ -311,9 +291,18 @@ const Categories = () => {
                     })}
                 </div>
             ) : (
-                <div className="no-results">
-                    <p>ไม่พบสินค้าในหมวดหมู่นี้</p>
-                    <button className="btn-reset-all" onClick={() => { setPriceFilter({min:'', max:''}); setActiveCategory('ทั้งหมด'); }}>กลับไปดูสินค้าทั้งหมด</button>
+                <div className="no-results" style={{textAlign: 'center', padding: '40px', color: '#666'}}>
+                    <p style={{fontSize: '1.2rem', marginBottom: '10px'}}>ไม่พบสินค้าในหมวดหมู่นี้</p>
+                    <div style={{background: '#f3f4f6', padding: '15px', borderRadius: '8px', display: 'inline-block', fontSize: '0.9rem', textAlign: 'left'}}>
+                        <strong>Debug Info:</strong><br/>
+                        • โหลดมาได้: {allProducts.length} รายการ (จำกัด 500)<br/>
+                        • หมวดที่เลือก: "{activeCategory}"<br/>
+                        {allProducts.length > 0 && <span>• ตัวอย่างหมวดในไฟล์: "{allProducts[0]?.category}"</span>}
+                    </div>
+                    <br/><br/>
+                    <button className="btn-reset-all" onClick={() => { setPriceFilter({min:'', max:''}); setActiveCategory('ทั้งหมด'); }}>
+                        กลับไปดูสินค้าทั้งหมด
+                    </button>
                 </div>
             )
         )}
