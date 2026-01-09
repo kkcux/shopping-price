@@ -19,22 +19,16 @@ import MyLists2 from './components/MyLists/MyLists2';
 import MyLists3 from './components/MyLists/MyLists3';
 import ListsEdit from './components/MyLists/ListsEdit';
 
+// ✅ Import Products
+import Products from './components/Products/Products'; 
+
 function App() {
   return (
     <div className="App">
       <Routes>
 
         {/* ===== HOME ===== */}
-        <Route
-          path="/"
-          element={
-            <>
-              <Navbar />
-              <Home />
-              <Footer />
-            </>
-          }
-        />
+        <Route path="/" element={<><Navbar /><Home /><Footer /></>} />
 
         {/* ===== AUTH ===== */}
         <Route path="/login" element={<Login />} />
@@ -44,24 +38,25 @@ function App() {
         <Route path="/favorites" element={<Favorites />} />
         <Route path="/profile" element={<Profile />} />
 
+        {/* ===== PRODUCT ===== */}
+        <Route path="/products" element={<Products />} />
+        <Route path="/categories" element={<Categories />} />
+
+        {/* ✅ เพิ่ม Route สำหรับการเพิ่มสินค้าตาม ID ของรายการ (List ID) */}
+        {/* กรณี: กำลังแก้ไขรายการ (Edit) แล้วกดเพิ่มสินค้า */}
+        <Route path="/mylists/edit/products/:id" element={<Products />} />
+        
+        {/* กรณี: กำลังสร้างรายการใหม่ (Create) แล้วกดเพิ่มสินค้า (ถ้ามี id ชั่วคราว) */}
+        <Route path="/mylists/create/products/:id" element={<Products />} />
+
+
         {/* ===== MYLISTS ===== */}
-
-        {/* 1. หน้ารวมรายการ */}
         <Route path="/mylists" element={<MyLists />} />
-
-        {/* 2. สร้างรายการใหม่ (static มาก่อน dynamic) */}
         <Route path="/mylists/create" element={<CreateMyList />} />
-
-        {/* 3. แก้ไขรายการ */}
         <Route path="/mylists/edit/:id" element={<ListsEdit />} />
-
-        {/* 4. หน้ารายละเอียดรายการ (MyLists2) */}
         <Route path="/mylists/:id" element={<MyLists2 />} />
-
-        {/* 5. หน้าเปรียบเทียบราคา (MyLists3) ✅ ใช้ id */}
         <Route path="/mylists/compare/:id" element={<MyLists3 />} />
 
-<Route path="/categories" element={<Categories />} />
       </Routes>
     </div>
   );
