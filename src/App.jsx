@@ -10,6 +10,7 @@ import Footer from './components/Home/Footer';
 import Home from './components/Home/Home'; 
 import Profile from './components/Profile/Profile';
 import Favorites from './components/Favorites/Favorites';
+import Categories from './components/Categories/Categories';
 
 // MyLists Components
 import MyLists from './components/MyLists/MyLists'; 
@@ -60,6 +61,7 @@ function App() {
         {/* 5. หน้าเปรียบเทียบราคา (MyLists3) ✅ ใช้ id */}
         <Route path="/mylists/compare/:id" element={<MyLists3 />} />
 
+<Route path="/categories" element={<Categories />} />
       </Routes>
     </div>
   );
