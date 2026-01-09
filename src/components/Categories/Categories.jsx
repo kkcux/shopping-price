@@ -2,11 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../Home/Navbar';
 import Footer from '../Home/Footer';
-import './Categories.css';
+import './Categories.css'; // นำเข้าไฟล์ CSS ที่แยกไว้
 import {
   Heart, Check,
-  SlidersHorizontal, ChevronDown,
-  ChevronLeft, ChevronRight
+  Search,
+  ChevronDown,
+  ChevronLeft, ChevronRight,
+  LayoutGrid,
+  Store,
+  X
 } from 'lucide-react';
 
 import AddToListModal from '../Home/AddToListModal';
@@ -28,21 +32,18 @@ const Categories = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // --- State สำหรับ Filter & Sort ---
-  const [showSortMenu, setShowSortMenu] = useState(false);
-  const [showFilterMenu, setShowFilterMenu] = useState(false);
+  // --- State สำหรับ Filter & Menu ---
+  const [showCatMenu, setShowCatMenu] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(''); 
+  const [nameFilter, setNameFilter] = useState('');
   
-  const [sortOption, setSortOption] = useState('popular');
-  const [priceFilter, setPriceFilter] = useState({ min: '', max: '' });
-
   // --- State สำหรับ Pagination ---
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 30;
 
-  const sortRef = useRef(null);
-  const filterRef = useRef(null);
+  const catMenuRef = useRef(null);
 
-  // ตารางจับคู่ชื่อปุ่ม -> ชื่อหมวดหมู่ในไฟล์
+  // ตารางจับคู่ชื่อหมวดหมู่
   const categoryMapping = {
     "อาหารสด & แช่แข็ง": ["อาหารสดและแช่แข็ง", "ผักและผลไม้", "เบเกอรี่"],
     "อาหารแห้ง": ["อาหารแห้งและเครื่องปรุง", "เครื่องดื่ม"],
@@ -54,15 +55,20 @@ const Categories = () => {
     "สัตว์เลี้ยง": ["สัตว์เลี้ยง"]
   };
 
+  const categoriesList = ['ทั้งหมด', ...Object.keys(categoryMapping)];
+
+  // Debounce Logic
+  useEffect(() => {
+    const delayDebounceFn = setTimeout(() => {
+      setNameFilter(searchTerm);
+    }, 500);
+    return () => clearTimeout(delayDebounceFn);
+  }, [searchTerm]);
+
   // ปิดเมนูเมื่อคลิกข้างนอก
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (sortRef.current && !sortRef.current.contains(event.target)) {
-        setShowSortMenu(false);
-      }
-      if (filterRef.current && !filterRef.current.contains(event.target)) {
-        setShowFilterMenu(false);
-      }
+      if (catMenuRef.current && !catMenuRef.current.contains(event.target)) setShowCatMenu(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -87,7 +93,7 @@ const Categories = () => {
         if (!response.ok) throw new Error('Network response was not ok');
 
         const text = await response.text();
-        const lines = text.trim().split('\n').slice(0, 500); // จำกัด 500
+        const lines = text.trim().split('\n');
         
         const products = lines
           .filter(line => line.trim() !== '') 
@@ -110,6 +116,7 @@ const Categories = () => {
   useEffect(() => {
     let processed = [...allProducts];
 
+    // 1. กรองหมวดหมู่
     if (activeCategory !== 'ทั้งหมด') {
         const targetCategories = categoryMapping[activeCategory] || [];
         if (targetCategories.length > 0) {
@@ -117,22 +124,16 @@ const Categories = () => {
         }
     }
 
-    if (priceFilter.min !== '') {
-        processed = processed.filter(p => (p.price || 0) >= Number(priceFilter.min));
+    // 2. กรองชื่อ
+    if (nameFilter.trim() !== '') {
+        processed = processed.filter(p => 
+            p.name && p.name.toLowerCase().includes(nameFilter.toLowerCase())
+        );
     }
-    if (priceFilter.max !== '') {
-        processed = processed.filter(p => (p.price || 0) <= Number(priceFilter.max));
-    }
-
-    if (sortOption === 'price_asc') {
-        processed.sort((a, b) => (a.price || 0) - (b.price || 0));
-    } else if (sortOption === 'price_desc') {
-        processed.sort((a, b) => (b.price || 0) - (a.price || 0));
-    }
-
+    
     setDisplayProducts(processed);
     setCurrentPage(1);
-  }, [allProducts, activeCategory, sortOption, priceFilter]);
+  }, [allProducts, activeCategory, nameFilter]);
 
   // --- Pagination Logic ---
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -143,47 +144,72 @@ const Categories = () => {
   const changePage = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
+      // 🟢 เพิ่ม Scroll to Top กลับมาตามคำขอ
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
-  // Helper สร้างปุ่มตัวเลข
   const renderPaginationButtons = () => {
+    const siblingCount = 1;
+    const totalPageNumbers = siblingCount + 5;
+
+    if (totalPages <= totalPageNumbers) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1).map(page => renderPageButton(page));
+    }
+
+    const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
+    const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
+
+    const shouldShowLeftDots = leftSiblingIndex > 2;
+    const shouldShowRightDots = rightSiblingIndex < totalPages - 2;
+
+    const firstPageIndex = 1;
+    const lastPageIndex = totalPages;
+
     const buttons = [];
-    const maxButtons = 5;
-    let startPage = Math.max(1, currentPage - 2);
-    let endPage = Math.min(totalPages, startPage + maxButtons - 1);
 
-    if (endPage - startPage < maxButtons - 1) {
-      startPage = Math.max(1, endPage - maxButtons + 1);
+    buttons.push(renderPageButton(firstPageIndex));
+
+    if (shouldShowLeftDots) {
+      buttons.push(<span key="left-dots" className="pagination-dots">...</span>);
+    } else {
+        for (let i = 2; i < leftSiblingIndex; i++) {
+            buttons.push(renderPageButton(i));
+        }
     }
 
-    for (let i = startPage; i <= endPage; i++) {
-      buttons.push(
-        <button
-          key={i}
-          onClick={() => changePage(i)}
-          className={`pagination-number ${currentPage === i ? 'active' : ''}`}
-          style={{
-            width: '40px', height: '40px', borderRadius: '50%',
-            border: '1px solid #e5e7eb',
-            background: currentPage === i ? '#10b981' : 'white',
-            color: currentPage === i ? 'white' : '#374151',
-            fontWeight: '600', cursor: 'pointer',
-            transition: 'all 0.2s',
-            display: 'flex', alignItems: 'center', justifyContent: 'center'
-          }}
-        >
-          {i}
-        </button>
-      );
+    for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
+       if (i !== firstPageIndex && i !== lastPageIndex) {
+           buttons.push(renderPageButton(i));
+       }
     }
+
+    if (shouldShowRightDots) {
+      buttons.push(<span key="right-dots" className="pagination-dots">...</span>);
+    } else {
+         for (let i = rightSiblingIndex + 1; i < lastPageIndex; i++) {
+             buttons.push(renderPageButton(i));
+         }
+    }
+
+    buttons.push(renderPageButton(lastPageIndex));
+
     return buttons;
   };
 
-  const resetFilter = () => {
-      setPriceFilter({ min: '', max: '' });
-      setShowFilterMenu(false);
+  const renderPageButton = (pageNumber) => (
+    <button
+      key={pageNumber}
+      onClick={() => changePage(pageNumber)}
+      className={`pagination-btn ${currentPage === pageNumber ? 'active' : ''}`}
+    >
+      {pageNumber}
+    </button>
+  );
+
+  const clearSearch = () => {
+      setSearchTerm('');
+      setNameFilter('');
   };
 
   const toggleFav = (product) => {
@@ -206,11 +232,10 @@ const Categories = () => {
     });
   };
 
-  const getSortLabel = () => {
-      if (sortOption === 'price_asc') return 'ราคา: ต่ำ - สูง';
-      if (sortOption === 'price_desc') return 'ราคา: สูง - ต่ำ';
-      return 'ยอดนิยม';
-  }
+  const handleSelectCategory = (cat) => {
+      setActiveCategory(cat);
+      setShowCatMenu(false);
+  };
 
   return (
     <div className="categories-page">
@@ -226,72 +251,54 @@ const Categories = () => {
         
         <div className="results-toolbar">
             <h2>
-                {activeCategory === 'ทั้งหมด' ? 'สินค้าทั้งหมด' : `รายการ: ${activeCategory}`} 
-                <span className="count-badge">{displayProducts.length}</span>
+                {activeCategory === 'ทั้งหมด' ? 'สินค้าทั้งหมด' : activeCategory} 
+                <span className="count-badge">{loading ? '...' : displayProducts.length}</span>
             </h2>
             
             <div className="filter-tools">
-                <div className="tool-wrapper" ref={filterRef}>
-                    <button 
-                        className={`tool-btn ${showFilterMenu || (priceFilter.min || priceFilter.max) ? 'active' : ''}`}
-                        onClick={() => setShowFilterMenu(!showFilterMenu)}
-                    >
-                        <SlidersHorizontal size={18}/> 
-                        ตัวกรอง {(priceFilter.min || priceFilter.max) && <span className="dot-indicator"></span>}
-                    </button>
-                    
-                    {showFilterMenu && (
-                        <div className="dropdown-popup filter-popup">
-                            <h4>ช่วงราคา (บาท)</h4>
-                            <div className="price-inputs">
-                                <input 
-                                    type="number" placeholder="ต่ำสุด" 
-                                    value={priceFilter.min}
-                                    onChange={(e) => setPriceFilter({...priceFilter, min: e.target.value})}
-                                />
-                                <span>-</span>
-                                <input 
-                                    type="number" placeholder="สูงสุด" 
-                                    value={priceFilter.max}
-                                    onChange={(e) => setPriceFilter({...priceFilter, max: e.target.value})}
-                                />
-                            </div>
-                            <div className="filter-actions">
-                                <button className="btn-reset" onClick={resetFilter}>ล้างค่า</button>
-                                <button className="btn-apply" onClick={() => setShowFilterMenu(false)}>ตกลง</button>
-                            </div>
-                        </div>
+                {/* 1. ช่องค้นหา */}
+                <div className="search-wrapper">
+                    <Search size={18} className="search-icon" />
+                    <input 
+                        type="text"
+                        placeholder="ค้นหาชื่อสินค้า..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="search-input-field"
+                    />
+                    {searchTerm && (
+                        <button onClick={clearSearch} className="search-clear-btn">
+                            <X size={16} />
+                        </button>
                     )}
                 </div>
 
-                <div className="tool-wrapper" ref={sortRef}>
+                {/* 2. ปุ่มเลือกหมวดหมู่ */}
+                <div className="tool-wrapper" ref={catMenuRef}>
                     <button 
-                        className={`tool-btn ${showSortMenu ? 'active' : ''}`}
-                        onClick={() => setShowSortMenu(!showSortMenu)}
+                        className={`tool-btn ${showCatMenu ? 'active' : ''}`}
+                        onClick={() => setShowCatMenu(!showCatMenu)}
+                        style={{ minWidth: '160px', justifyContent: 'space-between' }}
                     >
-                        เรียงตาม: {getSortLabel()} <ChevronDown size={16} />
+                        <span style={{display:'flex', alignItems:'center', gap:'8px'}}>
+                            <LayoutGrid size={18} />
+                            {activeCategory === 'ทั้งหมด' ? 'หมวดหมู่: ทั้งหมด' : activeCategory}
+                        </span>
+                        <ChevronDown size={16} />
                     </button>
 
-                    {showSortMenu && (
-                        <div className="dropdown-popup sort-popup">
-                            <button 
-                                className={sortOption === 'popular' ? 'selected' : ''} 
-                                onClick={() => { setSortOption('popular'); setShowSortMenu(false); }}
-                            >
-                                ยอดนิยม {sortOption === 'popular' && <Check size={16}/>}
-                            </button>
-                            <button 
-                                className={sortOption === 'price_asc' ? 'selected' : ''} 
-                                onClick={() => { setSortOption('price_asc'); setShowSortMenu(false); }}
-                            >
-                                ราคา: ต่ำ - สูง {sortOption === 'price_asc' && <Check size={16}/>}
-                            </button>
-                            <button 
-                                className={sortOption === 'price_desc' ? 'selected' : ''} 
-                                onClick={() => { setSortOption('price_desc'); setShowSortMenu(false); }}
-                            >
-                                ราคา: สูง - ต่ำ {sortOption === 'price_desc' && <Check size={16}/>}
-                            </button>
+                    {showCatMenu && (
+                        <div className="dropdown-popup cat-menu-popup">
+                            {categoriesList.map((cat, idx) => (
+                                <button 
+                                    key={idx}
+                                    className={activeCategory === cat ? 'selected' : ''} 
+                                    onClick={() => handleSelectCategory(cat)}
+                                >
+                                    {cat} 
+                                    {activeCategory === cat && <ChevronDown size={16} style={{transform: 'rotate(-90deg)'}}/>} 
+                                </button>
+                            ))}
                         </div>
                     )}
                 </div>
@@ -300,7 +307,15 @@ const Categories = () => {
 
         {/* ตารางแสดงสินค้า */}
         {loading ? (
-             <div className="loading-state">กำลังค้นหาสินค้า...</div>
+             <div className="cat-product-grid">
+                {[...Array(10)].map((_, i) => (
+                    <div key={i} className="product-card-std skeleton-card">
+                        <div className="skeleton-img skeleton-pulse"></div>
+                        <div className="skeleton-line-long skeleton-pulse"></div>
+                        <div className="skeleton-line-short skeleton-pulse"></div>
+                    </div>
+                ))}
+             </div>
         ) : (
             displayProducts.length > 0 ? (
                 <>
@@ -317,9 +332,14 @@ const Categories = () => {
                                     </div>
                                     <div className="info-std">
                                         <h3 title={item.name}>{item.name}</h3>
-                                        {/* ❌ ลบส่วนแสดงราคาออกตามที่ขอ */}
-                                        {/* <div className="price-std">{item.price ? `฿${item.price.toLocaleString()}` : 'เช็คราคา'}</div> */}
                                         
+                                        {(item.retailer || item.store) && (
+                                            <div className="retailer-info">
+                                                <Store size={14} /> 
+                                                {item.retailer || item.store}
+                                            </div>
+                                        )}
+
                                         <button className="btn-add-std" onClick={() => { setSelectedProduct(item); setIsModalOpen(true); }} style={{marginTop: 'auto'}}>
                                             เพิ่มลงรายการ
                                         </button>
@@ -329,26 +349,13 @@ const Categories = () => {
                         })}
                     </div>
 
-                    {/* Pagination Buttons */}
+                    {/* Pagination */}
                     {totalPages > 1 && (
-                        <div style={{
-                            display: 'flex', 
-                            justifyContent: 'center', 
-                            alignItems: 'center', 
-                            gap: '8px', 
-                            marginTop: '40px',
-                            padding: '20px'
-                        }}>
+                        <div className="pagination-container">
                             <button 
                                 onClick={() => changePage(currentPage - 1)}
                                 disabled={currentPage === 1}
-                                style={{
-                                    width: '40px', height: '40px', borderRadius: '50%',
-                                    border: '1px solid #e5e7eb', background: 'white',
-                                    cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
-                                    color: currentPage === 1 ? '#d1d5db' : '#374151',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center'
-                                }}
+                                className="pagination-nav-btn"
                             >
                                 <ChevronLeft size={20} />
                             </button>
@@ -358,13 +365,7 @@ const Categories = () => {
                             <button 
                                 onClick={() => changePage(currentPage + 1)}
                                 disabled={currentPage === totalPages}
-                                style={{
-                                    width: '40px', height: '40px', borderRadius: '50%',
-                                    border: '1px solid #e5e7eb', background: 'white',
-                                    cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
-                                    color: currentPage === totalPages ? '#d1d5db' : '#374151',
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center'
-                                }}
+                                className="pagination-nav-btn"
                             >
                                 <ChevronRight size={20} />
                             </button>
@@ -372,10 +373,10 @@ const Categories = () => {
                     )}
                 </>
             ) : (
-                <div className="no-results" style={{textAlign: 'center', padding: '40px', color: '#666'}}>
-                    <p style={{fontSize: '1.2rem', marginBottom: '10px'}}>ไม่พบสินค้าในหมวดหมู่นี้</p>
-                    <button className="btn-reset-all" onClick={() => { setPriceFilter({min:'', max:''}); setActiveCategory('ทั้งหมด'); }}>
-                        กลับไปดูสินค้าทั้งหมด
+                <div className="no-results">
+                    <p>ไม่พบสินค้าที่คุณค้นหา</p>
+                    <button className="btn-reset-all" onClick={() => { setSearchTerm(''); setActiveCategory('ทั้งหมด'); }}>
+                        ดูสินค้าทั้งหมด
                     </button>
                 </div>
             )
