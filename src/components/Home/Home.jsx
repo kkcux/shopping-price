@@ -173,7 +173,7 @@ const Home = () => {
   ];
 
   const handleCategoryClick = (categoryName) => {
-    navigate('/categories', { state: { selectedCategory: categoryName } });
+    navigate('/products', { state: { selectedCategory: categoryName } });
   };
 
   return (
