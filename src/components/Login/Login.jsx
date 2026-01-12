@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom"; // ✅ 1. เพิ่ม useLocation
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import "./Login.css";
@@ -11,8 +11,13 @@ import { FcGoogle } from "react-icons/fc";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation(); // ✅ 2. เรียกใช้ hook
+  
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // ✅ 3. กำหนดหน้าปลายทาง (ถ้ามีส่งมาให้ใช้ตัวนั้น ถ้าไม่มีให้ไปหน้าแรก)
+  const from = location.state?.from || "/";
 
   // --- ส่วนจัดการ Google Login ---
   const loginWithGoogle = useGoogleLogin({
@@ -26,12 +31,12 @@ const Login = () => {
 
         console.log("User Info:", userInfo.data);
 
-        // 2. บันทึกข้อมูลลงเครื่อง (เพื่อให้หน้าอื่นรู้ว่าล็อกอินแล้ว)
+        // 2. บันทึกข้อมูลลงเครื่อง
         localStorage.setItem('user', JSON.stringify(userInfo.data));
         localStorage.setItem('token', tokenResponse.access_token);
 
-        // 3. ไปหน้าแรกทันที
-        navigate("/"); 
+        // ✅ 4. เปลี่ยนการ Redirect: ไปยังหน้าปลายทางที่จำไว้
+        navigate(from, { replace: true }); 
 
       } catch (error) {
         console.error("Error fetching user info:", error);
@@ -44,8 +49,17 @@ const Login = () => {
   const handleLogin = (e) => {
     e.preventDefault();
     console.log("Login submitted");
-    // ตัวอย่าง: ล็อกอินแบบปกติเสร็จ ก็ให้ไปหน้าแรกเหมือนกัน
-    // navigate("/"); 
+    
+    // สมมติว่า Login ปกติสำเร็จ
+    // (ในโค้ดจริงคุณต้องต่อ API ยืนยันรหัสผ่านตรงนี้)
+    
+    // จำลองการบันทึก User
+    const mockUser = { name: "User Test", email: "test@example.com" };
+    localStorage.setItem('user', JSON.stringify(mockUser));
+    localStorage.setItem('token', "mock-token-123");
+
+    // ✅ 5. แบบฟอร์มปกติก็ต้อง Redirect กลับเหมือนกัน
+    navigate(from, { replace: true });
   };
 
   return (
@@ -106,7 +120,7 @@ const Login = () => {
               <span>หรือเข้าสู่ระบบด้วย</span>
             </div>
 
-            {/* ปุ่ม Google Custom ที่แก้ไขแล้ว */}
+            {/* ปุ่ม Google Custom */}
             <button 
                 type="button" 
                 className="btn-google" 

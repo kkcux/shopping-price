@@ -1,5 +1,5 @@
 /* =========================
-   PAGE LAYOUT (Theme: PriceFinder #10B77E + Fixed Layout 1200px)
+   myLists3 CSS Styles
 ========================= */
 * {
   box-sizing: border-box;
@@ -362,12 +362,12 @@
 }
 
 .ml3-savebtn {
-  /* ✅ สีเขียวธีม */
+  /* ใช้สีเขียวธีมเดียวกับส่วนอื่นๆ */
   background: #10b77e;
   color: white;
   border: none;
   padding: 14px 48px;
-  border-radius: 50px; /* มนขึ้น */
+  border-radius: 50px;
   font-size: 1.1rem;
   font-weight: 700;
   display: flex;
@@ -377,43 +377,369 @@
   box-shadow: 0 4px 12px rgba(16, 183, 126, 0.3);
   transition: all 0.2s;
 }
+
 .ml3-savebtn:hover {
   background: #0d9668;
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(16, 183, 126, 0.4);
 }
-.ml3-saveicon {
-  font-size: 1.2rem;
+
+/* ===== Modal Styles ===== */
+.ml3-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* พื้นหลังสีดำจางๆ */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* ให้ลอยอยู่เหนือทุกอย่าง */
+  backdrop-filter: blur(2px); /* เบลอฉากหลังเล็กน้อย (optional) */
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
-@media (max-width: 900px) {
-  /* ปรับ Grid ให้เป็น Column เดียวในมือถือ */
-  .ml3-thead,
-  .ml3-tr,
-  .ml3-shop-head,
-  .ml3-shop-row {
-    grid-template-columns: 1fr; /* แถวเดียว */
-    gap: 10px;
-    text-align: left;
+.ml3-modal-box {
+  background: white;
+  width: 90%;
+  max-width: 400px;
+  padding: 30px 20px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  position: relative;
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ml3-modal-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s;
+}
+
+.ml3-modal-close:hover {
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.ml3-modal-icon {
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.ml3-modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.ml3-modal-desc {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 25px;
+  line-height: 1.5;
+}
+
+.ml3-modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* ปุ่มใน Modal */
+.ml3-btn-primary,
+.ml3-btn-secondary {
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.ml3-btn-primary {
+  background-color: #28a745;
+  color: white;
+  box-shadow: 0 4px 10px rgba(40, 167, 69, 0.2);
+}
+
+.ml3-btn-primary:hover {
+  background-color: #218838;
+  transform: translateY(-1px);
+}
+
+.ml3-btn-secondary {
+  background-color: #f1f3f5;
+  color: #495057;
+}
+
+.ml3-btn-secondary:hover {
+  background-color: #e9ecef;
+}
+
+/* --- เพิ่มต่อท้ายในไฟล์ mylists3.css --- */
+
+/* ฉากหลังสีดำจางๆ */
+.ml3-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.2s ease-out;
+}
+
+/* กล่อง Popup */
+.ml3-modal {
+  background: #fff;
+  width: 90%;
+  max-width: 400px;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: scaleUp 0.2s ease-out;
+}
+
+.ml3-modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.ml3-modal-desc {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 24px;
+}
+
+/* ปุ่มกดใน Popup */
+.ml3-modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.ml3-btn-cancel,
+.ml3-btn-confirm {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.2s;
+}
+
+.ml3-btn-cancel {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.ml3-btn-confirm {
+  background: #28a745; /* สีเขียว */
+  color: #fff;
+}
+
+.ml3-btn-cancel:hover,
+.ml3-btn-confirm:hover {
+  opacity: 0.8;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes scaleUp {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* =========================================
+   ส่วนอัปเดตสำหรับ Modal 3 ปุ่ม (วางต่อท้ายไฟล์สุด)
+   ========================================= */
+
+.ml3-modal-actions {
+  display: flex;
+  flex-wrap: wrap; /* ยืดหยุ่นเผื่อจอเล็ก */
+  gap: 10px; /* ระยะห่างระหว่างปุ่ม */
+  justify-content: center;
+  margin-top: 20px;
+}
+
+/* ตั้งค่าพื้นฐานให้ปุ่มทั้ง 3 แบบ */
+.ml3-btn-cancel,
+.ml3-btn-discard,
+.ml3-btn-confirm {
+  flex: 1; /* ให้ขยายเต็มพื้นที่เท่าๆ กัน */
+  min-width: 90px; /* ความกว้างขั้นต่ำ */
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: opacity 0.2s, transform 0.1s;
+}
+
+/* 1. ปุ่มยกเลิก (สีเทา) -> อยู่หน้าเดิม */
+.ml3-btn-cancel {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+/* 2. ปุ่มไม่บันทึก (สีแดง) -> ย้อนกลับ/ทิ้งข้อมูล */
+.ml3-btn-discard {
+  background: #ef4444; /* สีแดง */
+  color: #fff;
+}
+
+/* 3. ปุ่มยืนยัน (สีเขียว) -> บันทึก */
+.ml3-btn-confirm {
+  background: #10b77e; /* สีเขียวธีม */
+  color: #fff;
+}
+
+/* Effect ตอนเอาเมาส์ชี้ */
+.ml3-btn-cancel:hover,
+.ml3-btn-discard:hover,
+.ml3-btn-confirm:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Add to mylists3.css */
+.ml3-icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ml3-icon-btn:hover {
+  background-color: #f1f5f9;
+}
+
+.ml3-icon-btn.edit {
+  color: #3b82f6; /* Blue for edit */
+}
+
+.ml3-icon-btn.delete {
+  color: #ef4444; /* Red for delete */
+}
+
+/* --- จัดกลุ่มปุ่มมุมขวา --- */
+.ml3-topRight {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ✅ ปุ่มแก้ไข (แบบแคปซูลสีฟ้า) */
+.ml3-btn-edit-pill {
+  background-color: #3b82f6; /* สีฟ้าสด */
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 50px; /* มุมมนเป็นแคปซูล */
+  font-family: "Sarabun", sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* ระยะห่างไอคอนกับตัวหนังสือ */
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); /* เงาสีฟ้าฟุ้งๆ */
+  transition: all 0.2s ease;
+}
+
+.ml3-btn-edit-pill:hover {
+  background-color: #2563eb; /* เข้มขึ้นตอนชี้ */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(59, 130, 246, 0.4);
+}
+
+/* ✅ ปุ่มลบ (แบบวงกลมขอบแดง) */
+.ml3-btn-delete-circle {
+  width: 48px;
+  height: 48px;
+  background-color: #ffffff;
+  border: 2px solid #fee2e2; /* ขอบสีชมพูอ่อน */
+  border-radius: 50%; /* วงกลม */
+  color: #ef4444; /* ไอคอนสีแดง */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.05);
+  transition: all 0.2s ease;
+}
+
+.ml3-btn-delete-circle:hover {
+  background-color: #fef2f2; /* พื้นหลังชมพูจางๆ ตอนชี้ */
+  border-color: #fca5a5;
+  color: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.15);
+}
+
+/* Responsive: มือถือจอเล็ก */
+@media (max-width: 600px) {
+  .ml3-topRight {
+    margin-top: 15px; /* ดันลงมาบรรทัดใหม่ถ้ายาวไป */
+    width: 100%;
+    justify-content: flex-start;
   }
 
-  .ml3-td,
-  .ml3-th,
-  .ml3-shop-head div,
-  .ml3-shop-row div {
-    text-align: left;
-  }
-
-  .ml3-header-inner {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 15px;
-  }
-
-  .ml3-container {
-    padding: 0 20px;
+  .ml3-btn-edit-pill span {
+    display: inline-block; /* ให้แสดงข้อความปกติ */
   }
 }
