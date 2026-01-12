@@ -1,5 +1,5 @@
 /* =========================
-   PAGE LAYOUT (Theme: PriceFinder #10B77E + Fixed Layout 1200px)
+  mylist2.css
 ========================= */
 
 @import url("https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap");
@@ -573,7 +573,8 @@
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
   text-align: center;
   border: 1px solid #f3f4f6;
-  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: popIn 0.15s ease-out forwards;
+  will-change: transform, opacity;
 }
 
 /* วงกลมไอคอน */
@@ -624,12 +625,16 @@
 /* จัดปุ่ม */
 .modal-actions {
   display: flex;
+  flex-direction: row; /* บังคับแนวนอน */
   gap: 12px;
   justify-content: center;
+  align-items: center; /* จัดกึ่งกลางแนวตั้ง */
+  width: 100%;
 }
 
 .modal-btn {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 120px;
   padding: 12px 20px;
   border: none;
   border-radius: 50px;

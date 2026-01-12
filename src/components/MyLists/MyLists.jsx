@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, MoreVertical, Trash2, X } from 'lucide-react'; // ✅ ใช้ MoreVertical เป็นปุ่มหลัก
+import { ChevronLeft, MoreVertical, Trash2, X, Plus, Pencil } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../Home/Navbar';
 import Footer from '../Home/Footer';
@@ -8,23 +8,16 @@ import './MyLists.css';
 const MyLists = () => {
   const navigate = useNavigate();
 
-  // State ข้อมูลรายการ
   const [savedLists, setSavedLists] = useState(() => {
     const data = localStorage.getItem("myLists");
     return data ? JSON.parse(data) : [];
   });
 
-  // ✅ State สำหรับเมนู 3 จุด (เก็บ ID ของการ์ดที่กำลังเปิดเมนูอยู่)
   const [menuId, setMenuId] = useState(null);
-
-  // ✅ State สำหรับ Modal ลบ
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
-
-  // Ref สำหรับคลิกข้างนอกแล้วปิดเมนู
   const menuRef = useRef(null);
 
-  // ปิดเมนูเมื่อคลิกที่อื่น
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -35,20 +28,17 @@ const MyLists = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ฟังก์ชันเปิด/ปิด เมนู 3 จุด
   const toggleMenu = (id, e) => {
-    e.stopPropagation(); // กันไม่ให้ไปกดโดนการ์ด
+    e.stopPropagation();
     setMenuId(menuId === id ? null : id);
   };
 
-  // ฟังก์ชันกดปุ่ม "ลบ" ในเมนู (เปิด Modal)
   const handleDeleteClick = (id) => {
     setDeleteId(id);
     setShowDeleteModal(true);
-    setMenuId(null); // ปิดเมนูหลังกด
+    setMenuId(null);
   };
 
-  // ยืนยันการลบจริง
   const confirmDelete = () => {
     if (deleteId) {
       const updated = savedLists.filter(list => list.id !== deleteId);
@@ -78,7 +68,7 @@ const MyLists = () => {
 
             <Link to="/mylists/create" style={{ textDecoration: 'none' }}>
               <button className="btn-newlist">
-                + NEWLIST
+                <Plus size={16} strokeWidth={3} style={{marginRight:4, transform: "translateY(3px)"}}/> NEWLIST
               </button>
             </Link>
           </div>
@@ -92,15 +82,24 @@ const MyLists = () => {
               {savedLists.map((list) => (
                 <div key={list.id} className="list-card">
                   
-                  {/* ✅ ส่วนเมนู 3 จุด มุมขวาบน */}
                   <div className="card-top-menu" ref={menuId === list.id ? menuRef : null}>
                     <button className="menu-icon-btn" onClick={(e) => toggleMenu(list.id, e)}>
                       <MoreVertical size={20} color="#6b7280" />
                     </button>
 
-                    {/* Dropdown Menu จะแสดงเมื่อ menuId ตรงกับ id การ์ด */}
                     {menuId === list.id && (
                       <div className="menu-dropdown">
+                        <div 
+                          className="menu-item edit" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/mylists/edit/${list.id}`);
+                          }}
+                        >
+                          <Pencil size={16} />
+                          <span>แก้ไข</span>
+                        </div>
+
                         <div 
                           className="menu-item delete" 
                           onClick={(e) => {
@@ -120,9 +119,10 @@ const MyLists = () => {
                     <p className="card-count">{list.totalItems} รายการ</p>
                   </div>
                   <div className="card-footer">
+                    {/* ✅ แก้ไขตรงนี้: เปลี่ยน Link ไปหน้า Compare (MyLists3) */}
                     <button 
                       className="btn-open" 
-                      onClick={() => navigate(`/mylists/${list.id}`)}
+                      onClick={() => navigate(`/mylists/compare/${list.id}`)}
                     >
                       เปิด
                     </button>
@@ -139,7 +139,6 @@ const MyLists = () => {
         </div>
       </div>
 
-      {/* ✅ Modal Popup ยืนยันการลบ (เล็กๆ น่ารัก) */}
       {showDeleteModal && (
         <div className="modal-overlay">
           <div className="modal-box fade-in">

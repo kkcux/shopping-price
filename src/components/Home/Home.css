@@ -219,10 +219,11 @@ button {
 /* --- 3. CATEGORIES --- */
 .category-scroll {
   display: flex;
-  justify-content: center; /* Center items */
+  justify-content: space-between;
   gap: 16px;
   overflow-x: auto;
-  padding: 20px 0;
+  padding: 16px 12px;
+  margin: 0;
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
@@ -231,15 +232,17 @@ button {
 }
 
 .cat-item {
-  min-width: auto; /* Let it shrink to content */
-  flex: 0 0 auto; /* Don't stretch */
+  flex: 1;
+  min-width: 110px;
+  max-width: 140px;
   background: white;
   border: 1px solid transparent;
   border-radius: var(--radius-md);
-  padding: 12px 24px; /* Adjust padding for better look */
+  padding: 16px 12px; /* Equal padding */
   display: flex;
   flex-direction: column; /* Reverted to column */
   align-items: center;
+  justify-content: center;
   gap: 10px;
   cursor: pointer;
   transition: all 0.2s;

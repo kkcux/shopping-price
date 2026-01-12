@@ -187,3 +187,154 @@
   color: white;
   border-color: var(--pf-primary);
 }
+
+/* --- Modal Overlay: ฉากหลังมืดและเบลอ --- */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.65); /* เข้มขึ้นนิดนึงเพื่อให้ Popup เด่น */
+  backdrop-filter: blur(8px); /* เบลอฉากหลังให้เนียน */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* --- Modal Box: ตัวกล่อง --- */
+.modal-box {
+  background: #ffffff;
+  padding: 40px 30px; /* เพิ่มพื้นที่ว่างด้านใน */
+  border-radius: 24px; /* มุมโค้งมนกว่าเดิม */
+  width: 85%;
+  max-width: 360px; /* ขนาดกำลังดีเหมือน Mobile App */
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15); /* เงาฟุ้งๆ */
+  transform: scale(0.9);
+  animation: popUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; /* เด้งแบบนุ่มๆ */
+}
+
+/* --- Icon Circle: วงกลมรองหลังไอคอน --- */
+.modal-icon-circle {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+
+/* สีเหลือง (Warning) - พาสเทล */
+.modal-icon-circle.warning {
+  background-color: #fff7ed; /* ส้มครีมอ่อนๆ */
+  color: #f59e0b; /* ส้มทอง */
+  border: 4px solid #ffedd5; /* ขอบจางๆ เพิ่มมิติ */
+}
+
+/* สีแดง (Danger) - พาสเทล */
+.modal-icon-circle.danger {
+  background-color: #fef2f2;
+  color: #ef4444;
+  border: 4px solid #fee2e2;
+}
+
+/* --- Typography: ตัวหนังสือ --- */
+.modal-title {
+  font-size: 1.25rem;
+  font-weight: 800; /* ตัวหนาพิเศษ */
+  color: #1f2937;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.modal-desc {
+  font-size: 1rem;
+  color: #6b7280; /* สีเทากลาง */
+  margin-bottom: 32px;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+/* --- Buttons: ปุ่มกด --- */
+.modal-actions {
+  display: flex;
+  flex-direction: column; /* เรียงปุ่มแนวตั้ง (ถ้ามีหลายปุ่ม) หรือเต็มความกว้าง */
+  gap: 12px;
+  width: 100%;
+}
+
+.modal-actions.row {
+  flex-direction: row; /* ถ้าปุ่มคู่ ให้เรียงแนวนอน */
+}
+
+.modal-btn {
+  width: 100%; /* ปุ่มเต็มความกว้าง */
+  padding: 14px 20px;
+  border-radius: 14px; /* มุมปุ่มโค้งรับกับกล่อง */
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.modal-btn:active {
+  transform: scale(0.96); /* กดแล้วยุบนิดนึง */
+}
+
+.modal-btn.primary {
+  /* เติม !important ต่อท้ายสี */
+  background: #008948 !important;
+  color: white !important;
+
+  box-shadow: 0 4px 12px rgba(0, 137, 72, 0.3);
+}
+
+.modal-btn.primary:hover {
+  background: #006e3a !important; /* เติมตรงนี้ด้วย */
+}
+
+/* สีปุ่มลบ (แดง) */
+.modal-btn.delete {
+  background: #ef4444;
+  color: white;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* สีปุ่มยกเลิก (เทา) */
+.modal-btn.cancel {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+.modal-btn.cancel:hover {
+  background: #e5e7eb;
+}
+
+/* --- Animation Keyframes --- */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes popUp {
+  from {
+    opacity: 0;
+    transform: scale(0.8) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
