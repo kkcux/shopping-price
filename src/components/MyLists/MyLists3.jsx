@@ -1,13 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { ChevronLeft } from "lucide-react";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { ChevronLeft, Save, Pencil, Trash2 } from "lucide-react"; 
 
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
 import "./mylists3.css";
 
 /* ================= helpers ================= */
-
 const toNumber = (v) => {
   if (v == null) return null;
   if (typeof v === "number") return Number.isFinite(v) ? v : null;
@@ -51,11 +50,9 @@ const matchProduct = (targetName, candidates) => {
 const normalizeRetailer = (v) => {
   const s = String(v || "").toLowerCase().replace(/\s+/g, "");
   if (!s) return "";
-
   if (s.includes("lotus") || s.includes("โลตัส")) return "LOTUS";
   if (s.includes("big")) return "BIGC";
   if (s.includes("makro") || s.includes("แม็คโคร")) return "MAKRO";
-
   return "";
 };
 
@@ -68,39 +65,11 @@ const pickFirst = (obj, keys) => {
 };
 
 const normalizeRow = (row) => {
-  const retailerRaw = pickFirst(row, [
-    "retailer",
-    "store",
-    "shop",
-    "source",
-    "merchant",
-    "platform",
-  ]);
+  const retailerRaw = pickFirst(row, ["retailer", "store", "shop", "source", "merchant", "platform"]);
   const retailer = normalizeRetailer(retailerRaw);
-
-  const name = pickFirst(row, [
-    "name",
-    "title",
-    "product_name",
-    "productName",
-    "product_title",
-  ]);
-  const price = pickFirst(row, [
-    "price",
-    "sale_price",
-    "final_price",
-    "current_price",
-    "min_price",
-    "discount_price",
-  ]);
-  const image = pickFirst(row, [
-    "image",
-    "img",
-    "image_url",
-    "imageUrl",
-    "thumbnail",
-    "thumb",
-  ]);
+  const name = pickFirst(row, ["name", "title", "product_name", "productName", "product_title"]);
+  const price = pickFirst(row, ["price", "sale_price", "final_price", "current_price", "min_price", "discount_price"]);
+  const image = pickFirst(row, ["image", "img", "image_url", "imageUrl", "thumbnail", "thumb"]);
 
   return {
     retailer,
@@ -115,9 +84,14 @@ const normalizeRow = (row) => {
 export default function MyLists3() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const location = useLocation();
 
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // State for controlling Popups (Modal)
+  const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false); 
 
   /* ===== load jsonl ===== */
   useEffect(() => {
@@ -140,9 +114,6 @@ export default function MyLists3() {
         if (!mounted) return;
         setAllProducts(normalized);
         setLoading(false);
-
-        const retailers = [...new Set(normalized.map((x) => x.retailer))];
-        console.log("Retailers in jsonl:", retailers);
       })
       .catch(() => setLoading(false));
 
@@ -152,24 +123,25 @@ export default function MyLists3() {
   }, []);
 
   /* ===== split by retailer ===== */
-  const lotusList = useMemo(
-    () => allProducts.filter((p) => p.retailer === "LOTUS"),
-    [allProducts]
-  );
-  const bigcList = useMemo(
-    () => allProducts.filter((p) => p.retailer === "BIGC"),
-    [allProducts]
-  );
-  const makroList = useMemo(
-    () => allProducts.filter((p) => p.retailer === "MAKRO"),
-    [allProducts]
-  );
+  const lotusList = useMemo(() => allProducts.filter((p) => p.retailer === "LOTUS"), [allProducts]);
+  const bigcList = useMemo(() => allProducts.filter((p) => p.retailer === "BIGC"), [allProducts]);
+  const makroList = useMemo(() => allProducts.filter((p) => p.retailer === "MAKRO"), [allProducts]);
 
   /* ===== selected list ===== */
   const selectedList = useMemo(() => {
+    if (location.state?.listData) {
+      return location.state.listData;
+    }
+    const pending = localStorage.getItem("pending_save_list");
+    if (pending) {
+      const parsedPending = JSON.parse(pending);
+      if (String(parsedPending.id) === String(id)) {
+        return parsedPending;
+      }
+    }
     const all = JSON.parse(localStorage.getItem("myLists")) || [];
     return all.find((l) => String(l.id) === String(id)) || null;
-  }, [id]);
+  }, [id, location.state]);
 
   const wanted = selectedList?.items || [];
   const listName = selectedList?.name || "ไม่พบรายการ";
@@ -187,9 +159,7 @@ export default function MyLists3() {
         MAKRO: m?.price ?? null,
       };
 
-      const valid = Object.values(priceMap).filter(
-        (v) => typeof v === "number"
-      );
+      const valid = Object.values(priceMap).filter((v) => typeof v === "number");
       const minVal = valid.length ? Math.min(...valid) : null;
 
       return {
@@ -202,8 +172,7 @@ export default function MyLists3() {
   }, [wanted, lotusList, bigcList, makroList]);
 
   const totals = useMemo(() => {
-    const sum = (k) =>
-      rows.reduce((acc, r) => acc + (r.priceMap[k] || 0), 0);
+    const sum = (k) => rows.reduce((acc, r) => acc + (r.priceMap[k] || 0), 0);
     return {
       LOTUS: sum("LOTUS"),
       BIGC: sum("BIGC"),
@@ -211,16 +180,14 @@ export default function MyLists3() {
     };
   }, [rows]);
 
-  /* ===== แนะนำร้านค้า ===== */
+  /* ===== Recommended Shops ===== */
   const recommendShops = [
     {
       key: "BIGC",
       name: "BIG C",
       distance: "2.5 km",
       memberPrice: totals.BIGC,
-      nonMemberPrice: totals.BIGC
-        ? Math.round(totals.BIGC * 1.05)
-        : null,
+      nonMemberPrice: totals.BIGC ? Math.round(totals.BIGC * 1.05) : null,
       url: "https://www.bigc.co.th",
     },
     {
@@ -228,9 +195,7 @@ export default function MyLists3() {
       name: "LOTUS’s",
       distance: "2.8 km",
       memberPrice: totals.LOTUS,
-      nonMemberPrice: totals.LOTUS
-        ? Math.round(totals.LOTUS * 1.05)
-        : null,
+      nonMemberPrice: totals.LOTUS ? Math.round(totals.LOTUS * 1.05) : null,
       url: "https://www.lotuss.com",
     },
     {
@@ -238,20 +203,81 @@ export default function MyLists3() {
       name: "MAKRO",
       distance: "3.7 km",
       memberPrice: totals.MAKRO,
-      nonMemberPrice: totals.MAKRO
-        ? Math.round(totals.MAKRO * 1.05)
-        : null,
+      nonMemberPrice: totals.MAKRO ? Math.round(totals.MAKRO * 1.05) : null,
       url: "https://www.makro.pro",
     },
   ].filter((s) => typeof s.memberPrice === "number");
+
+  // Open Save Modal
+  const handleSaveClick = () => {
+    if (!selectedList) {
+      alert("ไม่พบข้อมูลที่จะบันทึก");
+      return;
+    }
+    setShowModal(true); 
+  };
+
+  // Confirm Save
+  const confirmSave = () => {
+    setShowModal(false); 
+    const isLoggedIn = localStorage.getItem("user") || localStorage.getItem("token");
+
+    if (!isLoggedIn) {
+      localStorage.setItem("pending_save_list", JSON.stringify(selectedList));
+      const confirmLogin = window.confirm("กรุณาเข้าสู่ระบบก่อนบันทึกรายการ\nต้องการไปหน้าเข้าสู่ระบบเลยหรือไม่?");
+      if (confirmLogin) {
+        navigate('/login', { state: { from: location.pathname } });
+      }
+      return; 
+    }
+
+    const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
+    const existingIndex = allLists.findIndex((l) => String(l.id) === String(id));
+
+    let newLists;
+    if (existingIndex !== -1) {
+      newLists = [...allLists];
+      newLists[existingIndex] = selectedList;
+    } else {
+      newLists = [...allLists, selectedList];
+    }
+
+    localStorage.setItem("myLists", JSON.stringify(newLists));
+    localStorage.removeItem("pending_save_list");
+    sessionStorage.removeItem('current_draft_id');
+    
+    navigate('/mylists');
+  };
+
+  // Handle Edit Action
+  const handleEditClick = () => {
+      navigate(`/mylists/edit/${id}`);
+  };
+
+  // Handle Delete Action - Open Modal
+  const handleDeleteClick = () => {
+      setShowDeleteModal(true);
+  };
+
+  // Confirm Delete
+  const confirmDelete = () => {
+      const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
+      const filteredLists = allLists.filter((l) => String(l.id) !== String(id));
+      localStorage.setItem("myLists", JSON.stringify(filteredLists));
+      
+      localStorage.removeItem("pending_save_list");
+      sessionStorage.removeItem('current_draft_id');
+
+      setShowDeleteModal(false);
+      navigate('/mylists');
+  };
+
 
   if (loading) {
     return (
       <>
         <Navbar />
-        <div style={{ padding: 40, textAlign: "center" }}>
-          กำลังโหลดข้อมูลราคา...
-        </div>
+        <div style={{ padding: 40, textAlign: "center" }}>กำลังโหลดข้อมูลราคา...</div>
         <Footer />
       </>
     );
@@ -270,19 +296,25 @@ export default function MyLists3() {
               </button>
               <div className="ml3-titlewrap">
                 <h1 className="ml3-title">{listName}</h1>
-                <p className="ml3-subtitle">
-                  เปรียบเทียบราคาสินค้าจากหลายร้าน
-                </p>
+                <p className="ml3-subtitle">เปรียบเทียบราคาสินค้าจากหลายร้าน</p>
               </div>
+            </div>
+             {/* ปุ่มแก้ไขและลบที่มุมขวาบน */}
+            <div className="ml3-topRight">
+                <button className="ml3-btn-edit-pill" onClick={handleEditClick}>
+                    <Pencil size={18} strokeWidth={2.5} />
+                    <span>แก้ไขรายการ</span>
+                </button>
+                <button className="ml3-btn-delete-circle" onClick={handleDeleteClick}>
+                    <Trash2 size={20} strokeWidth={2} />
+                </button>
             </div>
           </div>
         </section>
 
         <div className="ml3-container">
-          {/* ===== ตารางเปรียบเทียบราคา ===== */}
           <section className="ml3-block">
             <div className="ml3-block-head">การเปรียบเทียบราคา</div>
-
             <div className="ml3-table">
               <div className="ml3-thead">
                 <div className="ml3-th left">สินค้า</div>
@@ -290,31 +322,20 @@ export default function MyLists3() {
                 <div className="ml3-th">BIGC</div>
                 <div className="ml3-th">MAKRO</div>
               </div>
-
               {rows.map((it, idx) => (
                 <div className="ml3-tr" key={idx}>
                   <div className="ml3-td left">
-                    <img
-                      className="ml3-prodimg"
-                      src={it.image}
-                      alt=""
-                    />
+                    <img className="ml3-prodimg" src={it.image} alt="" />
                     <div className="ml3-prodmeta">
                       <div className="ml3-prodname">{it.name}</div>
                     </div>
                   </div>
-
                   {["LOTUS", "BIGC", "MAKRO"].map((k) => {
                     const val = it.priceMap[k];
-                    const isMin =
-                      typeof val === "number" && it.minVal === val;
+                    const isMin = typeof val === "number" && it.minVal === val;
                     return (
                       <div className="ml3-td" key={k}>
-                        <span
-                          className={`ml3-pill ${
-                            isMin ? "best" : ""
-                          }`}
-                        >
+                        <span className={`ml3-pill ${isMin ? "best" : ""}`}>
                           {typeof val === "number" ? val : "-"}
                         </span>
                       </div>
@@ -322,7 +343,6 @@ export default function MyLists3() {
                   })}
                 </div>
               ))}
-
               <div className="ml3-tr total">
                 <div className="ml3-td left total-label">รวม</div>
                 {["LOTUS", "BIGC", "MAKRO"].map((k) => (
@@ -336,10 +356,8 @@ export default function MyLists3() {
             </div>
           </section>
 
-          {/* ===== แนะนำร้านค้า ===== */}
           <section className="ml3-block">
             <div className="ml3-block-head">แนะนำร้านค้า</div>
-
             <div className="ml3-shop-table">
               <div className="ml3-shop-head">
                 <div>ร้านค้า</div>
@@ -348,35 +366,18 @@ export default function MyLists3() {
                 <div>ไม่เป็นสมาชิก</div>
                 <div></div>
               </div>
-
-              {recommendShops.map((s, idx) => (
+              {recommendShops.map((s) => (
                 <div className="ml3-shop-row" key={s.key}>
                   <div className="ml3-shop-brand">
-                    {idx === 0 && (
-                      <span className="ml3-best">ราคาถูกที่สุด</span>
-                    )}
                     {s.name}
                   </div>
-
                   <div className="ml3-shop-muted">{s.distance}</div>
-
+                  <div className="ml3-shop-price">฿{Math.round(s.memberPrice)}</div>
                   <div className="ml3-shop-price">
-                    ฿{Math.round(s.memberPrice)}
+                    {s.nonMemberPrice ? `฿${s.nonMemberPrice}` : "-"}
                   </div>
-
-                  <div className="ml3-shop-price">
-                    {s.nonMemberPrice
-                      ? `฿${s.nonMemberPrice}`
-                      : "-"}
-                  </div>
-
                   <div>
-                    <button
-                      className="ml3-go"
-                      onClick={() =>
-                        window.open(s.url, "_blank")
-                      }
-                    >
+                    <button className="ml3-go" onClick={() => window.open(s.url, "_blank")}>
                       ไปยังร้านค้า
                     </button>
                   </div>
@@ -384,8 +385,72 @@ export default function MyLists3() {
               ))}
             </div>
           </section>
+
+          <div className="ml3-save">
+            <button className="ml3-savebtn" onClick={handleSaveClick}>
+              <Save size={20} strokeWidth={2.5} />
+              บันทึกรายการ
+            </button>
+          </div>
         </div>
       </main>
+
+      {/* Save Confirmation Modal */}
+        {showModal && (
+            <div className="ml3-modal-overlay" onClick={() => setShowModal(false)}>
+              <div className="ml3-modal" onClick={(e) => e.stopPropagation()}>
+                <div className="ml3-modal-title">ยืนยันการบันทึก</div>
+                <p className="ml3-modal-desc">
+                  ต้องการบันทึกรายการสินค้านี้ใช่หรือไม่?
+                </p>
+                <div className="ml3-modal-actions">
+                  
+                  {/* ✅ เหลือแค่ 2 ปุ่มตามที่ขอ */}
+                  <button 
+                    className="ml3-btn-cancel" 
+                    onClick={() => setShowModal(false)}
+                  >
+                    ยกเลิก
+                  </button>
+
+                  <button 
+                    className="ml3-btn-confirm" 
+                    onClick={confirmSave}
+                  >
+                    ยืนยัน
+                  </button>
+
+                </div>
+              </div>
+            </div>
+          )}
+        
+        {/* Delete Confirmation Modal */}
+        {showDeleteModal && (
+            <div className="ml3-modal-overlay" onClick={() => setShowDeleteModal(false)}>
+              <div className="ml3-modal" onClick={(e) => e.stopPropagation()}>
+                <div className="ml3-modal-title" style={{ color: "#ef4444" }}>ยืนยันการลบ</div>
+                <p className="ml3-modal-desc">
+                  คุณต้องการลบรายการสินค้านี้ใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้
+                </p>
+                <div className="ml3-modal-actions">
+                  <button 
+                    className="ml3-btn-cancel" 
+                    onClick={() => setShowDeleteModal(false)}
+                  >
+                    ยกเลิก
+                  </button>
+                  <button 
+                    className="ml3-btn-discard" 
+                    onClick={confirmDelete}
+                    style={{ backgroundColor: "#ef4444", color: "white", border: "none" }}
+                  >
+                    ลบรายการ
+                  </button>
+                </div>
+              </div>
+            </div>
+        )}
 
       <Footer />
     </>

@@ -6,22 +6,27 @@ import {
   Trash2, 
   Plus, 
   Minus,
-  Save
+  Save,
+  AlertTriangle,
+  X 
 } from "lucide-react";
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
-import "./ListsEdit.css"; // ใช้ CSS เดียวกับ Edit ได้เลย
+import "./CreateMyList.css"; // ตรวจสอบชื่อไฟล์ CSS ให้ตรงกันนะครับ
 
 export default function CreateMyList() {
   const navigate = useNavigate();
   
   const [listName, setListName] = useState("");
   const [items, setItems] = useState([]); 
-  const [draftId, setDraftId] = useState(null); // เก็บ ID ของรายการร่าง
+  const [draftId, setDraftId] = useState(null); 
 
-  // ✅ 1. โหลดข้อมูล "Draft" ถ้ามีค้างอยู่ (เมื่อกลับมาจากหน้า Product)
+  // Modal States
+  const [showExitModal, setShowExitModal] = useState(false);
+  const [showWarningModal, setShowWarningModal] = useState(false);
+
+  // --- 1. LOAD DATA (โหลดข้อมูล Draft ถ้ามี) ---
   useEffect(() => {
-    // เช็คว่ามี ID ค้างใน Session ไหม
     const savedDraftId = sessionStorage.getItem('current_draft_id');
     
     if (savedDraftId) {
@@ -29,14 +34,24 @@ export default function CreateMyList() {
       const foundList = allLists.find(l => String(l.id) === String(savedDraftId));
       
       if (foundList) {
-        setDraftId(foundDraftId => savedDraftId);
+        setDraftId(savedDraftId);
         setListName(foundList.name);
         setItems(foundList.items || []);
       }
     }
   }, []);
 
-  // ===== Catalog Data =====
+  // ป้องกันการปิด Tab โดยไม่ตั้งใจ
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      e.preventDefault();
+      e.returnValue = ''; 
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
+  // --- CATALOG DATA ---
   const [catalog, setCatalog] = useState([
     { id: "c1", name: "อินโนวีเนส อาหารทางการแพทย์ 300ก.", img: "https://o2o-static.lotuss.com/products/105727/51921065.jpg", qty: 1 },
     { id: "c2", name: "อันอัน แผ่นรองซึมซับ ไซส์ XXL 10 ชิ้น", img: "https://o2o-static.lotuss.com/products/105727/75583866.jpg", qty: 1 },
@@ -45,10 +60,10 @@ export default function CreateMyList() {
     { id: "c5", name: "ซอฟเท็กซ์ แผ่นรองซับ ขนาดใหญ่ 10 ชิ้น", img: "https://o2o-static.lotuss.com/products/105727/791156.jpg", qty: 1 },
   ]);
 
-  // ... (Catalog Logic เหมือนเดิม)
   const increaseCatalogQty = (id) => setCatalog(prev => prev.map(i => i.id === id ? { ...i, qty: i.qty + 1 } : i));
   const decreaseCatalogQty = (id) => setCatalog(prev => prev.map(i => i.id === id && i.qty > 1 ? { ...i, qty: i.qty - 1 } : i));
 
+  // --- LOGIC จัดการสินค้า ---
   const handleSelectFromCatalog = (product) => {
     const existingIndex = items.findIndex((item) => item.name === product.name); 
     if (existingIndex !== -1) {
@@ -72,13 +87,33 @@ export default function CreateMyList() {
 
   const removeItem = (index) => setItems((prev) => prev.filter((_, i) => i !== index));
 
+  // --- NAVIGATION HANDLERS ---
+  const handleBackClick = () => {
+    if (!listName && items.length === 0) {
+        navigate(-1);
+        return;
+    }
+    setShowExitModal(true);
+  };
 
-  // ✅ 2. ฟังก์ชัน "ดูสินค้าทั้งหมด" (หัวใจสำคัญ)
+  const confirmExit = () => {
+    // ถ้าออกโดยไม่บันทึก ให้ลบ Draft ทิ้ง (Cleanup)
+    if (draftId) {
+      const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
+      const filteredLists = allLists.filter(l => String(l.id) !== String(draftId));
+      localStorage.setItem("myLists", JSON.stringify(filteredLists));
+      sessionStorage.removeItem('current_draft_id');
+    }
+    setShowExitModal(false);
+    navigate(-1);
+  };
+
+  // ✅ 2. ฟังก์ชันไปหน้าสินค้า (บันทึกก่อนไป)
   const handleGoToProducts = () => {
-    // สร้าง ID ใหม่ หรือใช้ ID เดิมถ้ามีอยู่แล้ว
+    // สร้าง ID ใหม่ถ้ายังไม่มี (Draft ID)
     const idToUse = draftId || Date.now();
     
-    // สร้าง Object รายการ
+    // สร้าง Object ข้อมูลล่าสุด
     const newList = {
       id: idToUse,
       name: listName,
@@ -87,34 +122,33 @@ export default function CreateMyList() {
       totalItems: items.reduce((sum, i) => sum + i.qty, 0)
     };
 
-    // บันทึกลง LocalStorage
     const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
     
+    // ✅ บันทึกลง LocalStorage ทันที
     if (draftId) {
-      // ถ้ามีอยู่แล้ว -> อัปเดต
+      // กรณีแก้ไข: อัปเดตรายการเดิม
       const updatedLists = allLists.map(l => String(l.id) === String(draftId) ? newList : l);
       localStorage.setItem("myLists", JSON.stringify(updatedLists));
     } else {
-      // ถ้ายังไม่มี -> เพิ่มใหม่
+      // กรณีใหม่: เพิ่มรายการใหม่เข้าไป
       localStorage.setItem("myLists", JSON.stringify([...allLists, newList]));
-      // จำ ID ไว้ใน Session
+      // บันทึก Session เพื่อให้พอกลับมาหน้านี้ ข้อมูลยังอยู่
       sessionStorage.setItem('current_draft_id', idToUse);
     }
 
-    // ไปหน้า Products พร้อมแนบ ID
+    // ไปหน้าเลือกสินค้า
     navigate(`/mylists/create/products/${idToUse}`);
   };
 
-
-  // ✅ 3. ฟังก์ชันบันทึกเสร็จสิ้น (Save Final)
+  // ✅ 3. ฟังก์ชันบันทึกรายการ (Save Final)
   const handleSaveFinal = () => {
     if (!listName.trim()) {
-      alert("กรุณากรอกชื่อรายการ");
+      setShowWarningModal(true);
       return;
     }
 
-    // บันทึกครั้งสุดท้าย (เผื่อมีการแก้ไขชื่อ)
     const idToUse = draftId || Date.now();
+    
     const newList = {
       id: idToUse,
       name: listName,
@@ -125,6 +159,7 @@ export default function CreateMyList() {
 
     const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
     
+    // ✅ บันทึกลง Storage ให้ชัวร์ก่อนเปลี่ยนหน้า
     if (draftId) {
       const updatedLists = allLists.map(l => String(l.id) === String(draftId) ? newList : l);
       localStorage.setItem("myLists", JSON.stringify(updatedLists));
@@ -132,13 +167,14 @@ export default function CreateMyList() {
       localStorage.setItem("myLists", JSON.stringify([...allLists, newList]));
     }
 
-    // ล้าง Session เพื่อจบการทำงานร่าง
+    // ล้าง session draft ออก เพราะบันทึกเสร็จแล้ว
     sessionStorage.removeItem('current_draft_id');
-
-    // ไปหน้ารายละเอียด
+    
+    // ไปหน้า View รายการ
     navigate(`/mylists/${idToUse}`);
   };
 
+  // --- RENDER ---
   return (
     <>
       <Navbar />
@@ -147,10 +183,7 @@ export default function CreateMyList() {
         <section className="le-header-section">
           <div className="le-header-inner">
             <div className="le-topLeft">
-              <button className="le-back-btn" onClick={() => {
-                  // ถ้ากดย้อนกลับ ให้ล้าง draft ไหม? แล้วแต่ design (ในที่นี้ไม่ล้าง เผื่อกลับมาทำต่อ)
-                  navigate(-1);
-              }}>
+              <button className="le-back-btn" onClick={handleBackClick}>
                 <ChevronLeft size={28} strokeWidth={2.5} />
               </button>
               <div>
@@ -162,7 +195,6 @@ export default function CreateMyList() {
         </section>
 
         <div className="le-container">
-          
           <div className="le-nameBlock">
             <div className="le-label">ชื่อรายการ</div>
             <input 
@@ -176,12 +208,10 @@ export default function CreateMyList() {
           <section className="le-box">
             <div className="le-boxHead">
               <div className="le-boxTitle">เลือกสินค้าแนะนำ</div>
-              {/* ✅ เรียกใช้ฟังก์ชันพิเศษของเรา */}
               <button className="le-seeAllBtn" onClick={handleGoToProducts}>
                 ดูสินค้าทั้งหมด <ChevronRight size={20} />
               </button>
             </div>
-            {/* Catalog Grid */}
             <div className="le-cards">
               {catalog.map((p) => (
                 <div key={p.id} className="le-card">
@@ -193,7 +223,7 @@ export default function CreateMyList() {
                     <button onClick={() => increaseCatalogQty(p.id)}><Plus size={14} /></button>
                   </div>
                   <button className="le-select" onClick={() => handleSelectFromCatalog(p)}>
-                    <Plus size={16} style={{marginRight:4}}/> เพิ่ม
+                    <Plus size={16} strokeWidth={3} style={{marginRight:4, transform: "translateY(3px)"}}/> เพิ่ม
                   </button>
                 </div>
               ))}
@@ -230,9 +260,69 @@ export default function CreateMyList() {
               สร้างรายการ
             </button>
           </div>
-
         </div>
       </main>
+
+      {/* ================= MODALS ================= */}
+
+      {/* 1. Modal ยืนยันการออก (Exit) */}
+      {showExitModal && (
+        <div className="modal-overlay" onClick={() => setShowExitModal(false)}>
+          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-icon-circle danger">
+              <Trash2 size={40} strokeWidth={2} />
+            </div>
+
+            <h3 className="modal-title">ยกเลิกรายการนี้?</h3>
+            <p className="modal-desc">
+              ข้อมูลที่คุณกรอกไว้จะไม่ถูกบันทึก <br/>
+              ต้องการลบและออกจากหน้านี้ใช่ไหม
+            </p>
+
+            <div className="modal-actions row">
+              <button 
+                className="modal-btn cancel" 
+                onClick={() => setShowExitModal(false)}
+              >
+                ทำรายการต่อ
+              </button>
+              <button 
+                className="modal-btn delete" 
+                onClick={confirmExit}
+              >
+                ทิ้งรายการ
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 2. Modal แจ้งเตือน (Warning) */}
+      {showWarningModal && (
+        <div className="modal-overlay" onClick={() => setShowWarningModal(false)}>
+          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-icon-circle warning">
+              <AlertTriangle size={48} strokeWidth={2} />
+            </div>
+
+            <h3 className="modal-title">กรุณากรอกชื่อรายการ</h3>
+            <p className="modal-desc">
+              คุณยังไม่ได้ตั้งชื่อรายการสินค้า <br/>
+              โปรดระบุชื่อก่อนทำการบันทึก
+            </p>
+
+            <div className="modal-actions">
+              <button 
+                className="modal-btn primary" 
+                onClick={() => setShowWarningModal(false)}
+              >
+                ตกลง, เข้าใจแล้ว
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Footer />
     </>
   );
