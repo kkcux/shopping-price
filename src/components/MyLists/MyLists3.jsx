@@ -285,7 +285,7 @@ export default function MyLists3() {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <main className="ml3-page">
         <section className="ml3-header-section">

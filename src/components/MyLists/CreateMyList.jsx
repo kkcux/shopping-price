@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -12,24 +12,26 @@ import {
 } from "lucide-react";
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
-import "./CreateMyList.css"; // ตรวจสอบชื่อไฟล์ CSS ให้ตรงกันนะครับ
+import "./CreateMyList.css"; 
 
 export default function CreateMyList() {
   const navigate = useNavigate();
+  const location = useLocation();
   
   const [listName, setListName] = useState("");
   const [items, setItems] = useState([]); 
   const [draftId, setDraftId] = useState(null); 
 
-  // Modal States
   const [showExitModal, setShowExitModal] = useState(false);
   const [showWarningModal, setShowWarningModal] = useState(false);
 
-  // --- 1. LOAD DATA (โหลดข้อมูล Draft ถ้ามี) ---
+  // --- 1. LOAD DATA (รวม Logic ทั้งหมดตรงนี้) ---
   useEffect(() => {
     const savedDraftId = sessionStorage.getItem('current_draft_id');
-    
+    const stateItem = location.state?.initialItem; // ✅ รับค่าจาก Modal
+
     if (savedDraftId) {
+      // 🟢 กรณี 1: กลับมาจากการเลือกสินค้า (มี Draft ID)
       const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
       const foundList = allLists.find(l => String(l.id) === String(savedDraftId));
       
@@ -38,8 +40,18 @@ export default function CreateMyList() {
         setListName(foundList.name);
         setItems(foundList.items || []);
       }
+    } else if (stateItem) {
+      // 🟢 กรณี 2: มาจาก Modal "เพิ่มลงรายการใหม่" (ยังไม่มี ID)
+      // เช็คก่อนว่าสินค้านี้มีอยู่แล้วหรือยัง เพื่อกันซ้ำ
+      setItems((prev) => {
+        if (prev.length > 0) return prev; // ถ้ามีของอยู่แล้ว (เช่น React re-render) ไม่ต้องทำไร
+        return [stateItem]; // ใส่สินค้าเริ่มต้นลงไป
+      });
+      
+      // (Optional) ล้าง state ออกจาก history เพื่อไม่ให้ refresh แล้วเพิ่มซ้ำ
+      window.history.replaceState({}, document.title);
     }
-  }, []);
+  }, [location]); 
 
   // ป้องกันการปิด Tab โดยไม่ตั้งใจ
   useEffect(() => {
@@ -63,7 +75,7 @@ export default function CreateMyList() {
   const increaseCatalogQty = (id) => setCatalog(prev => prev.map(i => i.id === id ? { ...i, qty: i.qty + 1 } : i));
   const decreaseCatalogQty = (id) => setCatalog(prev => prev.map(i => i.id === id && i.qty > 1 ? { ...i, qty: i.qty - 1 } : i));
 
-  // --- LOGIC จัดการสินค้า ---
+  // --- LOGIC ---
   const handleSelectFromCatalog = (product) => {
     const existingIndex = items.findIndex((item) => item.name === product.name); 
     if (existingIndex !== -1) {
@@ -87,9 +99,9 @@ export default function CreateMyList() {
 
   const removeItem = (index) => setItems((prev) => prev.filter((_, i) => i !== index));
 
-  // --- NAVIGATION HANDLERS ---
   const handleBackClick = () => {
     if (!listName && items.length === 0) {
+        sessionStorage.removeItem('current_draft_id');
         navigate(-1);
         return;
     }
@@ -97,7 +109,6 @@ export default function CreateMyList() {
   };
 
   const confirmExit = () => {
-    // ถ้าออกโดยไม่บันทึก ให้ลบ Draft ทิ้ง (Cleanup)
     if (draftId) {
       const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
       const filteredLists = allLists.filter(l => String(l.id) !== String(draftId));
@@ -108,12 +119,8 @@ export default function CreateMyList() {
     navigate(-1);
   };
 
-  // ✅ 2. ฟังก์ชันไปหน้าสินค้า (บันทึกก่อนไป)
   const handleGoToProducts = () => {
-    // สร้าง ID ใหม่ถ้ายังไม่มี (Draft ID)
     const idToUse = draftId || Date.now();
-    
-    // สร้าง Object ข้อมูลล่าสุด
     const newList = {
       id: idToUse,
       name: listName,
@@ -124,23 +131,17 @@ export default function CreateMyList() {
 
     const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
     
-    // ✅ บันทึกลง LocalStorage ทันที
     if (draftId) {
-      // กรณีแก้ไข: อัปเดตรายการเดิม
       const updatedLists = allLists.map(l => String(l.id) === String(draftId) ? newList : l);
       localStorage.setItem("myLists", JSON.stringify(updatedLists));
     } else {
-      // กรณีใหม่: เพิ่มรายการใหม่เข้าไป
       localStorage.setItem("myLists", JSON.stringify([...allLists, newList]));
-      // บันทึก Session เพื่อให้พอกลับมาหน้านี้ ข้อมูลยังอยู่
       sessionStorage.setItem('current_draft_id', idToUse);
     }
 
-    // ไปหน้าเลือกสินค้า
     navigate(`/mylists/create/products/${idToUse}`);
   };
 
-  // ✅ 3. ฟังก์ชันบันทึกรายการ (Save Final)
   const handleSaveFinal = () => {
     if (!listName.trim()) {
       setShowWarningModal(true);
@@ -148,7 +149,6 @@ export default function CreateMyList() {
     }
 
     const idToUse = draftId || Date.now();
-    
     const newList = {
       id: idToUse,
       name: listName,
@@ -159,7 +159,6 @@ export default function CreateMyList() {
 
     const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
     
-    // ✅ บันทึกลง Storage ให้ชัวร์ก่อนเปลี่ยนหน้า
     if (draftId) {
       const updatedLists = allLists.map(l => String(l.id) === String(draftId) ? newList : l);
       localStorage.setItem("myLists", JSON.stringify(updatedLists));
@@ -167,17 +166,13 @@ export default function CreateMyList() {
       localStorage.setItem("myLists", JSON.stringify([...allLists, newList]));
     }
 
-    // ล้าง session draft ออก เพราะบันทึกเสร็จแล้ว
     sessionStorage.removeItem('current_draft_id');
-    
-    // ไปหน้า View รายการ
     navigate(`/mylists/${idToUse}`);
   };
 
-  // --- RENDER ---
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <main className="le-page">
         <section className="le-header-section">
@@ -263,61 +258,37 @@ export default function CreateMyList() {
         </div>
       </main>
 
-      {/* ================= MODALS ================= */}
-
-      {/* 1. Modal ยืนยันการออก (Exit) */}
+      {/* Modal Exit */}
       {showExitModal && (
         <div className="modal-overlay" onClick={() => setShowExitModal(false)}>
           <div className="modal-box" onClick={(e) => e.stopPropagation()}>
             <div className="modal-icon-circle danger">
               <Trash2 size={40} strokeWidth={2} />
             </div>
-
             <h3 className="modal-title">ยกเลิกรายการนี้?</h3>
             <p className="modal-desc">
               ข้อมูลที่คุณกรอกไว้จะไม่ถูกบันทึก <br/>
               ต้องการลบและออกจากหน้านี้ใช่ไหม
             </p>
-
             <div className="modal-actions row">
-              <button 
-                className="modal-btn cancel" 
-                onClick={() => setShowExitModal(false)}
-              >
-                ทำรายการต่อ
-              </button>
-              <button 
-                className="modal-btn delete" 
-                onClick={confirmExit}
-              >
-                ทิ้งรายการ
-              </button>
+              <button className="modal-btn cancel" onClick={() => setShowExitModal(false)}>ทำรายการต่อ</button>
+              <button className="modal-btn delete" onClick={confirmExit}>ทิ้งรายการ</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* 2. Modal แจ้งเตือน (Warning) */}
+      {/* Modal Warning */}
       {showWarningModal && (
         <div className="modal-overlay" onClick={() => setShowWarningModal(false)}>
           <div className="modal-box" onClick={(e) => e.stopPropagation()}>
             <div className="modal-icon-circle warning">
               <AlertTriangle size={48} strokeWidth={2} />
             </div>
-
             <h3 className="modal-title">กรุณากรอกชื่อรายการ</h3>
-            <p className="modal-desc">
-              คุณยังไม่ได้ตั้งชื่อรายการสินค้า <br/>
-              โปรดระบุชื่อก่อนทำการบันทึก
-            </p>
-
+            <p className="modal-desc">โปรดระบุชื่อก่อนทำการบันทึก</p>
             <div className="modal-actions">
-              <button 
-                className="modal-btn primary" 
-                onClick={() => setShowWarningModal(false)}
-              >
-                ตกลง, เข้าใจแล้ว
-              </button>
+              <button className="modal-btn primary" onClick={() => setShowWarningModal(false)}>ตกลง, เข้าใจแล้ว</button>
             </div>
           </div>
         </div>

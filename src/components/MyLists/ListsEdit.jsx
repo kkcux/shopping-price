@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom"; // ✅ 1. เพิ่ม useLocation
 import { 
   ChevronLeft, 
   ChevronRight, 
@@ -16,26 +16,29 @@ import "./ListsEdit.css";
 export default function ListsEdit() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const location = useLocation(); // ✅ 2. ใช้ดักจับการเปลี่ยนหน้า
 
   const [listName, setListName] = useState("");
   const [items, setItems] = useState([]); 
+  const [originalList, setOriginalList] = useState(null); // เก็บค่า ID เดิมไว้กันพลาด
   
-  // Modal States
   const [showExitModal, setShowExitModal] = useState(false);
   const [showWarningModal, setShowWarningModal] = useState(false);
 
-  /* ===== 1. LOAD DATA ===== */
+  /* ===== 1. LOAD DATA (ทำงานทุกครั้งที่กลับมาหน้านี้) ===== */
   useEffect(() => {
     const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
+    // หาโดยแปลงเป็น String ทั้งคู่เพื่อความชัวร์
     const foundList = allLists.find(l => String(l.id) === String(id));
       
     if (foundList) {
+      setOriginalList(foundList);
       setListName(foundList.name);
-      setItems(foundList.items || []);
+      setItems(foundList.items || []); // โหลดรายการสินค้าล่าสุด
     } else {
       console.warn("ไม่พบรายการ ID:", id);
     }
-  }, [id]);
+  }, [id, location]); // ✅ 3. ใส่ location ใน dependency ให้โหลดใหม่เมื่อกลับมาจากหน้าเลือกของ
 
   // ป้องกันการปิด Tab โดยไม่ตั้งใจ
   useEffect(() => {
@@ -85,15 +88,18 @@ export default function ListsEdit() {
 
   /* ===== NAVIGATION & SAVE ===== */
   
-  // ฟังก์ชันบันทึก (Save)
+  // ✅ ฟังก์ชันบันทึกที่ปรับปรุงแล้ว
   const performSave = () => {
     const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
     
+    // ใช้ ID เดิมจากที่โหลดมา (ถ้ามี) เพื่อป้องกัน ID เพี้ยน
+    const finalId = originalList ? originalList.id : (Number(id) || id);
+
     const updatedList = {
-      id: Number(id) || id, 
+      ...(originalList || {}), // คงค่าอื่นๆ ไว้ (เช่น createdAt)
+      id: finalId, 
       name: listName,
       items: items,
-      createdAt: Number(id) || Date.now(), 
       totalItems: items.reduce((sum, i) => sum + i.qty, 0)
     };
 
@@ -102,7 +108,7 @@ export default function ListsEdit() {
     let newLists;
     if (existingIndex !== -1) {
       newLists = [...allLists];
-      newLists[existingIndex] = updatedList; // ทับข้อมูลเก่า
+      newLists[existingIndex] = updatedList;
     } else {
       newLists = [...allLists, updatedList];
     }
@@ -114,18 +120,13 @@ export default function ListsEdit() {
     setShowExitModal(true);
   };
 
-  // ✅ ฟังก์ชันยืนยันการออก (Confirm Exit) - แก้ไขใหม่!
   const confirmExit = () => {
     setShowExitModal(false);
-    
-    // ⚠️ เพียงแค่ย้อนกลับ (Navigate Back)
-    // ไม่มีการสั่งลบ LocalStorage ใดๆ ทั้งสิ้น
-    // ข้อมูลเดิมที่เคยบันทึกไว้จะยังอยู่ครบเหมือนเดิม
     navigate(-1); 
   };
 
   const handleGoToProducts = () => {
-    performSave(); // บันทึกสถานะล่าสุดก่อนไปเลือกของเพิ่ม
+    performSave(); // บันทึกสถานะปัจจุบันก่อนไป
     navigate(`/mylists/edit/products/${id}`);
   };
 
@@ -134,8 +135,9 @@ export default function ListsEdit() {
       setShowWarningModal(true);
       return;
     }
+    
     performSave(); 
-    navigate(`/mylists/${id}`); 
+    navigate(-1); // กลับไปหน้าก่อนหน้า
   };
 
   return (
@@ -240,7 +242,6 @@ export default function ListsEdit() {
             </p>
             <div className="modal-actions row">
               <button className="modal-btn cancel" onClick={() => setShowExitModal(false)}>แก้ไขต่อ</button>
-              {/* ปุ่มนี้จะแค่ย้อนกลับ ไม่ลบข้อมูล */}
               <button className="modal-btn delete" onClick={confirmExit}>ไม่บันทึก</button>
             </div>
           </div>
