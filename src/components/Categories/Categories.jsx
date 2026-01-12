@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../Home/Navbar';
 import Footer from '../Home/Footer';
-import './Categories.css'; // นำเข้าไฟล์ CSS ที่แยกไว้
+import './Categories.css';
 import {
-  Heart, Check,
+  Heart,
   Search,
   ChevronDown,
   ChevronLeft, ChevronRight,
@@ -32,18 +32,20 @@ const Categories = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // --- State สำหรับ Filter & Menu ---
+  // --- State สำหรับ Menu ---
   const [showCatMenu, setShowCatMenu] = useState(false);
+  
+  // --- State สำหรับ Search ---
   const [searchTerm, setSearchTerm] = useState(''); 
   const [nameFilter, setNameFilter] = useState('');
   
   // --- State สำหรับ Pagination ---
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 30;
+  const itemsPerPage = 50;
 
   const catMenuRef = useRef(null);
 
-  // ตารางจับคู่ชื่อหมวดหมู่
+  // ตารางจับคู่หมวดหมู่
   const categoryMapping = {
     "อาหารสด & แช่แข็ง": ["อาหารสดและแช่แข็ง", "ผักและผลไม้", "เบเกอรี่"],
     "อาหารแห้ง": ["อาหารแห้งและเครื่องปรุง", "เครื่องดื่ม"],
@@ -57,7 +59,7 @@ const Categories = () => {
 
   const categoriesList = ['ทั้งหมด', ...Object.keys(categoryMapping)];
 
-  // Debounce Logic
+  // Debounce Search
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       setNameFilter(searchTerm);
@@ -144,7 +146,6 @@ const Categories = () => {
   const changePage = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
-      // 🟢 เพิ่ม Scroll to Top กลับมาตามคำขอ
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -159,13 +160,10 @@ const Categories = () => {
 
     const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
     const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
-
     const shouldShowLeftDots = leftSiblingIndex > 2;
     const shouldShowRightDots = rightSiblingIndex < totalPages - 2;
-
     const firstPageIndex = 1;
     const lastPageIndex = totalPages;
-
     const buttons = [];
 
     buttons.push(renderPageButton(firstPageIndex));
@@ -173,27 +171,20 @@ const Categories = () => {
     if (shouldShowLeftDots) {
       buttons.push(<span key="left-dots" className="pagination-dots">...</span>);
     } else {
-        for (let i = 2; i < leftSiblingIndex; i++) {
-            buttons.push(renderPageButton(i));
-        }
+        for (let i = 2; i < leftSiblingIndex; i++) { buttons.push(renderPageButton(i)); }
     }
 
     for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
-       if (i !== firstPageIndex && i !== lastPageIndex) {
-           buttons.push(renderPageButton(i));
-       }
+       if (i !== firstPageIndex && i !== lastPageIndex) { buttons.push(renderPageButton(i)); }
     }
 
     if (shouldShowRightDots) {
       buttons.push(<span key="right-dots" className="pagination-dots">...</span>);
     } else {
-         for (let i = rightSiblingIndex + 1; i < lastPageIndex; i++) {
-             buttons.push(renderPageButton(i));
-         }
+         for (let i = rightSiblingIndex + 1; i < lastPageIndex; i++) { buttons.push(renderPageButton(i)); }
     }
 
     buttons.push(renderPageButton(lastPageIndex));
-
     return buttons;
   };
 
@@ -296,7 +287,7 @@ const Categories = () => {
                                     onClick={() => handleSelectCategory(cat)}
                                 >
                                     {cat} 
-                                    {activeCategory === cat && <ChevronDown size={16} style={{transform: 'rotate(-90deg)'}}/>} 
+                                    {/* 🟢 ลบไอคอน ChevronDown ที่หมุน 90 องศาออกแล้วครับ */}
                                 </button>
                             ))}
                         </div>
