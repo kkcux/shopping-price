@@ -128,7 +128,7 @@ export default function MyLists2() {
 
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <main className="ml2-page">
         <section className="ml2-header-section">
