@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Navbar from '../Home/Navbar';
 import Footer from '../Home/Footer';
-import './products.css';
+import './Products.css';
 import {
   Heart,
   ChevronDown,
