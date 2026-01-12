@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect, useRef } from "react"; 
 import { useNavigate, useParams } from "react-router-dom";
 import { ChevronLeft, Pencil, Trash2, Search, Check, AlertTriangle } from "lucide-react";
 import Navbar from "../Home/Navbar";
@@ -6,7 +6,7 @@ import Footer from "../Home/Footer";
 import "./mylists2.css";
 
 const STORE_LOGOS = {
-  MAKRO: "https://scontent.fbkk22-8.fna.fbcdn.net/v/t39.30808-6/480657626_681170814244941_7835255767097779908_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=a5f93a&_nc_eui2=AeEuZWsDXX_D8WKS9ATOuANpUbxuZqIADWRRvG5mogANZBG47EMrpkrOTT8a1rAi7gyHwRJoJ0MoQ2XNHp7S-9yh&_nc_ohc=ckci-jAoGkEQ7kNvwGCQC7i&_nc_oc=AdkvmER3vbZnLe3LeyYsxsPrAt9q5IstrK8vmhucN7k8X1DTnAIfKhKuPxjYdcU6m8k&_nc_zt=23&_nc_ht=scontent.fbkk22-8.fna&_nc_gid=FLKyR7X10A2oGTH-RI2qGw&oh=00_AfqC1JxrI5BVKAw6QZ-SV_93b4xLbw2hMV6r1ZHYJziRNQ&oe=696115A7",
+  MAKRO: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1weBQ9rq_nOC5CSMa2dFW9Ez5CFXKKy4Q3Q&s",
   LOTUS: "https://upload.wikimedia.org/wikipedia/commons/1/14/Lotus-2021-logo.png",
   BIGC: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Big_C_Logo.svg/500px-Big_C_Logo.svg.png",
 };
@@ -21,7 +21,11 @@ export default function MyLists2() {
   const navigate = useNavigate();
   const { id } = useParams();
 
+  // ไม่จำเป็นต้องใช้ isEditing แล้ว เพราะเราจะไม่ลบอัตโนมัติ
+  // const isEditing = useRef(false);
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showExitModal, setShowExitModal] = useState(false);
 
   /* ===== LOAD FROM LOCAL STORAGE ===== */
   const allLists = useMemo(
@@ -34,43 +38,66 @@ export default function MyLists2() {
     [allLists, id]
   );
 
-  const listName = initialData?.name || "ไม่พบรายการ";
-  const wanted = initialData?.items || [];
+  const [currentListData] = useState(initialData);
+  const listName = currentListData?.name || "ไม่พบรายการ";
+  const wanted = currentListData?.items || [];
 
-  /* ===== STORES ===== */
+  /* ===== ❌ ลบส่วน Auto Delete ออก (ตัวต้นเหตุปัญหา) ===== */
+  // useEffect(() => {
+  //   return () => { ... }
+  // }, [id]);
+
+  /* ===== Prevent Accidental Refresh/Close ===== */
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      e.preventDefault();
+      e.returnValue = ''; 
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
+  /* ===== STORES & LOGIC ===== */
   const stores = [
     { key: "LOTUS", label: "LOTUS’s" },
     { key: "BIGC", label: "BIG C" },
     { key: "MAKRO", label: "MAKRO" },
   ];
 
-  const membership = {
-    LOTUS: true,
-    BIGC: false,
-    MAKRO: false,
-  };
+  const membership = { LOTUS: true, BIGC: false, MAKRO: false };
 
   const [selectedStores, setSelectedStores] = useState({
-    ALL: true,
-    LOTUS: false,
-    BIGC: false,
-    MAKRO: false,
+    ALL: true, LOTUS: false, BIGC: false, MAKRO: false,
   });
 
   const toggleAll = () => {
     const v = !selectedStores.ALL;
-    setSelectedStores({
-      ALL: v,
-      LOTUS: v,
-      BIGC: v,
-      MAKRO: v,
-    });
+    setSelectedStores({ ALL: v, LOTUS: v, BIGC: v, MAKRO: v });
   };
 
   const toggleStore = (k) => {
     const next = { ...selectedStores, [k]: !selectedStores[k], ALL: false };
     if (next.LOTUS && next.BIGC && next.MAKRO) next.ALL = true;
     setSelectedStores(next);
+  };
+
+  /* ===== HANDLERS ===== */
+  
+  // ✅ ปุ่มแก้ไข: ไปหน้า Edit (ข้อมูลยังอยู่แน่นอน เพราะเราเลิกลบอัตโนมัติแล้ว)
+  const handleEditClick = () => {
+    // เซ็ต session เผื่อไว้ (Optional)
+    sessionStorage.setItem('current_draft_id', id);
+    navigate(`/mylists/edit/${id}`); 
+  };
+
+  // ✅ ปุ่มค้นหา: ไปหน้า Compare
+  const handleGoToCompare = () => {
+    navigate(`/mylists/compare/${id}`, { 
+      state: { 
+        listData: currentListData,
+        selectedStores: selectedStores 
+      } 
+    });
   };
 
   const handleDeleteClick = () => {
@@ -83,16 +110,31 @@ export default function MyLists2() {
     navigate("/mylists");
   };
 
+  const handleBackClick = () => {
+    setShowExitModal(true);
+  };
+
+  // ✅ ปุ่ม Exit: ลบข้อมูลตรงนี้แทน (ปลอดภัยกว่า)
+  const confirmExit = () => {
+    setShowExitModal(false);
+
+    // ลบข้อมูลทิ้งเมื่อ user ยืนยันว่าจะออกจริงๆ
+    const newLists = allLists.filter((l) => String(l.id) !== String(id));
+    localStorage.setItem("myLists", JSON.stringify(newLists));
+    console.log(`User confirmed exit. List ID: ${id} deleted.`);
+
+    navigate("/mylists");
+  };
+
   return (
     <>
-      <Navbar />
+      {/* <Navbar /> */}
 
       <main className="ml2-page">
-        {/* HEADER */}
         <section className="ml2-header-section">
           <div className="ml2-header-inner">
             <div className="ml2-topLeft">
-              <button className="ml2-back" onClick={() => navigate("/mylists")}>
+              <button className="ml2-back" onClick={handleBackClick}>
                 <ChevronLeft size={24} strokeWidth={2.5} />
               </button>
               <div>
@@ -104,19 +146,13 @@ export default function MyLists2() {
             </div>
 
             <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-              <button
-                className="ml2-edit"
-                onClick={() => navigate(`/mylists/edit/${id}`)}
-              >
+              
+              <button className="ml2-edit" onClick={handleEditClick}>
                 <Pencil size={18} strokeWidth={2.5} />
                 <span>แก้ไขรายการ</span>
               </button>
 
-              <button
-                className="ml2-btn-delete"
-                onClick={handleDeleteClick}
-                title="ลบรายการ"
-              >
+              <button className="ml2-btn-delete" onClick={handleDeleteClick} title="ลบรายการ">
                 <Trash2 size={20} strokeWidth={2} />
               </button>
             </div>
@@ -148,10 +184,7 @@ export default function MyLists2() {
                 ))}
               </div>
             ) : (
-              <div
-                className="ml2-empty"
-                style={{ textAlign: "center", padding: "40px", color: "#999" }}
-              >
+              <div className="ml2-empty" style={{ textAlign: "center", padding: "40px", color: "#999" }}>
                 ยังไม่มีสินค้าในรายการ
               </div>
             )}
@@ -165,11 +198,7 @@ export default function MyLists2() {
                 <span className="ml2-checkText">ทั้งหมด</span>
               </div>
               {stores.map((s) => (
-                <div
-                  key={s.key}
-                  className="ml2-checkRow"
-                  onClick={() => toggleStore(s.key)}
-                >
+                <div key={s.key} className="ml2-checkRow" onClick={() => toggleStore(s.key)}>
                   <span className={`ml2-check ${selectedStores[s.key] ? "on" : ""}`} />
                   <span className="ml2-checkText">{s.label}</span>
                 </div>
@@ -185,11 +214,7 @@ export default function MyLists2() {
           </div>
 
           <div className="ml2-searchWrap">
-            <button
-              className="ml2-searchBtn"
-              // ✅ แก้ตรงนี้: ส่ง id ไป MyLists3
-              onClick={() => navigate(`/mylists/compare/${id}`)}
-            >
+            <button className="ml2-searchBtn" onClick={handleGoToCompare}>
               <Search size={22} strokeWidth={2.5} />
               เริ่มค้นหาร้านที่ถูกที่สุด
             </button>
@@ -197,26 +222,46 @@ export default function MyLists2() {
         </div>
       </main>
 
-      {/* Modal ลบ */}
-      {showDeleteModal && (
-        <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
+      {/* Modal Popup: ยืนยันการออก */}
+      {showExitModal && (
+        <div className="modal-overlay" onClick={() => setShowExitModal(false)}>
           <div className="modal-box" onClick={(e) => e.stopPropagation()}>
             <div className="modal-icon-circle danger">
               <AlertTriangle size={36} strokeWidth={2} />
             </div>
 
-            <h3 className="modal-title">ยืนยันการลบรายการ?</h3>
+            <h3 className="modal-title">ออกจากหน้านี้?</h3>
             <p className="modal-desc">
-              คุณต้องการลบรายการ "{listName}" ใช่หรือไม่?
-              <br />
-              การกระทำนี้ไม่สามารถย้อนกลับได้
+              หากคุณออกจากหน้านี้ รายการสินค้าจะถูกลบ <br/>
+              คุณต้องการออกใช่หรือไม่?
             </p>
 
             <div className="modal-actions">
-              <button
-                className="modal-btn cancel"
-                onClick={() => setShowDeleteModal(false)}
-              >
+              <button className="modal-btn cancel" onClick={() => setShowExitModal(false)}>
+                อยู่ต่อ
+              </button>
+              <button className="modal-btn delete" onClick={confirmExit}>
+                ออก
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal: ยืนยันการลบ */}
+      {showDeleteModal && (
+        <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
+          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-icon-circle danger">
+              <Trash2 size={36} strokeWidth={2} />
+            </div>
+            <h3 className="modal-title">ยืนยันการลบรายการ?</h3>
+            <p className="modal-desc">
+              คุณต้องการลบรายการ "{listName}" ใช่หรือไม่? <br />
+              การกระทำนี้ไม่สามารถย้อนกลับได้
+            </p>
+            <div className="modal-actions">
+              <button className="modal-btn cancel" onClick={() => setShowDeleteModal(false)}>
                 ยกเลิก
               </button>
               <button className="modal-btn delete" onClick={confirmDelete}>
@@ -249,25 +294,15 @@ function ProductCard({ name, img, sub }) {
 function MemberRow({ brand, isMember }) {
   return (
     <div className={`ml2-memberRow ${isMember ? "ok" : ""}`}>
-      {/* --- ลบส่วนนี้ออก --- */}
-      {/* <div className={`ml2-brand ${brand.toLowerCase()}`}>{brand}</div> */}
-
-      {/* --- แสดงรูปภาพโลโก้ในตัวห่อที่มี class ตามแบรนด์ --- */}
       <div className={`ml2-brand-logo ${brand.toLowerCase()}`}>
         <img src={STORE_LOGOS[brand]} alt={brand} />
       </div>
-      {/* ------------------------------------------ */}
 
       <div className="ml2-memberText">
         {isMember ? "เป็นสมาชิกแล้ว" : "ไม่ได้เป็นสมาชิก"}
       </div>
       {!isMember && (
-        <a
-          href={REGISTER_URL[brand]}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="ml2-join"
-        >
+        <a href={REGISTER_URL[brand]} target="_blank" rel="noopener noreferrer" className="ml2-join">
           สมัคร
         </a>
       )}
