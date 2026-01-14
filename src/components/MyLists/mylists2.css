@@ -100,9 +100,9 @@
 
 /* ปุ่ม Edit List (สีเขียวทึบ เด่นชัด) */
 .ml2-edit {
-  background-color: #3b82f6; /* สีน้ำเงิน */
-  color: white;
-  border: 1px solid #3b82f6; /* แก้ขอบให้เป็นสีน้ำเงินเหมือนกัน */
+  background-color: #ffffff;
+  color: #3b82f6; /* สีฟ้า */
+  border: 1.5px solid #dbeafe; /* ขอบฟ้าอ่อน */
   padding: 10px 24px;
   border-radius: 50px;
   font-family: "Sarabun", sans-serif;
@@ -111,14 +111,15 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.2s;
-  box-shadow: 0 4px 6px rgba(59, 130, 246, 0.25); /* แก้เงาให้เป็นโทนน้ำเงิน */
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .ml2-edit:hover {
-  background-color: #2563eb; /* เปลี่ยนสีตอนเมาส์ชี้เป็นน้ำเงินเข้ม */
-  border-color: #2563eb;
-  box-shadow: 0 6px 12px rgba(59, 130, 246, 0.4); /* แก้เงาตอน hover */
+  background-color: #eff6ff; /* พื้นหลังฟ้าจางๆ ตอนชี้ */
+  border-color: #3b82f6; /* ขอบเข้มขึ้น */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15); /* เงาสีฟ้าฟุ้งๆ */
 }
 
 /* ปุ่ม Delete List (วงกลมขอบแดง) */
