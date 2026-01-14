@@ -30,7 +30,6 @@ const Profile = () => {
     setShowPopup(false);
   };
 
-  // ฟังก์ชันเปิดลิงก์ภายนอก
   const handleRegisterClick = (url) => {
     if (url) {
       window.open(url, '_blank', 'noopener,noreferrer');
@@ -45,7 +44,7 @@ const Profile = () => {
       bgIcon: '#eafff0',
       color: '#00b050',
       logo: 'https://corporate.lotuss.com/images/2023/02/cover-logo-lotuss-060323.jpg',
-      registerUrl: 'https://www.lotuss.com/th' // ลิงก์สมัคร Lotus's
+      registerUrl: 'https://www.lotuss.com/th'
     },
     { 
       id: 2, 
@@ -54,7 +53,7 @@ const Profile = () => {
       bgIcon: '#f4ffe0',
       color: '#8dc63f',
       logo: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSlLdbffklYPCCfrhKihAv0yGlVjV__NwsYG36F-_hdtTqDGQ97Y3ur0jEvPsFNYH-_CPZQ9Ynu',
-      registerUrl: 'https://www.bigc.co.th/auth/register' // ลิงก์สมัคร Big C
+      registerUrl: 'https://www.bigc.co.th/auth/register'
     },
     { 
       id: 3, 
@@ -63,7 +62,7 @@ const Profile = () => {
       bgIcon: '#fff0f0',
       color: '#ed1c24',
       logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1weBQ9rq_nOC5CSMa2dFW9Ez5CFXKKy4Q3Q&s',
-      registerUrl: 'https://www.makro.pro/register' // ลิงก์สมัคร Makro
+      registerUrl: 'https://www.makro.pro/register'
     },
   ];
 
@@ -168,7 +167,6 @@ const Profile = () => {
                         </div>
                       </div>
                     </div>
-                    {/* แก้ไขตรงนี้: เพิ่ม onClick ให้เปิดหน้าเว็บ */}
                     <button 
                       type="button" 
                       className="btn-apply-member"
@@ -191,14 +189,15 @@ const Profile = () => {
       </div>
 
       {showPopup && (
-        <div className="modal-overlay">
-          <div className="modal-content fade-in-scale">
-            <div className="modal-icon-wrapper">
-              <Check size={40} className="modal-check-icon" />
+        // 🟢 เปลี่ยนชื่อ Class ตรงนี้ไม่ให้ซ้ำกับหน้าอื่น
+        <div className="profile-modal-overlay">
+          <div className="profile-modal-content fade-in-scale">
+            <div className="profile-modal-icon-wrapper">
+              <Check size={40} className="profile-modal-check-icon" />
             </div>
-            <h2 className="modal-title">บันทึกข้อมูลแล้ว</h2>
-            <p className="modal-subtitle">ข้อมูลถูกอัปเดตเรียบร้อยแล้ว</p>
-            <button className="modal-btn-close" onClick={closePopup}>
+            <h2 className="profile-modal-title">บันทึกข้อมูลแล้ว</h2>
+            <p className="profile-modal-subtitle">ข้อมูลถูกอัปเดตเรียบร้อยแล้ว</p>
+            <button className="profile-modal-btn-close" onClick={closePopup}>
               เข้าใจแล้ว
             </button>
           </div>
