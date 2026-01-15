@@ -534,3 +534,91 @@ button {
     font-size: 0.9rem;
   }
 }
+
+/* --- Search Container Relative (เพื่อให้ Dropdown อ้างอิงตำแหน่งได้) --- */
+.search-container-relative {
+  position: relative;
+  max-width: 650px;
+  margin: 0 auto;
+  z-index: 50; /* ให้ลอยอยู่เหนือทุกอย่าง */
+}
+
+/* --- Search Suggestions Dropdown --- */
+.search-suggestions-dropdown {
+  position: absolute;
+  top: 100%; /* อยู่ใต้ช่องค้นหาพอดี */
+  left: 0;
+  right: 0;
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  margin-top: 8px;
+  padding: 8px 0;
+  overflow: hidden;
+  z-index: 100;
+  border: 1px solid #f3f4f6;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Suggestion Item --- */
+.suggestion-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  border-bottom: 1px solid #f9fafb;
+}
+
+.suggestion-item:last-child {
+  border-bottom: none;
+}
+
+.suggestion-item:hover {
+  background-color: #f0fdf4; /* สีเขียวอ่อนๆ เวลาชี้ */
+}
+
+/* --- Item Icon/Image --- */
+.suggestion-icon-area {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #f3f4f6;
+}
+
+.suggestion-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.suggestion-icon-default {
+  color: #9ca3af;
+}
+
+/* --- Item Text --- */
+.suggestion-text {
+  flex: 1;
+  overflow: hidden;
+}
+
+.suggestion-name {
+  font-size: 0.95rem;
+  color: #374151;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
