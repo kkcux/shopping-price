@@ -9,7 +9,8 @@ import {
 
 import AddToListModal from './AddToListModal';
 
-const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onAddToCart }) => {
+// 🟢 1. รับ prop 'onViewAll' เข้ามาใช้งาน
+const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onAddToCart, onViewAll }) => {
   const scrollRef = useRef(null);
   const scroll = (direction) => {
     if (scrollRef.current) {
@@ -25,7 +26,10 @@ const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onA
           {icon}
           <span>{title}</span>
         </h2>
-        <button className="btn-view-all">ดูทั้งหมด</button>
+        {/* 🟢 2. ผูกฟังก์ชัน onViewAll กับปุ่ม */}
+        <button className="btn-view-all" onClick={onViewAll}>
+            ดูทั้งหมด
+        </button>
       </div>
 
       {loading ? (
@@ -60,12 +64,6 @@ const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onA
 
                   <div className="product-info">
                     <h3>{item.name}</h3>
-                    
-                    {/* ❌ ลบส่วนแสดงราคาออกตามที่ขอ */}
-                    {/* <div style={{fontWeight: 'bold', color: 'var(--primary)', marginBottom: '8px'}}>
-                        {item.price ? `฿${item.price.toLocaleString()}` : ''}
-                    </div> */}
-
                     <button className="btn-add-cart" onClick={() => onAddToCart(item)}>
                       <Plus size={18} /> เพิ่มลง My List
                     </button>
@@ -93,12 +91,20 @@ const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
+  // 🟢 3. สร้างฟังก์ชันกดปุ่ม "ดูทั้งหมด" แล้วส่งค่า Filter ไปหน้า Categories
+  const handleViewAll = (filterType) => {
+    navigate('/categories', { 
+      state: { 
+        selectedFilter: filterType,  // ส่งค่าตัวกรอง (เช่น 'recommended')
+        selectedCategory: 'ทั้งหมด' // รีเซ็ตหมวดหมู่เป็นทั้งหมด
+      } 
+    });
+  };
+
   useEffect(() => {
     const savedFavs = JSON.parse(localStorage.getItem('favoritesItems')) || [];
     const favMap = {};
-    savedFavs.forEach(item => {
-      if (item.data) favMap[item.data] = true;
-    });
+    savedFavs.forEach(item => { if (item.data) favMap[item.data] = true; });
     setFavorites(favMap);
   }, []);
 
@@ -114,15 +120,9 @@ const Home = () => {
       } else {
         const alreadyExists = currentSavedFavs.some(item => item.data === productName);
         if (!alreadyExists) {
-          const favItem = {
-            image: product.image,
-            data: product.name,
-            price: product.price
-          };
+          const favItem = { image: product.image, data: product.name, price: product.price };
           newSavedFavs = [...currentSavedFavs, favItem];
-        } else {
-          newSavedFavs = currentSavedFavs;
-        }
+        } else { newSavedFavs = currentSavedFavs; }
       }
       localStorage.setItem('favoritesItems', JSON.stringify(newSavedFavs));
       return newFavState;
@@ -135,12 +135,10 @@ const Home = () => {
         setLoading(true);
         const response = await fetch('/data/all_retailers_products_merged_v1.jsonl');
         const text = await response.text();
-        // โหลดแค่ 500 รายการแรกเพื่อสุ่มโชว์หน้า Home
         const lines = text.trim().split('\n').slice(0, 500); 
         const products = lines.map(line => {
             try { return JSON.parse(line); } catch(e) { return null; }
         }).filter(item => item !== null);
-        
         setAllProducts(products);
       } catch (error) {
         console.error("Error loading products:", error);
@@ -178,7 +176,6 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      {/* HERO SECTION */}
       <header className="hero-banner">
         <div className="hero-content">
           <h1>
@@ -199,7 +196,6 @@ const Home = () => {
         </div>
       </header>
 
-      {/* CATEGORIES SECTION */}
       <main className="content-wrapper">
         <section className="section-container">
           <div className="section-header">
@@ -223,7 +219,7 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Product Sections */}
+        {/* 🟢 4. ส่ง prop onViewAll ให้แต่ละ Section พร้อมระบุประเภท */}
         <ProductSection
           title="สินค้าแนะนำ"
           icon={<Star size={24} color="var(--primary)" />}
@@ -232,6 +228,7 @@ const Home = () => {
           toggleFav={toggleFav}
           loading={loading}
           onAddToCart={(p) => { setSelectedProduct(p); setIsModalOpen(true); }}
+          onViewAll={() => handleViewAll('recommended')} 
         />
         <ProductSection
           title="สินค้ายอดนิยม"
@@ -241,6 +238,7 @@ const Home = () => {
           toggleFav={toggleFav}
           loading={loading}
           onAddToCart={(p) => { setSelectedProduct(p); setIsModalOpen(true); }}
+          onViewAll={() => handleViewAll('popular')} 
         />
         <ProductSection
           title="สินค้าโปรโมชั่น"
@@ -250,6 +248,7 @@ const Home = () => {
           toggleFav={toggleFav}
           loading={loading}
           onAddToCart={(p) => { setSelectedProduct(p); setIsModalOpen(true); }}
+          onViewAll={() => handleViewAll('promo')} 
         />
       </main>
 

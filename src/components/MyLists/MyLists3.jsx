@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
-import { ChevronLeft, Save, Pencil, Trash2 } from "lucide-react"; 
+import { ChevronLeft, Save, Pencil, Trash2, CheckCircle2, ShoppingBag, Store, LogIn } from "lucide-react"; 
 
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
@@ -92,6 +92,7 @@ export default function MyLists3() {
   // State for controlling Popups (Modal)
   const [showModal, setShowModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false); 
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   /* ===== load jsonl ===== */
   useEffect(() => {
@@ -184,29 +185,26 @@ export default function MyLists3() {
   const recommendShops = [
     {
       key: "BIGC",
-      name: "BIG C",
+      name: "Big C",
       distance: "2.5 km",
-      memberPrice: totals.BIGC,
-      nonMemberPrice: totals.BIGC ? Math.round(totals.BIGC * 1.05) : null,
+      totalPrice: totals.BIGC, // ใช้ชื่อตัวแปรกลางๆ
       url: "https://www.bigc.co.th",
     },
     {
       key: "LOTUS",
-      name: "LOTUS’s",
+      name: "Lotus’s",
       distance: "2.8 km",
-      memberPrice: totals.LOTUS,
-      nonMemberPrice: totals.LOTUS ? Math.round(totals.LOTUS * 1.05) : null,
+      totalPrice: totals.LOTUS,
       url: "https://www.lotuss.com",
     },
     {
       key: "MAKRO",
-      name: "MAKRO",
+      name: "Makro",
       distance: "3.7 km",
-      memberPrice: totals.MAKRO,
-      nonMemberPrice: totals.MAKRO ? Math.round(totals.MAKRO * 1.05) : null,
+      totalPrice: totals.MAKRO,
       url: "https://www.makro.pro",
     },
-  ].filter((s) => typeof s.memberPrice === "number");
+  ].filter((s) => typeof s.totalPrice === "number" && s.totalPrice > 0);
 
   // Open Save Modal
   const handleSaveClick = () => {
@@ -224,10 +222,7 @@ export default function MyLists3() {
 
     if (!isLoggedIn) {
       localStorage.setItem("pending_save_list", JSON.stringify(selectedList));
-      const confirmLogin = window.confirm("กรุณาเข้าสู่ระบบก่อนบันทึกรายการ\nต้องการไปหน้าเข้าสู่ระบบเลยหรือไม่?");
-      if (confirmLogin) {
-        navigate('/login', { state: { from: location.pathname } });
-      }
+      setShowLoginModal(true);
       return; 
     }
 
@@ -249,17 +244,19 @@ export default function MyLists3() {
     navigate('/mylists');
   };
 
-  // Handle Edit Action
+  const handleLoginRedirect = () => {
+    setShowLoginModal(false);
+    navigate('/login', { state: { from: location.pathname } });
+  };
+
   const handleEditClick = () => {
       navigate(`/mylists/edit/${id}`);
   };
 
-  // Handle Delete Action - Open Modal
   const handleDeleteClick = () => {
       setShowDeleteModal(true);
   };
 
-  // Confirm Delete
   const confirmDelete = () => {
       const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
       const filteredLists = allLists.filter((l) => String(l.id) !== String(id));
@@ -277,7 +274,7 @@ export default function MyLists3() {
     return (
       <>
         <Navbar />
-        <div style={{ padding: 40, textAlign: "center" }}>กำลังโหลดข้อมูลราคา...</div>
+        <div style={{ padding: 80, textAlign: "center", color: "#64748b" }}>กำลังโหลดข้อมูลราคา...</div>
         <Footer />
       </>
     );
@@ -285,28 +282,27 @@ export default function MyLists3() {
 
   return (
     <>
-      {/* <Navbar /> */}
+      <Navbar />
 
       <main className="ml3-page">
         <section className="ml3-header-section">
           <div className="ml3-header-inner">
             <div className="ml3-topLeft">
               <button className="ml3-back" onClick={() => navigate(-1)}>
-                <ChevronLeft size={28} strokeWidth={2.5} />
+                <ChevronLeft size={24} strokeWidth={2.5} />
               </button>
               <div className="ml3-titlewrap">
                 <h1 className="ml3-title">{listName}</h1>
-                <p className="ml3-subtitle">เปรียบเทียบราคาสินค้าจากหลายร้าน</p>
+                <p className="ml3-subtitle">เปรียบเทียบราคาและจัดการรายการสินค้า</p>
               </div>
             </div>
-             {/* ปุ่มแก้ไขและลบที่มุมขวาบน */}
             <div className="ml3-topRight">
                 <button className="ml3-btn-edit-pill" onClick={handleEditClick}>
-                    <Pencil size={18} strokeWidth={2.5} />
-                    <span>แก้ไขรายการ</span>
+                    <Pencil size={16} strokeWidth={2.5} />
+                    <span>แก้ไข</span>
                 </button>
                 <button className="ml3-btn-delete-circle" onClick={handleDeleteClick}>
-                    <Trash2 size={20} strokeWidth={2} />
+                    <Trash2 size={18} strokeWidth={2} />
                 </button>
             </div>
           </div>
@@ -314,18 +310,30 @@ export default function MyLists3() {
 
         <div className="ml3-container">
           <section className="ml3-block">
-            <div className="ml3-block-head">การเปรียบเทียบราคา</div>
+            <div className="ml3-block-head">
+              <ShoppingBag size={24} color="#10b77e" />
+              <span>การเปรียบเทียบราคา</span>
+            </div>
+            
             <div className="ml3-table">
               <div className="ml3-thead">
-                <div className="ml3-th left">สินค้า</div>
-                <div className="ml3-th">LOTUS</div>
-                <div className="ml3-th">BIGC</div>
+                <div className="ml3-th left">รายการสินค้า</div>
+                <div className="ml3-th">LOTUS'S</div>
+                <div className="ml3-th">BIG C</div>
                 <div className="ml3-th">MAKRO</div>
               </div>
+              
               {rows.map((it, idx) => (
                 <div className="ml3-tr" key={idx}>
                   <div className="ml3-td left">
-                    <img className="ml3-prodimg" src={it.image} alt="" />
+                    <div className="ml3-img-container">
+                      <img 
+                        className="ml3-prodimg" 
+                        src={it.image || "https://via.placeholder.com/64?text=No+Img"} 
+                        alt="" 
+                        onError={(e) => { e.target.src = "https://via.placeholder.com/64?text=No+Img"; }}
+                      />
+                    </div>
                     <div className="ml3-prodmeta">
                       <div className="ml3-prodname">{it.name}</div>
                     </div>
@@ -336,19 +344,27 @@ export default function MyLists3() {
                     return (
                       <div className="ml3-td" key={k}>
                         <span className={`ml3-pill ${isMin ? "best" : ""}`}>
-                          {typeof val === "number" ? val : "-"}
+                          {typeof val === "number" ? (
+                            <>
+                              ฿{val.toLocaleString()}
+                              {isMin && <CheckCircle2 size={14} style={{marginLeft: 6}} />}
+                            </>
+                          ) : (
+                            <span style={{color: '#cbd5e1'}}>-</span>
+                          )}
                         </span>
                       </div>
                     );
                   })}
                 </div>
               ))}
+              
               <div className="ml3-tr total">
-                <div className="ml3-td left total-label">รวม</div>
+                <div className="ml3-td left total-label">รวมทั้งหมด</div>
                 {["LOTUS", "BIGC", "MAKRO"].map((k) => (
                   <div className="ml3-td" key={k}>
-                    <span className="ml3-pill">
-                      {totals[k] > 0 ? Math.round(totals[k]) : "-"}
+                    <span className="ml3-pill" style={{ fontWeight: 800, color: '#1e293b' }}>
+                      {totals[k] > 0 ? `฿${Math.round(totals[k]).toLocaleString()}` : "-"}
                     </span>
                   </div>
                 ))}
@@ -356,14 +372,17 @@ export default function MyLists3() {
             </div>
           </section>
 
+          {/* Shop Recommendation Block (Updated) */}
           <section className="ml3-block">
-            <div className="ml3-block-head">แนะนำร้านค้า</div>
+            <div className="ml3-block-head">
+              <Store size={24} color="#3b82f6" />
+              <span>ร้านค้าแนะนำ</span>
+            </div>
             <div className="ml3-shop-table">
               <div className="ml3-shop-head">
                 <div>ร้านค้า</div>
                 <div>ระยะทาง</div>
-                <div>เป็นสมาชิก</div>
-                <div>ไม่เป็นสมาชิก</div>
+                <div>ราคารวม</div> {/* เหลือแค่ช่องเดียว */}
                 <div></div>
               </div>
               {recommendShops.map((s) => (
@@ -371,10 +390,10 @@ export default function MyLists3() {
                   <div className="ml3-shop-brand">
                     {s.name}
                   </div>
-                  <div className="ml3-shop-muted">{s.distance}</div>
-                  <div className="ml3-shop-price">฿{Math.round(s.memberPrice)}</div>
-                  <div className="ml3-shop-price">
-                    {s.nonMemberPrice ? `฿${s.nonMemberPrice}` : "-"}
+                  <div className="ml3-shop-muted" style={{color: '#64748b'}}>{s.distance}</div>
+                  {/* แสดงราคาเดียว คือราคารวม */}
+                  <div className="ml3-shop-price" style={{color: '#10b77e', fontSize: '1.1rem'}}>
+                    ฿{Math.round(s.totalPrice).toLocaleString()}
                   </div>
                   <div>
                     <button className="ml3-go" onClick={() => window.open(s.url, "_blank")}>
@@ -395,62 +414,52 @@ export default function MyLists3() {
         </div>
       </main>
 
-      {/* Save Confirmation Modal */}
-        {showModal && (
-            <div className="ml3-modal-overlay" onClick={() => setShowModal(false)}>
-              <div className="ml3-modal" onClick={(e) => e.stopPropagation()}>
-                <div className="ml3-modal-title">ยืนยันการบันทึก</div>
-                <p className="ml3-modal-desc">
-                  ต้องการบันทึกรายการสินค้านี้ใช่หรือไม่?
-                </p>
-                <div className="ml3-modal-actions">
-                  
-                  {/* ✅ เหลือแค่ 2 ปุ่มตามที่ขอ */}
-                  <button 
-                    className="ml3-btn-cancel" 
-                    onClick={() => setShowModal(false)}
-                  >
-                    ยกเลิก
-                  </button>
-
-                  <button 
-                    className="ml3-btn-confirm" 
-                    onClick={confirmSave}
-                  >
-                    ยืนยัน
-                  </button>
-
-                </div>
-              </div>
+      {/* Save Modal */}
+      {showModal && (
+        <div className="ml3-modal-overlay" onClick={() => setShowModal(false)}>
+          <div className="ml3-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="ml3-modal-title">ยืนยันการบันทึก</div>
+            <p className="ml3-modal-desc">ต้องการบันทึกรายการสินค้านี้เก็บไว้ใช่หรือไม่?</p>
+            <div className="ml3-modal-actions">
+              <button className="ml3-btn-cancel" onClick={() => setShowModal(false)}>ยกเลิก</button>
+              <button className="ml3-btn-confirm" onClick={confirmSave}>ยืนยัน</button>
             </div>
-          )}
-        
-        {/* Delete Confirmation Modal */}
-        {showDeleteModal && (
-            <div className="ml3-modal-overlay" onClick={() => setShowDeleteModal(false)}>
-              <div className="ml3-modal" onClick={(e) => e.stopPropagation()}>
-                <div className="ml3-modal-title" style={{ color: "#ef4444" }}>ยืนยันการลบ</div>
-                <p className="ml3-modal-desc">
-                  คุณต้องการลบรายการสินค้านี้ใช่หรือไม่? การกระทำนี้ไม่สามารถย้อนกลับได้
-                </p>
-                <div className="ml3-modal-actions">
-                  <button 
-                    className="ml3-btn-cancel" 
-                    onClick={() => setShowDeleteModal(false)}
-                  >
-                    ยกเลิก
-                  </button>
-                  <button 
-                    className="ml3-btn-discard" 
-                    onClick={confirmDelete}
-                    style={{ backgroundColor: "#ef4444", color: "white", border: "none" }}
-                  >
-                    ลบรายการ
-                  </button>
-                </div>
-              </div>
+          </div>
+        </div>
+      )}
+    
+      {/* Delete Modal */}
+      {showDeleteModal && (
+        <div className="ml3-modal-overlay" onClick={() => setShowDeleteModal(false)}>
+          <div className="ml3-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="ml3-modal-title" style={{ color: "#ef4444" }}>ยืนยันการลบ</div>
+            <p className="ml3-modal-desc">คุณต้องการลบรายการสินค้านี้ใช่หรือไม่? <br/>การกระทำนี้ไม่สามารถย้อนกลับได้</p>
+            <div className="ml3-modal-actions">
+              <button className="ml3-btn-cancel" onClick={() => setShowDeleteModal(false)}>ยกเลิก</button>
+              <button className="ml3-btn-discard" onClick={confirmDelete}>ลบรายการ</button>
             </div>
-        )}
+          </div>
+        </div>
+      )}
+
+      {/* Login Modal */}
+      {showLoginModal && (
+        <div className="ml3-modal-overlay" onClick={() => setShowLoginModal(false)}>
+          <div className="ml3-modal" onClick={(e) => e.stopPropagation()}>
+            <div style={{display:'flex',justifyContent:'center',marginBottom:12}}>
+                <div style={{background:'#eff6ff', padding: 12, borderRadius:'50%', display:'flex', alignItems:'center', justifyContent:'center'}}>
+                    <LogIn size={28} color="#3b82f6" />
+                </div>
+            </div>
+            <div className="ml3-modal-title">กรุณาเข้าสู่ระบบ</div>
+            <p className="ml3-modal-desc">คุณจำเป็นต้องเข้าสู่ระบบก่อนบันทึกรายการสินค้า<br/>ต้องการไปที่หน้าเข้าสู่ระบบเลยหรือไม่?</p>
+            <div className="ml3-modal-actions">
+              <button className="ml3-btn-cancel" onClick={() => setShowLoginModal(false)}>เอาไว้ก่อน</button>
+              <button className="ml3-btn-confirm" style={{backgroundColor: '#3b82f6'}} onClick={handleLoginRedirect}>ไปหน้าเข้าสู่ระบบ</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </>
