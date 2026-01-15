@@ -1,13 +1,14 @@
-/* products.css */
-
+/* --- Layout --- */
 .products-page {
   min-height: 100vh;
-  background-color: var(--bg-page, #f3f4f6);
   display: flex;
   flex-direction: column;
+  background-color: var(--bg-page, #f3f4f6);
+  animation: fadeIn 0.4s ease-out;
 }
 
-.products-container {
+/* ใช้ cat-container เพื่อให้ขนาดเท่ากัน */
+.cat-container {
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
@@ -15,257 +16,218 @@
   flex: 1;
 }
 
-/* --- Header Section --- */
-.products-header {
-  background: linear-gradient(180deg, #ecfdf5 0%, #d1fae5 100%);
-  padding: 24px 0 48px;
-  margin-bottom: 24px;
-  border-radius: 0 0 40px 40px;
+/* --- Header (Style เดียวกับ Categories) --- */
+.cat-header {
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  padding: 40px 20px 50px;
+  text-align: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-  position: relative;
+  margin-bottom: 40px;
+  border-radius: 0 0 24px 24px;
+  box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.1);
 }
 
-.products-header-container {
-  max-width: 1200px; /* ความกว้างเดียวกับ Navbar เพื่อให้ตรงกัน */
-  width: 100%;
-  margin: 0 auto;
-  padding: 0 24px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start; /* สำคัญ: จัดทุกอย่างชิดซ้ายให้ตรง Navbar */
+.cat-header-content h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #14532d;
+  margin: 0 0 10px 0;
+  letter-spacing: -1px;
 }
 
-.btn-text-blue {
+.cat-header-content p {
+  color: #374151;
+  font-size: 1.1rem;
+  margin: 0;
+  opacity: 0.9;
+}
+
+/* --- ปุ่ม Back (Link Style) --- */
+.btn-link-action {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   background: none;
   border: none;
-  padding: 0; /* เอา padding ออกเพื่อให้ชิดขอบซ้ายเป๊ะๆ */
-  margin-bottom: 16px; /* ระยะห่างจากปุ่มถึงหัวข้อด้านล่าง */
-
+  padding: 0;
   font-family: "Sarabun", sans-serif;
-  font-size: 1.25rem; /* ขนาดตัวอักษรประมาณ 20px */
-  font-weight: 700; /* ตัวหนา */
-  color: #5b8cff; /* สีฟ้าพาสเทลเข้มแบบในรูป */
-
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-text-blue:hover {
-  opacity: 0.8;
-  gap: 12px; /* ขยับลูกศรออกเล็กน้อยเมื่อชี้ */
-}
-
-.btn-text-blue svg {
-  stroke-width: 3px; /* เพิ่มความหนาของเส้นลูกศร */
-}
-
-.header-back-wrapper {
-  align-self: flex-start;
-  margin-bottom: 12px;
-}
-
-.btn-back-capsule {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background-color: white;
-  border: none; /* เอาขอบออกตามคำขอ "ไม่เอาแบบปุ่ม" */
-  padding: 10px 24px;
-  border-radius: 100px; /* แคปซูล */
-  font-family: "Sarabun", sans-serif;
+  font-size: 1rem;
   font-weight: 700;
-  font-size: 1rem;
-  color: #1f2937; /* สีเทาเข้มเกือบดำ */
+  color: #14532d; /* ปรับให้เข้ากับธีม */
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06); /* เงาฟุ้งๆ ให้ดูลอย */
   transition: all 0.2s ease;
 }
 
-.btn-back-capsule:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  color: #10b981; /* เปลี่ยนสีไอคอน/ข้อความเมื่อชี้ */
+.btn-link-action:hover {
+  gap: 12px;
+  opacity: 0.8;
 }
 
-/* เนื้อหา Header */
-.products-header-content {
-  text-align: center;
-  width: 100%;
-}
-
-.products-header-content h1 {
-  font-size: 2.2rem;
-  font-weight: 800;
-  color: #064e3b;
-  margin: 0 0 8px 0;
-  letter-spacing: -0.5px;
-}
-
-.products-header-content p {
-  color: #374151;
-  font-size: 1rem;
-  margin: 0;
-  opacity: 0.9;
-}
-
-/* --- Filter Toolbar (Search + Category Only) --- */
+/* --- Toolbar --- */
 .results-toolbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
-  padding: 16px 0;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 12px 0;
+  border-bottom: 2px solid #e5e7eb;
 }
 
 .results-toolbar h2 {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   color: #111827;
   margin: 0;
   display: flex;
   align-items: center;
   gap: 12px;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .count-badge {
   background-color: #f59e0b;
   color: white;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   padding: 4px 10px;
-  border-radius: 99px;
+  border-radius: 6px !important;
 }
 
 .filter-tools {
   display: flex;
-  align-items: center;
   gap: 12px;
+  align-items: center;
 }
 
-/* Search Bar Capsule */
-.search-wrapper {
+/* --- Buttons & Inputs (Design ใหม่: สี่เหลี่ยมมน) --- */
+.tool-btn {
   display: flex;
   align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 8px !important;
+  font-size: 0.9rem;
+  color: #374151;
+  transition: all 0.2s;
+  cursor: pointer;
+  font-weight: 500;
+}
+.tool-btn:hover {
+  border-color: #10b981;
+  color: #10b981;
+  background: #ecfdf5;
+}
+.tool-btn.active {
+  background-color: #10b981;
+  color: white;
+  border-color: #10b981;
+}
+
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 260px;
+  height: 44px;
   background-color: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 99px;
-  padding: 0 16px;
-  width: 280px;
-  height: 46px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px !important;
+  padding: 0 8px 0 16px;
   transition: all 0.2s ease;
 }
 
 .search-wrapper:focus-within {
   border-color: #10b981;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+  transform: translateY(-1px);
+}
+
+.search-input-field {
+  flex: 1;
+  width: 100%;
+  border: none !important;
+  outline: none !important;
+  background: transparent;
+  padding: 0;
+  font-size: 0.95rem;
+  color: #374151;
+  font-family: inherit;
 }
 
 .search-icon {
   color: #9ca3af;
-  margin-right: 8px;
-}
-
-.search-input-field {
-  border: none;
-  outline: none;
-  background: transparent;
-  flex: 1;
-  font-size: 0.95rem;
-  color: #374151;
-  width: 100%;
-}
-
-.search-input-field::placeholder {
-  color: #9ca3af;
+  margin-right: 10px;
 }
 
 .search-clear-btn {
-  background: none;
-  border: none;
-  color: #9ca3af;
-  cursor: pointer;
-  padding: 0;
   display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f4f6;
+  border: none;
+  cursor: pointer;
+  color: #9ca3af;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px !important;
+  margin-left: 8px;
+  transition: all 0.2s;
 }
 .search-clear-btn:hover {
+  background-color: #fee2e2;
   color: #ef4444;
 }
 
-/* Category Button */
-.tool-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 20px;
-  height: 46px;
-  background: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 99px;
-  font-size: 0.95rem;
-  color: #374151;
-  transition: all 0.2s;
-  cursor: pointer;
-  font-weight: 600;
-}
-.tool-btn:hover,
-.tool-btn.active {
-  border-color: #10b981;
-  color: #10b981;
-  background: #ecfdf5;
-}
-
+/* --- Dropdown --- */
 .tool-wrapper {
   position: relative;
 }
 
 .dropdown-popup {
   position: absolute;
-  top: 115%;
+  top: 110%;
   right: 0;
   background: white;
   border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  border-radius: 8px !important;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   z-index: 50;
+  min-width: 200px;
   padding: 8px;
-  min-width: 220px;
-  animation: slideDown 0.2s ease-out;
+  animation: fadeIn 0.2s ease-out;
 }
 
 .cat-menu-popup {
-  max-height: 320px;
+  width: 240px;
+  max-height: 300px;
   overflow-y: auto;
 }
 
-.cat-menu-popup button {
+.dropdown-popup button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
-  text-align: left;
-  padding: 10px 14px;
-  background: none;
+  padding: 10px 12px;
   border: none;
-  border-radius: 8px;
+  background: transparent;
   cursor: pointer;
-  font-size: 0.9rem;
+  border-radius: 6px !important;
+  text-align: left;
   color: #374151;
-  transition: background 0.1s;
+  font-size: 0.9rem;
 }
-
-.cat-menu-popup button:hover {
+.dropdown-popup button:hover {
   background-color: #f3f4f6;
-  color: #10b981;
 }
-
-.cat-menu-popup button.selected {
+.dropdown-popup button.selected {
   background-color: #ecfdf5;
   color: #10b981;
-  font-weight: 600;
+  font-weight: 500;
 }
 
-/* --- Product Grid & Card --- */
-.products-grid {
+/* --- Product Grid --- */
+.cat-product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
   gap: 24px;
@@ -273,7 +235,7 @@
 
 .product-card-std {
   background: white;
-  border-radius: 20px;
+  border-radius: 12px !important;
   padding: 12px;
   position: relative;
   transition: all 0.3s ease;
@@ -281,22 +243,22 @@
   flex-direction: column;
   justify-content: space-between;
   border: 1px solid #f3f4f6;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
 
 .product-card-std:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.1);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+  border-color: transparent;
 }
 
 .fav-btn-std {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 16px;
+  right: 16px;
   z-index: 5;
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px !important;
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(4px);
   border: 1px solid #e5e7eb;
@@ -307,8 +269,8 @@
   cursor: pointer;
   transition: all 0.2s;
 }
-
 .fav-btn-std:hover {
+  transform: scale(1.1);
   color: #ef4444;
   border-color: #fee2e2;
 }
@@ -324,19 +286,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 12px;
+  margin-bottom: 20px;
+  overflow: hidden;
+  border-radius: 8px !important;
   background-color: white;
-  border-radius: 12px;
 }
 
 .img-wrapper-std img {
-  max-width: 90%;
-  max-height: 90%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
-  transition: transform 0.3s;
+  transition: transform 0.5s;
 }
 .product-card-std:hover .img-wrapper-std img {
-  transform: scale(1.05);
+  transform: scale(1.08);
 }
 
 .info-std {
@@ -345,12 +308,12 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .info-std h3 {
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 500;
   color: #111827;
   margin: 0;
   line-height: 1.4;
@@ -361,50 +324,156 @@
   height: 2.8em;
 }
 
+.retailer-info {
+  font-size: 0.8rem;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .btn-add-std {
   width: 100%;
-  padding: 10px;
+  padding: 8px 12px;
   background-color: #10b981;
   color: white;
-  border-radius: 99px;
-  font-size: 0.9rem;
-  font-weight: 600;
+  border-radius: 8px !important;
+  font-size: 0.85rem;
+  font-weight: 500;
   border: none;
   cursor: pointer;
   margin-top: auto;
   transition: all 0.2s;
-  box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
 }
-
 .btn-add-std:hover {
   background-color: #059669;
   transform: translateY(-2px);
-  box-shadow: 0 8px 12px rgba(16, 185, 129, 0.3);
-}
-.btn-add-std:active {
-  transform: scale(0.98);
+  box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.3);
 }
 
-.loading-state,
-.no-results {
-  text-align: center;
-  padding: 80px 0;
+/* --- Pagination (แบบใหม่) --- */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 40px;
+  padding: 20px 0;
+}
+
+.pagination-nav-btn {
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px !important;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
   color: #6b7280;
+  transition: all 0.2s;
+}
+.pagination-nav-btn:hover:not(:disabled) {
+  border-color: #10b981;
+  color: #10b981;
+}
+.pagination-nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px !important;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #374151;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.pagination-btn:hover {
+  background: #f3f4f6;
+}
+.pagination-btn.active {
+  background: #10b981;
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
+}
+
+.pagination-dots {
+  color: #9ca3af;
+  padding: 0 4px;
+}
+
+/* --- Skeleton --- */
+.skeleton-card {
+  min-height: 300px;
+  background: white;
+}
+.skeleton-img {
+  width: 100%;
+  height: 160px;
+  background: #f3f4f6;
+  border-radius: 8px !important;
+  margin-bottom: 20px;
+}
+.skeleton-line-long {
+  width: 80%;
+  height: 16px;
+  background: #f3f4f6;
+  border-radius: 4px;
+  margin: 0 auto 10px;
+}
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.skeleton-pulse {
+  animation: pulse 1.5s infinite;
+}
+
+/* --- No Results --- */
+.no-results {
   grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 0;
+  color: #6b7280;
 }
 .btn-reset-all {
-  margin-top: 12px;
-  padding: 8px 16px;
+  margin-top: 16px;
+  padding: 10px 24px;
   border: 1px solid #d1d5db;
   background: white;
-  border-radius: 99px;
+  border-radius: 8px !important;
   cursor: pointer;
+  color: #374151;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+.btn-reset-all:hover {
+  border-color: #10b981;
+  color: #10b981;
 }
 
-@keyframes slideDown {
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -412,15 +481,8 @@
   }
 }
 
-@media (max-width: 1024px) {
-  .products-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
+/* Responsive */
 @media (max-width: 768px) {
-  .products-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
   .results-toolbar {
     flex-direction: column;
     align-items: stretch;
@@ -431,37 +493,9 @@
   }
   .search-wrapper {
     width: 100%;
+    max-width: none;
   }
-}
-
-/* products.css */
-
-.btn-link-action {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px; /* ระยะห่างระหว่างลูกศรกับข้อความ */
-  background: none;
-  border: none;
-  padding: 0;
-
-  /* ส่วนกำหนดฟอนต์และสี */
-  font-family: "Sarabun", sans-serif;
-  font-size: 17px;
-  font-weight: 700;
-  color: #0b6455; /* <--- จุดสำคัญ: สีฟ้ากำหนดตรงนี้ครับ */
-
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-link-action:hover {
-  gap: 12px; /* ขยับลูกศรเมื่อเอาเมาส์ชี้ */
-  opacity: 0.8;
-}
-
-/* ปรับขนาดไอคอน */
-.btn-link-action svg {
-  stroke-width: 3px;
-  width: 24px;
-  height: 24px;
+  .tool-btn {
+    justify-content: center;
+  }
 }

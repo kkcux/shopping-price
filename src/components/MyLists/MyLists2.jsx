@@ -149,7 +149,7 @@ export default function MyLists2() {
               
               <button className="ml2-edit" onClick={handleEditClick}>
                 <Pencil size={18} strokeWidth={2.5} />
-                <span>แก้ไขรายการ</span>
+                <span>แก้ไข</span>
               </button>
 
               <button className="ml2-btn-delete" onClick={handleDeleteClick} title="ลบรายการ">
