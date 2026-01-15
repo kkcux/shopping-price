@@ -535,18 +535,18 @@ button {
   }
 }
 
-/* --- Search Container Relative (เพื่อให้ Dropdown อ้างอิงตำแหน่งได้) --- */
+/* --- Search Container Relative --- */
 .search-container-relative {
   position: relative;
   max-width: 650px;
   margin: 0 auto;
-  z-index: 50; /* ให้ลอยอยู่เหนือทุกอย่าง */
+  z-index: 50;
 }
 
 /* --- Search Suggestions Dropdown --- */
 .search-suggestions-dropdown {
   position: absolute;
-  top: 100%; /* อยู่ใต้ช่องค้นหาพอดี */
+  top: 100%;
   left: 0;
   right: 0;
   background: white;
@@ -558,6 +558,9 @@ button {
   z-index: 100;
   border: 1px solid #f3f4f6;
   animation: slideDown 0.2s ease-out;
+  
+  /* 🟢 เพิ่มบรรทัดนี้: บังคับให้เนื้อหาทั้งหมดในกล่องชิดซ้าย */
+  text-align: left; 
 }
 
 @keyframes slideDown {
@@ -573,6 +576,9 @@ button {
   cursor: pointer;
   transition: background-color 0.2s;
   border-bottom: 1px solid #f9fafb;
+  
+  /* 🟢 หรือจะใส่ตรงนี้เพื่อความชัวร์ก็ได้ */
+  text-align: left; 
 }
 
 .suggestion-item:last-child {
@@ -580,7 +586,7 @@ button {
 }
 
 .suggestion-item:hover {
-  background-color: #f0fdf4; /* สีเขียวอ่อนๆ เวลาชี้ */
+  background-color: #f0fdf4;
 }
 
 /* --- Item Icon/Image --- */
@@ -611,6 +617,10 @@ button {
 .suggestion-text {
   flex: 1;
   overflow: hidden;
+  /* จัดการข้อความ */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .suggestion-name {
