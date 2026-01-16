@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState, useRef } from "react"; // ✅ เพิ่ม useRef
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import toast, { Toaster } from 'react-hot-toast'; 
 import { ChevronLeft, Save, Pencil, Trash2, CheckCircle2, ShoppingBag, Store, LogIn, Loader2, X, AlertCircle } from "lucide-react"; 
@@ -101,6 +101,9 @@ export default function MyLists3() {
   const [showDeleteModal, setShowDeleteModal] = useState(false); 
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false); 
+  
+  // ✅ เปลี่ยนจาก useState เป็น useRef เพื่อแก้ปัญหา Alert เด้งซ้ำ
+  const processedIncomingRef = useRef(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -141,6 +144,7 @@ export default function MyLists3() {
 
   useEffect(() => {
     const fetchListData = async () => {
+      // ลองหาใน Local ก่อน
       const allLocalLists = JSON.parse(localStorage.getItem("myLists")) || [];
       const localList = allLocalLists.find((l) => String(l.id) === String(id));
 
@@ -149,6 +153,7 @@ export default function MyLists3() {
         return;
       }
 
+      // ถ้าไม่เจอ และมี user ลองหาใน Firebase
       if (currentUser) {
         try {
           const docRef = doc(db, "shopping_lists", id);
@@ -163,6 +168,46 @@ export default function MyLists3() {
     };
     fetchListData();
   }, [id, currentUser]);
+
+  // ✅ แก้ไข: ใช้ useRef เช็ค ทำให้ Alert เด้งแค่ครั้งเดียวแน่นอน
+  useEffect(() => {
+    // เช็คว่ามี List, มีของส่งมา, และยัง "ไม่เคย" process ในรอบการ mount นี้
+    if (selectedList && location.state?.incomingItem && !processedIncomingRef.current) {
+        
+        processedIncomingRef.current = true; // ✅ ล็อคทันที ไม่ให้เข้าเงื่อนไขอีก
+
+        const newItem = location.state.incomingItem;
+        
+        setSelectedList((prev) => {
+            const currentItems = prev.items || [];
+            const existingIndex = currentItems.findIndex(i => i.name === newItem.name);
+            let updatedItems = [...currentItems];
+
+            if (existingIndex > -1) {
+                updatedItems[existingIndex] = {
+                    ...updatedItems[existingIndex],
+                    qty: (updatedItems[existingIndex].qty || 1) + (newItem.qty || 1)
+                };
+                toast.success(`เพิ่มจำนวน ${newItem.name} แล้ว`, { id: 'add-item-toast' }); // ใส่ id กันเหนียว
+            } else {
+                updatedItems.push(newItem);
+                toast.success(`เพิ่ม ${newItem.name} ลงในรายการแล้ว`, { id: 'add-item-toast' }); // ใส่ id กันเหนียว
+            }
+
+            const newTotalItems = updatedItems.reduce((acc, curr) => acc + (curr.qty || 1), 0);
+
+            return {
+                ...prev,
+                items: updatedItems,
+                totalItems: newTotalItems
+            };
+        });
+
+        // ล้าง state ออกจาก history ทันที
+        window.history.replaceState({}, document.title);
+    }
+  }, [selectedList, location.state]); 
+
 
   const wanted = selectedList?.items || [];
   const listName = selectedList?.name || "ไม่พบรายการ";
@@ -237,7 +282,6 @@ export default function MyLists3() {
 
     try {
       if (currentUser) {
-        // --- LOGIC เดิม: สำหรับ User Login ---
         const isLocalId = !isNaN(id);
         
         if (isLocalId) {
@@ -266,7 +310,6 @@ export default function MyLists3() {
         }
 
       } else {
-        // --- LOGIC เดิม: สำหรับ Guest (บันทึก Local ก่อน แล้วเด้ง Modal) ---
         const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
         const existingIndex = allLists.findIndex((l) => String(l.id) === String(id));
 
@@ -284,7 +327,6 @@ export default function MyLists3() {
 
         toast.dismiss(toastId);
         setIsSaving(false); 
-        // เปิด Modal แจ้งเตือน (ที่กำลังจะแก้)
         setShowLoginModal(true);
       }
 
@@ -300,16 +342,11 @@ export default function MyLists3() {
     navigate('/login', { state: { from: location.pathname } });
   };
   
-  // ✅ แก้ไขฟังก์ชันนี้: ยกเลิกการบันทึก (Undo Save)
   const handleCancelLogin = () => {
-    // 1. อ่านข้อมูลล่าสุดมา
     const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
-    
-    // 2. ลบรายการปัจจุบันออกไปเลย (เพราะ User เลือก "ยกเลิก/ไม่บันทึก")
     const filteredLists = allLists.filter((l) => String(l.id) !== String(id));
     localStorage.setItem("myLists", JSON.stringify(filteredLists));
 
-    // 3. ปิด Modal และกลับหน้าหลัก
     setShowLoginModal(false);
     navigate('/mylists'); 
   };
@@ -384,7 +421,7 @@ export default function MyLists3() {
               <ShoppingBag size={24} color="#10b77e" />
               <span>การเปรียบเทียบราคา</span>
             </div>
-            {/* ... Table Code ... */}
+            
             <div className="ml3-table">
               <div className="ml3-thead">
                 <div className="ml3-th left">รายการสินค้า</div>
@@ -542,7 +579,7 @@ export default function MyLists3() {
         </div>
       )}
 
-      {/* ✅ Login Modal (แก้ไขแล้ว) */}
+      {/* Login Modal */}
       {showLoginModal && (
         <div className="ml3-modal-overlay" onClick={() => setShowLoginModal(false)}>
           <div className="ml3-modal" onClick={(e) => e.stopPropagation()}>
@@ -557,7 +594,6 @@ export default function MyLists3() {
                 กรุณาเข้าสู่ระบบเพื่อเก็บข้อมูลถาวร หรือกด "ยกเลิก" หากไม่ต้องการบันทึก
             </p>
             <div className="ml3-modal-actions">
-              {/* ✅ เปลี่ยนปุ่มเป็น "ยกเลิก" และใช้ฟังก์ชัน handleCancelLogin ที่ลบข้อมูลทิ้ง */}
               <button className="ml3-btn-cancel" onClick={handleCancelLogin}>ยกเลิก</button>
               <button className="ml3-btn-confirm" style={{backgroundColor: '#3b82f6'}} onClick={handleLoginRedirect}>เข้าสู่ระบบ</button>
             </div>
