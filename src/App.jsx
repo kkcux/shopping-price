@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom'; 
 import './App.css';
+import { db } from './firebase-config';
+import { collection, getDocs } from 'firebase/firestore';
 
 /* ===== Components Imports ===== */
 // Auth & Home
@@ -17,19 +19,33 @@ import Categories from './components/Categories/Categories';
 import Products from './components/Products/Products'; 
 
 // MyLists Components
-import MyLists from './components/MyLists/MyLists';       // หน้า Dashboard รวม
-import CreateMyList from './components/MyLists/CreateMyList'; // หน้าสร้าง
-import ListsEdit from './components/MyLists/ListsEdit';   // หน้าแก้ไข
-import MyLists2 from './components/MyLists/MyLists2';     // หน้ารายละเอียด (Review)
-import MyLists3 from './components/MyLists/MyLists3';     // หน้าเปรียบเทียบราคา (Compare)
+import MyLists from './components/MyLists/MyLists';       
+import CreateMyList from './components/MyLists/CreateMyList'; 
+import ListsEdit from './components/MyLists/ListsEdit';   
+
+// ❌ ลบหรือ Comment บรรทัดนี้ออก เพราะเราไม่ได้ใช้แล้ว
+// import MyLists2 from './components/MyLists/MyLists2';     
+
+import MyLists3 from './components/MyLists/MyLists3';     
 
 function App() {
+    useEffect(() => {
+      const testFirebase = async () => {
+        try {
+          await getDocs(collection(db, "test_connection")); 
+          console.log("Firebase Connected Successfully!");
+        } catch (err) {
+          console.error("Firebase Connection Error:", err);
+        }
+      };
+      testFirebase();
+    }, []);
+
   return (
     <div className="App">
       <Routes>
 
         {/* ===== HOME SECTION ===== */}
-        {/* หมายเหตุ: หน้า Home ใส่ Navbar/Footer ไว้ที่นี่ เพราะในไฟล์ Home อาจจะไม่มี */}
         <Route path="/" element={<><Navbar /><Home /><Footer /></>} />
 
         {/* ===== AUTH SECTION ===== */}
@@ -44,28 +60,16 @@ function App() {
         <Route path="/products" element={<Products />} />
         <Route path="/categories" element={<Categories />} />
 
-        {/* ===== 🛒 SHOPPING LIST FLOW ===== */}
-
-        {/* 1. Dashboard: หน้ารวมรายการทั้งหมด */}
+        {/* ===== SHOPPING LIST FLOW ===== */}
         <Route path="/mylists" element={<MyLists />} />
-
-        {/* 2. Create: หน้าสร้างรายการใหม่ */}
         <Route path="/mylists/create" element={<CreateMyList />} />
-        
-        {/* 2.1 Add Products (Create Mode): กดเพิ่มสินค้าตอนสร้างรายการใหม่ */}
-        {/* Products จะต้องรับ params id ไปเพื่อรู้ว่าต้อง save ลง Draft ID ไหน */}
         <Route path="/mylists/create/products/:id" element={<Products />} />
-
-        {/* 3. Edit: หน้าแก้ไขรายการเดิม */}
         <Route path="/mylists/edit/:id" element={<ListsEdit />} />
-
-        {/* 3.1 Add Products (Edit Mode): กดเพิ่มสินค้าตอนแก้ไขรายการเดิม */}
         <Route path="/mylists/edit/products/:id" element={<Products />} />
-
-        {/* 4. Review: หน้าดูรายละเอียดรายการ (หน้านี้คือที่ทำ Auto Delete LocalStorage) */}
-        <Route path="/mylists/:id" element={<MyLists2 />} />
-
-        {/* 5. Compare: หน้าเปรียบเทียบราคา (รับค่าจาก state, ไม่ใช่ localStorage) */}
+        
+        {/* Route นี้ Comment ไว้อยู่แล้ว ถูกต้องครับ */}
+        {/* <Route path="/mylists/:id" element={<MyLists2 />} /> */}
+        
         <Route path="/mylists/compare/:id" element={<MyLists3 />} />
 
       </Routes>
