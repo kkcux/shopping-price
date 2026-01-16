@@ -4,60 +4,38 @@ import Navbar from '../Home/Navbar';
 import Footer from '../Home/Footer';
 import './Categories.css';
 import {
-  Heart,
-  Search,
-  ChevronDown,
-  ChevronLeft, ChevronRight,
-  LayoutGrid,
-  Store,
-  X,
-  Star,
-  Flame,
-  Tag,
-  Filter
+  Heart, Search, ChevronDown, ChevronLeft, ChevronRight,
+  LayoutGrid, Store, X, Star, Flame, Tag, Filter
 } from 'lucide-react';
-
 import AddToListModal from '../Home/AddToListModal';
 
 const Categories = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // --- State หลัก ---
-  const [activeCategory, setActiveCategory] = useState(
-    location.state?.selectedCategory || 'ทั้งหมด'
-  );
-
-  // 🟢 1. แก้ไขตรงนี้: ให้รับค่า Filter จากหน้า Home ถ้ามีส่งมา (default เป็น 'all')
-  const [specialFilter, setSpecialFilter] = useState(
-    location.state?.selectedFilter || 'all' 
-  ); 
-
+  const [activeCategory, setActiveCategory] = useState(location.state?.selectedCategory || 'ทั้งหมด');
+  const [specialFilter, setSpecialFilter] = useState(location.state?.selectedFilter || 'all'); 
+  const [searchTerm, setSearchTerm] = useState(location.state?.searchTerm || ''); 
+  
   const [allProducts, setAllProducts] = useState([]);
   const [displayProducts, setDisplayProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // --- State สำหรับ Features ---
   const [favorites, setFavorites] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // --- State สำหรับ Menu ---
   const [showCatMenu, setShowCatMenu] = useState(false);
   const [showFilterMenu, setShowFilterMenu] = useState(false); 
   
-  // --- State สำหรับ Search ---
-  const [searchTerm, setSearchTerm] = useState(''); 
   const [nameFilter, setNameFilter] = useState('');
   
-  // --- State สำหรับ Pagination ---
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 50;
 
   const catMenuRef = useRef(null);
   const filterMenuRef = useRef(null); 
 
-  // ตารางจับคู่หมวดหมู่ 
   const categoryMapping = {
     "อาหารสด & แช่แข็ง": ["อาหารสดและแช่แข็ง", "ผักและผลไม้", "เบเกอรี่"],
     "อาหารแห้ง": ["อาหารแห้งและเครื่องปรุง", "เครื่องดื่ม"],
@@ -71,7 +49,6 @@ const Categories = () => {
 
   const categoriesList = ['ทั้งหมด', ...Object.keys(categoryMapping)];
 
-  // รายการตัวกรองพิเศษ
   const specialFiltersList = [
     { id: 'all', label: 'ตัวกรอง', icon: null },
     { id: 'favorites', label: 'สินค้าที่บันทึกไว้', icon: <Heart size={16} fill="#ef4444" stroke="#ef4444" /> },
@@ -80,7 +57,6 @@ const Categories = () => {
     { id: 'promo', label: 'สินค้าโปรโมชั่น', icon: <Tag size={16} className="text-emerald-500" /> },
   ];
 
-  // Debounce Search
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       setNameFilter(searchTerm);
@@ -88,7 +64,6 @@ const Categories = () => {
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm]);
 
-  // ปิดเมนูเมื่อคลิกข้างนอก
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (catMenuRef.current && !catMenuRef.current.contains(event.target)) setShowCatMenu(false);
@@ -98,7 +73,6 @@ const Categories = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // โหลด Favorites
   useEffect(() => {
     const savedFavs = JSON.parse(localStorage.getItem('favoritesItems')) || [];
     const favMap = {};
@@ -106,7 +80,6 @@ const Categories = () => {
     setFavorites(favMap);
   }, []);
 
-  // โหลดข้อมูลสินค้า
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -123,13 +96,11 @@ const Categories = () => {
           .map(line => {
             try { 
                 const item = JSON.parse(line);
-                // จำลอง Tag 
                 const randomVal = Math.random();
                 item.tags = [];
                 if (randomVal > 0.8) item.tags.push('recommended');
                 else if (randomVal > 0.6) item.tags.push('popular');
                 else if (randomVal > 0.4) item.tags.push('promo');
-                
                 return item; 
             } catch (e) { return null; }
           })
@@ -145,11 +116,9 @@ const Categories = () => {
     fetchData();
   }, []);
 
-  // Logic กรองสินค้า
   useEffect(() => {
     let processed = [...allProducts];
 
-    // 1. กรองหมวดหมู่
     if (activeCategory !== 'ทั้งหมด') {
         const targetCategories = categoryMapping[activeCategory] || [];
         if (targetCategories.length > 0) {
@@ -157,14 +126,12 @@ const Categories = () => {
         }
     }
 
-    // 2. กรองชื่อ
     if (nameFilter.trim() !== '') {
         processed = processed.filter(p => 
             p.name && p.name.toLowerCase().includes(nameFilter.toLowerCase())
         );
     }
 
-    // 3. กรองตาม Special Filter
     if (specialFilter !== 'all') {
         if (specialFilter === 'favorites') {
             processed = processed.filter(item => favorites[item.name]);
@@ -177,7 +144,6 @@ const Categories = () => {
     setCurrentPage(1);
   }, [allProducts, activeCategory, nameFilter, specialFilter, favorites]);
 
-  // --- Pagination Logic ---
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = displayProducts.slice(indexOfFirstItem, indexOfLastItem);
@@ -284,7 +250,6 @@ const Categories = () => {
       </header>
 
       <div className="cat-container">
-        
         <div className="results-toolbar">
             <h2>
                 {activeCategory === 'ทั้งหมด' ? 'สินค้าทั้งหมด' : activeCategory} 
@@ -369,11 +334,9 @@ const Categories = () => {
                         </div>
                     )}
                 </div>
-
             </div>
         </div>
 
-        {/* ตารางแสดงสินค้า */}
         {loading ? (
              <div className="cat-product-grid">
                 {[...Array(10)].map((_, i) => (
@@ -400,14 +363,12 @@ const Categories = () => {
                                     </div>
                                     <div className="info-std">
                                         <h3 title={item.name}>{item.name}</h3>
-                                        
                                         {(item.retailer || item.store) && (
                                             <div className="retailer-info">
                                                 <Store size={14} /> 
                                                 {item.retailer || item.store}
                                             </div>
                                         )}
-
                                         <button className="btn-add-std" onClick={() => { setSelectedProduct(item); setIsModalOpen(true); }} style={{marginTop: 'auto'}}>
                                             เพิ่มลงรายการ
                                         </button>
@@ -417,7 +378,6 @@ const Categories = () => {
                         })}
                     </div>
 
-                    {/* Pagination */}
                     {totalPages > 1 && (
                         <div className="pagination-container">
                             <button 
@@ -427,9 +387,7 @@ const Categories = () => {
                             >
                                 <ChevronLeft size={20} />
                             </button>
-
                             {renderPaginationButtons()}
-
                             <button 
                                 onClick={() => changePage(currentPage + 1)}
                                 disabled={currentPage === totalPages}

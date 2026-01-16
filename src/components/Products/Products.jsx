@@ -1,32 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import Navbar from '../Home/Navbar'; // เปิดใช้ถ้าต้องการ
+// import Navbar from '../Home/Navbar'; 
 import Footer from '../Home/Footer';
 import './Products.css';
 import {
-  Heart,
-  ChevronDown,
-  ChevronLeft, ChevronRight,
-  Search, X, LayoutGrid,
-  Store,
-  Filter, // เพิ่ม icon
-  Star,
-  Flame,
-  Tag
+  Heart, ChevronDown, ChevronLeft, ChevronRight,
+  Search, X, LayoutGrid, Store, Filter, Star, Flame, Tag, CheckCircle2
 } from 'lucide-react';
+import toast, { Toaster } from 'react-hot-toast'; // ✅ Import Toast
 
 import AddToListModal from '../Home/AddToListModal';
 
 const Products = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  
+  // ✅ รับ ID เป้าหมายจาก URL (ถ้ามี)
   const { id: targetListId } = useParams();
 
   // --- State ---
   const [activeCategory, setActiveCategory] = useState(
     location.state?.selectedCategory || 'ทั้งหมด'
   );
-  // 🟢 เพิ่ม State สำหรับตัวกรองพิเศษ
   const [specialFilter, setSpecialFilter] = useState('all'); 
   const [showFilterMenu, setShowFilterMenu] = useState(false);
 
@@ -46,7 +41,7 @@ const Products = () => {
   const itemsPerPage = 30;
 
   const catMenuRef = useRef(null);
-  const filterMenuRef = useRef(null); // 🟢 เพิ่ม Ref
+  const filterMenuRef = useRef(null);
 
   const categoryMapping = {
     "อาหารสด & แช่แข็ง": ["อาหารสดและแช่แข็ง", "ผักและผลไม้", "เบเกอรี่"],
@@ -60,7 +55,6 @@ const Products = () => {
   };
   const categoriesList = ['ทั้งหมด', ...Object.keys(categoryMapping)];
 
-  // 🟢 รายการตัวกรองพิเศษ
   const specialFiltersList = [
     { id: 'all', label: 'ตัวกรอง', icon: null },
     { id: 'favorites', label: 'สินค้าที่บันทึกไว้', icon: <Heart size={16} fill="#ef4444" stroke="#ef4444" /> },
@@ -77,11 +71,10 @@ const Products = () => {
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm]);
 
-  // Click Outside เพื่อปิดเมนู
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (catMenuRef.current && !catMenuRef.current.contains(event.target)) setShowCatMenu(false);
-      if (filterMenuRef.current && !filterMenuRef.current.contains(event.target)) setShowFilterMenu(false); // 🟢 เพิ่ม check
+      if (filterMenuRef.current && !filterMenuRef.current.contains(event.target)) setShowFilterMenu(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
@@ -94,7 +87,6 @@ const Products = () => {
     setFavorites(favMap);
   }, []);
 
-  // Fetch Data (จำลอง Tag สำหรับ Filter)
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -108,7 +100,6 @@ const Products = () => {
           .map(line => { 
               try { 
                   const item = JSON.parse(line); 
-                  // 🟢 จำลอง Tag เพื่อให้ Filter ทำงานได้
                   const randomVal = Math.random();
                   item.tags = [];
                   if (randomVal > 0.8) item.tags.push('recommended');
@@ -125,24 +116,20 @@ const Products = () => {
     fetchData();
   }, []);
 
-  // Logic กรองสินค้า (รวม Special Filter)
   useEffect(() => {
     let processed = [...allProducts];
 
-    // 1. Category
     if (activeCategory !== 'ทั้งหมด') {
         const targetCategories = categoryMapping[activeCategory] || [];
         if (targetCategories.length > 0) processed = processed.filter(item => item.category && targetCategories.includes(item.category));
     }
 
-    // 2. Name
     if (nameFilter.trim() !== '') {
         processed = processed.filter(p => 
             p.name && p.name.toLowerCase().includes(nameFilter.toLowerCase())
         );
     }
 
-    // 3. 🟢 Special Filter
     if (specialFilter !== 'all') {
         if (specialFilter === 'favorites') {
             processed = processed.filter(item => favorites[item.name]);
@@ -153,7 +140,7 @@ const Products = () => {
 
     setDisplayProducts(processed);
     setCurrentPage(1);
-  }, [allProducts, activeCategory, nameFilter, specialFilter, favorites]); // เพิ่ม deps
+  }, [allProducts, activeCategory, nameFilter, specialFilter, favorites]);
 
   // --- Handlers ---
   const changePage = (newPage) => {
@@ -182,28 +169,59 @@ const Products = () => {
     });
   };
 
+  // ✅ ฟังก์ชันเพิ่มสินค้า (แก้ไขให้รองรับ temp_editing)
   const handleAddToCart = (item) => {
     if (targetListId) {
-      // (Code เดิมสำหรับการเพิ่มลง List)
       try {
-        const allLists = JSON.parse(localStorage.getItem('myLists')) || [];
-        const listIndex = allLists.findIndex(l => l.id.toString() === targetListId.toString());
-        if (listIndex > -1) {
-          const newItem = {
-            id: Date.now(),
-            name: item.name,
-            qty: 1,
-            img: item.image,
-            price: item.price,
-            retailer: item.retailer || 'Unknown' 
-          };
-          if (!allLists[listIndex].items) allLists[listIndex].items = [];
-          allLists[listIndex].items.push(newItem);
-          localStorage.setItem('myLists', JSON.stringify(allLists));
-          navigate(-1);
+        const newItem = {
+          name: item.name,
+          qty: 1,
+          img: item.image,
+          price: item.price,
+          retailer: item.retailer || 'Unknown' 
+        };
+
+        // 🟢 สร้าง Key ชั่วคราวตาม ID ที่ส่งมา
+        const TEMP_KEY = `temp_editing_${targetListId}`;
+        const tempString = localStorage.getItem(TEMP_KEY);
+
+        if (tempString) {
+            // A. เจอของที่ฝากไว้ (จากหน้า Edit)
+            const tempData = JSON.parse(tempString);
+            
+            // เช็คว่ามีของซ้ำไหม
+            const existingIndex = tempData.items.findIndex(i => i.name === item.name);
+            if (existingIndex > -1) {
+                tempData.items[existingIndex].qty += 1;
+            } else {
+                tempData.items.push(newItem);
+            }
+
+            // บันทึกกลับลงกล่อง
+            localStorage.setItem(TEMP_KEY, JSON.stringify(tempData));
+            
+            // กลับไปหน้า Edit ทันที
+            navigate(-1);
+
+        } else if (targetListId === 'new') {
+            // B. สร้างรายการใหม่ (Create Flow)
+            const draftString = localStorage.getItem('current_draft');
+            const draft = draftString ? JSON.parse(draftString) : { items: [] };
+            
+            const existingIndex = draft.items.findIndex(i => i.name === item.name);
+            if (existingIndex > -1) draft.items[existingIndex].qty += 1;
+            else draft.items.push(newItem);
+
+            localStorage.setItem('current_draft', JSON.stringify(draft));
+            navigate(-1);
+
         } else {
-          alert('ไม่พบรายการนี้ในระบบ');
+            // C. กรณีอื่นๆ (Fallback: เพิ่มลง DB ตรงๆ หรือแจ้งเตือน)
+            // ถ้า User ไม่ได้กด Edit เข้ามา แต่กด URL เข้ามาตรงๆ อาจจะให้แจ้งเตือน
+            // หรือถ้าจะให้เพิ่มลง LocalStorage เลยก็ได้ แต่ตาม Flow ควรมีกล่องฝาก
+            alert('ไม่พบข้อมูลการแก้ไข (Session Expired) กรุณากลับไปหน้าแก้ไขแล้วลองใหม่');
         }
+
       } catch (error) {
         console.error("Error adding to list:", error);
         alert('เกิดข้อผิดพลาดในการบันทึก');
@@ -222,7 +240,7 @@ const Products = () => {
   const clearSearch = () => {
     setSearchTerm('');
     setNameFilter('');
-    setSpecialFilter('all'); // Reset filter ด้วย
+    setSpecialFilter('all');
   };
 
   const getSpecialFilterLabel = () => {
@@ -230,7 +248,6 @@ const Products = () => {
     return filter ? filter.label : 'ตัวกรอง';
   };
 
-  // --- Pagination Logic ---
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = displayProducts.slice(indexOfFirstItem, indexOfLastItem);
@@ -247,7 +264,6 @@ const Products = () => {
   );
 
   const renderPaginationButtons = () => {
-    // (Logic เดิม)
     const siblingCount = 1;
     const totalPageNumbers = siblingCount + 5;
     if (totalPages <= totalPageNumbers) {
@@ -296,7 +312,6 @@ const Products = () => {
             </h2>
             
             <div className="filter-tools">
-                {/* 1. Search Bar */}
                 <div className="search-wrapper">
                     <Search size={18} className="search-icon" />
                     <input 
@@ -311,7 +326,6 @@ const Products = () => {
                     )}
                 </div>
 
-                {/* 2. Category Dropdown */}
                 <div className="tool-wrapper" ref={catMenuRef}>
                     <button 
                         className={`tool-btn ${showCatMenu ? 'active' : ''}`}
@@ -335,7 +349,6 @@ const Products = () => {
                     )}
                 </div>
 
-                {/* 3. 🟢 Filter Dropdown (เพิ่มส่วนนี้) */}
                 <div className="tool-wrapper" ref={filterMenuRef}>
                     <button 
                         className={`tool-btn ${showFilterMenu || specialFilter !== 'all' ? 'active' : ''}`}
@@ -373,7 +386,6 @@ const Products = () => {
             </div>
         </div>
 
-        {/* Product Grid & Loading Logic (เหมือนเดิม) */}
         {loading ? (
              <div className="cat-product-grid">
                 {[...Array(10)].map((_, i) => (
