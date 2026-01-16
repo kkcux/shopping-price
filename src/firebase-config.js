@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 // เอาค่าพวกนี้มาจากหน้าเว็บ Firebase Console -> Project Settings
 const firebaseConfig = {
@@ -16,3 +17,4 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 // Initialize Firestore Database
 export const db = getFirestore(app);
+export const auth = getAuth(app);
