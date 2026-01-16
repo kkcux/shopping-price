@@ -1,8 +1,13 @@
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom"; // ✅ 1. เพิ่ม useLocation
-import { useGoogleLogin } from '@react-oauth/google';
-import axios from 'axios';
+import { useNavigate, useLocation } from "react-router-dom"; 
+// ❌ ลบ @react-oauth/google และ axios ออก เพราะเราจะใช้ Firebase แทน
+// import { useGoogleLogin } from '@react-oauth/google';
+// import axios from 'axios';
 import "./Login.css";
+
+// ✅ 1. Import Firebase
+import { auth } from "../../firebase-config"; // ตรวจสอบ path ให้ถูกต้อง
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
@@ -11,55 +16,80 @@ import { FcGoogle } from "react-icons/fc";
 
 const Login = () => {
   const navigate = useNavigate();
-  const location = useLocation(); // ✅ 2. เรียกใช้ hook
+  const location = useLocation(); 
   
+  // ✅ 2. เพิ่ม State สำหรับเก็บค่าจากฟอร์ม
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState(""); // เอาไว้โชว์ข้อความสีแดงเวลากรอกผิด
 
-  // ✅ 3. กำหนดหน้าปลายทาง (ถ้ามีส่งมาให้ใช้ตัวนั้น ถ้าไม่มีให้ไปหน้าแรก)
+  // หน้าปลายทาง (ถ้าไม่มีให้ไปหน้า MyLists แทนหน้าแรก จะได้เห็น Dashboard เลย)
   const from = location.state?.from || "/";
 
-  // --- ส่วนจัดการ Google Login ---
-  const loginWithGoogle = useGoogleLogin({
-    onSuccess: async (tokenResponse) => {
-      try {
-        // 1. ดึงข้อมูล User จาก Google
-        const userInfo = await axios.get(
-          'https://www.googleapis.com/oauth2/v3/userinfo',
-          { headers: { Authorization: `Bearer ${tokenResponse.access_token}` } }
-        );
+  // --- ส่วนจัดการ Google Login (Firebase Version) ---
+  const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      // คำสั่งเดียวจบ เด้ง Popup -> Login -> เชื่อม Database
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
 
-        console.log("User Info:", userInfo.data);
+      // console.log("Google Login สำเร็จ:", user);
 
-        // 2. บันทึกข้อมูลลงเครื่อง
-        localStorage.setItem('user', JSON.stringify(userInfo.data));
-        localStorage.setItem('token', tokenResponse.access_token);
+      // บันทึกข้อมูลลงเครื่อง (เพื่อให้ Navbar โชว์รูปได้ทันที)
+      localStorage.setItem('user', JSON.stringify({
+        uid: user.uid,
+        email: user.email,
+        name: user.displayName,
+        photoURL: user.photoURL
+      }));
+      localStorage.setItem('token', user.accessToken);
 
-        // ✅ 4. เปลี่ยนการ Redirect: ไปยังหน้าปลายทางที่จำไว้
-        navigate(from, { replace: true }); 
+      // Redirect ไปหน้าเดิม
+      navigate(from, { replace: true });
 
-      } catch (error) {
-        console.error("Error fetching user info:", error);
-      }
-    },
-    onError: error => console.log('Login Failed:', error)
-  });
-  // -----------------------------
+    } catch (error) {
+      console.error("Google Login Error:", error);
+      setErrorMessage("เกิดข้อผิดพลาดในการเชื่อมต่อ Google");
+    }
+  };
 
-  const handleLogin = (e) => {
+  // --- ส่วนจัดการ Email Login (Firebase Version) ---
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Login submitted");
-    
-    // สมมติว่า Login ปกติสำเร็จ
-    // (ในโค้ดจริงคุณต้องต่อ API ยืนยันรหัสผ่านตรงนี้)
-    
-    // จำลองการบันทึก User
-    const mockUser = { name: "User Test", email: "test@example.com" };
-    localStorage.setItem('user', JSON.stringify(mockUser));
-    localStorage.setItem('token', "mock-token-123");
+    setErrorMessage(""); // เคลียร์ error เก่าก่อน
 
-    // ✅ 5. แบบฟอร์มปกติก็ต้อง Redirect กลับเหมือนกัน
-    navigate(from, { replace: true });
+    try {
+      // ส่ง Email/Password ไปตรวจสอบที่ Firebase
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      console.log("Email Login สำเร็จ:", user);
+      
+      // บันทึก user ลง LocalStorage
+      localStorage.setItem('user', JSON.stringify({
+        uid: user.uid,
+        email: user.email,
+        // user.displayName อาจจะว่างถ้าสมัครด้วย email แต่ไม่เป็นไร
+      }));
+      localStorage.setItem('token', user.accessToken);
+
+      // Redirect
+      navigate(from, { replace: true });
+
+    } catch (error) {
+      console.error("Login Error:", error);
+      // แปล Error เป็นภาษาไทย
+      if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+        setErrorMessage("อีเมลหรือรหัสผ่านไม่ถูกต้อง");
+      } else if (error.code === 'auth/too-many-requests') {
+        setErrorMessage("คุณล็อกอินผิดบ่อยเกินไป กรุณารอสักครู่");
+      } else {
+        setErrorMessage("เข้าสู่ระบบไม่สำเร็จ: " + error.message);
+      }
+    }
   };
 
   return (
@@ -74,12 +104,34 @@ const Login = () => {
             <p>เข้าสู่ระบบเพื่อใช้งานฟีเจอร์ต่างๆ ของ PriceFinder</p>
           </div>
 
+          {/* ✅ 3. ส่วนแสดง Error Message (ถ้ามี) */}
+          {errorMessage && (
+            <div style={{ 
+              backgroundColor: '#ffebee', 
+              color: '#c62828', 
+              padding: '10px', 
+              borderRadius: '8px', 
+              marginBottom: '15px',
+              textAlign: 'center',
+              fontSize: '0.9rem'
+            }}>
+              {errorMessage}
+            </div>
+          )}
+
           <form onSubmit={handleLogin}>
             <div className="form-group">
               <label>อีเมล</label>
               <div className="input-wrapper">
                 <FiMail className="input-icon" />
-                <input type="email" placeholder="กรอกอีเมลของคุณ" required />
+                <input 
+                  type="email" 
+                  placeholder="กรอกอีเมลของคุณ" 
+                  required 
+                  // ✅ 4. ผูกค่ากับ State
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </div>
             </div>
 
@@ -91,6 +143,9 @@ const Login = () => {
                   type={showPassword ? "text" : "password"}
                   placeholder="กรอกรหัสผ่านของคุณ"
                   required
+                  // ✅ 4. ผูกค่ากับ State
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                 />
                 <div className="toggle-password" onClick={() => setShowPassword(!showPassword)}>
                   {showPassword ? <FiEyeOff /> : <FiEye />}
@@ -120,11 +175,11 @@ const Login = () => {
               <span>หรือเข้าสู่ระบบด้วย</span>
             </div>
 
-            {/* ปุ่ม Google Custom */}
+            {/* ✅ 5. ปุ่ม Google เรียกใช้ฟังก์ชัน Firebase */}
             <button 
                 type="button" 
                 className="btn-google" 
-                onClick={() => loginWithGoogle()}
+                onClick={handleGoogleLogin}
             >
               <FcGoogle size={22} />
               เข้าสู่ระบบด้วย Google

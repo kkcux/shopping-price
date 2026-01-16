@@ -5,6 +5,10 @@ import { googleLogout } from '@react-oauth/google';
 import './Navbar.css';
 import NotificationList from '../Notification/NotificationList';
 
+// ✅ 1. เพิ่ม Import Firebase Auth (สำคัญมาก!)
+import { auth } from '../../firebase-config'; 
+import { signOut } from 'firebase/auth';
+
 function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -12,7 +16,6 @@ function Navbar() {
   const [showNotif, setShowNotif] = useState(false);
   const notifRef = useRef(null);
   
-  // ✅ 1. เพิ่ม State สำหรับหน้าต่างยืนยัน
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   const [user, setUser] = useState(() => {
@@ -29,19 +32,34 @@ function Navbar() {
     }
   }, [location]);
 
-  // ✅ 2. ฟังก์ชันเมื่อกดปุ่ม Logout (แค่เปิดหน้าต่างถาม)
   const handleLogoutClick = () => {
     setShowLogoutConfirm(true);
   };
 
-  // ✅ 3. ฟังก์ชันยืนยันการออกจริงๆ (ย้าย Logic เดิมมาไว้ตรงนี้)
-  const confirmLogout = () => {
-    googleLogout(); 
-    localStorage.removeItem('user'); 
-    localStorage.removeItem('token'); 
-    setUser(null);
-    setShowLogoutConfirm(false); // ปิดหน้าต่าง
-    navigate('/'); 
+  // ✅ 2. แก้ไขฟังก์ชัน Logout ให้ SignOut จาก Firebase ด้วย
+  const confirmLogout = async () => {
+    try {
+      // 1. สั่ง Firebase ให้ Logout (ตัวการสำคัญที่ทำให้ MyLists รู้ตัว)
+      await signOut(auth);
+      
+      // 2. เคลียร์ส่วนอื่นๆ ตามปกติ
+      googleLogout(); 
+      localStorage.removeItem('user'); 
+      localStorage.removeItem('token'); 
+      
+      // (Optional) เคลียร์ข้อมูลชั่วคราวอื่นๆ ถ้ามี
+      // localStorage.removeItem('myLists'); 
+
+      setUser(null);
+      setShowLogoutConfirm(false); 
+      
+      // 3. ย้ายหน้าและรีเฟรชเพื่อความชัวร์ (ล้าง State ทั้งหมด)
+      navigate('/login'); 
+      window.location.reload(); 
+      
+    } catch (error) {
+      console.error("Error signing out: ", error);
+    }
   };
 
   useEffect(() => {
@@ -54,7 +72,6 @@ function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // ... (ส่วน isAuthPage และ getBackBtnConfig เหมือนเดิม ไม่ต้องแก้) ...
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
   const getBackBtnConfig = () => {
     if (location.pathname === '/register') {
@@ -111,7 +128,6 @@ function Navbar() {
                 <img src={user.picture} alt="Profile" className="user-avatar" />
                 <span className="user-name">{(user.given_name || user.name).split(' ')[0]}</span>
 
-                {/* ✅ แก้ตรงนี้: เรียก handleLogoutClick แทน */}
                 <button 
                   onClick={(e) => {
                     e.stopPropagation(); 
@@ -146,7 +162,6 @@ function Navbar() {
         </div>
       </nav>
 
-      {/* ✅ 4. เพิ่ม Modal ยืนยันตรงนี้ (อยู่นอก nav แต่ยังอยู่ใน Navbar Component) */}
       {showLogoutConfirm && (
         <div className="logout-confirm-overlay" onClick={() => setShowLogoutConfirm(false)}>
           <div className="logout-confirm-modal" onClick={(e) => e.stopPropagation()}>

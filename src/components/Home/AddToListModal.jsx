@@ -1,64 +1,162 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShoppingCart, Plus, Minus, X, Check, ListPlus, Info } from 'lucide-react'; 
+import { ShoppingCart, Plus, Minus, X, Check, ListPlus, Info, Loader2 } from 'lucide-react'; 
 import './AddToListModal.css';
+
+// ✅ 1. เพิ่ม Import Firebase
+import { auth, db } from '../../firebase-config';
+import { onAuthStateChanged } from 'firebase/auth';
+import { collection, query, where, getDocs, doc, updateDoc, getDoc } from 'firebase/firestore';
 
 const AddToListModal = ({ isOpen, onClose, product }) => {
   const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
-  const [myLists, setMyLists] = useState(() => {
-    const savedData = localStorage.getItem("myLists");
-    return savedData ? JSON.parse(savedData) : [];
-  });
+  const [myLists, setMyLists] = useState([]);
   const [addedListId, setAddedListId] = useState(null);
+  
+  // ✅ เพิ่ม State สำหรับเช็ค User และ Loading
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(false);
 
+  // ✅ 2. เช็คสถานะ Login
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // ✅ 3. โหลดข้อมูล (แยก Guest / User)
   useEffect(() => {
     if (isOpen) {
         setQuantity(1);
         setAddedListId(null);
+        fetchLists();
     }
-  }, [isOpen]);
+  }, [isOpen, currentUser]); // เพิ่ม dependency currentUser
+
+  const fetchLists = async () => {
+    setLoading(true);
+    if (currentUser) {
+        // --- 🅰️ กรณี Login: ดึงจาก Firestore ---
+        try {
+            const q = query(
+                collection(db, "shopping_lists"), 
+                where("userId", "==", currentUser.uid)
+            );
+            const querySnapshot = await getDocs(q);
+            const cloudLists = querySnapshot.docs.map(doc => ({
+                id: doc.id, 
+                ...doc.data()
+            }));
+            setMyLists(cloudLists);
+        } catch (error) {
+            console.error("Error fetching cloud lists:", error);
+        }
+    } else {
+        // --- 🅱️ กรณี Guest: ดึงจาก LocalStorage (โค้ดเดิม) ---
+        try {
+            const savedData = localStorage.getItem("myLists");
+            if (savedData) {
+                const parsedData = JSON.parse(savedData);
+                setMyLists(Array.isArray(parsedData) ? parsedData : []);
+            } else {
+                setMyLists([]);
+            }
+        } catch (error) {
+            setMyLists([]);
+        }
+    }
+    setLoading(false);
+  };
 
   const handleQuantity = (type) => {
     if (type === 'inc') setQuantity(prev => prev + 1);
     if (type === 'dec' && quantity > 1) setQuantity(prev => prev - 1);
   };
 
-  const handleAddToList = (listId) => {
-    const currentLists = JSON.parse(localStorage.getItem("myLists")) || [];
-    const updatedLists = currentLists.map(list => {
-      if (list.id === listId) {
-        const newItem = {
-            id: product.id || `prod-${Date.now()}`,
-            name: product.name || product.data,
-            img: product.image,
-            qty: quantity
-        };
-        const existingItemIndex = (list.items || []).findIndex(item => item.name === newItem.name);
-        let newItems = list.items ? [...list.items] : [];
-        if (existingItemIndex > -1) {
-            newItems[existingItemIndex].qty += quantity;
-        } else {
-            newItems.push(newItem);
-        }
-        const newTotal = newItems.reduce((sum, item) => sum + item.qty, 0);
-        return { ...list, items: newItems, totalItems: newTotal };
-      }
-      return list;
-    });
+  // ✅ 4. บันทึกข้อมูล (แยก Guest / User)
+  const handleAddToList = async (listId) => {
+    // เตรียมข้อมูลสินค้า
+    const newItem = {
+        id: product.id || `prod-${Date.now()}`,
+        name: product.name || product.data,
+        img: product.image,
+        qty: quantity
+    };
 
-    localStorage.setItem("myLists", JSON.stringify(updatedLists));
-    setMyLists(updatedLists);
-    setAddedListId(listId);
-    setTimeout(() => { setAddedListId(null); onClose(); }, 1200);
+    if (currentUser) {
+        // --- 🅰️ กรณี Login: บันทึกลง Firestore ---
+        try {
+            const listRef = doc(db, "shopping_lists", listId);
+            
+            // เราต้องอ่านข้อมูลล่าสุดก่อน เพื่อคำนวณจำนวนสินค้า (ป้องกันการทับซ้อน)
+            const listSnap = await getDoc(listRef);
+            
+            if (listSnap.exists()) {
+                const listData = listSnap.data();
+                let currentItems = listData.items || [];
+                
+                const existingIndex = currentItems.findIndex(i => i.name === newItem.name);
+                
+                if (existingIndex > -1) {
+                    currentItems[existingIndex].qty += quantity;
+                } else {
+                    currentItems.push(newItem);
+                }
+
+                const newTotal = currentItems.reduce((sum, item) => sum + item.qty, 0);
+
+                // อัปเดตกลับไปที่ Firestore
+                await updateDoc(listRef, {
+                    items: currentItems,
+                    totalItems: newTotal
+                });
+
+                // อัปเดต State หน้าจอ (เพื่อให้ UI เปลี่ยนทันทีไม่ต้องรอ fetch ใหม่)
+                setMyLists(prev => prev.map(l => 
+                    l.id === listId ? { ...l, items: currentItems, totalItems: newTotal } : l
+                ));
+            }
+
+            setAddedListId(listId);
+            setTimeout(() => { setAddedListId(null); onClose(); }, 1200);
+
+        } catch (error) {
+            console.error("Error updating cloud list:", error);
+            alert("เกิดข้อผิดพลาดในการบันทึก");
+        }
+
+    } else {
+        // --- 🅱️ กรณี Guest: บันทึกลง LocalStorage (โค้ดเดิม) ---
+        const currentLists = JSON.parse(localStorage.getItem("myLists")) || [];
+        const updatedLists = currentLists.map(list => {
+            if (list.id === listId) {
+                const existingItemIndex = (list.items || []).findIndex(item => item.name === newItem.name);
+                let newItems = list.items ? [...list.items] : [];
+                if (existingItemIndex > -1) {
+                    newItems[existingItemIndex].qty += quantity;
+                } else {
+                    newItems.push(newItem);
+                }
+                const newTotal = newItems.reduce((sum, item) => sum + item.qty, 0);
+                return { ...list, items: newItems, totalItems: newTotal };
+            }
+            return list;
+        });
+
+        localStorage.setItem("myLists", JSON.stringify(updatedLists));
+        setMyLists(updatedLists);
+        setAddedListId(listId);
+        setTimeout(() => { setAddedListId(null); onClose(); }, 1200);
+    }
   };
 
-  // ✨ ฟังก์ชันสำหรับส่งข้อมูลสินค้าไปหน้าสร้างรายการใหม่
   const handleCreateNewList = () => {
     const productToSend = {
       id: product.id || `prod-${Date.now()}`,
       name: product.name || product.data,
-      img: product.image, // ใช้ 'img' ให้ตรงกับ CreateMyList
+      img: product.image, 
       qty: quantity
     };
 
@@ -82,7 +180,7 @@ const AddToListModal = ({ isOpen, onClose, product }) => {
         <div className="modal-body">
           <div className="product-row-card">
             <div className="prod-img">
-               <img src={product.image} alt={product.name} />
+               <img src={product.image} alt={product.name || product.data} />
             </div>
             <div className="prod-name">{product.name || product.data}</div>
             <div className="qty-control-group">
@@ -94,11 +192,21 @@ const AddToListModal = ({ isOpen, onClose, product }) => {
 
           <div className="info-note">
              <Info size={16} />
-             <span>สามารถเพิ่มใส่ใน MyList ที่มีอยู่ได้ทันที</span>
+             <span>
+                {currentUser 
+                    ? "บันทึกข้อมูลลงในบัญชีของคุณ (Cloud)" 
+                    : "บันทึกในเครื่อง (Guest) - เข้าสู่ระบบเพื่อซิงค์ข้อมูล"
+                }
+             </span>
           </div>
 
           <div className="list-selection-container">
-            {myLists.length > 0 ? (
+            {loading ? (
+                <div className="empty-state">
+                    <Loader2 className="animate-spin" size={24} />
+                    <p>กำลังโหลดรายการ...</p>
+                </div>
+            ) : myLists.length > 0 ? (
                 myLists.map((list) => (
                 <div 
                     key={list.id} 
@@ -116,12 +224,13 @@ const AddToListModal = ({ isOpen, onClose, product }) => {
                 </div>
                 ))
             ) : (
-                <div className="empty-state"><p>You haven't created a list yet</p></div>
+                <div className="empty-state">
+                    <p>You haven’t created a list yet</p>
+                </div>
             )}
           </div>
 
           <div className="create-new-list-area">
-             {/* ✅ แก้ไข onClick ให้เรียก handleCreateNewList */}
              <button className="btn-start-create" onClick={handleCreateNewList}>
                 <ListPlus size={18} />
                 <span>สร้างรายการใหม่</span>

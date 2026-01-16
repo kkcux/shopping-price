@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom'; 
 import './App.css';
-import { db } from '../firebase-config';
+import { db } from './firebase-config';
 import { collection, getDocs } from 'firebase/firestore';
 
 /* ===== Components Imports ===== */
@@ -19,17 +19,19 @@ import Categories from './components/Categories/Categories';
 import Products from './components/Products/Products'; 
 
 // MyLists Components
-import MyLists from './components/MyLists/MyLists';       // หน้า Dashboard รวม
-import CreateMyList from './components/MyLists/CreateMyList'; // หน้าสร้าง
-import ListsEdit from './components/MyLists/ListsEdit';   // หน้าแก้ไข
-import MyLists2 from './components/MyLists/MyLists2';     // หน้ารายละเอียด (Review)
-import MyLists3 from './components/MyLists/MyLists3';     // หน้าเปรียบเทียบราคา (Compare)
+import MyLists from './components/MyLists/MyLists';       
+import CreateMyList from './components/MyLists/CreateMyList'; 
+import ListsEdit from './components/MyLists/ListsEdit';   
+
+// ❌ ลบหรือ Comment บรรทัดนี้ออก เพราะเราไม่ได้ใช้แล้ว
+// import MyLists2 from './components/MyLists/MyLists2';     
+
+import MyLists3 from './components/MyLists/MyLists3';     
 
 function App() {
     useEffect(() => {
       const testFirebase = async () => {
         try {
-          // ลองดึงข้อมูล (ถ้ายังไม่มี collection ชื่อ users ก็ไม่เป็นไร แค่ไม่ error ก็พอ)
           await getDocs(collection(db, "test_connection")); 
           console.log("Firebase Connected Successfully!");
         } catch (err) {
@@ -38,6 +40,7 @@ function App() {
       };
       testFirebase();
     }, []);
+
   return (
     <div className="App">
       <Routes>
@@ -63,7 +66,10 @@ function App() {
         <Route path="/mylists/create/products/:id" element={<Products />} />
         <Route path="/mylists/edit/:id" element={<ListsEdit />} />
         <Route path="/mylists/edit/products/:id" element={<Products />} />
-        <Route path="/mylists/:id" element={<MyLists2 />} />
+        
+        {/* Route นี้ Comment ไว้อยู่แล้ว ถูกต้องครับ */}
+        {/* <Route path="/mylists/:id" element={<MyLists2 />} /> */}
+        
         <Route path="/mylists/compare/:id" element={<MyLists3 />} />
 
       </Routes>
