@@ -4,48 +4,38 @@ import Navbar from '../Home/Navbar';
 import Footer from '../Home/Footer';
 import './Categories.css';
 import {
-  Heart,
-  Search,
-  ChevronDown,
-  ChevronLeft, ChevronRight,
-  LayoutGrid,
-  Store,
-  X
+  Heart, Search, ChevronDown, ChevronLeft, ChevronRight,
+  LayoutGrid, Store, X, Star, Flame, Tag, Filter
 } from 'lucide-react';
-
 import AddToListModal from '../Home/AddToListModal';
 
 const Categories = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // --- State หลัก ---
-  const [activeCategory, setActiveCategory] = useState(
-    location.state?.selectedCategory || 'ทั้งหมด'
-  );
+  const [activeCategory, setActiveCategory] = useState(location.state?.selectedCategory || 'ทั้งหมด');
+  const [specialFilter, setSpecialFilter] = useState(location.state?.selectedFilter || 'all'); 
+  const [searchTerm, setSearchTerm] = useState(location.state?.searchTerm || ''); 
+  
   const [allProducts, setAllProducts] = useState([]);
   const [displayProducts, setDisplayProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // --- State สำหรับ Features ---
   const [favorites, setFavorites] = useState({});
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // --- State สำหรับ Menu ---
   const [showCatMenu, setShowCatMenu] = useState(false);
+  const [showFilterMenu, setShowFilterMenu] = useState(false); 
   
-  // --- State สำหรับ Search ---
-  const [searchTerm, setSearchTerm] = useState(''); 
   const [nameFilter, setNameFilter] = useState('');
   
-  // --- State สำหรับ Pagination ---
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 50;
 
   const catMenuRef = useRef(null);
+  const filterMenuRef = useRef(null); 
 
-  // ตารางจับคู่หมวดหมู่
   const categoryMapping = {
     "อาหารสด & แช่แข็ง": ["อาหารสดและแช่แข็ง", "ผักและผลไม้", "เบเกอรี่"],
     "อาหารแห้ง": ["อาหารแห้งและเครื่องปรุง", "เครื่องดื่ม"],
@@ -59,7 +49,14 @@ const Categories = () => {
 
   const categoriesList = ['ทั้งหมด', ...Object.keys(categoryMapping)];
 
-  // Debounce Search
+  const specialFiltersList = [
+    { id: 'all', label: 'ตัวกรอง', icon: null },
+    { id: 'favorites', label: 'สินค้าที่บันทึกไว้', icon: <Heart size={16} fill="#ef4444" stroke="#ef4444" /> },
+    { id: 'recommended', label: 'สินค้าแนะนำ', icon: <Star size={16} className="text-yellow-500" /> },
+    { id: 'popular', label: 'สินค้ายอดนิยม', icon: <Flame size={16} className="text-orange-500" /> },
+    { id: 'promo', label: 'สินค้าโปรโมชั่น', icon: <Tag size={16} className="text-emerald-500" /> },
+  ];
+
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       setNameFilter(searchTerm);
@@ -67,16 +64,15 @@ const Categories = () => {
     return () => clearTimeout(delayDebounceFn);
   }, [searchTerm]);
 
-  // ปิดเมนูเมื่อคลิกข้างนอก
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (catMenuRef.current && !catMenuRef.current.contains(event.target)) setShowCatMenu(false);
+      if (filterMenuRef.current && !filterMenuRef.current.contains(event.target)) setShowFilterMenu(false);
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // โหลด Favorites
   useEffect(() => {
     const savedFavs = JSON.parse(localStorage.getItem('favoritesItems')) || [];
     const favMap = {};
@@ -84,12 +80,10 @@ const Categories = () => {
     setFavorites(favMap);
   }, []);
 
-  // โหลดข้อมูลสินค้า
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        console.log("Start fetching data...");
         const response = await fetch('/data/all_retailers_products_merged_v1.jsonl');
         
         if (!response.ok) throw new Error('Network response was not ok');
@@ -100,7 +94,15 @@ const Categories = () => {
         const products = lines
           .filter(line => line.trim() !== '') 
           .map(line => {
-            try { return JSON.parse(line); } catch (e) { return null; }
+            try { 
+                const item = JSON.parse(line);
+                const randomVal = Math.random();
+                item.tags = [];
+                if (randomVal > 0.8) item.tags.push('recommended');
+                else if (randomVal > 0.6) item.tags.push('popular');
+                else if (randomVal > 0.4) item.tags.push('promo');
+                return item; 
+            } catch (e) { return null; }
           })
           .filter(item => item !== null && item.name);
 
@@ -114,11 +116,9 @@ const Categories = () => {
     fetchData();
   }, []);
 
-  // Logic กรองสินค้า
   useEffect(() => {
     let processed = [...allProducts];
 
-    // 1. กรองหมวดหมู่
     if (activeCategory !== 'ทั้งหมด') {
         const targetCategories = categoryMapping[activeCategory] || [];
         if (targetCategories.length > 0) {
@@ -126,18 +126,24 @@ const Categories = () => {
         }
     }
 
-    // 2. กรองชื่อ
     if (nameFilter.trim() !== '') {
         processed = processed.filter(p => 
             p.name && p.name.toLowerCase().includes(nameFilter.toLowerCase())
         );
     }
+
+    if (specialFilter !== 'all') {
+        if (specialFilter === 'favorites') {
+            processed = processed.filter(item => favorites[item.name]);
+        } else {
+            processed = processed.filter(p => p.tags && p.tags.includes(specialFilter));
+        }
+    }
     
     setDisplayProducts(processed);
     setCurrentPage(1);
-  }, [allProducts, activeCategory, nameFilter]);
+  }, [allProducts, activeCategory, nameFilter, specialFilter, favorites]);
 
-  // --- Pagination Logic ---
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = displayProducts.slice(indexOfFirstItem, indexOfLastItem);
@@ -228,6 +234,11 @@ const Categories = () => {
       setShowCatMenu(false);
   };
 
+  const getSpecialFilterLabel = () => {
+      const filter = specialFiltersList.find(f => f.id === specialFilter);
+      return filter ? filter.label : 'ตัวกรอง';
+  };
+
   return (
     <div className="categories-page">
       <Navbar />
@@ -239,7 +250,6 @@ const Categories = () => {
       </header>
 
       <div className="cat-container">
-        
         <div className="results-toolbar">
             <h2>
                 {activeCategory === 'ทั้งหมด' ? 'สินค้าทั้งหมด' : activeCategory} 
@@ -247,7 +257,6 @@ const Categories = () => {
             </h2>
             
             <div className="filter-tools">
-                {/* 1. ช่องค้นหา */}
                 <div className="search-wrapper">
                     <Search size={18} className="search-icon" />
                     <input 
@@ -264,7 +273,6 @@ const Categories = () => {
                     )}
                 </div>
 
-                {/* 2. ปุ่มเลือกหมวดหมู่ */}
                 <div className="tool-wrapper" ref={catMenuRef}>
                     <button 
                         className={`tool-btn ${showCatMenu ? 'active' : ''}`}
@@ -287,7 +295,40 @@ const Categories = () => {
                                     onClick={() => handleSelectCategory(cat)}
                                 >
                                     {cat} 
-                                    {/* 🟢 ลบไอคอน ChevronDown ที่หมุน 90 องศาออกแล้วครับ */}
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                </div>
+
+                <div className="tool-wrapper" ref={filterMenuRef}>
+                    <button 
+                        className={`tool-btn ${showFilterMenu || specialFilter !== 'all' ? 'active' : ''}`}
+                        onClick={() => setShowFilterMenu(!showFilterMenu)}
+                        style={{ minWidth: '150px', justifyContent: 'space-between' }}
+                    >
+                        <span style={{display:'flex', alignItems:'center', gap:'8px'}}>
+                            <Filter size={18} />
+                            {getSpecialFilterLabel()}
+                        </span>
+                        <ChevronDown size={16} />
+                    </button>
+
+                    {showFilterMenu && (
+                        <div className="dropdown-popup" style={{width: '200px'}}>
+                            {specialFiltersList.map((filter) => (
+                                <button 
+                                    key={filter.id}
+                                    className={specialFilter === filter.id ? 'selected' : ''} 
+                                    onClick={() => {
+                                        setSpecialFilter(filter.id);
+                                        setShowFilterMenu(false);
+                                    }}
+                                >
+                                    <span style={{display:'flex', alignItems:'center', gap:'8px'}}>
+                                        {filter.icon}
+                                        {filter.label}
+                                    </span>
                                 </button>
                             ))}
                         </div>
@@ -296,7 +337,6 @@ const Categories = () => {
             </div>
         </div>
 
-        {/* ตารางแสดงสินค้า */}
         {loading ? (
              <div className="cat-product-grid">
                 {[...Array(10)].map((_, i) => (
@@ -323,14 +363,12 @@ const Categories = () => {
                                     </div>
                                     <div className="info-std">
                                         <h3 title={item.name}>{item.name}</h3>
-                                        
                                         {(item.retailer || item.store) && (
                                             <div className="retailer-info">
                                                 <Store size={14} /> 
                                                 {item.retailer || item.store}
                                             </div>
                                         )}
-
                                         <button className="btn-add-std" onClick={() => { setSelectedProduct(item); setIsModalOpen(true); }} style={{marginTop: 'auto'}}>
                                             เพิ่มลงรายการ
                                         </button>
@@ -340,7 +378,6 @@ const Categories = () => {
                         })}
                     </div>
 
-                    {/* Pagination */}
                     {totalPages > 1 && (
                         <div className="pagination-container">
                             <button 
@@ -350,9 +387,7 @@ const Categories = () => {
                             >
                                 <ChevronLeft size={20} />
                             </button>
-
                             {renderPaginationButtons()}
-
                             <button 
                                 onClick={() => changePage(currentPage + 1)}
                                 disabled={currentPage === totalPages}
@@ -366,8 +401,8 @@ const Categories = () => {
             ) : (
                 <div className="no-results">
                     <p>ไม่พบสินค้าที่คุณค้นหา</p>
-                    <button className="btn-reset-all" onClick={() => { setSearchTerm(''); setActiveCategory('ทั้งหมด'); }}>
-                        ดูสินค้าทั้งหมด
+                    <button className="btn-reset-all" onClick={() => { setSearchTerm(''); setActiveCategory('ทั้งหมด'); setSpecialFilter('all'); }}>
+                        ล้างตัวกรองทั้งหมด
                     </button>
                 </div>
             )

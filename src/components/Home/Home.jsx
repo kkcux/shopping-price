@@ -9,7 +9,7 @@ import {
 
 import AddToListModal from './AddToListModal';
 
-const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onAddToCart }) => {
+const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onAddToCart, onViewAll }) => {
   const scrollRef = useRef(null);
   const scroll = (direction) => {
     if (scrollRef.current) {
@@ -25,7 +25,9 @@ const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onA
           {icon}
           <span>{title}</span>
         </h2>
-        <button className="btn-view-all">ดูทั้งหมด</button>
+        <button className="btn-view-all" onClick={onViewAll}>
+            ดูทั้งหมด
+        </button>
       </div>
 
       {loading ? (
@@ -60,12 +62,6 @@ const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onA
 
                   <div className="product-info">
                     <h3>{item.name}</h3>
-                    
-                    {/* ❌ ลบส่วนแสดงราคาออกตามที่ขอ */}
-                    {/* <div style={{fontWeight: 'bold', color: 'var(--primary)', marginBottom: '8px'}}>
-                        {item.price ? `฿${item.price.toLocaleString()}` : ''}
-                    </div> */}
-
                     <button className="btn-add-cart" onClick={() => onAddToCart(item)}>
                       <Plus size={18} /> เพิ่มลง My List
                     </button>
@@ -93,12 +89,76 @@ const Home = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
+  // --- Search & Suggestion States ---
+  const [searchTerm, setSearchTerm] = useState('');
+  const [suggestions, setSuggestions] = useState([]);     // เก็บรายการแนะนำ
+  const [showSuggestions, setShowSuggestions] = useState(false); // ควบคุมการแสดงผล Dropdown
+  const searchContainerRef = useRef(null); // ใช้เช็คคลิกนอกกล่อง
+
+  // ฟังก์ชันจัดการการพิมพ์
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+
+    if (value.trim().length > 0) {
+      // กรองสินค้าที่ชื่อตรงกัน (เอาแค่ 6 รายการพอ ไม่ให้ยาวเกิน)
+      const filtered = allProducts
+        .filter(p => p.name && p.name.toLowerCase().includes(value.toLowerCase()))
+        .slice(0, 6);
+      setSuggestions(filtered);
+      setShowSuggestions(true);
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  // ฟังก์ชันเมื่อกดค้นหา (Enter หรือ ปุ่มแว่นขยาย)
+  const handleSearch = () => {
+    if (searchTerm.trim()) {
+      setShowSuggestions(false);
+      navigate('/categories', { 
+        state: { searchTerm: searchTerm, selectedCategory: 'ทั้งหมด' } 
+      });
+    }
+  };
+
+  // ฟังก์ชันเมื่อเลือกรายการจาก Dropdown
+  const handleSelectSuggestion = (productName) => {
+    setSearchTerm(productName);
+    setShowSuggestions(false);
+    // ไปหน้า Categories เพื่อค้นหาสินค้านั้นทันที
+    navigate('/categories', { 
+        state: { searchTerm: productName, selectedCategory: 'ทั้งหมด' } 
+    });
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
+
+  // ปิด Dropdown เมื่อคลิกข้างนอก
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // ... (ฟังก์ชันอื่นๆ: handleViewAll, favorites, loading - เหมือนเดิม) ...
+  const handleViewAll = (filterType) => {
+    navigate('/categories', { state: { selectedFilter: filterType, selectedCategory: 'ทั้งหมด' } });
+  };
+
   useEffect(() => {
     const savedFavs = JSON.parse(localStorage.getItem('favoritesItems')) || [];
     const favMap = {};
-    savedFavs.forEach(item => {
-      if (item.data) favMap[item.data] = true;
-    });
+    savedFavs.forEach(item => { if (item.data) favMap[item.data] = true; });
     setFavorites(favMap);
   }, []);
 
@@ -114,15 +174,9 @@ const Home = () => {
       } else {
         const alreadyExists = currentSavedFavs.some(item => item.data === productName);
         if (!alreadyExists) {
-          const favItem = {
-            image: product.image,
-            data: product.name,
-            price: product.price
-          };
+          const favItem = { image: product.image, data: product.name, price: product.price };
           newSavedFavs = [...currentSavedFavs, favItem];
-        } else {
-          newSavedFavs = currentSavedFavs;
-        }
+        } else { newSavedFavs = currentSavedFavs; }
       }
       localStorage.setItem('favoritesItems', JSON.stringify(newSavedFavs));
       return newFavState;
@@ -135,12 +189,10 @@ const Home = () => {
         setLoading(true);
         const response = await fetch('/data/all_retailers_products_merged_v1.jsonl');
         const text = await response.text();
-        // โหลดแค่ 500 รายการแรกเพื่อสุ่มโชว์หน้า Home
         const lines = text.trim().split('\n').slice(0, 500); 
         const products = lines.map(line => {
             try { return JSON.parse(line); } catch(e) { return null; }
         }).filter(item => item !== null);
-        
         setAllProducts(products);
       } catch (error) {
         console.error("Error loading products:", error);
@@ -178,7 +230,6 @@ const Home = () => {
 
   return (
     <div className="home-container">
-      {/* HERO SECTION */}
       <header className="hero-banner">
         <div className="hero-content">
           <h1>
@@ -190,16 +241,51 @@ const Home = () => {
             <strong> {allProducts.length > 0 ? '5,000+' : '...'} </strong>
             รายการ เพื่อดีลที่คุ้มที่สุด
           </p>
-          <div className="search-box-wrapper">
-            <input type="text" placeholder="ค้นหาชื่อสินค้าที่ต้องการ..." />
-            <button className="search-btn">
-              <Search size={22} />
-            </button>
+          
+          {/* 🟢 4. ส่วน Search Box + Dropdown Suggestions */}
+          <div className="search-container-relative" ref={searchContainerRef}>
+            <div className="search-box-wrapper">
+              <input 
+                  type="text" 
+                  placeholder="ค้นหาชื่อสินค้าที่ต้องการ..." 
+                  value={searchTerm}
+                  onChange={handleInputChange} // ใช้ฟังก์ชันใหม่
+                  onKeyDown={handleKeyDown}
+                  onFocus={() => { if(searchTerm && suggestions.length > 0) setShowSuggestions(true); }}
+              />
+              <button className="search-btn" onClick={handleSearch}>
+                <Search size={22} />
+              </button>
+            </div>
+
+            {/* 🟢 5. กล่อง Dropdown แสดงผลการค้นหา */}
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="search-suggestions-dropdown">
+                {suggestions.map((item, idx) => (
+                  <div 
+                    key={idx} 
+                    className="suggestion-item"
+                    onClick={() => handleSelectSuggestion(item.name)}
+                  >
+                    <div className="suggestion-icon-area">
+                      {item.image ? (
+                        <img src={item.image} alt="product" className="suggestion-img" />
+                      ) : (
+                        <Search size={18} className="suggestion-icon-default" />
+                      )}
+                    </div>
+                    <div className="suggestion-text">
+                      <span className="suggestion-name">{item.name}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
+
         </div>
       </header>
 
-      {/* CATEGORIES SECTION */}
       <main className="content-wrapper">
         <section className="section-container">
           <div className="section-header">
@@ -223,7 +309,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Product Sections */}
         <ProductSection
           title="สินค้าแนะนำ"
           icon={<Star size={24} color="var(--primary)" />}
@@ -232,6 +317,7 @@ const Home = () => {
           toggleFav={toggleFav}
           loading={loading}
           onAddToCart={(p) => { setSelectedProduct(p); setIsModalOpen(true); }}
+          onViewAll={() => handleViewAll('recommended')} 
         />
         <ProductSection
           title="สินค้ายอดนิยม"
@@ -241,6 +327,7 @@ const Home = () => {
           toggleFav={toggleFav}
           loading={loading}
           onAddToCart={(p) => { setSelectedProduct(p); setIsModalOpen(true); }}
+          onViewAll={() => handleViewAll('popular')} 
         />
         <ProductSection
           title="สินค้าโปรโมชั่น"
@@ -250,6 +337,7 @@ const Home = () => {
           toggleFav={toggleFav}
           loading={loading}
           onAddToCart={(p) => { setSelectedProduct(p); setIsModalOpen(true); }}
+          onViewAll={() => handleViewAll('promo')} 
         />
       </main>
 

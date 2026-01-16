@@ -1,56 +1,152 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams, useLocation } from "react-router-dom"; // ✅ 1. เพิ่ม useLocation
+import React, { useState, useEffect, useRef } from "react";
+import { useNavigate, useParams, useLocation } from "react-router-dom"; 
 import { 
-  ChevronLeft, 
-  ChevronRight, 
-  Trash2, 
-  Plus, 
-  Minus,
-  Save,
-  AlertTriangle
+  ChevronLeft, ChevronRight, Trash2, Plus, Minus, Save,
+  AlertTriangle, Loader2, CheckCircle2, Check
 } from "lucide-react";
-import Navbar from "../Home/Navbar";
+import toast, { Toaster } from 'react-hot-toast'; 
+
 import Footer from "../Home/Footer";
 import "./ListsEdit.css"; 
+
+import { db, auth } from '../../firebase-config';
+import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore'; 
+import { onAuthStateChanged } from 'firebase/auth';
+
+const STORE_LOGOS = {
+  MAKRO: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1weBQ9rq_nOC5CSMa2dFW9Ez5CFXKKy4Q3Q&s",
+  LOTUS: "https://upload.wikimedia.org/wikipedia/commons/1/14/Lotus-2021-logo.png",
+  BIGC: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Big_C_Logo.svg/500px-Big_C_Logo.svg.png",
+};
+
+const REGISTER_URL = {
+  MAKRO: "https://www.makro.pro/",
+  LOTUS: "https://www.lotuss.com/th/register",
+  BIGC: "https://www.bigc.co.th/register",
+};
 
 export default function ListsEdit() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const location = useLocation(); // ✅ 2. ใช้ดักจับการเปลี่ยนหน้า
+  const location = useLocation(); 
+
+  const TEMP_KEY = `temp_editing_${id}`;
 
   const [listName, setListName] = useState("");
   const [items, setItems] = useState([]); 
-  const [originalList, setOriginalList] = useState(null); // เก็บค่า ID เดิมไว้กันพลาด
+  const [originalList, setOriginalList] = useState(null); 
+  const [selectedStores, setSelectedStores] = useState({
+    ALL: true, LOTUS: false, BIGC: false, MAKRO: false,
+  });
   
+  const membership = { LOTUS: true, BIGC: false, MAKRO: false };
+
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Flag ป้องกันการทำงานซ้ำซ้อน
+  const isDiscarding = useRef(false);
+
   const [showExitModal, setShowExitModal] = useState(false);
   const [showWarningModal, setShowWarningModal] = useState(false);
 
-  /* ===== 1. LOAD DATA (ทำงานทุกครั้งที่กลับมาหน้านี้) ===== */
   useEffect(() => {
-    const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
-    // หาโดยแปลงเป็น String ทั้งคู่เพื่อความชัวร์
-    const foundList = allLists.find(l => String(l.id) === String(id));
-      
-    if (foundList) {
-      setOriginalList(foundList);
-      setListName(foundList.name);
-      setItems(foundList.items || []); // โหลดรายการสินค้าล่าสุด
-    } else {
-      console.warn("ไม่พบรายการ ID:", id);
-    }
-  }, [id, location]); // ✅ 3. ใส่ location ใน dependency ให้โหลดใหม่เมื่อกลับมาจากหน้าเลือกของ
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
 
-  // ป้องกันการปิด Tab โดยไม่ตั้งใจ
+  // 1. LOAD DATA
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      const isReturning = sessionStorage.getItem('returning_from_add');
+
+      // A. กรณีกลับมาจากหน้าเลือกสินค้า: ให้โหลดจาก TEMP_KEY
+      if (isReturning) {
+        const tempData = JSON.parse(localStorage.getItem(TEMP_KEY));
+        if (tempData) {
+          setOriginalList(tempData.original || {}); 
+          setListName(tempData.name);
+          setItems(tempData.items || []); 
+          if(tempData.selectedStores) setSelectedStores(tempData.selectedStores);
+          
+          setLoading(false);
+          sessionStorage.removeItem('returning_from_add'); 
+          return;
+        }
+      } 
+      
+      // B. กรณีเข้ามาใหม่: ลบ Temp ทิ้ง เพื่อโหลดข้อมูลจริงจาก DB เท่านั้น
+      localStorage.removeItem(TEMP_KEY);
+
+      const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
+      const localListRaw = allLists.find(l => String(l.id) === String(id));
+
+      if (localListRaw) {
+        // Deep Copy เพื่อป้องกัน Reference ติดกัน
+        const localList = JSON.parse(JSON.stringify(localListRaw));
+        setOriginalList(JSON.parse(JSON.stringify(localList))); 
+        setListName(localList.name);
+        setItems(localList.items || []); 
+        if(localList.selectedStores) setSelectedStores(localList.selectedStores);
+        setLoading(false);
+        return;
+      }
+
+      if (auth.currentUser) {
+        try {
+          const docRef = doc(db, "shopping_lists", id);
+          const docSnap = await getDoc(docRef);
+          
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            setOriginalList({ id: docSnap.id, ...data });
+            setListName(data.name);
+            setItems([...(data.items || [])]); 
+            if(data.selectedStores) setSelectedStores(data.selectedStores);
+          } else {
+            toast.error("ไม่พบรายการนี้");
+            navigate('/mylists');
+          }
+        } catch (error) {
+          console.error("Error fetching:", error);
+          toast.error("โหลดข้อมูลล้มเหลว");
+        }
+      }
+      
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [id, location, TEMP_KEY]); 
+
+  // Prevent Tab Close
   useEffect(() => {
     const handleBeforeUnload = (e) => {
-      e.preventDefault();
-      e.returnValue = ''; 
+      if (hasChanges() && !isDiscarding.current) {
+        e.preventDefault();
+        e.returnValue = ''; 
+      }
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, []);
+  }, [items, listName, selectedStores, originalList]);
 
-  /* ===== CATALOG DATA ===== */
+  /* ===== LOGIC ===== */
+  const toggleAll = () => {
+    const v = !selectedStores.ALL;
+    setSelectedStores({ ALL: v, LOTUS: v, BIGC: v, MAKRO: v });
+  };
+
+  const toggleStore = (k) => {
+    const next = { ...selectedStores, [k]: !selectedStores[k], ALL: false };
+    if (next.LOTUS && next.BIGC && next.MAKRO) next.ALL = true;
+    setSelectedStores(next);
+  };
+
   const [catalog, setCatalog] = useState([
     { id: "c1", name: "อินโนวีเนส อาหารทางการแพทย์ 300ก.", img: "https://o2o-static.lotuss.com/products/105727/51921065.jpg", qty: 1 },
     { id: "c2", name: "อันอัน แผ่นรองซึมซับ ไซส์ XXL 10 ชิ้น", img: "https://o2o-static.lotuss.com/products/105727/75583866.jpg", qty: 1 },
@@ -62,7 +158,6 @@ export default function ListsEdit() {
   const increaseCatalogQty = (pid) => setCatalog(prev => prev.map(i => i.id === pid ? { ...i, qty: i.qty + 1 } : i));
   const decreaseCatalogQty = (pid) => setCatalog(prev => prev.map(i => i.id === pid && i.qty > 1 ? { ...i, qty: i.qty - 1 } : i));
 
-  /* ===== ITEMS LOGIC ===== */
   const handleSelectFromCatalog = (product) => {
     const existingIndex = items.findIndex((item) => item.name === product.name); 
     if (existingIndex !== -1) {
@@ -74,6 +169,7 @@ export default function ListsEdit() {
     } else {
       setItems((prev) => [...prev, { ...product }]);
     }
+    toast.success(`เพิ่ม ${product.name} แล้ว`, { duration: 1500, icon: <CheckCircle2 size={18} color="#10b981" /> });
   };
 
   const updateQty = (index, delta) => {
@@ -86,64 +182,108 @@ export default function ListsEdit() {
 
   const removeItem = (index) => setItems((prev) => prev.filter((_, i) => i !== index));
 
-  /* ===== NAVIGATION & SAVE ===== */
-  
-  // ✅ ฟังก์ชันบันทึกที่ปรับปรุงแล้ว
-  const performSave = () => {
-    const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
-    
-    // ใช้ ID เดิมจากที่โหลดมา (ถ้ามี) เพื่อป้องกัน ID เพี้ยน
-    const finalId = originalList ? originalList.id : (Number(id) || id);
-
-    const updatedList = {
-      ...(originalList || {}), // คงค่าอื่นๆ ไว้ (เช่น createdAt)
-      id: finalId, 
-      name: listName,
-      items: items,
-      totalItems: items.reduce((sum, i) => sum + i.qty, 0)
-    };
-
-    const existingIndex = allLists.findIndex(l => String(l.id) === String(id));
-    
-    let newLists;
-    if (existingIndex !== -1) {
-      newLists = [...allLists];
-      newLists[existingIndex] = updatedList;
-    } else {
-      newLists = [...allLists, updatedList];
-    }
-    
-    localStorage.setItem("myLists", JSON.stringify(newLists));
+  const hasChanges = () => {
+    if (!originalList) return false;
+    const nameChanged = listName !== originalList.name;
+    const currentItemsStr = JSON.stringify(items);
+    const originalItemsStr = JSON.stringify(originalList.items || []);
+    const storesChanged = JSON.stringify(selectedStores) !== JSON.stringify(originalList.selectedStores || {});
+    return nameChanged || (currentItemsStr !== originalItemsStr) || storesChanged;
   };
 
   const handleBackClick = () => {
-    setShowExitModal(true);
+    if (hasChanges()) {
+      setShowExitModal(true); 
+    } else {
+      localStorage.removeItem(TEMP_KEY); 
+      // ✅ กลับไปหน้า Compare (View) โดยตรงเลย ไม่ใช้ navigate(-1)
+      navigate(`/mylists/compare/${id}`);
+    }
   };
 
+  // ✅ ปุ่มยืนยันการ "ไม่บันทึก" (Discard)
   const confirmExit = () => {
+    isDiscarding.current = true;
+    localStorage.removeItem(TEMP_KEY); // ลบ Temp ทิ้ง
     setShowExitModal(false);
-    navigate(-1); 
+    
+    // ✅ บังคับกลับไปหน้า View ข้อมูลจริง เพื่อรีเซ็ต State ทุกอย่าง
+    navigate(`/mylists/compare/${id}`, { replace: true }); 
   };
 
   const handleGoToProducts = () => {
-    performSave(); // บันทึกสถานะปัจจุบันก่อนไป
-    navigate(`/mylists/edit/products/${id}`);
+    sessionStorage.setItem('returning_from_add', 'true');
+    const currentData = {
+        id: id,
+        name: listName,
+        items: items,
+        selectedStores: selectedStores,
+        original: originalList
+    };
+    // บันทึก Temp ไว้ก่อนไปเลือกของเพิ่ม
+    localStorage.setItem(TEMP_KEY, JSON.stringify(currentData));
+    navigate(`/mylists/create/products/${id}`); 
   };
 
-  const handleSaveFinal = () => {
+  const handleSaveFinal = async () => {
     if (!listName.trim()) {
       setShowWarningModal(true);
       return;
     }
-    
-    performSave(); 
-    navigate(-1); // กลับไปหน้าก่อนหน้า
+
+    setIsSaving(true);
+    const toastId = toast.loading("กำลังบันทึกการแก้ไข...");
+
+    try {
+        const updatedData = {
+            name: listName,
+            items: items, 
+            totalItems: items.reduce((sum, i) => sum + i.qty, 0),
+            selectedStores: selectedStores,
+            updatedAt: new Date().toISOString() 
+        };
+
+        const isLocalId = !isNaN(id); 
+
+        if (!isLocalId && currentUser) {
+            const docRef = doc(db, "shopping_lists", id);
+            await updateDoc(docRef, {
+                ...updatedData,
+                updatedAt: serverTimestamp() 
+            });
+        } else {
+            const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
+            const existingIndex = allLists.findIndex(l => String(l.id) === String(id));
+            
+            if (existingIndex !== -1) {
+                const newList = { ...allLists[existingIndex], ...updatedData };
+                allLists[existingIndex] = newList;
+                
+                // ✅ บันทึกจริงลง LocalStorage ที่นี่ที่เดียว!
+                localStorage.setItem("myLists", JSON.stringify(allLists));
+            }
+        }
+
+        localStorage.removeItem(TEMP_KEY);
+        toast.success("บันทึกสำเร็จ!", { id: toastId, duration: 1500 });
+        
+        setTimeout(() => {
+            navigate(`/mylists/compare/${id}`); 
+        }, 1000);
+
+    } catch (error) {
+        console.error("Save error:", error);
+        toast.error("บันทึกไม่สำเร็จ", { id: toastId });
+        setIsSaving(false);
+    }
   };
+
+  if (loading) {
+      return <div style={{padding: 50, textAlign:'center'}}>กำลังโหลดข้อมูล...</div>;
+  }
 
   return (
     <>
-      <Navbar />
-
       <main className="le-page">
         <section className="le-header-section">
           <div className="le-header-inner">
@@ -173,11 +313,11 @@ export default function ListsEdit() {
           <section className="le-box">
             <div className="le-boxHead">
               <div className="le-boxTitle">เลือกสินค้าแนะนำ</div>
-              <button className="le-seeAllBtn" onClick={handleGoToProducts}>
+              <button className="le-seeAllBtn" onClick={handleGoToProducts}> 
                 ดูสินค้าทั้งหมด <ChevronRight size={20} />
               </button>
             </div>
-            <div className="le-cards">
+            <div className="le-cards-scroll"> 
               {catalog.map((p) => (
                 <div key={p.id} className="le-card">
                   <div className="le-imgWrap"><img src={p.img} alt={p.name} /></div>
@@ -219,10 +359,42 @@ export default function ListsEdit() {
             )}
           </section>
 
+           <div className="le-grid-row">
+            <section className="le-box le-box-half">
+              <div className="le-boxTitle" style={{marginBottom: 15}}>เลือกร้านค้าที่ต้องการเปรียบเทียบ</div>
+              <div className="le-checkRow" onClick={toggleAll}>
+                <span className={`le-check ${selectedStores.ALL ? "on" : ""}`} />
+                <span className="le-checkText">ทั้งหมด</span>
+              </div>
+              {["LOTUS", "BIGC", "MAKRO"].map((k) => (
+                <div key={k} className="le-checkRow" onClick={() => toggleStore(k)}>
+                  <span className={`le-check ${selectedStores[k] ? "on" : ""}`} />
+                  <span className="le-checkText">{k === 'LOTUS' ? "Lotus's" : k === 'BIGC' ? "Big C" : "Makro"}</span>
+                </div>
+              ))}
+            </section>
+
+            <section className="le-box le-box-half">
+              <div className="le-boxTitle" style={{marginBottom: 15}}>สถานะสมาชิก</div>
+              {["LOTUS", "BIGC", "MAKRO"].map((brand) => (
+                <MemberRow key={brand} brand={brand} isMember={membership[brand]} />
+              ))}
+            </section>
+          </div>
+
           <div className="le-saveWrap">
-            <button className="le-saveBtn" onClick={handleSaveFinal}>
-              <Save size={20} style={{ marginRight: 8 }} />
-              บันทึกการแก้ไข
+            <button className="le-saveBtn" onClick={handleSaveFinal} disabled={isSaving}>
+              {isSaving ? (
+                  <>
+                    <Loader2 className="animate-spin" size={20} style={{ marginRight: 8 }} />
+                    กำลังบันทึก...
+                  </>
+              ) : (
+                  <>
+                    <Save size={20} style={{ marginRight: 8 }} />
+                    บันทึกการแก้ไข
+                  </>
+              )}
             </button>
           </div>
         </div>
@@ -248,7 +420,6 @@ export default function ListsEdit() {
         </div>
       )}
 
-      {/* Modal Warning */}
       {showWarningModal && (
         <div className="modal-overlay" onClick={() => setShowWarningModal(false)}>
           <div className="modal-box" onClick={(e) => e.stopPropagation()}>
@@ -264,7 +435,31 @@ export default function ListsEdit() {
         </div>
       )}
 
+      <Toaster position="top-center" />
       <Footer />
     </>
+  );
+}
+
+function MemberRow({ brand, isMember }) {
+  return (
+    <div className={`le-memberRow ${isMember ? "ok" : ""}`}>
+      <div className={`le-brand-logo ${brand.toLowerCase()}`}>
+        <img src={STORE_LOGOS[brand]} alt={brand} />
+      </div>
+      <div className="le-memberText">
+        {isMember ? "เป็นสมาชิกแล้ว" : "ไม่ได้เป็นสมาชิก"}
+      </div>
+      {!isMember && (
+        <a href={REGISTER_URL[brand]} target="_blank" rel="noopener noreferrer" className="le-join">
+          สมัคร
+        </a>
+      )}
+      {isMember && (
+        <div className="le-check-icon">
+          <Check size={18} color="#10b77e" />
+        </div>
+      )}
+    </div>
   );
 }

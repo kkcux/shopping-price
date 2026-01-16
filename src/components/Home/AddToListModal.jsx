@@ -1,70 +1,94 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ShoppingCart, Plus, Minus, X, Check, ListPlus, Info } from 'lucide-react'; 
+import { ShoppingCart, X, ListPlus, Info, Loader2, ChevronRight } from 'lucide-react'; 
+import { Toaster } from 'react-hot-toast'; 
 import './AddToListModal.css';
+
+import { auth, db } from '../../firebase-config';
+import { onAuthStateChanged } from 'firebase/auth';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 
 const AddToListModal = ({ isOpen, onClose, product }) => {
   const navigate = useNavigate();
-  const [quantity, setQuantity] = useState(1);
-  const [myLists, setMyLists] = useState(() => {
-    const savedData = localStorage.getItem("myLists");
-    return savedData ? JSON.parse(savedData) : [];
-  });
-  const [addedListId, setAddedListId] = useState(null);
+  const [myLists, setMyLists] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(false);
 
+  // 1. เช็ค Login
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setCurrentUser(user);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  // 2. โหลดรายการ List
   useEffect(() => {
     if (isOpen) {
-        setQuantity(1);
-        setAddedListId(null);
+        fetchLists();
     }
-  }, [isOpen]);
+  }, [isOpen, currentUser]);
 
-  const handleQuantity = (type) => {
-    if (type === 'inc') setQuantity(prev => prev + 1);
-    if (type === 'dec' && quantity > 1) setQuantity(prev => prev - 1);
-  };
-
-  const handleAddToList = (listId) => {
-    const currentLists = JSON.parse(localStorage.getItem("myLists")) || [];
-    const updatedLists = currentLists.map(list => {
-      if (list.id === listId) {
-        const newItem = {
-            id: product.id || `prod-${Date.now()}`,
-            name: product.name || product.data,
-            img: product.image,
-            qty: quantity
-        };
-        const existingItemIndex = (list.items || []).findIndex(item => item.name === newItem.name);
-        let newItems = list.items ? [...list.items] : [];
-        if (existingItemIndex > -1) {
-            newItems[existingItemIndex].qty += quantity;
-        } else {
-            newItems.push(newItem);
+  const fetchLists = async () => {
+    setLoading(true);
+    if (currentUser) {
+        try {
+            const q = query(collection(db, "shopping_lists"), where("userId", "==", currentUser.uid));
+            const querySnapshot = await getDocs(q);
+            
+            // ใช้ doc.id (H2er3...) เป็น id หลัก เพื่อให้ URL ถูกต้อง
+            const cloudLists = querySnapshot.docs.map(doc => ({ 
+                ...doc.data(), 
+                id: doc.id 
+            }));
+            
+            setMyLists(cloudLists);
+        } catch (error) {
+            console.error("Error loading cloud lists:", error);
         }
-        const newTotal = newItems.reduce((sum, item) => sum + item.qty, 0);
-        return { ...list, items: newItems, totalItems: newTotal };
-      }
-      return list;
-    });
-
-    localStorage.setItem("myLists", JSON.stringify(updatedLists));
-    setMyLists(updatedLists);
-    setAddedListId(listId);
-    setTimeout(() => { setAddedListId(null); onClose(); }, 1200);
+    } else {
+        try {
+            const savedData = localStorage.getItem("myLists");
+            const parsedData = savedData ? JSON.parse(savedData) : [];
+            setMyLists(Array.isArray(parsedData) ? parsedData : []);
+        } catch (error) {
+            setMyLists([]);
+        }
+    }
+    setLoading(false);
   };
 
-  // ✨ ฟังก์ชันสำหรับส่งข้อมูลสินค้าไปหน้าสร้างรายการใหม่
-  const handleCreateNewList = () => {
+  // ✅ ฟังก์ชัน: ไปที่ลิสต์พร้อมหิ้วสินค้าไปด้วย
+  const handleGoToList = (listId) => {
+    // 1. จัดเตรียมข้อมูลสินค้าให้อยู่ในฟอร์แมตที่พร้อมใช้
     const productToSend = {
       id: product.id || `prod-${Date.now()}`,
-      name: product.name || product.data,
-      img: product.image, // ใช้ 'img' ให้ตรงกับ CreateMyList
-      qty: quantity
+      name: product.name || product.data || "สินค้าไม่ระบุชื่อ",
+      img: product.image || product.img || "", 
+      qty: 1, // ค่าเริ่มต้น (เพราะหน้า Modal นี้เราตัดตัวปรับจำนวนออกแล้ว)
+      price: product.price || 0 // (เผื่อมีราคา)
     };
 
-    navigate('/mylists/create', { 
-      state: { initialItem: productToSend } 
-    });
+    console.log("Navigating to List:", listId, "With Item:", productToSend);
+    
+    onClose(); 
+
+    // 2. สั่งเปลี่ยนหน้า พร้อมแนบ state ชื่อ 'incomingItem' ไปด้วย
+    navigate(`/mylists/compare/${listId}`, { 
+      state: { incomingItem: productToSend } 
+    }); 
+  };
+
+  const handleCreateNewList = () => {
+    // เตรียมข้อมูลส่งไปหน้าสร้างใหม่เหมือนกัน
+    const productToSend = {
+        id: product.id || `prod-${Date.now()}`,
+        name: product.name || product.data || "สินค้าไม่ระบุชื่อ",
+        img: product.image || product.img || "", 
+        qty: 1
+    };
+    onClose();
+    navigate('/mylists/create', { state: { initialItem: productToSend } });
   };
 
   if (!isOpen || !product) return null;
@@ -73,62 +97,69 @@ const AddToListModal = ({ isOpen, onClose, product }) => {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header-green">
-          <h3>เลือก List ที่ต้องการเพิ่ม</h3>
-          <button className="close-btn-white" onClick={onClose}>
-            <X size={24} />
-          </button>
+          <h3>เพิ่มไปยังรายการของฉัน</h3>
+          <button className="close-btn-white" onClick={onClose}><X size={24} /></button>
         </div>
 
         <div className="modal-body">
+          {/* แสดงสินค้าที่จะนำไป */}
           <div className="product-row-card">
             <div className="prod-img">
-               <img src={product.image} alt={product.name} />
+               <img 
+                 src={product.image || product.img || "https://via.placeholder.com/60"} 
+                 alt={product.name} 
+                 onError={(e) => e.target.src = "https://via.placeholder.com/60"} 
+               />
             </div>
-            <div className="prod-name">{product.name || product.data}</div>
-            <div className="qty-control-group">
-              <button onClick={() => handleQuantity('dec')} disabled={quantity <= 1}><Minus size={16}/></button>
-              <span>{quantity}</span>
-              <button onClick={() => handleQuantity('inc')}><Plus size={16}/></button>
-            </div>
+            <div className="prod-name">{product.name || product.data || "สินค้า"}</div>
           </div>
 
           <div className="info-note">
              <Info size={16} />
-             <span>สามารถเพิ่มใส่ใน MyList ที่มีอยู่ได้ทันที</span>
+             <span>เลือกรายการเพื่อนำสินค้านี้ไปใส่</span>
           </div>
 
+          {/* รายการ List */}
           <div className="list-selection-container">
-            {myLists.length > 0 ? (
+            {loading ? (
+                <div className="empty-state"><Loader2 className="animate-spin" size={24} /><p>กำลังโหลด...</p></div>
+            ) : myLists.length > 0 ? (
                 myLists.map((list) => (
-                <div 
-                    key={list.id} 
-                    className={`list-card-item ${addedListId === list.id ? 'selected' : ''}`}
-                    onClick={() => handleAddToList(list.id)}
-                >
-                    <div className="list-icon-box" style={{ backgroundColor: list.bg || '#dcfce7', color: list.color || '#166534' }}>
-                      {addedListId === list.id ? <Check size={20} /> : <ShoppingCart size={20} />}
+                    <div 
+                        key={list.id} 
+                        className="list-card-item"
+                        onClick={() => handleGoToList(list.id)}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        <div className="list-icon-box" style={{ backgroundColor: list.bg || '#dcfce7', color: list.color || '#166534' }}>
+                           <ShoppingCart size={20} />
+                        </div>
+                        <div className="list-text">
+                          <span className="list-name">{list.name}</span>
+                          <span className="list-count">{list.totalItems || 0} รายการ</span>
+                        </div>
+                        <div className="action-arrow">
+                            <ChevronRight size={20} color="#ccc" />
+                        </div>
                     </div>
-                    <div className="list-text">
-                      <span className="list-name">{list.name}</span>
-                      <span className="list-count">{list.totalItems || 0} รายการ</span>
-                    </div>
-                    <div className="action-arrow"><Plus size={18} /></div>
-                </div>
                 ))
             ) : (
-                <div className="empty-state"><p>You haven't created a list yet</p></div>
+                <div className="empty-state">
+                    <p>ยังไม่มีรายการสินค้า</p>
+                </div>
             )}
           </div>
 
+          {/* ปุ่มสร้างใหม่ */}
           <div className="create-new-list-area">
-             {/* ✅ แก้ไข onClick ให้เรียก handleCreateNewList */}
              <button className="btn-start-create" onClick={handleCreateNewList}>
                 <ListPlus size={18} />
-                <span>สร้างรายการใหม่</span>
+                <span>สร้างรายการใหม่พร้อมสินค้านี้</span>
              </button>
           </div>
         </div>
       </div>
+      <Toaster position="top-center" />
     </div>
   );
 };
