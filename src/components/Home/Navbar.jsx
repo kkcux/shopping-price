@@ -48,7 +48,9 @@ function Navbar() {
       localStorage.removeItem('token'); 
       
       // (Optional) เคลียร์ข้อมูลชั่วคราวอื่นๆ ถ้ามี
-      // localStorage.removeItem('myLists'); 
+      localStorage.removeItem('myLists'); 
+      localStorage.removeItem('pending_save_list');
+      localStorage.removeItem('current_draft'); 
 
       setUser(null);
       setShowLogoutConfirm(false); 

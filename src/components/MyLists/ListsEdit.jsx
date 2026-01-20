@@ -9,9 +9,8 @@ import toast, { Toaster } from 'react-hot-toast';
 import Footer from "../Home/Footer";
 import "./ListsEdit.css"; 
 
-import { db, auth } from '../../firebase-config';
-import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore'; 
-import { onAuthStateChanged } from 'firebase/auth';
+// NOTE: Firebase imports removed as strictly requested for Offline Mode
+// import { db, auth } from '../../firebase-config';
 
 const STORE_LOGOS = {
   MAKRO: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1weBQ9rq_nOC5CSMa2dFW9Ez5CFXKKy4Q3Q&s",
@@ -41,22 +40,14 @@ export default function ListsEdit() {
   
   const membership = { LOTUS: true, BIGC: false, MAKRO: false };
 
-  const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Flag ป้องกันการทำงานซ้ำซ้อน
+  // Flag to prevent double actions
   const isDiscarding = useRef(false);
 
   const [showExitModal, setShowExitModal] = useState(false);
   const [showWarningModal, setShowWarningModal] = useState(false);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
-    });
-    return () => unsubscribe();
-  }, []);
 
   // 1. LOAD DATA
   useEffect(() => {
@@ -64,7 +55,7 @@ export default function ListsEdit() {
       setLoading(true);
       const isReturning = sessionStorage.getItem('returning_from_add');
 
-      // A. กรณีกลับมาจากหน้าเลือกสินค้า: ให้โหลดจาก TEMP_KEY
+      // A. RETURNING from Add Product Screen: Load from TEMP_KEY
       if (isReturning) {
         const tempData = JSON.parse(localStorage.getItem(TEMP_KEY));
         if (tempData) {
@@ -74,19 +65,34 @@ export default function ListsEdit() {
           if(tempData.selectedStores) setSelectedStores(tempData.selectedStores);
           
           setLoading(false);
-          sessionStorage.removeItem('returning_from_add'); 
+          // FIX: Don't remove immediately to prevent Double-Elimination in StrictMode
+          // sessionStorage.removeItem('returning_from_add'); 
           return;
         }
       } 
       
-      // B. กรณีเข้ามาใหม่: ลบ Temp ทิ้ง เพื่อโหลดข้อมูลจริงจาก DB เท่านั้น
+      // B. FRESH LOAD: Remove any old temp data to avoid confusion
       localStorage.removeItem(TEMP_KEY);
 
+      // C. CHECK FOR PASSED DATA (from MyLists3)
+      if (location.state?.initialData) {
+         console.log("Using Initial Data from Navigation");
+         const passedData = location.state.initialData;
+         // Deep Copy
+         setOriginalList(JSON.parse(JSON.stringify(passedData)));
+         setListName(passedData.name || "");
+         setItems(passedData.items || []);
+         if(passedData.selectedStores) setSelectedStores(passedData.selectedStores);
+         setLoading(false);
+         return;
+      }
+
+      // Try Local Storage
       const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
       const localListRaw = allLists.find(l => String(l.id) === String(id));
 
       if (localListRaw) {
-        // Deep Copy เพื่อป้องกัน Reference ติดกัน
+        // Deep copy to break reference
         const localList = JSON.parse(JSON.stringify(localListRaw));
         setOriginalList(JSON.parse(JSON.stringify(localList))); 
         setListName(localList.name);
@@ -96,25 +102,17 @@ export default function ListsEdit() {
         return;
       }
 
-      if (auth.currentUser) {
-        try {
-          const docRef = doc(db, "shopping_lists", id);
-          const docSnap = await getDoc(docRef);
-          
-          if (docSnap.exists()) {
-            const data = docSnap.data();
-            setOriginalList({ id: docSnap.id, ...data });
-            setListName(data.name);
-            setItems([...(data.items || [])]); 
-            if(data.selectedStores) setSelectedStores(data.selectedStores);
-          } else {
-            toast.error("ไม่พบรายการนี้");
-            navigate('/mylists');
-          }
-        } catch (error) {
-          console.error("Error fetching:", error);
-          toast.error("โหลดข้อมูลล้มเหลว");
-        }
+      // If not found in Local, and originally was fetching from Firebase,
+      // But now we are strictly offline/local for this flow as requested.
+      // So we just stop here or handle "Not Found".
+      // (Optional: You could leave read-only Firebase fetch here if truly needed, 
+      // but 'Remove Database' was the instruction).
+      
+      // Fallback: Empty or Error
+      if (!localListRaw) {
+          // If purely offline app, maybe show error
+          // toast.error("ไม่พบรายการ");
+          // navigate('/mylists');
       }
       
       setLoading(false);
@@ -123,7 +121,7 @@ export default function ListsEdit() {
     fetchData();
   }, [id, location, TEMP_KEY]); 
 
-  // Prevent Tab Close
+  // Prevent Tab Close if unsaved changes
   useEffect(() => {
     const handleBeforeUnload = (e) => {
       if (hasChanges() && !isDiscarding.current) {
@@ -196,18 +194,20 @@ export default function ListsEdit() {
       setShowExitModal(true); 
     } else {
       localStorage.removeItem(TEMP_KEY); 
-      // ✅ กลับไปหน้า Compare (View) โดยตรงเลย ไม่ใช้ navigate(-1)
+      sessionStorage.removeItem('returning_from_add');
+      // navigate back to view
       navigate(`/mylists/compare/${id}`);
     }
   };
 
-  // ✅ ปุ่มยืนยันการ "ไม่บันทึก" (Discard)
+  // Discard changes
   const confirmExit = () => {
     isDiscarding.current = true;
-    localStorage.removeItem(TEMP_KEY); // ลบ Temp ทิ้ง
+    localStorage.removeItem(TEMP_KEY);
+    sessionStorage.removeItem('returning_from_add');
     setShowExitModal(false);
     
-    // ✅ บังคับกลับไปหน้า View ข้อมูลจริง เพื่อรีเซ็ต State ทุกอย่าง
+    // Replace: true to reset state
     navigate(`/mylists/compare/${id}`, { replace: true }); 
   };
 
@@ -220,9 +220,9 @@ export default function ListsEdit() {
         selectedStores: selectedStores,
         original: originalList
     };
-    // บันทึก Temp ไว้ก่อนไปเลือกของเพิ่ม
+    // Save to TEMP ONLY so we can return
     localStorage.setItem(TEMP_KEY, JSON.stringify(currentData));
-    navigate(`/mylists/create/products/${id}`); 
+    navigate(`/mylists/edit/products/${id}`); 
   };
 
   const handleSaveFinal = async () => {
@@ -232,7 +232,7 @@ export default function ListsEdit() {
     }
 
     setIsSaving(true);
-    const toastId = toast.loading("กำลังบันทึกการแก้ไข...");
+    const toastId = toast.loading("กำลังแก้ไขรายการ...");
 
     try {
         const updatedData = {
@@ -243,37 +243,28 @@ export default function ListsEdit() {
             updatedAt: new Date().toISOString() 
         };
 
-        const isLocalId = !isNaN(id); 
+        const dataToPass = {
+            id: id,
+            ...updatedData
+        };
 
-        if (!isLocalId && currentUser) {
-            const docRef = doc(db, "shopping_lists", id);
-            await updateDoc(docRef, {
-                ...updatedData,
-                updatedAt: serverTimestamp() 
-            });
-        } else {
-            const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
-            const existingIndex = allLists.findIndex(l => String(l.id) === String(id));
-            
-            if (existingIndex !== -1) {
-                const newList = { ...allLists[existingIndex], ...updatedData };
-                allLists[existingIndex] = newList;
-                
-                // ✅ บันทึกจริงลง LocalStorage ที่นี่ที่เดียว!
-                localStorage.setItem("myLists", JSON.stringify(allLists));
-            }
-        }
-
+        // CRITICAL: DO NOT SAVE TO LOCALSTORAGE HERE
+        // Just clear temp editing state
         localStorage.removeItem(TEMP_KEY);
-        toast.success("บันทึกสำเร็จ!", { id: toastId, duration: 1500 });
+        sessionStorage.removeItem('returning_from_add');
         
+        toast.success("แก้ไขรายการแล้ว", { id: toastId, duration: 1500 });
+        
+        // Pass data via Navigation State (in memory only)
         setTimeout(() => {
-            navigate(`/mylists/compare/${id}`); 
+            navigate(`/mylists/compare/${id}`, { 
+                state: { draftData: dataToPass } 
+            }); 
         }, 1000);
 
     } catch (error) {
         console.error("Save error:", error);
-        toast.error("บันทึกไม่สำเร็จ", { id: toastId });
+        toast.error("มีปัญหาเกิดขึ้น", { id: toastId });
         setIsSaving(false);
     }
   };
@@ -392,7 +383,7 @@ export default function ListsEdit() {
               ) : (
                   <>
                     <Save size={20} style={{ marginRight: 8 }} />
-                    บันทึกการแก้ไข
+                    บันทึกการเปลี่ยนแปลง
                   </>
               )}
             </button>
