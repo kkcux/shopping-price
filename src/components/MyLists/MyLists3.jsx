@@ -7,8 +7,8 @@ import Footer from "../Home/Footer";
 import "./mylists3.css";
 
 import { db, auth } from '../../firebase-config';
-import { doc, getDoc, setDoc, deleteDoc, serverTimestamp, collection } from 'firebase/firestore'; 
 import { onAuthStateChanged } from 'firebase/auth';
+import { doc, setDoc, getDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 
 /* ================= helpers ================= */
 const toNumber = (v) => {
@@ -141,10 +141,29 @@ export default function MyLists3() {
 
   /* ===== selected list ===== */
   const [selectedList, setSelectedList] = useState(null);
+  const [isDraft, setIsDraft] = useState(false);
 
   useEffect(() => {
     const fetchListData = async () => {
-      // ลองหาใน Local ก่อน
+      // 0. PENDING LOGIN DRAFT PRIORITY (For returning users)
+      const pending = JSON.parse(localStorage.getItem("pending_save_list"));
+      if (pending && String(pending.id) === String(id)) {
+          console.log("RECEIVED PENDING LOGIN DATA:", pending);
+          setSelectedList(pending);
+          setIsDraft(true);
+          return;
+      }
+      
+      // 1. DRAFT DATA PRIORITY
+      // 1. DRAFT DATA PRIORITY
+      if (location.state?.draftData) {
+        console.log("RECEIVED DRAFT DATA:", location.state.draftData);
+        setSelectedList(location.state.draftData);
+        setIsDraft(true); 
+        return;
+      }
+
+      // 2. ถ้าไม่มี ให้หาใน Local Storage
       const allLocalLists = JSON.parse(localStorage.getItem("myLists")) || [];
       const localList = allLocalLists.find((l) => String(l.id) === String(id));
 
@@ -153,21 +172,27 @@ export default function MyLists3() {
         return;
       }
 
-      // ถ้าไม่เจอ และมี user ลองหาใน Firebase
-      if (currentUser) {
-        try {
-          const docRef = doc(db, "shopping_lists", id);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            setSelectedList({ id: docSnap.id, ...docSnap.data() });
+      // 3. ถ้าไม่มีใน Local ให้หาใน FireStore (Cloud)
+      if (auth.currentUser) {
+          try {
+              const docRef = doc(db, "shopping_lists", String(id));
+              const docSnap = await getDoc(docRef);
+              
+              if (docSnap.exists()) {
+                  const data = docSnap.data();
+                  setSelectedList({ id: docSnap.id, ...data });
+                  // Optional: Sync back to local? 
+                  // might be good for consistency but let's just display it first
+              } else {
+                  console.log("No such document in Firestore!");
+              }
+          } catch (err) {
+              console.error("Error fetching from Firestore:", err);
           }
-        } catch (error) {
-          console.error("Error fetching list:", error);
-        }
       }
     };
     fetchListData();
-  }, [id, currentUser]);
+  }, [id, location.state]);
 
   // ✅ แก้ไข: ใช้ useRef เช็ค ทำให้ Alert เด้งแค่ครั้งเดียวแน่นอน
   useEffect(() => {
@@ -274,6 +299,7 @@ export default function MyLists3() {
   };
 
   const confirmSave = async () => {
+    console.log("CONFIRM SAVE CALLED - WRITING TO STORAGE");
     setShowModal(false); 
     setShowExitModal(false); 
     setIsSaving(true);
@@ -281,54 +307,58 @@ export default function MyLists3() {
     const toastId = toast.loading('กำลังบันทึกข้อมูล...');
 
     try {
-      if (currentUser) {
-        const isLocalId = !isNaN(id);
-        
-        if (isLocalId) {
-            const newListRef = doc(collection(db, "shopping_lists"));
-            await setDoc(newListRef, {
-                ...selectedList,
-                userId: currentUser.uid,
-                updatedAt: serverTimestamp()
-            });
-            const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
-            const filteredLists = allLists.filter((l) => String(l.id) !== String(id));
-            localStorage.setItem("myLists", JSON.stringify(filteredLists));
-
-            toast.dismiss(toastId);
-            navigate('/mylists');
-
-        } else {
-            const listRef = doc(db, "shopping_lists", id);
-            await setDoc(listRef, {
-                ...selectedList,
-                updatedAt: serverTimestamp()
-            }, { merge: true });
-            
-            toast.dismiss(toastId);
-            navigate('/mylists');
-        }
-
-      } else {
         const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
         const existingIndex = allLists.findIndex((l) => String(l.id) === String(id));
 
         let newLists;
+        // กรณีแก้ไขรายการเดิม (ทั้งที่มีอยู่แล้ว หรือ Draft ที่ทับ ID เดิม)
         if (existingIndex !== -1) {
           newLists = [...allLists];
-          newLists[existingIndex] = selectedList; 
+          newLists[existingIndex] = {
+             ...selectedList,
+             updatedAt: new Date().toISOString()
+          }; 
         } else {
-          newLists = [...allLists, selectedList];
+          // กรณีสร้างใหม่
+          newLists = [...allLists, {
+            ...selectedList,
+            updatedAt: new Date().toISOString()
+          }];
         }
         localStorage.setItem("myLists", JSON.stringify(newLists));
+
+        // 🟢 CLOUD SAVE (If Logged In)
+        if (currentUser) {
+           try {
+              const cloudData = {
+                  ...selectedList,
+                  userId: currentUser.uid,
+                  items: selectedList.items || [],
+                  updatedAt: serverTimestamp(),
+                  totalItems: (selectedList.items || []).reduce((sum, i) => sum + (i.qty || 1), 0)
+              };
+              // Ensure ID is string for doc ref
+              await setDoc(doc(db, "shopping_lists", String(id)), cloudData);
+              console.log("Cloud save success");
+           } catch (cloudErr) {
+              console.error("Cloud save failed:", cloudErr);
+              toast.error("บันทึกออนไลน์ไม่สำเร็จ (แต่ในเครื่องบันทึกแล้ว)");
+           }
+        }
         
+        // Clear related temp data
         localStorage.removeItem("pending_save_list");
         sessionStorage.removeItem('current_draft_id');
 
         toast.dismiss(toastId);
-        setIsSaving(false); 
-        setShowLoginModal(true);
-      }
+        toast.success("บันทึกข้อมูลเรียบร้อย");
+        setIsSaving(false);
+        setIsDraft(false);
+
+        // Redirect to My Lists page
+        setTimeout(() => {
+          navigate('/mylists');
+        }, 500); 
 
     } catch (error) {
         console.error("Save error:", error);
@@ -351,20 +381,33 @@ export default function MyLists3() {
     navigate('/mylists'); 
   };
 
-  const handleEditClick = () => { navigate(`/mylists/edit/${id}`); };
+  const handleEditClick = () => { 
+    navigate(`/mylists/edit/${id}`, {
+      state: { initialData: selectedList }
+    }); 
+  };
   const handleDeleteClick = () => { setShowDeleteModal(true); };
 
   const confirmDelete = async () => {
       const toastId = toast.loading('กำลังลบรายการ...');
 
       try {
-        if (currentUser) {
-            await deleteDoc(doc(db, "shopping_lists", id));
-        }
-
+        // ลบจาก Local Storage เท่านั้น
         const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
         const filteredLists = allLists.filter((l) => String(l.id) !== String(id));
         localStorage.setItem("myLists", JSON.stringify(filteredLists));
+
+        // 🟢 CLOUD DELETE (If Logged In)
+        if (currentUser) {
+            try {
+                await deleteDoc(doc(db, "shopping_lists", String(id)));
+                console.log("Cloud delete success");
+            } catch (cloudErr) {
+                console.error("Cloud delete failed:", cloudErr);
+                // ไม่ต้อง throw error เพื่อให้ process การลบในเครื่องจบสมบูรณ์
+                // toast.error("ลบออนไลน์ไม่สำเร็จ"); 
+            }
+        }
         
         toast.success('ลบรายการเรียบร้อย', { id: toastId });
         
@@ -553,13 +596,22 @@ export default function MyLists3() {
             >
                 <X size={24} />
             </button>
-            <div className="ml3-modal-title" style={{marginTop: '10px'}}>ยืนยันการบันทึก</div>
+            <div className="ml3-modal-title" style={{marginTop: '10px'}}>{currentUser ? "ยืนยันการบันทึก" : "กรุณาเข้าสู่ระบบ"}</div>
             <p className="ml3-modal-desc">
-                {currentUser ? "ต้องการบันทึกข้อมูลการเปลี่ยนแปลงใช่หรือไม่?" : "คุณจำเป็นต้องเข้าสู่ระบบเพื่อบันทึกข้อมูลถาวร"}
+                {currentUser ? "ต้องการบันทึกข้อมูลการเปลี่ยนแปลงใช่หรือไม่?" : "คุณจำเป็นต้องเข้าสู่ระบบสมาชิกก่อนจึงจะบันทึกรายการได้"}
             </p>
             <div className="ml3-modal-actions">
               <button className="ml3-btn-cancel" onClick={() => setShowModal(false)}>ยกเลิก</button>
-              <button className="ml3-btn-confirm" onClick={confirmSave}>บันทึก</button>
+              {currentUser ? (
+                 <button className="ml3-btn-confirm" onClick={confirmSave}>บันทึก</button>
+              ) : (
+                 <button className="ml3-btn-confirm" className="ml3-btn-confirm" style={{backgroundColor: '#3b82f6'}} onClick={() => {
+                    // Save pending state and go to login
+                    localStorage.setItem("pending_save_list", JSON.stringify(selectedList));
+                    setShowModal(false);
+                    navigate('/login', { state: { from: location.pathname } });
+                 }}>เข้าสู่ระบบ</button>
+              )}
             </div>
           </div>
         </div>
