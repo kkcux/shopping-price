@@ -605,7 +605,7 @@ export default function MyLists3() {
               {currentUser ? (
                  <button className="ml3-btn-confirm" onClick={confirmSave}>บันทึก</button>
               ) : (
-                 <button className="ml3-btn-confirm" className="ml3-btn-confirm" style={{backgroundColor: '#3b82f6'}} onClick={() => {
+                 <button className="ml3-btn-confirm" style={{backgroundColor: '#3b82f6'}} onClick={() => {
                     // Save pending state and go to login
                     localStorage.setItem("pending_save_list", JSON.stringify(selectedList));
                     setShowModal(false);
