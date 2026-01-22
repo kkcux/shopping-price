@@ -1,13 +1,63 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Camera, User, Mail, Info, Crown, Check } from 'lucide-react';
+import { updateProfile, onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../firebase-config"; 
 import Navbar from '../Home/Navbar';
 import Footer from '../Home/Footer';
 import './Profile.css';
 
 const Profile = () => {
   const fileInputRef = useRef(null);
+  
   const [profileImage, setProfileImage] = useState(null);
+  const [name, setName] = useState(""); 
+  const [email, setEmail] = useState("");
   const [showPopup, setShowPopup] = useState(false);
+  const [firebaseUser, setFirebaseUser] = useState(null);
+
+  useEffect(() => {
+    // 1. ดึงจาก LocalStorage (ถ้ามี)
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      try {
+        const userData = JSON.parse(storedUser);
+        // ป้องกันรูปเสีย: ถ้าเป็น blob (รูปชั่วคราว) ไม่ต้องเอามาโชว์
+        if (userData.photoURL && !userData.photoURL.startsWith('blob:')) {
+           setProfileImage(userData.photoURL);
+        }
+        if (userData.name) setName(userData.name);
+        if (userData.email) setEmail(userData.email);
+      } catch (error) {
+        console.error("Error parsing user data:", error);
+      }
+    }
+
+    // 2. ดึงจาก Firebase (ตัวจริง)
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setFirebaseUser(currentUser); 
+
+        // ⭐ ส่วนที่เพิ่ม: สั่งให้หน้าจออัปเดตข้อมูลทันทีที่เจอ User
+        if (currentUser.displayName) setName(currentUser.displayName);
+        if (currentUser.email) setEmail(currentUser.email);
+        if (currentUser.photoURL) setProfileImage(currentUser.photoURL);
+
+        // อัปเดตข้อมูลใหม่ลง LocalStorage ด้วย
+        const freshUserData = {
+            uid: currentUser.uid,
+            email: currentUser.email,
+            name: currentUser.displayName,
+            photoURL: currentUser.photoURL
+        };
+        localStorage.setItem('user', JSON.stringify(freshUserData));
+
+      } else {
+        setFirebaseUser(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleImageClick = () => {
     fileInputRef.current.click();
@@ -21,9 +71,44 @@ const Profile = () => {
     }
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    setShowPopup(true);
+
+    if (!firebaseUser) {
+        alert("ไม่พบข้อมูลผู้ใช้จากระบบ Firebase กรุณาลองล็อกอินใหม่");
+        return;
+    }
+
+    try {
+        // 1. อัปเดตชื่อขึ้น Server
+        await updateProfile(firebaseUser, {
+            displayName: name
+        });
+        
+        // 2. อัปเดตลงเครื่อง (ระวังเรื่องรูป Blob)
+        const storedUser = localStorage.getItem('user');
+        let currentUserData = {};
+        if (storedUser) currentUserData = JSON.parse(storedUser);
+
+        // เช็คว่ารูปปัจจุบันเป็นรูปจริงหรือเปล่า
+        let photoToSave = currentUserData.photoURL;
+        if (profileImage && !profileImage.startsWith('blob:')) {
+            photoToSave = profileImage;
+        }
+
+        const updatedUserData = {
+            ...currentUserData,
+            name: name,
+            photoURL: photoToSave
+        };
+        localStorage.setItem('user', JSON.stringify(updatedUserData));
+
+        setShowPopup(true);
+
+    } catch (error) {
+        console.error("Error updating profile:", error);
+        alert("เกิดข้อผิดพลาด: " + error.message);
+    }
   };
 
   const closePopup = () => {
@@ -107,7 +192,12 @@ const Profile = () => {
               <label>ชื่อที่ใช้แสดง</label>
               <div className="input-wrapper">
                 <User className="input-icon" size={20} />
-                <input type="text" placeholder="เช่น Somchai Jaidee" defaultValue="" />
+                <input 
+                  type="text" 
+                  placeholder="เช่น Somchai Jaidee" 
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
               </div>
             </div>
 
@@ -115,7 +205,13 @@ const Profile = () => {
               <label>อีเมล</label>
               <div className="input-wrapper">
                 <Mail className="input-icon" size={20} />
-                <input type="email" placeholder="name@example.com" />
+                <input 
+                  type="email" 
+                  placeholder="name@example.com" 
+                  value={email}
+                  readOnly 
+                  style={{ backgroundColor: '#f3f4f6', cursor: 'not-allowed', color: '#6b7280' }} 
+                />
               </div>
             </div>
 
@@ -127,27 +223,18 @@ const Profile = () => {
                 {memberships.map((item) => (
                   <div key={item.id} className="membership-item">
                     <div className="membership-left">
-                      
                       <div className="membership-logo-box" style={{ color: item.color, backgroundColor: item.bgIcon }}>
-                        {item.logo ? (
-                          <img src={item.logo} alt={item.name} className="membership-logo-img" />
-                        ) : (
-                          item.name
-                        )}
+                        {item.logo ? <img src={item.logo} alt={item.name} className="membership-logo-img" /> : item.name}
                       </div>
-                      
                       <div className="membership-info">
                         <span className="ms-name">{item.name}</span>
                         <div className="ms-status-row">
                           <span className="status-text">{item.label}</span>
-                          
                           <div className="info-tooltip-wrapper">
                             <Info size={16} className="info-icon" />
                             <div className="benefit-popup">
                               <div className="popup-header">
-                                <div className="crown-icon-bg">
-                                  <Crown size={24} color="white" />
-                                </div>
+                                <div className="crown-icon-bg"><Crown size={24} color="white" /></div>
                                 <div className="popup-title-text">
                                   <h3>สิทธิประโยชน์</h3>
                                   <span>สมาชิก {item.name}</span>
@@ -163,15 +250,10 @@ const Profile = () => {
                               </div>
                             </div>
                           </div>
-
                         </div>
                       </div>
                     </div>
-                    <button 
-                      type="button" 
-                      className="btn-apply-member"
-                      onClick={() => handleRegisterClick(item.registerUrl)}
-                    >
+                    <button type="button" className="btn-apply-member" onClick={() => handleRegisterClick(item.registerUrl)}>
                       สมัคร
                     </button>
                   </div>
@@ -189,7 +271,6 @@ const Profile = () => {
       </div>
 
       {showPopup && (
-        // 🟢 เปลี่ยนชื่อ Class ตรงนี้ไม่ให้ซ้ำกับหน้าอื่น
         <div className="profile-modal-overlay">
           <div className="profile-modal-content fade-in-scale">
             <div className="profile-modal-icon-wrapper">
