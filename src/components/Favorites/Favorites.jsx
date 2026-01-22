@@ -3,28 +3,23 @@ import { ChevronLeft, Heart, Trash2, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Home/Navbar'; 
 import Footer from '../Home/Footer'; 
-import AddToListModal from '../Home/AddToListModal'; // ✅ 1. Import Modal เข้ามา (เช็ค Path ให้ถูกต้อง)
+import AddToListModal from '../Home/AddToListModal'; 
+import { useFavorites } from '../../context/FavoritesContext';
 import './Favorites.css'; 
 
 const Favorites = () => {
   const navigate = useNavigate();
-  const [favItems, setFavItems] = useState([]);
+  // Use Context
+  const { favorites: favItems, toggleFavorite } = useFavorites();
 
   // ✅ 2. เพิ่ม State สำหรับ Modal และสินค้าที่เลือก
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // โหลดข้อมูลจาก LocalStorage
-  useEffect(() => {
-    const savedFavs = JSON.parse(localStorage.getItem('favoritesItems')) || [];
-    setFavItems(savedFavs);
-  }, []);
-
   // ฟังก์ชันลบสินค้า
   const handleRemove = (itemToRemove) => {
-    const newItems = favItems.filter(item => item.data !== itemToRemove.data);
-    setFavItems(newItems);
-    localStorage.setItem('favoritesItems', JSON.stringify(newItems));
+    // Context expects { name, ... } to toggle (remove)
+    toggleFavorite({ ...itemToRemove, name: itemToRemove.data });
   };
 
   // ✅ 3. สร้างฟังก์ชันเปิด Modal (เลียนแบบหน้า Home)

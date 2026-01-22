@@ -27,6 +27,7 @@ import ListsEdit from './components/MyLists/ListsEdit';
 // import MyLists2 from './components/MyLists/MyLists2';     
 
 import MyLists3 from './components/MyLists/MyLists3';     
+import { FavoritesProvider } from './context/FavoritesContext';
 
 function App() {
     useEffect(() => {
@@ -43,6 +44,7 @@ function App() {
 
   return (
     <div className="App">
+      <FavoritesProvider>
       <Routes>
 
         {/* ===== HOME SECTION ===== */}
@@ -73,6 +75,7 @@ function App() {
         <Route path="/mylists/compare/:id" element={<MyLists3 />} />
 
       </Routes>
+      </FavoritesProvider>
     </div>
   );
 }

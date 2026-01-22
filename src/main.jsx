@@ -8,12 +8,16 @@ import App from './App.jsx'
 // เรียกค่า Client ID จาก .env (ปลอดภัยกว่า Hardcode)
 const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 
+import ErrorBoundary from './components/ErrorBoundary.jsx';
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
+   <ErrorBoundary>
     <GoogleOAuthProvider clientId={clientId}>
       <BrowserRouter>
         <App />
       </BrowserRouter>
     </GoogleOAuthProvider>
+   </ErrorBoundary>
   </StrictMode>,
 )
