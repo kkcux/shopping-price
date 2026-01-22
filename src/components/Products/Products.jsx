@@ -10,6 +10,8 @@ import {
 import toast, { Toaster } from 'react-hot-toast'; // ✅ Import Toast
 
 import AddToListModal from '../Home/AddToListModal';
+import { getCategorySlug, categorySlugMap } from '../../utils/categoryMap';
+import { useFavorites } from '../../context/FavoritesContext';
 
 const Products = () => {
   const location = useLocation();
@@ -29,7 +31,9 @@ const Products = () => {
   const [displayProducts, setDisplayProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  const [favorites, setFavorites] = useState({});
+  // Use Context
+  const { favorites: contextFavorites, isFavorite, toggleFavorite } = useFavorites();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -37,23 +41,24 @@ const Products = () => {
   const [nameFilter, setNameFilter] = useState('');
   const [showCatMenu, setShowCatMenu] = useState(false);
 
+  // 🔥 Full Search Index State
+  const [fullSearchIndex, setFullSearchIndex] = useState(null);
+  const [isSearchingIndex, setIsSearchingIndex] = useState(false);
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 30;
 
   const catMenuRef = useRef(null);
   const filterMenuRef = useRef(null);
 
+  /* 
   const categoryMapping = {
     "อาหารสด & แช่แข็ง": ["อาหารสดและแช่แข็ง", "ผักและผลไม้", "เบเกอรี่"],
-    "อาหารแห้ง": ["อาหารแห้งและเครื่องปรุง", "เครื่องดื่ม"],
-    "ของใช้ในบ้าน": ["ของใช้ในบ้าน", "เครื่องเขียนและอุปกรณ์สำนักงาน", "อุปกรณ์สำนักงาน"],
-    "สุขภาพ & ความงาม": ["สุขภาพและความงาม", "ของใช้ส่วนตัว", "เสื้อผ้าและเครื่องแต่งกาย"],
-    "แม่และเด็ก": ["แม่และเด็ก"],
-    "เครื่องใช้ไฟฟ้า": ["เครื่องใช้ไฟฟ้า"],
-    "เครื่องมือช่าง": ["เครื่องมือช่างและอุปกรณ์ปรับปรุงบ้าน", "ยานยนต์"],
-    "สัตว์เลี้ยง": ["สัตว์เลี้ยง"]
+     ...
   };
-  const categoriesList = ['ทั้งหมด', ...Object.keys(categoryMapping)];
+  */
+  // Use shared mapping
+  const categoriesList = ['ทั้งหมด', ...Object.keys(categorySlugMap).filter(k=>k!=='อื่นๆ')];
 
   const specialFiltersList = [
     { id: 'all', label: 'ตัวกรอง', icon: null },
@@ -80,67 +85,113 @@ const Products = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  useEffect(() => {
-    const savedFavs = JSON.parse(localStorage.getItem('favoritesItems')) || [];
-    const favMap = {};
-    savedFavs.forEach(item => { if (item.data) favMap[item.data] = true; });
-    setFavorites(favMap);
-  }, []);
+  /* Removed local favorites effect */
 
   useEffect(() => {
     const fetchData = async () => {
+      setLoading(true);
+      setAllProducts([]); 
+
       try {
-        setLoading(true);
-        const response = await fetch('/data/all_retailers_products_merged_v1.jsonl');
+        let url = '';
+        if (activeCategory === 'ทั้งหมด') {
+            url = '/data/categories/mixed_products.json';
+        } else {
+            const slug = getCategorySlug(activeCategory);
+            url = `/data/categories/${slug}.json`;
+        }
+
+        const response = await fetch(url);
         if (!response.ok) throw new Error('Network response was not ok');
-        const text = await response.text();
-        const lines = text.trim().split('\n'); 
-        const products = lines
-          .filter(line => line.trim() !== '') 
-          .map(line => { 
-              try { 
-                  const item = JSON.parse(line); 
-                  const randomVal = Math.random();
-                  item.tags = [];
-                  if (randomVal > 0.8) item.tags.push('recommended');
-                  else if (randomVal > 0.6) item.tags.push('popular');
-                  else if (randomVal > 0.4) item.tags.push('promo');
-                  return item;
-              } catch (e) { return null; } 
-          })
-          .filter(item => item !== null && item.name);
+        const data = await response.json();
+        
+        let products = [];
+        if (Array.isArray(data)) {
+            products = data;
+        } else if (data.recommended) {
+            products = [...data.recommended, ...data.popular, ...data.promo];
+        }
+
+        // Filter out nulls and ensure basic fields
+        products = products.filter(item => item && item.name).map(item => {
+            if(!item.tags) {
+                const randomVal = Math.random();
+                item.tags = [];
+                if (randomVal > 0.8) item.tags.push('recommended');
+                else if (randomVal > 0.6) item.tags.push('popular');
+                else if (randomVal > 0.4) item.tags.push('promo');
+            }
+            return item;
+        });
+
         setAllProducts(products);
       } catch (error) { console.error("Error loading products:", error); } 
       finally { setLoading(false); }
     };
     fetchData();
-  }, []);
+  }, [activeCategory]);
 
   useEffect(() => {
-    let processed = [...allProducts];
+    const processData = async () => {
+        let processed = [];
 
-    if (activeCategory !== 'ทั้งหมด') {
-        const targetCategories = categoryMapping[activeCategory] || [];
-        if (targetCategories.length > 0) processed = processed.filter(item => item.category && targetCategories.includes(item.category));
-    }
-
-    if (nameFilter.trim() !== '') {
-        processed = processed.filter(p => 
-            p.name && p.name.toLowerCase().includes(nameFilter.toLowerCase())
-        );
-    }
-
-    if (specialFilter !== 'all') {
-        if (specialFilter === 'favorites') {
-            processed = processed.filter(item => favorites[item.name]);
+        // 1. Determine Source Data
+        if (activeCategory === 'ทั้งหมด' && nameFilter.trim() !== '') {
+            // Priority: Use Full Index if available
+            if (fullSearchIndex) {
+                 const PREFIX = "https://st.bigc-cs.com/cdn-cgi/image/format=webp,quality=85/public/media/catalog/product/";
+                 processed = fullSearchIndex.map(p => ({
+                     name: p.n,
+                     price: p.p,
+                     image: p.i ? p.i.replace('{|}', PREFIX) : null,
+                     category: p.c,
+                     retailer: p.r,
+                     tags: [] 
+                 }));
+            } else {
+                // Fallback to loaded 2000 items while loading index
+                processed = [...allProducts];
+                // Trigger lazy load if not started
+                if (!isSearchingIndex) {
+                    setIsSearchingIndex(true);
+                    fetch('/data/categories/all_products_lite.json')
+                        .then(res => res.json())
+                        .then(data => {
+                            setFullSearchIndex(data);
+                            setIsSearchingIndex(false);
+                        })
+                        .catch(err => {
+                            console.error("Failed to load search index", err);
+                            setIsSearchingIndex(false);
+                        });
+                }
+            }
         } else {
-            processed = processed.filter(p => p.tags && p.tags.includes(specialFilter));
+             processed = [...allProducts];
         }
-    }
 
-    setDisplayProducts(processed);
-    setCurrentPage(1);
-  }, [allProducts, activeCategory, nameFilter, specialFilter, favorites]);
+        // 2. Search Filter
+        if (nameFilter.trim() !== '') {
+            processed = processed.filter(p => 
+                p.name && p.name.toLowerCase().includes(nameFilter.toLowerCase())
+            );
+        }
+
+        // 3. Special Filters
+        if (specialFilter !== 'all') {
+            if (specialFilter === 'favorites') {
+                processed = processed.filter(item => isFavorite(item.name));
+            } else {
+                processed = processed.filter(p => p.tags && p.tags.includes(specialFilter));
+            }
+        }
+
+        setDisplayProducts(processed);
+        setCurrentPage(1);
+    };
+
+    processData();
+  }, [allProducts, nameFilter, specialFilter, contextFavorites, fullSearchIndex]);
 
   // --- Handlers ---
   const changePage = (newPage) => {
@@ -151,23 +202,7 @@ const Products = () => {
     }
   };
 
-  const toggleFav = (product) => {
-    const productName = product.name;
-    setFavorites(prev => {
-      const isCurrentlyFav = !!prev[productName];
-      const newFavState = { ...prev, [productName]: !isCurrentlyFav };
-      const currentSavedFavs = JSON.parse(localStorage.getItem('favoritesItems')) || [];
-      let newSavedFavs;
-      if (isCurrentlyFav) newSavedFavs = currentSavedFavs.filter(item => item.data !== productName);
-      else {
-        const alreadyExists = currentSavedFavs.some(item => item.data === productName);
-        if (!alreadyExists) newSavedFavs = [...currentSavedFavs, { image: product.image, data: product.name, price: product.price }];
-        else newSavedFavs = currentSavedFavs;
-      }
-      localStorage.setItem('favoritesItems', JSON.stringify(newSavedFavs));
-      return newFavState;
-    });
-  };
+  /* Removed local toggleFav */
 
   // ✅ ฟังก์ชันเพิ่มสินค้า (แก้ไขให้รองรับ temp_editing)
   const handleAddToCart = (item) => {
@@ -308,7 +343,6 @@ const Products = () => {
         <div className="results-toolbar">
             <h2>
                 {activeCategory === 'ทั้งหมด' ? 'สินค้าทั้งหมด' : activeCategory} 
-                <span className="count-badge">{loading ? '...' : displayProducts.length}</span>
             </h2>
             
             <div className="filter-tools">
@@ -400,10 +434,10 @@ const Products = () => {
                 <>
                     <div className="cat-product-grid">
                         {currentItems.map((item, index) => { 
-                            const isFav = favorites[item.name];
+                            const isFav = isFavorite(item.name);
                             return (
                                 <div key={index} className="product-card-std">
-                                    <button className={`fav-btn-std ${isFav ? 'active' : ''}`} onClick={() => toggleFav(item)}>
+                                    <button className={`fav-btn-std ${isFav ? 'active' : ''}`} onClick={() => toggleFavorite(item)}>
                                         <Heart size={20} fill={isFav ? "#ef4444" : "none"} stroke={isFav ? "#ef4444" : "currentColor"} />
                                     </button>
                                     <div className="img-wrapper-std">
