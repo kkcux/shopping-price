@@ -91,7 +91,9 @@ const MyLists = () => {
     try {
       // 1. ลบออกจาก Firebase (ถ้า Login อยู่ และไม่ใช่ ID แบบ Local)
       // (ID Local มักจะเป็นตัวเลขยาวๆ ส่วน Firebase เป็นตัวอักษรผสม)
-      if (currentUser && isNaN(Number(docIdString))) {
+      // 1. ลบออกจาก Firebase (ถ้า Login อยู่)
+      // ไม่ต้องเช็ค isNaN แล้ว เพราะเราใช้ ID เป็นตัวเลขได้
+      if (currentUser) {
          try {
             await deleteDoc(doc(db, "shopping_lists", docIdString));
          } catch (e) {
