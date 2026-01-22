@@ -1,104 +1,86 @@
 [
   {
-    "name": "อาหารแห้งและเครื่องปรุง",
+    "name": "dry-food-condiments",
     "slug": "dry-food-condiments",
     "count": 11434,
     "file": "data/categories/dry-food-condiments.json"
   },
   {
-    "name": "แม่และเด็ก",
+    "name": "mom-baby",
     "slug": "mom-baby",
     "count": 4318,
     "file": "data/categories/mom-baby.json"
   },
   {
-    "name": "สุขภาพและความงาม",
-    "slug": "others",
-    "count": 3815,
-    "file": "data/categories/others.json"
+    "name": "health-beauty",
+    "slug": "health-beauty",
+    "count": 8106,
+    "file": "data/categories/health-beauty.json"
   },
   {
-    "name": "อื่นๆ",
+    "name": "others",
     "slug": "others",
     "count": 11782,
     "file": "data/categories/others.json"
   },
   {
-    "name": "อาหารสดและแช่แข็ง",
-    "slug": "others",
+    "name": "fresh-frozen",
+    "slug": "fresh-frozen",
     "count": 7083,
-    "file": "data/categories/others.json"
+    "file": "data/categories/fresh-frozen.json"
   },
   {
-    "name": "เครื่องดื่ม",
+    "name": "beverages",
     "slug": "beverages",
     "count": 2294,
     "file": "data/categories/beverages.json"
   },
   {
-    "name": "ของใช้ในบ้าน",
+    "name": "household",
     "slug": "household",
     "count": 13697,
     "file": "data/categories/household.json"
   },
   {
-    "name": "เครื่องใช้ไฟฟ้า",
+    "name": "electronics",
     "slug": "electronics",
     "count": 2589,
     "file": "data/categories/electronics.json"
   },
   {
-    "name": "เครื่องมือช่างและอุปกรณ์ปรับปรุงบ้าน",
+    "name": "tools",
     "slug": "tools",
-    "count": 1133,
+    "count": 1800,
     "file": "data/categories/tools.json"
   },
   {
-    "name": "ผักและผลไม้",
+    "name": "vegetables-fruits",
     "slug": "vegetables-fruits",
     "count": 1929,
     "file": "data/categories/vegetables-fruits.json"
   },
   {
-    "name": "ของใช้ส่วนตัว",
-    "slug": "others",
-    "count": 4291,
-    "file": "data/categories/others.json"
-  },
-  {
-    "name": "เสื้อผ้าและเครื่องแต่งกาย",
+    "name": "clothing",
     "slug": "clothing",
     "count": 1948,
     "file": "data/categories/clothing.json"
   },
   {
-    "name": "ยานยนต์",
-    "slug": "others",
-    "count": 667,
-    "file": "data/categories/others.json"
-  },
-  {
-    "name": "เบเกอรี่",
+    "name": "bakery",
     "slug": "bakery",
     "count": 491,
     "file": "data/categories/bakery.json"
   },
   {
-    "name": "สัตว์เลี้ยง",
+    "name": "pets",
     "slug": "pets",
     "count": 2293,
     "file": "data/categories/pets.json"
   },
   {
-    "name": "เครื่องเขียนและอุปกรณ์สำนักงาน",
+    "name": "office-supplies",
     "slug": "office-supplies",
-    "count": 1956,
-    "file": "data/categories/office-supplies.json"
-  },
-  {
-    "name": "อุปกรณ์สำนักงาน",
-    "slug": "office-supplies",
-    "count": 277,
+    "count": 2233,
     "file": "data/categories/office-supplies.json"
   }
 ]
