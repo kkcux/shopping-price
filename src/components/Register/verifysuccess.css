@@ -1,0 +1,138 @@
+/* =========================
+   Verify Success Page
+   file: src/components/Register/verifysuccess.css
+   ========================= */
+
+.verify-success-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f4f5f6;
+}
+
+.verify-success-main {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 26px 16px 34px;
+  box-sizing: border-box;
+}
+
+/* top right back */
+.verify-success-top-actions {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  padding: 18px 24px 0;
+  box-sizing: border-box;
+}
+
+.verify-success-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #d9d9d9;
+  border-radius: 14px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #111;
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.verify-success-back-btn:hover {
+  background: #fafafa;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+}
+
+.verify-success-back-btn:active {
+  transform: translateY(1px);
+}
+
+/* title */
+.verify-success-title {
+  margin: 12px 0 18px;
+  font-size: 22px;
+  font-weight: 800;
+  color: #0f0f0f;
+}
+
+/* card */
+.verify-success-card {
+  width: min(520px, 92vw);
+  min-height: 360px;
+  background: #ffffff;
+  border: 1px solid #e6e6e6;
+  border-radius: 12px;
+  padding: 28px 22px 22px;
+  box-sizing: border-box;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* icon */
+.verify-success-icon {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.verify-success-icon-circle {
+  width: 56px;
+  height: 56px;
+  border-radius: 999px;
+  background: #eaffea;
+  border: 2px solid #7adf7a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.verify-success-icon-circle svg {
+  color: #2e7d32;
+}
+
+.verify-success-card-title {
+  margin: 8px 0 6px;
+  font-size: 18px;
+  font-weight: 900;
+  color: #111;
+}
+
+.verify-success-desc {
+  margin: 0 0 18px;
+  font-size: 13px;
+  color: #666;
+}
+
+/* button */
+.verify-success-submit {
+  width: min(360px, 100%);
+  height: 46px;
+  margin: 0 auto;
+  border: none;
+  border-radius: 10px;
+  background: #10b981;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(46, 125, 50, 0.28);
+  transition: transform 0.08s ease, filter 0.2s ease, box-shadow 0.2s ease;
+}
+
+.verify-success-submit:hover {
+  filter: brightness(1.03);
+  box-shadow: 0 14px 26px rgba(46, 125, 50, 0.34);
+}
+
+.verify-success-submit:active {
+  transform: translateY(1px);
+}

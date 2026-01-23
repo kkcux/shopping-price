@@ -19,16 +19,16 @@ import {
 import Footer from "../Home/Footer";
 import "./mylists3.css";
 
-import { db, auth } from "../../firebase-config";
-import {
-  doc,
-  getDoc,
-  setDoc,
-  deleteDoc,
-  serverTimestamp,
-  collection,
-} from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
+import { db, auth } from '../../firebase-config';
+import { onAuthStateChanged } from 'firebase/auth';
+
+/* ===== ✅ Store Logos ===== */
+const STORE_LOGOS = {
+  MAKRO: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1weBQ9rq_nOC5CSMa2dFW9Ez5CFXKKy4Q3Q&s",
+  LOTUS: "https://upload.wikimedia.org/wikipedia/commons/1/14/Lotus-2021-logo.png",
+  BIGC: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Big_C_Logo.svg/500px-Big_C_Logo.svg.png",
+};
+import { doc, setDoc, getDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 
 /* ================= helpers ================= */
 const toNumber = (v) => {
@@ -481,65 +481,62 @@ export default function MyLists3() {
   };
 
   const confirmSave = async () => {
-    if (isSaving) return; // ✅ ป้องกันการกดซ้ำซ้อน
-
-    setShowModal(false);
-    setShowExitModal(false);
+    console.log("CONFIRM SAVE CALLED - WRITING TO STORAGE");
+    setShowModal(false); 
+    setShowExitModal(false); 
     setIsSaving(true);
 
     const toastId = toast.loading("กำลังบันทึกข้อมูล...");
 
     try {
-      if (currentUser) {
-        const isLocalId = !isNaN(id);
-
-        if (isLocalId) {
-          const newListRef = doc(collection(db, "shopping_lists"));
-          await setDoc(newListRef, {
-            ...selectedList,
-            userId: currentUser.uid,
-            updatedAt: serverTimestamp(),
-          });
-          const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
-          const filteredLists = allLists.filter((l) => String(l.id) !== String(id));
-          localStorage.setItem("myLists", JSON.stringify(filteredLists));
-
-          toast.dismiss(toastId);
-          navigate("/mylists");
-        } else {
-          const listRef = doc(db, "shopping_lists", id);
-          await setDoc(
-            listRef,
-            {
-              ...selectedList,
-              updatedAt: serverTimestamp(),
-            },
-            { merge: true }
-          );
-
-          toast.dismiss(toastId);
-          navigate("/mylists");
-        }
-      } else {
         const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
         const existingIndex = allLists.findIndex((l) => String(l.id) === String(id));
 
         let newLists;
         if (existingIndex !== -1) {
           newLists = [...allLists];
-          newLists[existingIndex] = selectedList;
+          newLists[existingIndex] = {
+             ...selectedList,
+             updatedAt: new Date().toISOString()
+          }; 
         } else {
           newLists = [...allLists, selectedList];
         }
         localStorage.setItem("myLists", JSON.stringify(newLists));
 
+        // 🟢 CLOUD SAVE (If Logged In)
+        if (currentUser) {
+           try {
+              const cloudData = {
+                  ...selectedList,
+                  userId: currentUser.uid,
+                  items: selectedList.items || [],
+                  updatedAt: serverTimestamp(),
+                  totalItems: (selectedList.items || []).reduce((sum, i) => sum + (i.qty || 1), 0)
+              };
+              // Ensure ID is string for doc ref
+              await setDoc(doc(db, "shopping_lists", String(id)), cloudData);
+              console.log("Cloud save success");
+           } catch (cloudErr) {
+              console.error("Cloud save failed:", cloudErr);
+              toast.error("บันทึกออนไลน์ไม่สำเร็จ (แต่ในเครื่องบันทึกแล้ว)");
+           }
+        }
+        
+        // Clear related temp data
         localStorage.removeItem("pending_save_list");
         sessionStorage.removeItem("current_draft_id");
 
         toast.dismiss(toastId);
+        toast.success("บันทึกข้อมูลเรียบร้อย");
         setIsSaving(false);
-        setShowLoginModal(true);
-      }
+        setIsDraft(false);
+
+        // Redirect to My Lists page
+        setTimeout(() => {
+          navigate('/mylists');
+        }, 500); 
+
     } catch (error) {
       console.error("Save error:", error);
       toast.error("บันทึกไม่สำเร็จ: " + error.message, { id: toastId });
@@ -561,36 +558,46 @@ export default function MyLists3() {
     navigate("/mylists");
   };
 
-  const handleEditClick = () => {
-    navigate(`/mylists/edit/${id}`);
+  const handleEditClick = () => { 
+    navigate(`/mylists/edit/${id}`, {
+      state: { initialData: selectedList }
+    }); 
   };
-
-  const handleDeleteClick = () => {
-    setShowDeleteModal(true);
-  };
+  const handleDeleteClick = () => { setShowDeleteModal(true); };
 
   const confirmDelete = async () => {
     const toastId = toast.loading("กำลังลบรายการ...");
 
-    try {
-      if (currentUser) {
-        await deleteDoc(doc(db, "shopping_lists", id));
+      try {
+        // ลบจาก Local Storage เท่านั้น
+        const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
+        const filteredLists = allLists.filter((l) => String(l.id) !== String(id));
+        localStorage.setItem("myLists", JSON.stringify(filteredLists));
+
+        // 🟢 CLOUD DELETE (If Logged In)
+        if (currentUser) {
+            try {
+                await deleteDoc(doc(db, "shopping_lists", String(id)));
+                console.log("Cloud delete success");
+            } catch (cloudErr) {
+                console.error("Cloud delete failed:", cloudErr);
+                // ไม่ต้อง throw error เพื่อให้ process การลบในเครื่องจบสมบูรณ์
+                // toast.error("ลบออนไลน์ไม่สำเร็จ"); 
+            }
+        }
+        
+        toast.success('ลบรายการเรียบร้อย', { id: toastId });
+        
+        setShowDeleteModal(false);
+        
+        setTimeout(() => {
+            navigate('/mylists');
+        }, 500);
+
+      } catch (error) { 
+          console.error("Delete error:", error);
+          toast.error("ลบไม่สำเร็จ: " + error.message, { id: toastId });
       }
-
-      const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
-      const filteredLists = allLists.filter((l) => String(l.id) !== String(id));
-      localStorage.setItem("myLists", JSON.stringify(filteredLists));
-
-      toast.success("ลบรายการเรียบร้อย", { id: toastId });
-      setShowDeleteModal(false);
-
-      setTimeout(() => {
-        navigate("/mylists");
-      }, 500);
-    } catch (error) {
-      console.error("Delete error:", error);
-      toast.error("ลบไม่สำเร็จ: " + error.message, { id: toastId });
-    }
   };
 
   if (loading) {
@@ -718,30 +725,56 @@ export default function MyLists3() {
                 <div></div>
               </div>
 
-              {recommendShops.map((s) => (
-                <div className="ml3-shop-row" key={s.key}>
-                  <div className="ml3-shop-brand">{s.name}</div>
+              {recommendShops.map((s) => {
+                // หาร้านที่ถูกที่สุด (ราคาต่ำสุด)
+                const minPrice = Math.min(...recommendShops.map(shop => shop.totalPrice));
+                const isCheapest = s.totalPrice === minPrice;
+                
+                return (
+                <div 
+                  className={`ml3-shop-row ${isCheapest ? 'ml3-shop-row-cheapest' : ''}`} 
+                  key={s.key}
+                >
+                  <div className="ml3-shop-brand">
+                    {STORE_LOGOS[s.key] ? (
+                      <div className={`ml3-shop-logo ${s.key.toLowerCase()}`}>
+                        <img 
+                          src={STORE_LOGOS[s.key]} 
+                          alt={s.name}
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            const fallback = e.target.parentElement.nextSibling;
+                            if (fallback) fallback.style.display = 'block';
+                          }}
+                        />
+                      </div>
+                    ) : null}
+                    <span 
+                      className="ml3-shop-name-fallback" 
+                      style={{ display: STORE_LOGOS[s.key] ? 'none' : 'block' }}
+                    >
+                      {s.name}
+                    </span>
+                  </div>
                   <div className="ml3-shop-muted" style={{ color: "#64748b" }}>
                     {s.distance}
                   </div>
-                  <div className="ml3-shop-price" style={{ color: "#10b77e", fontSize: "1.1rem" }}>
+                  <div className="ml3-shop-price" style={{ 
+                    color: isCheapest ? "#3cb371" : "#1e293b", 
+                    fontSize: "1.1rem",
+                    fontWeight: "600"
+                  }}>
                     ฿{Math.round(s.totalPrice).toLocaleString()}
                   </div>
 
                   {/* ✅ ปุ่มเหมือนเดิม + เพิ่มปุ่มนำทาง */}
                   <div style={{ display: "flex", gap: "8px" }}>
-                    <button className="ml3-go" onClick={() => window.open(s.url, "_blank")}>
+                    <button className="ml3-go-shop" onClick={() => window.open(s.url, "_blank")}>
                       ไปยังร้านค้า
                     </button>
 
                     <button
-                      className="ml3-go"
-                      style={{
-                        backgroundColor: "#cbd5e1",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                      }}
+                      className="ml3-go-navigate"
                       onClick={() => handleNavigate(s.key)}
                       disabled={!branches?.[s.key]?.[0]}
                       title={!branches?.[s.key]?.[0] ? "ยังไม่พบพิกัดสาขา" : "นำทางไปยังสาขาใกล้ที่สุด"}
@@ -751,7 +784,8 @@ export default function MyLists3() {
                     </button>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </section>
 
@@ -851,35 +885,21 @@ export default function MyLists3() {
             >
               <X size={24} />
             </button>
-            <div className="ml3-modal-title" style={{ marginTop: '10px' }}>
-              {currentUser ? "ยืนยันการบันทึก" : "กรุณาเข้าสู่ระบบ"}
-            </div>
+            <div className="ml3-modal-title" style={{marginTop: '10px'}}>{currentUser ? "ยืนยันการบันทึก" : "กรุณาเข้าสู่ระบบ"}</div>
             <p className="ml3-modal-desc">
-              {currentUser
-                ? "ต้องการบันทึกข้อมูลการเปลี่ยนแปลงใช่หรือไม่?"
-                : "คุณจำเป็นต้องเข้าสู่ระบบสมาชิกก่อนจึงจะบันทึกรายการได้"}
+                {currentUser ? "ต้องการบันทึกข้อมูลการเปลี่ยนแปลงใช่หรือไม่?" : "คุณจำเป็นต้องเข้าสู่ระบบสมาชิกก่อนจึงจะบันทึกรายการได้"}
             </p>
             <div className="ml3-modal-actions">
-              <button className="ml3-btn-cancel" onClick={() => setShowModal(false)} disabled={isSaving}>
-                ยกเลิก
-              </button>
+              <button className="ml3-btn-cancel" onClick={() => setShowModal(false)}>ยกเลิก</button>
               {currentUser ? (
-                <button className="ml3-btn-confirm" onClick={confirmSave} disabled={isSaving}>
-                  {isSaving ? "กำลังบันทึก..." : "บันทึก"}
-                </button>
+                 <button className="ml3-btn-confirm" onClick={confirmSave}>บันทึก</button>
               ) : (
-                <button
-                  className="ml3-btn-confirm"
-                  style={{ backgroundColor: '#3b82f6' }}
-                  onClick={() => {
+                 <button className="ml3-btn-confirm" style={{backgroundColor: '#3b82f6'}} onClick={() => {
+                    // Save pending state and go to login
                     localStorage.setItem("pending_save_list", JSON.stringify(selectedList));
                     setShowModal(false);
                     navigate('/login', { state: { from: location.pathname } });
-                  }}
-                  disabled={isSaving}
-                >
-                  เข้าสู่ระบบ
-                </button>
+                 }}>เข้าสู่ระบบ</button>
               )}
             </div>
           </div>

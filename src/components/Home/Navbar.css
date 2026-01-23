@@ -242,9 +242,13 @@
   /* ✅ ปรับแก้: ลด padding ด้านขวาลงเยอะๆ */
   padding-right: 6px; /* จากเดิม 12px */
 
-  transition: all 0.3s ease;
+  transition: background 0.2s ease;
   order: 1;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.user-profile:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .user-profile:active {
@@ -268,10 +272,30 @@
   object-fit: cover;
 }
 
+.user-initials-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.initials-text {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.02em;
+}
+
 /* ชื่อคน */
 .user-name {
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   font-weight: 600;
+  padding-right: 12px;
 
   /* ✅ ปรับแก้: ลดความกว้างสูงสุดของชื่อลง */
   max-width: 70px; /* จากเดิม 100px */
@@ -279,8 +303,9 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  color: #f0f9ff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  font-weight: 700;
 }
 
 /* ปุ่ม Logout */
