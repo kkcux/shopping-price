@@ -14,6 +14,7 @@ import {
   X,
   AlertCircle,
   Navigation, // ✅ เพิ่มไอคอนนำทาง
+  Lightbulb, // ✅ เพิ่มไอคอน lightbulb
 } from "lucide-react";
 
 import Footer from "../Home/Footer";
@@ -215,17 +216,7 @@ export default function MyLists3() {
 
   useEffect(() => {
     const fetchListData = async () => {
-      // 0. PENDING LOGIN DRAFT PRIORITY (For returning users)
-      const pending = JSON.parse(localStorage.getItem("pending_save_list"));
-      if (pending && String(pending.id) === String(id)) {
-          console.log("RECEIVED PENDING LOGIN DATA:", pending);
-          setSelectedList(pending);
-          setIsDraft(true);
-          return;
-      }
-      
-      // 1. DRAFT DATA PRIORITY
-      // 1. DRAFT DATA PRIORITY
+      // 1. DRAFT DATA PRIORITY (จากหน้า Create)
       if (location.state?.draftData) {
         console.log("RECEIVED DRAFT DATA:", location.state.draftData);
         setSelectedList(location.state.draftData);
@@ -233,32 +224,52 @@ export default function MyLists3() {
         return;
       }
 
-      // 2. ถ้าไม่มี ให้หาใน Local Storage
-      const allLocalLists = JSON.parse(localStorage.getItem("myLists")) || [];
-      const localList = allLocalLists.find((l) => String(l.id) === String(id));
-
-      if (localList) {
-        setSelectedList(localList);
-        return;
+      // 2. ถ้าเป็น temporary ID ให้ดึงจาก draft
+      if (String(id).startsWith('temp_')) {
+        // ลองดึงจาก temp_draft ก่อน
+        const tempDraft = JSON.parse(localStorage.getItem("temp_draft") || "null");
+        if (tempDraft && String(tempDraft.id) === String(id)) {
+          setSelectedList(tempDraft);
+          setIsDraft(true);
+          return;
+        }
+        // ถ้าไม่มี ลองดึงจาก current_draft
+        const draft = JSON.parse(localStorage.getItem("current_draft") || "null");
+        if (draft && String(draft.id) === String(id)) {
+          setSelectedList(draft);
+          setIsDraft(true);
+          return;
+        }
       }
 
-      // 3. ถ้าไม่มีใน Local ให้หาใน FireStore (Cloud)
+      // 3. ถ้า login แล้ว ให้หาใน Local Storage หรือ FireStore
       if (auth.currentUser) {
-          try {
-              const docRef = doc(db, "shopping_lists", String(id));
-              const docSnap = await getDoc(docRef);
-              
-              if (docSnap.exists()) {
-                  const data = docSnap.data();
-                  setSelectedList({ id: docSnap.id, ...data });
-                  // Optional: Sync back to local? 
-                  // might be good for consistency but let's just display it first
-              } else {
-                  console.log("No such document in Firestore!");
-              }
-          } catch (err) {
-              console.error("Error fetching from Firestore:", err);
-          }
+        // 3.1 หาใน Local Storage ก่อน
+        const allLocalLists = JSON.parse(localStorage.getItem("myLists")) || [];
+        const localList = allLocalLists.find((l) => String(l.id) === String(id));
+
+        if (localList) {
+          setSelectedList(localList);
+          return;
+        }
+
+        // 3.2 หาใน FireStore
+        try {
+            const docRef = doc(db, "shopping_lists", String(id));
+            const docSnap = await getDoc(docRef);
+            
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                setSelectedList({ id: docSnap.id, ...data });
+            } else {
+                console.log("No such document in Firestore!");
+            }
+        } catch (err) {
+            console.error("Error fetching from Firestore:", err);
+        }
+      } else {
+        // ✅ ถ้ายังไม่ login และไม่ใช่ draft ให้แสดงข้อความ
+        console.log("Not logged in and no draft data");
       }
     };
     fetchListData();
@@ -473,6 +484,12 @@ export default function MyLists3() {
   };
 
   const handleSaveClick = () => {
+    // ✅ ถ้ายังไม่ login ให้แสดง modal ให้ login
+    if (!currentUser) {
+      setShowLoginModal(true);
+      return;
+    }
+    
     if (!selectedList) {
       toast.error("ไม่พบข้อมูลที่จะบันทึก");
       return;
@@ -481,6 +498,13 @@ export default function MyLists3() {
   };
 
   const confirmSave = async () => {
+    // ✅ ต้อง login ก่อนบันทึก
+    if (!currentUser) {
+      setShowModal(false);
+      setShowLoginModal(true);
+      return;
+    }
+
     console.log("CONFIRM SAVE CALLED - WRITING TO STORAGE");
     setShowModal(false); 
     setShowExitModal(false); 
@@ -490,41 +514,52 @@ export default function MyLists3() {
 
     try {
         const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
-        const existingIndex = allLists.findIndex((l) => String(l.id) === String(id));
+        
+        // ✅ สร้าง ID ใหม่ถ้าเป็น temporary list
+        let finalId = id;
+        if (id.startsWith('temp_') || selectedList?.isTemporary) {
+          finalId = Date.now().toString();
+        }
+        
+        const existingIndex = allLists.findIndex((l) => String(l.id) === String(finalId));
 
         let newLists;
+        const listToSave = {
+          ...selectedList,
+          id: finalId,
+          isGuest: false,
+          isTemporary: false, // ✅ ไม่ใช่ temporary แล้ว
+          updatedAt: new Date().toISOString()
+        };
+        
         if (existingIndex !== -1) {
           newLists = [...allLists];
-          newLists[existingIndex] = {
-             ...selectedList,
-             updatedAt: new Date().toISOString()
-          }; 
+          newLists[existingIndex] = listToSave;
         } else {
-          newLists = [...allLists, selectedList];
+          newLists = [...allLists, listToSave];
         }
         localStorage.setItem("myLists", JSON.stringify(newLists));
 
-        // 🟢 CLOUD SAVE (If Logged In)
-        if (currentUser) {
-           try {
-              const cloudData = {
-                  ...selectedList,
-                  userId: currentUser.uid,
-                  items: selectedList.items || [],
-                  updatedAt: serverTimestamp(),
-                  totalItems: (selectedList.items || []).reduce((sum, i) => sum + (i.qty || 1), 0)
-              };
-              // Ensure ID is string for doc ref
-              await setDoc(doc(db, "shopping_lists", String(id)), cloudData);
-              console.log("Cloud save success");
-           } catch (cloudErr) {
-              console.error("Cloud save failed:", cloudErr);
-              toast.error("บันทึกออนไลน์ไม่สำเร็จ (แต่ในเครื่องบันทึกแล้ว)");
-           }
+        // 🟢 CLOUD SAVE (ต้อง login แล้ว)
+        try {
+           const cloudData = {
+               ...listToSave,
+               userId: currentUser.uid,
+               items: selectedList.items || [],
+               updatedAt: serverTimestamp(),
+               totalItems: (selectedList.items || []).reduce((sum, i) => sum + (i.qty || 1), 0)
+           };
+           await setDoc(doc(db, "shopping_lists", String(finalId)), cloudData);
+           console.log("Cloud save success");
+        } catch (cloudErr) {
+           console.error("Cloud save failed:", cloudErr);
+           toast.error("บันทึกออนไลน์ไม่สำเร็จ (แต่ในเครื่องบันทึกแล้ว)");
         }
         
         // Clear related temp data
         localStorage.removeItem("pending_save_list");
+        localStorage.removeItem("current_draft");
+        localStorage.removeItem("temp_draft");
         sessionStorage.removeItem("current_draft_id");
 
         toast.dismiss(toastId);
@@ -799,10 +834,33 @@ export default function MyLists3() {
               ) : (
                 <>
                   <Save size={20} strokeWidth={2.5} />
-                  บันทึกการเปลี่ยนแปลง
+                  {currentUser ? "บันทึกการเปลี่ยนแปลง" : "เข้าสู่ระบบเพื่อบันทึก"}
                 </>
               )}
             </button>
+            {!currentUser && (
+              <div style={{ 
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '10px',
+                marginTop: '16px',
+                maxWidth: '600px',
+                marginLeft: 'auto',
+                marginRight: 'auto'
+              }}>
+                <Lightbulb size={20} color="#16a34a" fill="#fef08a" strokeWidth={2.5} />
+                <p style={{ 
+                  color: '#166534', 
+                  fontSize: '0.9rem',
+                  margin: 0,
+                  lineHeight: '1.5',
+                  fontWeight: 400
+                }}>
+                  คุณสามารถเปรียบเทียบราคาได้ แต่ต้องเข้าสู่ระบบเพื่อบันทึกรายการ
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </main>
@@ -885,22 +943,13 @@ export default function MyLists3() {
             >
               <X size={24} />
             </button>
-            <div className="ml3-modal-title" style={{marginTop: '10px'}}>{currentUser ? "ยืนยันการบันทึก" : "กรุณาเข้าสู่ระบบ"}</div>
+            <div className="ml3-modal-title" style={{marginTop: '10px'}}>ยืนยันการบันทึก</div>
             <p className="ml3-modal-desc">
-                {currentUser ? "ต้องการบันทึกข้อมูลการเปลี่ยนแปลงใช่หรือไม่?" : "คุณจำเป็นต้องเข้าสู่ระบบสมาชิกก่อนจึงจะบันทึกรายการได้"}
+              ต้องการบันทึกข้อมูลการเปลี่ยนแปลงใช่หรือไม่?
             </p>
             <div className="ml3-modal-actions">
               <button className="ml3-btn-cancel" onClick={() => setShowModal(false)}>ยกเลิก</button>
-              {currentUser ? (
-                 <button className="ml3-btn-confirm" onClick={confirmSave}>บันทึก</button>
-              ) : (
-                 <button className="ml3-btn-confirm" style={{backgroundColor: '#3b82f6'}} onClick={() => {
-                    // Save pending state and go to login
-                    localStorage.setItem("pending_save_list", JSON.stringify(selectedList));
-                    setShowModal(false);
-                    navigate('/login', { state: { from: location.pathname } });
-                 }}>เข้าสู่ระบบ</button>
-              )}
+              <button className="ml3-btn-confirm" onClick={confirmSave}>บันทึก</button>
             </div>
           </div>
         </div>

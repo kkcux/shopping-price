@@ -38,26 +38,30 @@ const MyLists = () => {
   const loadAllLists = async (user) => {
     let mergedLists = [];
 
-    // 1. ดึงจาก LocalStorage เสมอ
+    // ✅ ถ้าไม่ login ไม่ต้องโหลดข้อมูลเลย
+    if (!user) {
+      setSavedLists([]);
+      return;
+    }
+
+    // 1. ดึงจาก LocalStorage
     const localData = JSON.parse(localStorage.getItem("myLists")) || [];
     mergedLists = [...localData];
 
-    // 2. ถ้ามี User ให้ดึงจาก Firebase มาสมทบ
-    if (user) {
-      try {
-        const q = query(collection(db, "shopping_lists"), where("userId", "==", user.uid));
-        const querySnapshot = await getDocs(q);
-        const cloudLists = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-        
-        // รวมรายการ (ป้องกัน ID ซ้ำกัน)
-        const localIds = new Set(localData.map(l => String(l.id)));
-        const newCloudLists = cloudLists.filter(l => !localIds.has(String(l.id)));
-        
-        mergedLists = [...mergedLists, ...newCloudLists];
-      } catch (error) {
-        console.error("Error fetching firebase:", error);
-        toast.error("โหลดข้อมูลออนไลน์ไม่สำเร็จ");
-      }
+    // 2. ดึงจาก Firebase
+    try {
+      const q = query(collection(db, "shopping_lists"), where("userId", "==", user.uid));
+      const querySnapshot = await getDocs(q);
+      const cloudLists = querySnapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+      
+      // รวมรายการ (ป้องกัน ID ซ้ำกัน)
+      const localIds = new Set(localData.map(l => String(l.id)));
+      const newCloudLists = cloudLists.filter(l => !localIds.has(String(l.id)));
+      
+      mergedLists = [...mergedLists, ...newCloudLists];
+    } catch (error) {
+      console.error("Error fetching firebase:", error);
+      toast.error("โหลดข้อมูลออนไลน์ไม่สำเร็จ");
     }
 
     // เรียงลำดับใหม่สุดขึ้นก่อน (ถ้ามี createdAt)
@@ -156,6 +160,30 @@ const MyLists = () => {
               return (
                 <div style={{textAlign: 'center', marginTop: '50px', color: '#999', display:'flex', justifyContent:'center', gap: 10}}>
                   <Loader2 className="animate-spin" /> กำลังโหลดข้อมูล...
+                </div>
+              );
+            }
+
+            // ✅ ถ้ายังไม่ login ให้แสดงข้อความให้ login
+            if (!currentUser) {
+              return (
+                <div className="empty-dashed-container">
+                  <div style={{ textAlign: 'center', padding: '40px 20px' }}>
+                    <LogIn size={48} color="#94a3b8" style={{ marginBottom: '16px' }} />
+                    <p className="empty-text" style={{ fontSize: '1.1rem', marginBottom: '8px' }}>
+                      กรุณาเข้าสู่ระบบเพื่อดูรายการสินค้า
+                    </p>
+                    <p style={{ color: '#94a3b8', fontSize: '0.9rem', marginBottom: '20px' }}>
+                      เมื่อเข้าสู่ระบบแล้ว คุณจะสามารถสร้างและบันทึกรายการสินค้าได้
+                    </p>
+                    <button 
+                      className="btn-newlist"
+                      onClick={() => navigate('/login', { state: { from: '/mylists' } })}
+                      style={{ marginTop: '12px' }}
+                    >
+                      <LogIn size={16} strokeWidth={3} style={{marginRight:4, transform: "translateY(3px)"}}/> เข้าสู่ระบบ
+                    </button>
+                  </div>
                 </div>
               );
             }
