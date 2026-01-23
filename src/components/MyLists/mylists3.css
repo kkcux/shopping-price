@@ -458,8 +458,11 @@
 ========================= */
 .ml3-save {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   margin-top: 40px;
+  width: 100%;
 }
 
 .ml3-savebtn {

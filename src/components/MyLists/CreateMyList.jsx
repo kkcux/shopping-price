@@ -24,7 +24,8 @@ const REGISTER_URL = {
   BIGC: "https://www.bigc.co.th/register",
 };
 
-const DRAFT_KEY = 'current_draft'; 
+const DRAFT_KEY = 'current_draft';
+const TEMP_DRAFT_KEY = 'temp_draft'; // สำหรับ temporary list 
 
 export default function CreateMyList() {
   const navigate = useNavigate();
@@ -196,6 +197,9 @@ export default function CreateMyList() {
   };
 
   const handleSaveFinal = () => {
+    // ✅ อนุญาตให้เปรียบเทียบราคาได้โดยไม่ต้อง login
+    // แต่จะไม่บันทึกลงระบบ (แค่ส่งไปหน้า compare)
+    
     const trimmedName = listName.trim();
 
     if (!trimmedName) {
@@ -209,36 +213,47 @@ export default function CreateMyList() {
       return;
     }
 
-    const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
-    const isDuplicate = allLists.some(list => list.name === trimmedName);
+    // ✅ ถ้า login แล้วให้เช็คชื่อซ้ำ
+    if (currentUser) {
+      const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
+      const isDuplicate = allLists.some(list => list.name === trimmedName);
 
-    if (isDuplicate) {
-      setWarningType("duplicate");
-      setShowWarningModal(true);
-      return;
+      if (isDuplicate) {
+        setWarningType("duplicate");
+        setShowWarningModal(true);
+        return;
+      }
     }
 
     try {
-      const guestId = Date.now().toString();
+      // ✅ สร้าง temporary ID สำหรับเปรียบเทียบราคา
+      const tempId = `temp_${Date.now()}`;
       
-      const newList = {
-        id: guestId,
+      const tempList = {
+        id: tempId,
         name: trimmedName,
         items: items,
         totalItems: items.reduce((sum, i) => sum + i.qty, 0),
         selectedStores: selectedStores, 
         createdAt: new Date().toISOString(),
         budget: 0,
-        isGuest: !currentUser 
+        isGuest: true,
+        isTemporary: true // ✅ ระบุว่าเป็นรายการชั่วคราว
       };
 
-      localStorage.setItem("myLists", JSON.stringify([...allLists, newList]));
-      
-      // ✅ ตอนบันทึกเสร็จ ก็บอกว่ากำลังจะไปแล้วเหมือนกัน เพื่อกัน Auto-save เขียนทับ
+      // ✅ บันทึก draft ก่อนไปหน้า compare (เพื่อให้กลับมาแก้ไขได้)
       isDiscarding.current = true;
-      localStorage.removeItem(DRAFT_KEY);
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(tempList));
+      localStorage.setItem(TEMP_DRAFT_KEY, JSON.stringify(tempList)); // ✅ บันทึกแยกสำหรับ temp
       
-      navigate(`/mylists/compare/${guestId}`, { state: { isNewList: true } }); 
+      // ✅ ไปหน้า compare โดยไม่บันทึกลง myLists
+      navigate(`/mylists/compare/${tempId}`, { 
+        state: { 
+          isNewList: true,
+          isTemporary: true, // ✅ บอกว่าเป็นรายการชั่วคราว
+          draftData: tempList
+        } 
+      }); 
 
     } catch (error) {
       console.error("Error creating list:", error);
