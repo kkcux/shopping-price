@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ShoppingCart, Bell, ArrowLeft, LogOut } from 'lucide-react';
+import { ShoppingCart, Bell, ArrowLeft } from 'lucide-react';
 import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import { googleLogout } from '@react-oauth/google';
 import './Navbar.css';
@@ -7,7 +7,7 @@ import NotificationList from '../Notification/NotificationList';
 
 // ✅ 1. Import Firebase Auth
 import { auth } from '../../firebase-config'; 
-import { signOut, onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 
 function Navbar() {
   const location = useLocation();
@@ -15,14 +15,23 @@ function Navbar() {
   
   const [showNotif, setShowNotif] = useState(false);
   const notifRef = useRef(null);
-  
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
   // โหลดข้อมูล User จาก LocalStorage
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem('user');
     return storedUser ? JSON.parse(storedUser) : null;
   });
+
+  // ✅ ดึงตัวย่อชื่อ (ใช้ logic เดียวกับ Profile)
+  const getInitials = (displayName) => {
+    if (!displayName) return '';
+    return displayName
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  };
 
   // ✅ เพิ่ม Auth State Listener - จะอัปเดต User ทันทีเมื่อ Auth เปลี่ยนแปลง
   useEffect(() => {
@@ -58,37 +67,6 @@ function Navbar() {
     }
   }, [location]);
 
-  const handleLogoutClick = () => {
-    setShowLogoutConfirm(true);
-  };
-
-  // ✅ 2. ฟังก์ชัน Logout
-  const confirmLogout = async () => {
-    try {
-      // 1. สั่ง Firebase ให้ Logout
-      await signOut(auth);
-      
-      // 2. เคลียร์ส่วนอื่นๆ
-      googleLogout(); 
-      localStorage.removeItem('user'); 
-      localStorage.removeItem('token'); 
-      
-      // เคลียร์ข้อมูลชั่วคราวอื่นๆ
-      localStorage.removeItem('myLists'); 
-      localStorage.removeItem('pending_save_list');
-      localStorage.removeItem('current_draft'); 
-
-      setUser(null);
-      setShowLogoutConfirm(false); 
-      
-      // 3. ย้ายหน้าและรีเฟรช
-      navigate('/login'); 
-      window.location.reload(); 
-      
-    } catch (error) {
-      console.error("Error signing out: ", error);
-    }
-  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -153,33 +131,36 @@ function Navbar() {
                 onClick={() => navigate('/profile')} 
                 style={{ cursor: 'pointer' }}
               >
-                {/* ตัวย่อชื่อในแถบนำทาง */}
-                <div className="user-initials-badge">
-                  <span className="initials-text">
-                    {(user.name || user.given_name || "")
-                      .split(' ')
-                      .map(word => word[0])
-                      .join('')
-                      .toUpperCase()
-                      .substring(0, 2)}
-                  </span>
-                </div>
+                {/* ✅ แสดงรูปโปรไฟล์เหมือน Profile */}
+                {user.photoURL ? (
+                  <img 
+                    src={user.photoURL} 
+                    alt="Profile" 
+                    className="user-profile-image"
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                      marginRight: '8px'
+                    }}
+                  />
+                ) : (
+                  <div className="user-initials-badge" style={{
+                    width: '32px',
+                    height: '32px',
+                    fontSize: '0.75rem'
+                  }}>
+                    <span className="initials-text">
+                      {getInitials(user.name || user.given_name || user.email || '')}
+                    </span>
+                  </div>
+                )}
                 
                 {/* 🔥 แก้ไข: ป้องกัน Error split ตามที่เคยคุยกัน */}
                 <span className="user-name">
                   {(user.given_name || user.name || "").split(' ')[0]}
                 </span>
-
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation(); 
-                    handleLogoutClick(); 
-                  }}
-                  className="btn-logout"
-                  title="ออกจากระบบ"
-                >
-                  <LogOut size={12} />
-                </button>
               </div>
             ) : (
               <Link to="/login">
@@ -203,23 +184,6 @@ function Navbar() {
           </div>
         </div>
       </nav>
-
-      {showLogoutConfirm && (
-        <div className="logout-confirm-overlay" onClick={() => setShowLogoutConfirm(false)}>
-          <div className="logout-confirm-modal" onClick={(e) => e.stopPropagation()}>
-            <h3>ยืนยันการออกจากระบบ</h3>
-            <p>คุณต้องการออกจากระบบใช่หรือไม่?</p>
-            <div className="logout-actions">
-              <button className="btn-cancel" onClick={() => setShowLogoutConfirm(false)}>
-                ยกเลิก
-              </button>
-              <button className="btn-confirm" onClick={confirmLogout}>
-                ออกจากระบบ
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }
