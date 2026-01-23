@@ -29,6 +29,8 @@ import ListsEdit from './components/MyLists/ListsEdit';
 import MyLists3 from './components/MyLists/MyLists3';     
 import { FavoritesProvider } from './context/FavoritesContext';
 
+import ForgotPassword from './components/Login/ForgotPassword';
+
 function App() {
     useEffect(() => {
       const testFirebase = async () => {
@@ -73,6 +75,7 @@ function App() {
         {/* <Route path="/mylists/:id" element={<MyLists2 />} /> */}
         
         <Route path="/mylists/compare/:id" element={<MyLists3 />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
 
       </Routes>
       </FavoritesProvider>
