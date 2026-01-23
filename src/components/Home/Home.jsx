@@ -8,8 +8,10 @@ import {
 } from 'lucide-react';
 
 import AddToListModal from './AddToListModal';
+import AuthRequiredModal from './AuthRequiredModal'; // ✅ Import Modal
+import { useFavorites } from '../../context/FavoritesContext';
 
-const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onAddToCart, onViewAll }) => {
+const ProductSection = ({ title, icon, items = [], isFavorite, toggleFav, loading, onAddToCart, onViewAll }) => {
   const scrollRef = useRef(null);
   const scroll = (direction) => {
     if (scrollRef.current) {
@@ -41,8 +43,8 @@ const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onA
           </button>
 
           <div className="product-grid" ref={scrollRef}>
-            {items.map((item, index) => {
-              const isFav = favorites[item.name];
+            {items && items.length > 0 ? items.map((item, index) => {
+              const isFav = isFavorite ? isFavorite(item.name) : false;
               return (
                 <div key={item.id || index} className="product-card">
                   <button
@@ -68,7 +70,7 @@ const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onA
                   </div>
                 </div>
               );
-            })}
+            }) : <div style={{padding: '20px'}}>ไม่พบสินค้า</div>}
           </div>
 
           <button className="scroll-btn next-btn" onClick={() => scroll('right')}>
@@ -83,28 +85,78 @@ const ProductSection = ({ title, icon, items, favorites, toggleFav, loading, onA
 
 const Home = () => {
   const navigate = useNavigate();
-  const [favorites, setFavorites] = useState({});
+  const { isFavorite, toggleFavorite, currentUser } = useFavorites();
+  // const [favorites, setFavorites] = useState({}); // Removed for Context
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false); // ✅ New State for Auth Modal
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   // --- Search & Suggestion States ---
   const [searchTerm, setSearchTerm] = useState('');
-  const [suggestions, setSuggestions] = useState([]);     // เก็บรายการแนะนำ
-  const [showSuggestions, setShowSuggestions] = useState(false); // ควบคุมการแสดงผล Dropdown
-  const searchContainerRef = useRef(null); // ใช้เช็คคลิกนอกกล่อง
+  const [suggestions, setSuggestions] = useState([]);     
+  const [showSuggestions, setShowSuggestions] = useState(false); 
+  const searchContainerRef = useRef(null); 
 
-  // ฟังก์ชันจัดการการพิมพ์
+  // 🔥 Full Search Index for Home
+  const [fullSearchIndex, setFullSearchIndex] = useState(null);
+  const [isSearchingIndex, setIsSearchingIndex] = useState(false);
+
+  const loadFullIndex = () => {
+    if (!fullSearchIndex && !isSearchingIndex) {
+        setIsSearchingIndex(true);
+        fetch('data/categories/all_products_lite.json')
+            .then(res => res.json())
+            .then(data => {
+                setFullSearchIndex(data);
+                setIsSearchingIndex(false);
+            })
+            .catch(err => {
+                console.error("Home: Failed to load search index", err);
+                setIsSearchingIndex(false);
+            });
+    }
+  };
+
   const handleInputChange = (e) => {
     const value = e.target.value;
     setSearchTerm(value);
+    
+    // Trigger lazy load
+    loadFullIndex();
 
     if (value.trim().length > 0) {
-      // กรองสินค้าที่ชื่อตรงกัน (เอาแค่ 6 รายการพอ ไม่ให้ยาวเกิน)
-      const filtered = allProducts
-        .filter(p => p.name && p.name.toLowerCase().includes(value.toLowerCase()))
-        .slice(0, 6);
+      let filtered = [];
+      
+      // Use Full Index if available
+      if (fullSearchIndex) {
+         const PREFIX = "https://st.bigc-cs.com/cdn-cgi/image/format=webp,quality=85/public/media/catalog/product/";
+         filtered = fullSearchIndex
+             .filter(p => p.n && p.n.toLowerCase().includes(value.toLowerCase()))
+             .slice(0, 8) // Show slightly more
+             .map(p => ({
+                 name: p.n,
+                 price: p.p,
+                 image: p.i ? p.i.replace('{|}', PREFIX) : null
+             }));
+      } else {
+          // Fallback to local subset
+          let searchSource = [];
+          if (Array.isArray(allProducts)) {
+            searchSource = allProducts;
+          } else if (allProducts && (allProducts.recommended || allProducts.popular)) {
+            searchSource = [
+              ...(allProducts.recommended || []),
+              ...(allProducts.popular || []),
+              ...(allProducts.promo || [])
+            ];
+          }
+          filtered = searchSource
+            .filter(p => p.name && p.name.toLowerCase().includes(value.toLowerCase()))
+            .slice(0, 6);
+      }
+
       setSuggestions(filtered);
       setShowSuggestions(true);
     } else {
@@ -155,45 +207,25 @@ const Home = () => {
     navigate('/categories', { state: { selectedFilter: filterType, selectedCategory: 'ทั้งหมด' } });
   };
 
-  useEffect(() => {
-    const savedFavs = JSON.parse(localStorage.getItem('favoritesItems')) || [];
-    const favMap = {};
-    savedFavs.forEach(item => { if (item.data) favMap[item.data] = true; });
-    setFavorites(favMap);
-  }, []);
+  /* Removed local favorites effect */
 
-  const toggleFav = (product) => {
-     const productName = product.name;
-    setFavorites(prev => {
-      const isCurrentlyFav = !!prev[productName];
-      const newFavState = { ...prev, [productName]: !isCurrentlyFav };
-      const currentSavedFavs = JSON.parse(localStorage.getItem('favoritesItems')) || [];
-      let newSavedFavs;
-      if (isCurrentlyFav) {
-        newSavedFavs = currentSavedFavs.filter(item => item.data !== productName);
-      } else {
-        const alreadyExists = currentSavedFavs.some(item => item.data === productName);
-        if (!alreadyExists) {
-          const favItem = { image: product.image, data: product.name, price: product.price };
-          newSavedFavs = [...currentSavedFavs, favItem];
-        } else { newSavedFavs = currentSavedFavs; }
-      }
-      localStorage.setItem('favoritesItems', JSON.stringify(newSavedFavs));
-      return newFavState;
-    });
-  };
+
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/data/all_retailers_products_merged_v1.jsonl');
-        const text = await response.text();
-        const lines = text.trim().split('\n').slice(0, 500); 
-        const products = lines.map(line => {
-            try { return JSON.parse(line); } catch(e) { return null; }
-        }).filter(item => item !== null);
-        setAllProducts(products);
+        // ✅ ใช้ไฟล์เล็กสำหรับหน้า Home (24KB)
+        const response = await fetch('data/home_products.json');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        // data format: { recommended: [], popular: [], promo: [] }
+        setAllProducts(data); // เก็บทั้งหมดลง State (ในที่นี้โครงสร้างเปลี่ยนไปเล็กน้อย แต่เราจะ destructure ข้างล่าง)
+        
       } catch (error) {
         console.error("Error loading products:", error);
       } finally {
@@ -204,12 +236,22 @@ const Home = () => {
   }, []);
 
   const { recommended, popular, promo } = useMemo(() => {
-    if (allProducts.length === 0) return { recommended: [], popular: [], promo: [] };
-    const shuffled = [...allProducts].sort(() => 0.5 - Math.random());
+    // ถ้า allProducts เป็น Array (กรณีเก่า) หรือยังไม่โหลด
+    if (!allProducts || (Array.isArray(allProducts) && allProducts.length === 0)) {
+        return { recommended: [], popular: [], promo: [] };
+    }
+    
+    // ถ้าเป็น Object ที่โหลดมาจาก home_products.json
+    if (!Array.isArray(allProducts) && allProducts.recommended) {
+        return allProducts;
+    }
+
+    // Fallback logic (ถ้าเผื่อมีการเปลี่ยนกลับไปใช้ Array)
+    const list = Array.isArray(allProducts) ? allProducts : [];
     return {
-      recommended: shuffled.slice(0, 10),
-      popular: shuffled.slice(10, 20),
-      promo: shuffled.slice(20, 30)
+       recommended: list.slice(0, 10),
+       popular: list.slice(10, 20),
+       promo: list.slice(20, 30)
     };
   }, [allProducts]);
 
@@ -228,6 +270,15 @@ const Home = () => {
     navigate('/categories', { state: { selectedCategory: categoryName } });
   };
 
+  // ✅ New Handler for Secure Likes
+  const handleToggleFavorite = (product) => {
+    if (!currentUser) {
+      setIsAuthModalOpen(true); // ✅ Show Beautiful Modal instead of confirm
+      return;
+    }
+    toggleFavorite(product);
+  };
+
   return (
     <div className="home-container">
       <header className="hero-banner">
@@ -238,7 +289,7 @@ const Home = () => {
           </h1>
           <p>
             เปรียบเทียบราคาจากสินค้ากว่า
-            <strong> {allProducts.length > 0 ? '5,000+' : '...'} </strong>
+            <strong> {!loading ? '70,000+' : '...'} </strong>
             รายการ เพื่อดีลที่คุ้มที่สุด
           </p>
           
@@ -249,7 +300,32 @@ const Home = () => {
                   type="text" 
                   placeholder="ค้นหาชื่อสินค้าที่ต้องการ..." 
                   value={searchTerm}
-                  onChange={handleInputChange} // ใช้ฟังก์ชันใหม่
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    setSearchTerm(value);
+
+                    if (value.trim().length > 0) {
+                      let searchSource = [];
+                      if (Array.isArray(allProducts)) {
+                        searchSource = allProducts;
+                      } else if (allProducts && (allProducts.recommended || allProducts.popular)) {
+                        searchSource = [
+                          ...(allProducts.recommended || []),
+                          ...(allProducts.popular || []),
+                          ...(allProducts.promo || [])
+                        ];
+                      }
+
+                      const filtered = searchSource
+                        .filter(p => p.name && p.name.toLowerCase().includes(value.toLowerCase()))
+                        .slice(0, 6);
+                      setSuggestions(filtered);
+                      setShowSuggestions(true);
+                    } else {
+                      setSuggestions([]);
+                      setShowSuggestions(false);
+                    }
+                  }} 
                   onKeyDown={handleKeyDown}
                   onFocus={() => { if(searchTerm && suggestions.length > 0) setShowSuggestions(true); }}
               />
@@ -313,8 +389,8 @@ const Home = () => {
           title="สินค้าแนะนำ"
           icon={<Star size={24} color="var(--primary)" />}
           items={recommended}
-          favorites={favorites}
-          toggleFav={toggleFav}
+          isFavorite={isFavorite}
+          toggleFav={handleToggleFavorite}
           loading={loading}
           onAddToCart={(p) => { setSelectedProduct(p); setIsModalOpen(true); }}
           onViewAll={() => handleViewAll('recommended')} 
@@ -323,8 +399,8 @@ const Home = () => {
           title="สินค้ายอดนิยม"
           icon={<Flame size={24} color="#ea580c" />}
           items={popular}
-          favorites={favorites}
-          toggleFav={toggleFav}
+          isFavorite={isFavorite}
+          toggleFav={handleToggleFavorite}
           loading={loading}
           onAddToCart={(p) => { setSelectedProduct(p); setIsModalOpen(true); }}
           onViewAll={() => handleViewAll('popular')} 
@@ -333,13 +409,19 @@ const Home = () => {
           title="สินค้าโปรโมชั่น"
           icon={<Tag size={24} color="var(--primary)" />}
           items={promo}
-          favorites={favorites}
-          toggleFav={toggleFav}
+          isFavorite={isFavorite}
+          toggleFav={handleToggleFavorite}
           loading={loading}
           onAddToCart={(p) => { setSelectedProduct(p); setIsModalOpen(true); }}
           onViewAll={() => handleViewAll('promo')} 
         />
       </main>
+
+      <AuthRequiredModal 
+        isOpen={isAuthModalOpen} 
+        onClose={() => setIsAuthModalOpen(false)} 
+        onLogin={() => navigate('/login')} 
+      />
 
       <AddToListModal
         isOpen={isModalOpen}

@@ -1,0 +1,86 @@
+[
+  {
+    "name": "dry-food-condiments",
+    "slug": "dry-food-condiments",
+    "count": 11434,
+    "file": "data/categories/dry-food-condiments.json"
+  },
+  {
+    "name": "mom-baby",
+    "slug": "mom-baby",
+    "count": 4318,
+    "file": "data/categories/mom-baby.json"
+  },
+  {
+    "name": "health-beauty",
+    "slug": "health-beauty",
+    "count": 8106,
+    "file": "data/categories/health-beauty.json"
+  },
+  {
+    "name": "others",
+    "slug": "others",
+    "count": 11782,
+    "file": "data/categories/others.json"
+  },
+  {
+    "name": "fresh-frozen",
+    "slug": "fresh-frozen",
+    "count": 7083,
+    "file": "data/categories/fresh-frozen.json"
+  },
+  {
+    "name": "beverages",
+    "slug": "beverages",
+    "count": 2294,
+    "file": "data/categories/beverages.json"
+  },
+  {
+    "name": "household",
+    "slug": "household",
+    "count": 13697,
+    "file": "data/categories/household.json"
+  },
+  {
+    "name": "electronics",
+    "slug": "electronics",
+    "count": 2589,
+    "file": "data/categories/electronics.json"
+  },
+  {
+    "name": "tools",
+    "slug": "tools",
+    "count": 1800,
+    "file": "data/categories/tools.json"
+  },
+  {
+    "name": "vegetables-fruits",
+    "slug": "vegetables-fruits",
+    "count": 1929,
+    "file": "data/categories/vegetables-fruits.json"
+  },
+  {
+    "name": "clothing",
+    "slug": "clothing",
+    "count": 1948,
+    "file": "data/categories/clothing.json"
+  },
+  {
+    "name": "bakery",
+    "slug": "bakery",
+    "count": 491,
+    "file": "data/categories/bakery.json"
+  },
+  {
+    "name": "pets",
+    "slug": "pets",
+    "count": 2293,
+    "file": "data/categories/pets.json"
+  },
+  {
+    "name": "office-supplies",
+    "slug": "office-supplies",
+    "count": 2233,
+    "file": "data/categories/office-supplies.json"
+  }
+]

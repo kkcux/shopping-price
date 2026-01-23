@@ -1,13 +1,13 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ShoppingCart, Bell, ArrowLeft, LogOut } from 'lucide-react';
+import { ShoppingCart, Bell, ArrowLeft } from 'lucide-react';
 import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import { googleLogout } from '@react-oauth/google';
 import './Navbar.css';
 import NotificationList from '../Notification/NotificationList';
 
-// ✅ 1. เพิ่ม Import Firebase Auth (สำคัญมาก!)
+// ✅ 1. Import Firebase Auth
 import { auth } from '../../firebase-config'; 
-import { signOut } from 'firebase/auth';
+import { onAuthStateChanged } from 'firebase/auth';
 
 function Navbar() {
   const location = useLocation();
@@ -15,14 +15,49 @@ function Navbar() {
   
   const [showNotif, setShowNotif] = useState(false);
   const notifRef = useRef(null);
-  
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
+  // โหลดข้อมูล User จาก LocalStorage
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem('user');
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
+  // ✅ ดึงตัวย่อชื่อ (ใช้ logic เดียวกับ Profile)
+  const getInitials = (displayName) => {
+    if (!displayName) return '';
+    return displayName
+      .split(' ')
+      .map(word => word[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  };
+
+  // ✅ เพิ่ม Auth State Listener - จะอัปเดต User ทันทีเมื่อ Auth เปลี่ยนแปลง
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        // User ล็อกอินแล้ว - อัปเดต localStorage และ state
+        const userData = {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          name: firebaseUser.displayName,
+          photoURL: firebaseUser.photoURL,
+          given_name: firebaseUser.displayName
+        };
+        localStorage.setItem('user', JSON.stringify(userData));
+        setUser(userData);
+      } else {
+        // User ยังไม่ล็อกอิน - เคลียร์ข้อมูล
+        localStorage.removeItem('user');
+        setUser(null);
+      }
+    });
+
+    return unsubscribe; // Cleanup listener
+  }, []);
+
+  // อัปเดตข้อมูล User ทุกครั้งที่เปลี่ยนหน้า (เพื่อให้รูปเปลี่ยนทันทีหลังแก้โปรไฟล์)
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -32,35 +67,6 @@ function Navbar() {
     }
   }, [location]);
 
-  const handleLogoutClick = () => {
-    setShowLogoutConfirm(true);
-  };
-
-  // ✅ 2. แก้ไขฟังก์ชัน Logout ให้ SignOut จาก Firebase ด้วย
-  const confirmLogout = async () => {
-    try {
-      // 1. สั่ง Firebase ให้ Logout (ตัวการสำคัญที่ทำให้ MyLists รู้ตัว)
-      await signOut(auth);
-      
-      // 2. เคลียร์ส่วนอื่นๆ ตามปกติ
-      googleLogout(); 
-      localStorage.removeItem('user'); 
-      localStorage.removeItem('token'); 
-      
-      // (Optional) เคลียร์ข้อมูลชั่วคราวอื่นๆ ถ้ามี
-      // localStorage.removeItem('myLists'); 
-
-      setUser(null);
-      setShowLogoutConfirm(false); 
-      
-      // 3. ย้ายหน้าและรีเฟรชเพื่อความชัวร์ (ล้าง State ทั้งหมด)
-      navigate('/login'); 
-      window.location.reload(); 
-      
-    } catch (error) {
-      console.error("Error signing out: ", error);
-    }
-  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -125,19 +131,36 @@ function Navbar() {
                 onClick={() => navigate('/profile')} 
                 style={{ cursor: 'pointer' }}
               >
-                <img src={user.picture} alt="Profile" className="user-avatar" />
-                <span className="user-name">{(user.given_name || user.name).split(' ')[0]}</span>
-
-                <button 
-                  onClick={(e) => {
-                    e.stopPropagation(); 
-                    handleLogoutClick(); 
-                  }}
-                  className="btn-logout"
-                  title="ออกจากระบบ"
-                >
-                  <LogOut size={12} />
-                </button>
+                {/* ✅ แสดงรูปโปรไฟล์เหมือน Profile */}
+                {user.photoURL ? (
+                  <img 
+                    src={user.photoURL} 
+                    alt="Profile" 
+                    className="user-profile-image"
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '50%',
+                      objectFit: 'cover',
+                      marginRight: '8px'
+                    }}
+                  />
+                ) : (
+                  <div className="user-initials-badge" style={{
+                    width: '32px',
+                    height: '32px',
+                    fontSize: '0.75rem'
+                  }}>
+                    <span className="initials-text">
+                      {getInitials(user.name || user.given_name || user.email || '')}
+                    </span>
+                  </div>
+                )}
+                
+                {/* 🔥 แก้ไข: ป้องกัน Error split ตามที่เคยคุยกัน */}
+                <span className="user-name">
+                  {(user.given_name || user.name || "").split(' ')[0]}
+                </span>
               </div>
             ) : (
               <Link to="/login">
@@ -161,23 +184,6 @@ function Navbar() {
           </div>
         </div>
       </nav>
-
-      {showLogoutConfirm && (
-        <div className="logout-confirm-overlay" onClick={() => setShowLogoutConfirm(false)}>
-          <div className="logout-confirm-modal" onClick={(e) => e.stopPropagation()}>
-            <h3>ยืนยันการออกจากระบบ</h3>
-            <p>คุณต้องการออกจากระบบใช่หรือไม่?</p>
-            <div className="logout-actions">
-              <button className="btn-cancel" onClick={() => setShowLogoutConfirm(false)}>
-                ยกเลิก
-              </button>
-              <button className="btn-confirm" onClick={confirmLogout}>
-                ออกจากระบบ
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 }
