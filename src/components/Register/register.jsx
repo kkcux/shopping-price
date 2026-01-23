@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 // ใช้ CSS ตัวเดียวกับ Login เพื่อให้ Theme เหมือนกันเป๊ะ
@@ -10,7 +10,7 @@ import {
   createUserWithEmailAndPassword, 
   updateProfile // เพิ่มตัวนี้มาเพื่อใช้อัปเดตชื่อผู้ใช้
 } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, collection, query, where, getDocs, limit } from "firebase/firestore";
 
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
@@ -19,6 +19,11 @@ import { FiMail, FiLock, FiEye, FiEyeOff, FiAlertCircle, FiUser } from "react-ic
 
 const Register = () => {
   const navigate = useNavigate();
+
+  // ✅ Scroll to top เมื่อเข้าหน้า
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // ✅ 2. State สำหรับเก็บข้อมูล (เพิ่ม displayName)
   const [displayName, setDisplayName] = useState(""); // ชื่อผู้ใช้งาน
@@ -58,6 +63,22 @@ const Register = () => {
     setLoading(true);
 
     try {
+      // ✅ เช็ค email ซ้ำใน Firestore ก่อนสร้าง user
+      try {
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("email", "==", email), limit(1));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          setErrorMessage("อีเมลนี้ถูกใช้งานแล้ว");
+          setLoading(false);
+          return;
+        }
+      } catch (firestoreError) {
+        // ถ้ามีปัญหา permissions ให้ข้ามไปใช้ Firebase Auth เช็คแทน
+        console.warn("Firestore check failed, using Auth check instead:", firestoreError);
+      }
+
       // ✅ 3. สร้าง User ใน Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;

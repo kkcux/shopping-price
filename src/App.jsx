@@ -1,8 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import './App.css';
-import { db } from './firebase-config';
-import { collection, getDocs } from 'firebase/firestore';
 
 /* ===== Components Imports ===== */
 // Auth & Home
@@ -31,18 +29,6 @@ import { FavoritesProvider } from './context/FavoritesContext';
 import ForgotPassword from './components/Login/ForgotPassword';
 
 function App() {
-  useEffect(() => {
-    const testFirebase = async () => {
-      try {
-        await getDocs(collection(db, "test_connection"));
-        console.log("Firebase Connected Successfully!");
-      } catch (err) {
-        console.error("Firebase Connection Error:", err);
-      }
-    };
-    testFirebase();
-  }, []);
-
   return (
     <div className="App">
       <FavoritesProvider>
@@ -73,7 +59,6 @@ function App() {
           <Route path="/mylists/edit/products/:id" element={<Products />} />
 
           <Route path="/mylists/compare/:id" element={<MyLists3 />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
 
         </Routes>
       </FavoritesProvider>

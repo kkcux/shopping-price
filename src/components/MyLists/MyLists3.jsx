@@ -21,6 +21,13 @@ import "./mylists3.css";
 
 import { db, auth } from '../../firebase-config';
 import { onAuthStateChanged } from 'firebase/auth';
+
+/* ===== ✅ Store Logos ===== */
+const STORE_LOGOS = {
+  MAKRO: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1weBQ9rq_nOC5CSMa2dFW9Ez5CFXKKy4Q3Q&s",
+  LOTUS: "https://upload.wikimedia.org/wikipedia/commons/1/14/Lotus-2021-logo.png",
+  BIGC: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Big_C_Logo.svg/500px-Big_C_Logo.svg.png",
+};
 import { doc, setDoc, getDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 
 /* ================= helpers ================= */
@@ -723,30 +730,56 @@ export default function MyLists3() {
                 <div></div>
               </div>
 
-              {recommendShops.map((s) => (
-                <div className="ml3-shop-row" key={s.key}>
-                  <div className="ml3-shop-brand">{s.name}</div>
+              {recommendShops.map((s) => {
+                // หาร้านที่ถูกที่สุด (ราคาต่ำสุด)
+                const minPrice = Math.min(...recommendShops.map(shop => shop.totalPrice));
+                const isCheapest = s.totalPrice === minPrice;
+                
+                return (
+                <div 
+                  className={`ml3-shop-row ${isCheapest ? 'ml3-shop-row-cheapest' : ''}`} 
+                  key={s.key}
+                >
+                  <div className="ml3-shop-brand">
+                    {STORE_LOGOS[s.key] ? (
+                      <div className={`ml3-shop-logo ${s.key.toLowerCase()}`}>
+                        <img 
+                          src={STORE_LOGOS[s.key]} 
+                          alt={s.name}
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                            const fallback = e.target.parentElement.nextSibling;
+                            if (fallback) fallback.style.display = 'block';
+                          }}
+                        />
+                      </div>
+                    ) : null}
+                    <span 
+                      className="ml3-shop-name-fallback" 
+                      style={{ display: STORE_LOGOS[s.key] ? 'none' : 'block' }}
+                    >
+                      {s.name}
+                    </span>
+                  </div>
                   <div className="ml3-shop-muted" style={{ color: "#64748b" }}>
                     {s.distance}
                   </div>
-                  <div className="ml3-shop-price" style={{ color: "#10b77e", fontSize: "1.1rem" }}>
+                  <div className="ml3-shop-price" style={{ 
+                    color: isCheapest ? "#3cb371" : "#1e293b", 
+                    fontSize: "1.1rem",
+                    fontWeight: "600"
+                  }}>
                     ฿{Math.round(s.totalPrice).toLocaleString()}
                   </div>
 
                   {/* ✅ ปุ่มเหมือนเดิม + เพิ่มปุ่มนำทาง */}
                   <div style={{ display: "flex", gap: "8px" }}>
-                    <button className="ml3-go" onClick={() => window.open(s.url, "_blank")}>
+                    <button className="ml3-go-shop" onClick={() => window.open(s.url, "_blank")}>
                       ไปยังร้านค้า
                     </button>
 
                     <button
-                      className="ml3-go"
-                      style={{
-                        backgroundColor: "#cbd5e1",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                      }}
+                      className="ml3-go-navigate"
                       onClick={() => handleNavigate(s.key)}
                       disabled={!branches?.[s.key]?.[0]}
                       title={!branches?.[s.key]?.[0] ? "ยังไม่พบพิกัดสาขา" : "นำทางไปยังสาขาใกล้ที่สุด"}
@@ -756,7 +789,8 @@ export default function MyLists3() {
                     </button>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           </section>
 

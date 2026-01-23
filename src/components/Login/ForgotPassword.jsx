@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth, db } from "../../firebase-config";
-import { sendPasswordResetEmail } from "firebase/auth";
+import { sendPasswordResetEmail, fetchSignInMethodsForEmail } from "firebase/auth";
 import { collection, query, where, getDocs, limit } from "firebase/firestore";
 import { FiMail, FiCheckCircle, FiAlertCircle } from "react-icons/fi";
 import Navbar from "../Home/Navbar";
@@ -27,6 +27,26 @@ const ForgotPassword = () => {
     }
 
     try {
+      // ✅ เช็คว่า email นี้ใช้ Google Login หรือไม่
+      try {
+        const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+        
+        // ถ้า email นี้ใช้ Google Login เท่านั้น (ไม่มี password)
+        if (signInMethods.length > 0 && signInMethods.includes('google.com') && !signInMethods.includes('password')) {
+          setMessage({ 
+            type: "error", 
+            text: "อีเมลนี้ใช้ Google Login กรุณาเข้าสู่ระบบผ่าน Google แทน" 
+          });
+          setLoading(false);
+          return;
+        }
+      } catch (authError) {
+        // ถ้า email ไม่มีในระบบ จะ throw error แต่เราจะเช็คต่อใน catch block ด้านล่าง
+        if (authError.code !== 'auth/user-not-found') {
+          console.warn("Error checking sign-in methods:", authError);
+        }
+      }
+
       // ✅ เช็คว่ามี email ใน Firestore หรือไม่ก่อนส่ง email
       // ต้องแก้ Firestore rules ให้อนุญาตให้อ่าน users collection โดย email
       try {
@@ -45,8 +65,9 @@ const ForgotPassword = () => {
       }
 
       // ✅ ถ้ามี email ใน Firestore แล้วค่อยส่งลิงก์รีเซ็ตรหัสผ่าน
+      // เมื่อเปลี่ยนรหัสผ่านสำเร็จในหน้า Firebase แล้วกด CONTINUE จะ redirect มาหน้า login
       const actionCodeSettings = {
-        url: `${window.location.origin}/reset-password`,
+        url: `${window.location.origin}/login`,
         handleCodeInApp: false, // บังคับให้ใช้ web redirect แทน Firebase default page
       };
       await sendPasswordResetEmail(auth, email, actionCodeSettings);

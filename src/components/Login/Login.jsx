@@ -7,7 +7,7 @@ import "./Login.css";
 
 // ✅ 1. Import Firebase
 import { auth } from "../../firebase-config"; // ตรวจสอบ path ให้ถูกต้อง
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence, browserSessionPersistence } from "firebase/auth";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence, browserSessionPersistence, fetchSignInMethodsForEmail } from "firebase/auth";
 
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
@@ -27,6 +27,11 @@ const Login = () => {
 
   // หน้าปลายทาง (ถ้าไม่มีให้ไปหน้า MyLists แทนหน้าแรก จะได้เห็น Dashboard เลย)
   const from = location.state?.from || "/";
+
+  // ✅ Scroll to top เมื่อเข้าหน้า
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   // ✅ โหลดข้อมูล remembered email เมื่อเข้าหน้า Login
   useEffect(() => {
@@ -88,6 +93,22 @@ const Login = () => {
     setErrorMessage(""); // เคลียร์ error เก่าก่อน
 
     try {
+      // ✅ เช็คว่า email นี้ใช้ Google Login หรือไม่
+      try {
+        const signInMethods = await fetchSignInMethodsForEmail(auth, email);
+        
+        // ถ้า email นี้ใช้ Google Login เท่านั้น (ไม่มี password)
+        if (signInMethods.length > 0 && signInMethods.includes('google.com') && !signInMethods.includes('password')) {
+          setErrorMessage("อีเมลนี้ใช้ Google Login กรุณาเข้าสู่ระบบผ่าน Google แทน");
+          return;
+        }
+      } catch (authError) {
+        // ถ้า email ไม่มีในระบบ จะ throw error แต่เราจะให้ login ต่อไปเพื่อให้แสดง error ที่ถูกต้อง
+        if (authError.code !== 'auth/user-not-found') {
+          console.warn("Error checking sign-in methods:", authError);
+        }
+      }
+
       // ตั้งค่า persistence ตามการเลือก Remember Me
       const persistenceType = remember ? browserLocalPersistence : browserSessionPersistence;
       await setPersistence(auth, persistenceType);

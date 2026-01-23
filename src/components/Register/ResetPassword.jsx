@@ -88,8 +88,10 @@ export default function ResetPassword() {
     try {
       await confirmPasswordReset(auth, oobCode, password);
       setSuccess(true);
-      // สำเร็จแล้วกลับไปหน้าเข้าสู่ระบบ
-      navigate("/login", { replace: true });
+      // แสดงข้อความสำเร็จแล้วค่อย redirect ไปหน้า login
+      setTimeout(() => {
+        navigate("/login", { replace: true });
+      }, 1500); // รอ 1.5 วินาทีเพื่อให้ user เห็นข้อความสำเร็จ
     } catch (err) {
       const code = err?.code || "";
       if (code === "auth/expired-action-code" || code === "auth/invalid-action-code") {
@@ -160,9 +162,23 @@ export default function ResetPassword() {
             </div>
 
             {showError ? <div className="reset-error">{showError}</div> : null}
+            
+            {success && (
+              <div style={{
+                backgroundColor: '#e8f5e9',
+                color: '#2e7d32',
+                padding: '12px',
+                borderRadius: '8px',
+                marginBottom: '15px',
+                textAlign: 'center',
+                fontSize: '0.9rem'
+              }}>
+                ✅ เปลี่ยนรหัสผ่านสำเร็จ! กำลังไปหน้าเข้าสู่ระบบ...
+              </div>
+            )}
 
-            <button className="reset-submit" type="submit" disabled={loading || !canSubmit}>
-              {verifying ? "กำลังตรวจสอบลิงก์..." : loading ? "กำลังบันทึก..." : "ยืนยัน"}
+            <button className="reset-submit" type="submit" disabled={loading || !canSubmit || success}>
+              {verifying ? "กำลังตรวจสอบลิงก์..." : loading ? "กำลังบันทึก..." : success ? "สำเร็จ" : "ยืนยัน"}
             </button>
           </form>
         </section>
