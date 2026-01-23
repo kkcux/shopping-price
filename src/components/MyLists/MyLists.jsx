@@ -182,7 +182,7 @@ const MyLists = () => {
                       </button>
                       {menuId === list.id && (
                         <div className="menu-dropdown">
-                          <div className="menu-item edit" onClick={(e) => { e.stopPropagation(); navigate(`/mylists/edit/${list.id}`); }}>
+                          <div className="menu-item edit" onClick={(e) => { e.stopPropagation(); navigate(`/mylists/edit/${list.id}`, { state: { initialData: list } }); }}>
                             <Pencil size={16} /> <span>แก้ไข</span>
                           </div>
                           <div className="menu-item delete" onClick={(e) => { e.stopPropagation(); handleDeleteClick(list.id); }}>

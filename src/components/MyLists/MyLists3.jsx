@@ -191,9 +191,9 @@ export default function MyLists3() {
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos((lat1 * Math.PI) / 180) *
-        Math.cos((lat2 * Math.PI) / 180) *
-        Math.sin(dLng / 2) *
-        Math.sin(dLng / 2);
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLng / 2) *
+      Math.sin(dLng / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return R * c; // ระยะทางเป็นกิโลเมตร
   };
@@ -204,7 +204,7 @@ export default function MyLists3() {
 
     const fetchNearbyStores = async () => {
       // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/b65ceb91-57c6-4681-8335-687676aa3c11',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'MyLists3.jsx:fetchNearbyStores_start',message:'fetch nearby stores start',data:{userLocation},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H4'})}).catch(()=>{});
+      fetch('http://127.0.0.1:7242/ingest/b65ceb91-57c6-4681-8335-687676aa3c11', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'MyLists3.jsx:fetchNearbyStores_start', message: 'fetch nearby stores start', data: { userLocation }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'pre-fix', hypothesisId: 'H4' }) }).catch(() => { });
       // #endregion
       setBranchLoading(true);
 
@@ -224,7 +224,7 @@ export default function MyLists3() {
             );
             const data = await response.json();
             // #region agent log
-            fetch('http://127.0.0.1:7242/ingest/b65ceb91-57c6-4681-8335-687676aa3c11',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'MyLists3.jsx:places_response',message:'places response',data:{key,resultsCount:(data?.results||[]).length,firstLocation:(data?.results||[])[0]?.location||null},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H4'})}).catch(()=>{});
+            fetch('http://127.0.0.1:7242/ingest/b65ceb91-57c6-4681-8335-687676aa3c11', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'MyLists3.jsx:places_response', message: 'places response', data: { key, resultsCount: (data?.results || []).length, firstLocation: (data?.results || [])[0]?.location || null }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'pre-fix', hypothesisId: 'H4' }) }).catch(() => { });
             // #endregion
 
             if (data.results && data.results.length > 0) {
@@ -252,7 +252,7 @@ export default function MyLists3() {
 
         setStoreDistances(distances);
         // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/b65ceb91-57c6-4681-8335-687676aa3c11',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'MyLists3.jsx:setStoreDistances',message:'store distances set',data:{distances},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H5'})}).catch(()=>{});
+        fetch('http://127.0.0.1:7242/ingest/b65ceb91-57c6-4681-8335-687676aa3c11', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'MyLists3.jsx:setStoreDistances', message: 'store distances set', data: { distances }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'pre-fix', hypothesisId: 'H5' }) }).catch(() => { });
         // #endregion
       } catch (error) {
         console.error("Error fetching nearby stores:", error);
@@ -316,18 +316,18 @@ export default function MyLists3() {
       // 0. PENDING LOGIN DRAFT PRIORITY (For returning users)
       const pending = JSON.parse(localStorage.getItem("pending_save_list"));
       if (pending && String(pending.id) === String(id)) {
-          console.log("RECEIVED PENDING LOGIN DATA:", pending);
-          setSelectedList(pending);
-          setIsDraft(true);
-          return;
+        console.log("RECEIVED PENDING LOGIN DATA:", pending);
+        setSelectedList(pending);
+        setIsDraft(true);
+        return;
       }
-      
+
       // 1. DRAFT DATA PRIORITY
       // 1. DRAFT DATA PRIORITY
       if (location.state?.draftData) {
         console.log("RECEIVED DRAFT DATA:", location.state.draftData);
         setSelectedList(location.state.draftData);
-        setIsDraft(true); 
+        setIsDraft(true);
         return;
       }
 
@@ -342,21 +342,21 @@ export default function MyLists3() {
 
       // 3. ถ้าไม่มีใน Local ให้หาใน FireStore (Cloud)
       if (auth.currentUser) {
-          try {
-              const docRef = doc(db, "shopping_lists", String(id));
-              const docSnap = await getDoc(docRef);
-              
-              if (docSnap.exists()) {
-                  const data = docSnap.data();
-                  setSelectedList({ id: docSnap.id, ...data });
-                  // Optional: Sync back to local? 
-                  // might be good for consistency but let's just display it first
-              } else {
-                  console.log("No such document in Firestore!");
-              }
-          } catch (err) {
-              console.error("Error fetching from Firestore:", err);
+        try {
+          const docRef = doc(db, "shopping_lists", String(id));
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            setSelectedList({ id: docSnap.id, ...data });
+            // Optional: Sync back to local? 
+            // might be good for consistency but let's just display it first
+          } else {
+            console.log("No such document in Firestore!");
           }
+        } catch (err) {
+          console.error("Error fetching from Firestore:", err);
+        }
       }
     };
     fetchListData();
@@ -611,7 +611,11 @@ export default function MyLists3() {
   };
 
   const handleEditClick = () => {
-    navigate(`/mylists/edit/${id}`);
+    if (selectedList) {
+      navigate(`/mylists/edit/${id}`, { state: { initialData: selectedList } });
+    } else {
+      navigate(`/mylists/edit/${id}`);
+    }
   };
 
   const handleDeleteClick = () => {
@@ -748,10 +752,10 @@ export default function MyLists3() {
 
           <section className="ml3-block">
             <div className="ml3-block-head">
-               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                  <Store size={24} color="#3b82f6" />
-                  <span>ราคาสินค้ารวมแต่ละร้านค้า</span>
-               </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <Store size={24} color="#3b82f6" />
+                <span>ราคาสินค้ารวมแต่ละร้านค้า</span>
+              </div>
             </div>
 
             <div className="ml3-shop-table">
