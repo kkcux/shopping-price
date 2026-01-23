@@ -294,9 +294,10 @@
 .ml3-shop-head,
 .ml3-shop-row {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  grid-template-columns: 2fr 1.2fr 1.5fr 1fr;
   align-items: center;
   text-align: center;
+  gap: 12px;
 }
 
 .ml3-shop-head {
@@ -324,10 +325,43 @@
   font-size: 1.05rem;
 }
 
+.ml3-shop-distance {
+  font-weight: 500;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+}
+
 .ml3-shop-price {
   font-weight: 600;
   color: var(--text-main);
   font-size: 1rem;
+}
+
+.ml3-btn-map {
+  background: #fff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: #3b82f6;
+  min-width: 36px;
+  height: 36px;
+}
+
+.ml3-btn-map:hover {
+  background: #3b82f6;
+  color: #fff;
+  border-color: #3b82f6;
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
+  transform: translateY(-1px);
 }
 
 .ml3-go {

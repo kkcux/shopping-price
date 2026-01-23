@@ -30,17 +30,7 @@ import MyLists3 from './components/MyLists/MyLists3';
 import { FavoritesProvider } from './context/FavoritesContext';
 
 function App() {
-    useEffect(() => {
-      const testFirebase = async () => {
-        try {
-          await getDocs(collection(db, "test_connection")); 
-          console.log("Firebase Connected Successfully!");
-        } catch (err) {
-          console.error("Firebase Connection Error:", err);
-        }
-      };
-      testFirebase();
-    }, []);
+
 
   return (
     <div className="App">

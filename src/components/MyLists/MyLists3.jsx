@@ -14,6 +14,7 @@ import {
   X,
   AlertCircle,
   Navigation, // ✅ เพิ่มไอคอนนำทาง
+  MapPin, // ✅ เพิ่มไอคอนแผนที่
 } from "lucide-react";
 
 import Footer from "../Home/Footer";
@@ -115,28 +116,9 @@ const normalizeRow = (row) => {
   };
 };
 
-/* ===== ✅ distance (Haversine) ===== */
-const haversineDistance = (lat1, lon1, lat2, lon2) => {
-  const toRad = (v) => (v * Math.PI) / 180;
-  const R = 6371; // km
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
-};
 
-// รองรับทั้ง {location:{lat,lng}} และ {geometry:{location:{lat,lng}}}
-const getPlaceLatLng = (p) => {
-  const lat = p?.location?.lat ?? p?.geometry?.location?.lat;
-  const lng = p?.location?.lng ?? p?.geometry?.location?.lng;
-  if (lat == null || lng == null) return null;
-  return { lat: Number(lat), lng: Number(lng) };
-};
 
-/* ================= component ================= */
+/* ================= constants ================= */
 
 export default function MyLists3() {
   const navigate = useNavigate();
@@ -158,11 +140,10 @@ export default function MyLists3() {
   // ✅ เปลี่ยนจาก useState เป็น useRef เพื่อแก้ปัญหา Alert เด้งซ้ำ
   const processedIncomingRef = useRef(false);
 
-  // ✅ สำหรับคำนวณ “ระยะทางจริง” ของร้านค้าแนะนำ
-  const [userLocation, setUserLocation] = useState(null);
-  const [branches, setBranches] = useState({ LOTUS: [], BIGC: [], MAKRO: [] });
+  // ✅ สำหรับดึงข้อมูลร้านค้าและระยะทาง
   const [branchLoading, setBranchLoading] = useState(false);
-  const [branchError, setBranchError] = useState("");
+  const [userLocation, setUserLocation] = useState(null);
+  const [storeDistances, setStoreDistances] = useState({});
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -170,6 +151,120 @@ export default function MyLists3() {
     });
     return () => unsubscribe();
   }, []);
+
+  // ✅ ดึงตำแหน่งปัจจุบันของผู้ใช้ (อัตโนมัติ)
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const location = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          console.log("✅ ดึงตำแหน่งสำเร็จ:", location);
+          setUserLocation(location);
+        },
+        (error) => {
+          console.log("⚠️ Geolocation error:", error);
+          // ใช้ตำแหน่งนครพนมเป็นค่า default อัตโนมัติ
+          console.log("📍 ใช้ตำแหน่งนครพนมเป็นค่า default");
+          setUserLocation({ lat: 17.4108, lng: 104.7786 });
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        }
+      );
+    } else {
+      // ถ้า browser ไม่รองรับ geolocation ให้ใช้ตำแหน่งนครพนม
+      console.log("📍 Browser ไม่รองรับ geolocation, ใช้ตำแหน่งนครพนม");
+      setUserLocation({ lat: 17.4108, lng: 104.7786 });
+    }
+  }, []);
+
+  // ✅ คำนวณระยะทางระหว่างสองจุด (Haversine formula)
+  const calculateDistance = (lat1, lng1, lat2, lng2) => {
+    const R = 6371; // รัศมีโลกเป็นกิโลเมตร
+    const dLat = ((lat2 - lat1) * Math.PI) / 180;
+    const dLng = ((lng2 - lng1) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((lat1 * Math.PI) / 180) *
+        Math.cos((lat2 * Math.PI) / 180) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c; // ระยะทางเป็นกิโลเมตร
+  };
+
+  // ✅ ดึงข้อมูลร้านค้าใกล้เคียง
+  useEffect(() => {
+    if (!userLocation) return;
+
+    const fetchNearbyStores = async () => {
+      // #region agent log
+      fetch('http://127.0.0.1:7242/ingest/b65ceb91-57c6-4681-8335-687676aa3c11',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'MyLists3.jsx:fetchNearbyStores_start',message:'fetch nearby stores start',data:{userLocation},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H4'})}).catch(()=>{});
+      // #endregion
+      setBranchLoading(true);
+
+      const storeQueries = {
+        LOTUS: "โลตัส",
+        BIGC: "บิ๊กซี",
+        MAKRO: "แม็คโคร",
+      };
+
+      const distances = {};
+
+      try {
+        for (const [key, query] of Object.entries(storeQueries)) {
+          try {
+            const response = await fetch(
+              `/api/places-nearby?lat=${userLocation.lat}&lng=${userLocation.lng}&q=${encodeURIComponent(query)}&radius=10000`
+            );
+            const data = await response.json();
+            // #region agent log
+            fetch('http://127.0.0.1:7242/ingest/b65ceb91-57c6-4681-8335-687676aa3c11',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'MyLists3.jsx:places_response',message:'places response',data:{key,resultsCount:(data?.results||[]).length,firstLocation:(data?.results||[])[0]?.location||null},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H4'})}).catch(()=>{});
+            // #endregion
+
+            if (data.results && data.results.length > 0) {
+              // หาร้านที่ใกล้ที่สุด
+              const nearest = data.results[0];
+              if (nearest.location) {
+                const distance = calculateDistance(
+                  userLocation.lat,
+                  userLocation.lng,
+                  nearest.location.lat,
+                  nearest.location.lng
+                );
+                distances[key] = {
+                  distance: distance,
+                  name: nearest.name,
+                  vicinity: nearest.vicinity,
+                  location: nearest.location, // ✅ เก็บ location เพื่อใช้เปิดแผนที่
+                };
+              }
+            }
+          } catch (err) {
+            console.error(`Error fetching ${key}:`, err);
+          }
+        }
+
+        setStoreDistances(distances);
+        // #region agent log
+        fetch('http://127.0.0.1:7242/ingest/b65ceb91-57c6-4681-8335-687676aa3c11',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'MyLists3.jsx:setStoreDistances',message:'store distances set',data:{distances},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-fix',hypothesisId:'H5'})}).catch(()=>{});
+        // #endregion
+      } catch (error) {
+        console.error("Error fetching nearby stores:", error);
+      } finally {
+        setBranchLoading(false);
+      }
+    };
+
+    fetchNearbyStores();
+  }, [userLocation]);
+
+
 
   /* ===== load jsonl ===== */
   useEffect(() => {
@@ -184,7 +279,10 @@ export default function MyLists3() {
             const row = JSON.parse(line);
             const n = normalizeRow(row);
             if (n.retailer && n.name) normalized.push(n);
-          } catch {}
+          } catch (err) {
+            // Skip invalid JSON lines
+            console.debug('Skipping invalid line:', err);
+          }
         }
         if (!mounted) return;
         setAllProducts(normalized);
@@ -300,81 +398,9 @@ export default function MyLists3() {
     }
   }, [selectedList, location.state]);
 
-  /* ===== ✅ ดึงตำแหน่งผู้ใช้ (สำหรับระยะทางร้าน) ===== */
-  useEffect(() => {
-    if (!navigator.geolocation) return;
 
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setUserLocation({
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        });
-      },
-      (err) => {
-        console.error("Location error:", err);
-        setBranchError("โปรดอนุญาต Location เพื่อคำนวณระยะทาง");
-      },
-      { enableHighAccuracy: true, timeout: 12000 }
-    );
-  }, []);
 
-  /* ===== ✅ ดึงสาขาจริงผ่าน /api/places-nearby แล้วคำนวณระยะทาง ===== */
-  useEffect(() => {
-    if (!userLocation) return;
 
-    const retailerQueries = [
-      { key: "LOTUS", q: "Lotus" },
-      { key: "BIGC", q: "Big C" },
-      { key: "MAKRO", q: "Makro" },
-    ];
-
-    const run = async () => {
-      setBranchLoading(true);
-      setBranchError("");
-
-      try {
-        const out = { LOTUS: [], BIGC: [], MAKRO: [] };
-
-        await Promise.all(
-          retailerQueries.map(async (r) => {
-            const url =
-              `/api/places-nearby?lat=${encodeURIComponent(userLocation.lat)}` +
-              `&lng=${encodeURIComponent(userLocation.lng)}` +
-              `&q=${encodeURIComponent(r.q)}&radius=10000`;
-
-            const res = await fetch(url);
-            const data = await res.json();
-
-            if (!res.ok) throw new Error(data?.error || "Places API error");
-            if (data.status && data.status !== "OK" && data.status !== "ZERO_RESULTS") {
-              throw new Error(`Google status: ${data.status}`);
-            }
-
-            const list = (data.results || [])
-              .map((p) => {
-                const ll = getPlaceLatLng(p);
-                if (!ll) return null;
-                const d = haversineDistance(userLocation.lat, userLocation.lng, ll.lat, ll.lng);
-                return { ...p, distance: d };
-              })
-              .filter(Boolean)
-              .sort((a, b) => (a.distance ?? 9999) - (b.distance ?? 9999));
-
-            out[r.key] = list;
-          })
-        );
-
-        setBranches(out);
-      } catch (e) {
-        setBranchError(String(e?.message || e));
-      } finally {
-        setBranchLoading(false);
-      }
-    };
-
-    run();
-  }, [userLocation]);
 
   const wanted = selectedList?.items || [];
   const listName = selectedList?.name || "ไม่พบรายการ";
@@ -409,51 +435,74 @@ export default function MyLists3() {
     };
   }, [rows]);
 
-  /* ===== ✅ “แก้แค่ระยะทาง” ของร้านค้าแนะนำ ===== */
+  /* ===== ✅ แนะนำร้านค้าพร้อมระยะทาง ===== */
   const recommendShops = useMemo(() => {
-    const fmt = (km) =>
-      typeof km === "number" && Number.isFinite(km) ? `${km.toFixed(2)} km` : "-";
-
-    const bigcKm = branches.BIGC?.[0]?.distance;
-    const lotusKm = branches.LOTUS?.[0]?.distance;
-    const makroKm = branches.MAKRO?.[0]?.distance;
-
     return [
       {
         key: "BIGC",
         name: "Big C",
-        distance: fmt(bigcKm),
         totalPrice: totals.BIGC,
         url: "https://www.bigc.co.th",
+        distance: storeDistances.BIGC?.distance || null,
+        vicinity: storeDistances.BIGC?.vicinity || null,
+        location: storeDistances.BIGC?.location || null,
       },
       {
         key: "LOTUS",
-        name: "Lotus’s",
-        distance: fmt(lotusKm),
+        name: "Lotus's",
         totalPrice: totals.LOTUS,
         url: "https://www.lotuss.com",
+        distance: storeDistances.LOTUS?.distance || null,
+        vicinity: storeDistances.LOTUS?.vicinity || null,
+        location: storeDistances.LOTUS?.location || null,
       },
       {
         key: "MAKRO",
         name: "Makro",
-        distance: fmt(makroKm),
         totalPrice: totals.MAKRO,
         url: "https://www.makro.pro",
+        distance: storeDistances.MAKRO?.distance || null,
+        vicinity: storeDistances.MAKRO?.vicinity || null,
+        location: storeDistances.MAKRO?.location || null,
       },
-    ].filter((s) => typeof s.totalPrice === "number" && s.totalPrice > 0);
-  }, [branches, totals]);
+    ]
+      .filter((s) => typeof s.totalPrice === "number" && s.totalPrice > 0)
+      .sort((a, b) => {
+        // เรียงตามราคาก่อน แล้วตามระยะทาง
+        if (a.totalPrice !== b.totalPrice) {
+          return a.totalPrice - b.totalPrice;
+        }
+        if (a.distance && b.distance) {
+          return a.distance - b.distance;
+        }
+        return 0;
+      });
+  }, [totals, storeDistances]);
 
-  /* ===== ✅ ปุ่ม “นำทาง” (เปิด Google Maps) ===== */
-  const handleNavigate = (shopKey) => {
-    const branch = branches?.[shopKey]?.[0]; // เอาสาขาที่ใกล้สุด
-    const ll = getPlaceLatLng(branch);
-    if (!ll) {
-      toast.error("ไม่พบพิกัดสาขาสำหรับนำทาง");
+  // ✅ ฟังก์ชันเปิดแผนที่พร้อมเส้นทาง
+  const openMap = (store) => {
+    if (!userLocation) {
+      toast.error("ไม่สามารถดึงตำแหน่งของคุณได้");
       return;
     }
-    const url = `https://www.google.com/maps/dir/?api=1&destination=${ll.lat},${ll.lng}`;
-    window.open(url, "_blank");
+
+    if (store.location) {
+      // ใช้ Google Maps Directions API เพื่อแสดงเส้นทาง
+      const origin = `${userLocation.lat},${userLocation.lng}`;
+      const destination = `${store.location.lat},${store.location.lng}`;
+      const mapUrl = `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}&travelmode=driving`;
+      window.open(mapUrl, "_blank");
+    } else if (store.vicinity) {
+      // ถ้าไม่มี location แต่มี vicinity ให้ค้นหาด้วยชื่อร้าน
+      const searchQuery = encodeURIComponent(`${store.name} ${store.vicinity}`);
+      const mapUrl = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
+      window.open(mapUrl, "_blank");
+    } else {
+      toast.error("ไม่พบข้อมูลตำแหน่งร้านค้า");
+    }
   };
+
+
 
   const handleBackClick = () => {
     setShowExitModal(true);
@@ -699,16 +748,11 @@ export default function MyLists3() {
 
           <section className="ml3-block">
             <div className="ml3-block-head">
-              <Store size={24} color="#3b82f6" />
-              <span>ร้านค้าแนะนำ</span>
+               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <Store size={24} color="#3b82f6" />
+                  <span>ราคาสินค้ารวมแต่ละร้านค้า</span>
+               </div>
             </div>
-
-            {branchLoading && (
-              <div style={{ padding: 8, color: "#64748b" }}>กำลังคำนวณระยะทาง...</div>
-            )}
-            {branchError && (
-              <div style={{ padding: 8, color: "#ef4444" }}>{branchError}</div>
-            )}
 
             <div className="ml3-shop-table">
               <div className="ml3-shop-head">
@@ -721,33 +765,36 @@ export default function MyLists3() {
               {recommendShops.map((s) => (
                 <div className="ml3-shop-row" key={s.key}>
                   <div className="ml3-shop-brand">{s.name}</div>
-                  <div className="ml3-shop-muted" style={{ color: "#64748b" }}>
-                    {s.distance}
+                  <div className="ml3-shop-distance">
+                    {branchLoading ? (
+                      <Loader2 size={14} className="animate-spin" color="#64748b" />
+                    ) : s.distance ? (
+                      <span style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+                        <Navigation size={14} color="#64748b" />
+                        {s.distance < 1
+                          ? `${Math.round(s.distance * 1000)} ม.`
+                          : `${s.distance.toFixed(1)} กม.`}
+                      </span>
+                    ) : (
+                      <span style={{ color: "#cbd5e1" }}>-</span>
+                    )}
                   </div>
                   <div className="ml3-shop-price" style={{ color: "#10b77e", fontSize: "1.1rem" }}>
                     ฿{Math.round(s.totalPrice).toLocaleString()}
                   </div>
 
-                  {/* ✅ ปุ่มเหมือนเดิม + เพิ่มปุ่มนำทาง */}
-                  <div style={{ display: "flex", gap: "8px" }}>
+                  <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                    {s.location && userLocation && (
+                      <button
+                        className="ml3-btn-map"
+                        onClick={() => openMap(s)}
+                        title="เปิดแผนที่พร้อมเส้นทาง"
+                      >
+                        <MapPin size={16} />
+                      </button>
+                    )}
                     <button className="ml3-go" onClick={() => window.open(s.url, "_blank")}>
                       ไปยังร้านค้า
-                    </button>
-
-                    <button
-                      className="ml3-go"
-                      style={{
-                        backgroundColor: "#cbd5e1",
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                      }}
-                      onClick={() => handleNavigate(s.key)}
-                      disabled={!branches?.[s.key]?.[0]}
-                      title={!branches?.[s.key]?.[0] ? "ยังไม่พบพิกัดสาขา" : "นำทางไปยังสาขาใกล้ที่สุด"}
-                    >
-                      <Navigation size={16} />
-                      นำทาง
                     </button>
                   </div>
                 </div>
