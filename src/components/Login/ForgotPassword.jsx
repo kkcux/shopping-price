@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../../firebase-config";
+import { auth, db } from "../../firebase-config";
 import { sendPasswordResetEmail } from "firebase/auth";
+import { collection, query, where, getDocs, limit } from "firebase/firestore";
 import { FiMail, FiCheckCircle, FiAlertCircle } from "react-icons/fi";
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
@@ -26,16 +27,43 @@ const ForgotPassword = () => {
     }
 
     try {
-      await sendPasswordResetEmail(auth, email);
+      // ✅ เช็คว่ามี email ใน Firestore หรือไม่ก่อนส่ง email
+      // ต้องแก้ Firestore rules ให้อนุญาตให้อ่าน users collection โดย email
+      try {
+        const usersRef = collection(db, "users");
+        const q = query(usersRef, where("email", "==", email), limit(1));
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+          setMessage({ type: "error", text: "ไม่พบอีเมลนี้ในระบบ" });
+          setLoading(false);
+          return;
+        }
+      } catch (firestoreError) {
+        // ถ้ามีปัญหา permissions ให้ข้ามไปใช้ Firebase Auth เช็คแทน
+        console.warn("Firestore check failed, using Auth check instead:", firestoreError);
+      }
+
+      // ✅ ถ้ามี email ใน Firestore แล้วค่อยส่งลิงก์รีเซ็ตรหัสผ่าน
+      const actionCodeSettings = {
+        url: `${window.location.origin}/reset-password`,
+        handleCodeInApp: false, // บังคับให้ใช้ web redirect แทน Firebase default page
+      };
+      await sendPasswordResetEmail(auth, email, actionCodeSettings);
+      
+      // ✅ ถ้าส่งสำเร็จ แสดงว่ามี email ในระบบ
       setMessage({
         type: "success",
-        text: "ส่งลิงก์รีเซ็ตรหัสผ่านไปที่อีเมลของคุณแล้ว",
+        text: "ส่งลิงก์รีเซ็ตรหัสผ่านไปที่อีเมลของคุณแล้ว (กรุณาตรวจสอบกล่องจดหมาย/สแปม)",
       });
       setEmail("");
     } catch (error) {
       console.error(error);
+      // ✅ Firebase จะ throw error ถ้าไม่มี email ในระบบ
       if (error.code === "auth/user-not-found") {
         setMessage({ type: "error", text: "ไม่พบอีเมลนี้ในระบบ" });
+      } else if (error.code === "auth/invalid-email") {
+        setMessage({ type: "error", text: "รูปแบบอีเมลไม่ถูกต้อง" });
       } else {
         setMessage({ type: "error", text: "เกิดข้อผิดพลาด: " + error.message });
       }
@@ -52,7 +80,7 @@ const ForgotPassword = () => {
         <div className="auth-card">
           <div className="auth-header">
             <h1>ลืมรหัสผ่าน</h1>
-            <p>คุณต้องการรับรหัสยืนยัน</p>
+            <p>ระบบจะส่งลิงก์สำหรับตั้งรหัสผ่านใหม่ไปที่อีเมลของคุณ</p>
           </div>
 
           {message.text && (
@@ -94,7 +122,7 @@ const ForgotPassword = () => {
               disabled={loading}
               style={{ opacity: loading ? 0.7 : 1 }}
             >
-              {loading ? "กำลังส่งข้อมูล..." : "ส่งรหัสผ่านยืนยัน"}
+              {loading ? "กำลังส่งลิงก์..." : "ส่งลิงก์รีเซ็ตรหัสผ่าน"}
             </button>
           </form>
 

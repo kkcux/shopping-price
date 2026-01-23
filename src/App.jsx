@@ -24,9 +24,7 @@ import CreateMyList from './components/MyLists/CreateMyList';
 import ListsEdit from './components/MyLists/ListsEdit';
 import MyLists3 from './components/MyLists/MyLists3';
 
-// ✅ หน้า OTP (ตามไฟล์จริงของคุณ)
-import VerifyCode from './components/Register/VerifyCode';
-import VerifySuccess from './components/Register/VerifySuccess';
+// Password Reset
 import ResetPassword from './components/Register/ResetPassword';
 
 import { FavoritesProvider } from './context/FavoritesContext';
@@ -48,43 +46,36 @@ function App() {
   return (
     <div className="App">
       <FavoritesProvider>
-      <Routes>
+        <Routes>
 
-        {/* ===== HOME SECTION ===== */}
-        <Route path="/" element={<><Navbar /><Home /><Footer /></>} />
+          {/* ===== HOME SECTION ===== */}
+          <Route path="/" element={<><Navbar /><Home /><Footer /></>} />
 
-        {/* ===== AUTH SECTION ===== */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+          {/* ===== AUTH SECTION ===== */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* ✅ หน้า OTP */}
-        <Route path="/verify" element={<VerifyCode />} />
+          {/* ===== USER FEATURES ===== */}
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/profile" element={<Profile />} />
 
-        {/* ✅ หน้า “ยืนยันรหัสสำเร็จ” */}
-        <Route path="/verify-success" element={<VerifySuccess />} />
+          {/* ===== PRODUCT & CATEGORY ===== */}
+          <Route path="/products" element={<Products />} />
+          <Route path="/categories" element={<Categories />} />
 
-        {/* ✅ หน้า “เปลี่ยนรหัสผ่านใหม่” */}
-        <Route path="/reset-password" element={<ResetPassword />} />
+          {/* ===== SHOPPING LIST FLOW ===== */}
+          <Route path="/mylists" element={<MyLists />} />
+          <Route path="/mylists/create" element={<CreateMyList />} />
+          <Route path="/mylists/create/products/:id" element={<Products />} />
+          <Route path="/mylists/edit/:id" element={<ListsEdit />} />
+          <Route path="/mylists/edit/products/:id" element={<Products />} />
 
-        {/* ===== USER FEATURES ===== */}
-        <Route path="/favorites" element={<Favorites />} />
-        <Route path="/profile" element={<Profile />} />
+          <Route path="/mylists/compare/:id" element={<MyLists3 />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
 
-        {/* ===== PRODUCT & CATEGORY ===== */}
-        <Route path="/products" element={<Products />} />
-        <Route path="/categories" element={<Categories />} />
-
-        {/* ===== SHOPPING LIST FLOW ===== */}
-        <Route path="/mylists" element={<MyLists />} />
-        <Route path="/mylists/create" element={<CreateMyList />} />
-        <Route path="/mylists/create/products/:id" element={<Products />} />
-        <Route path="/mylists/edit/:id" element={<ListsEdit />} />
-        <Route path="/mylists/edit/products/:id" element={<Products />} />
-
-        <Route path="/mylists/compare/:id" element={<MyLists3 />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-
-      </Routes>
+        </Routes>
       </FavoritesProvider>
     </div>
   );

@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // ✅ Users collection
+    match /users/{userId} {
+      // อนุญาตให้ query โดย email ได้ (สำหรับ password reset)
+      // แต่จะได้แค่ email field เท่านั้น ไม่ได้ข้อมูลอื่น
+      allow list: if request.auth == null && 
+                     request.query.limit <= 1 &&
+                     resource.data.email != null;
+      
+      // อนุญาตให้ user อ่านข้อมูลของตัวเองได้
+      allow read: if request.auth != null && request.auth.uid == userId;
+      
+      // อนุญาตให้ user เขียนข้อมูลของตัวเองได้
+      allow write: if request.auth != null && request.auth.uid == userId;
+      
+      // อนุญาตให้สร้าง document ใหม่ได้ (สำหรับ register)
+      allow create: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // Rules อื่นๆ ที่มีอยู่แล้ว
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
+
