@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom'; 
+import { Routes, Route } from 'react-router-dom';
 import './App.css';
 import { db } from './firebase-config';
 import { collection, getDocs } from 'firebase/firestore';
@@ -10,36 +10,41 @@ import Login from './components/Login/Login';
 import Register from './components/Register/register';
 import Navbar from './components/Home/Navbar';
 import Footer from './components/Home/Footer';
-import Home from './components/Home/Home'; 
+import Home from './components/Home/Home';
 
 // Features
 import Profile from './components/Profile/Profile';
 import Favorites from './components/Favorites/Favorites';
 import Categories from './components/Categories/Categories';
-import Products from './components/Products/Products'; 
+import Products from './components/Products/Products';
 
 // MyLists Components
-import MyLists from './components/MyLists/MyLists';       
-import CreateMyList from './components/MyLists/CreateMyList'; 
-import ListsEdit from './components/MyLists/ListsEdit';   
+import MyLists from './components/MyLists/MyLists';
+import CreateMyList from './components/MyLists/CreateMyList';
+import ListsEdit from './components/MyLists/ListsEdit';
+import MyLists3 from './components/MyLists/MyLists3';
 
-// ❌ ลบหรือ Comment บรรทัดนี้ออก เพราะเราไม่ได้ใช้แล้ว
-// import MyLists2 from './components/MyLists/MyLists2';     
+// ✅ หน้า OTP (ตามไฟล์จริงของคุณ)
+import VerifyCode from './components/Register/VerifyCode';
 
-import MyLists3 from './components/MyLists/MyLists3';     
+// ✅ หน้า “ยืนยันรหัสสำเร็จ”
+import VerifySuccess from './components/Register/VerifySuccess';
+
+// ✅ เพิ่มหน้า ResetPassword
+import ResetPassword from './components/Register/ResetPassword';
 
 function App() {
-    useEffect(() => {
-      const testFirebase = async () => {
-        try {
-          await getDocs(collection(db, "test_connection")); 
-          console.log("Firebase Connected Successfully!");
-        } catch (err) {
-          console.error("Firebase Connection Error:", err);
-        }
-      };
-      testFirebase();
-    }, []);
+  useEffect(() => {
+    const testFirebase = async () => {
+      try {
+        await getDocs(collection(db, "test_connection"));
+        console.log("Firebase Connected Successfully!");
+      } catch (err) {
+        console.error("Firebase Connection Error:", err);
+      }
+    };
+    testFirebase();
+  }, []);
 
   return (
     <div className="App">
@@ -51,6 +56,15 @@ function App() {
         {/* ===== AUTH SECTION ===== */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+
+        {/* ✅ หน้า OTP */}
+        <Route path="/verify" element={<VerifyCode />} />
+
+        {/* ✅ หน้า “ยืนยันรหัสสำเร็จ” */}
+        <Route path="/verify-success" element={<VerifySuccess />} />
+
+        {/* ✅ หน้า “เปลี่ยนรหัสผ่านใหม่” */}
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* ===== USER FEATURES ===== */}
         <Route path="/favorites" element={<Favorites />} />
@@ -66,10 +80,7 @@ function App() {
         <Route path="/mylists/create/products/:id" element={<Products />} />
         <Route path="/mylists/edit/:id" element={<ListsEdit />} />
         <Route path="/mylists/edit/products/:id" element={<Products />} />
-        
-        {/* Route นี้ Comment ไว้อยู่แล้ว ถูกต้องครับ */}
-        {/* <Route path="/mylists/:id" element={<MyLists2 />} /> */}
-        
+
         <Route path="/mylists/compare/:id" element={<MyLists3 />} />
 
       </Routes>
