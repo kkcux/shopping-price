@@ -5,9 +5,9 @@ import { googleLogout } from '@react-oauth/google';
 import './Navbar.css';
 import NotificationList from '../Notification/NotificationList';
 
-// ✅ 1. เพิ่ม Import Firebase Auth (สำคัญมาก!)
+// ✅ 1. Import Firebase Auth
 import { auth } from '../../firebase-config'; 
-import { signOut } from 'firebase/auth';
+import { signOut, onAuthStateChanged } from 'firebase/auth';
 
 function Navbar() {
   const location = useLocation();
@@ -18,11 +18,37 @@ function Navbar() {
   
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
+  // โหลดข้อมูล User จาก LocalStorage
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem('user');
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
+  // ✅ เพิ่ม Auth State Listener - จะอัปเดต User ทันทีเมื่อ Auth เปลี่ยนแปลง
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser) {
+        // User ล็อกอินแล้ว - อัปเดต localStorage และ state
+        const userData = {
+          uid: firebaseUser.uid,
+          email: firebaseUser.email,
+          name: firebaseUser.displayName,
+          photoURL: firebaseUser.photoURL,
+          given_name: firebaseUser.displayName
+        };
+        localStorage.setItem('user', JSON.stringify(userData));
+        setUser(userData);
+      } else {
+        // User ยังไม่ล็อกอิน - เคลียร์ข้อมูล
+        localStorage.removeItem('user');
+        setUser(null);
+      }
+    });
+
+    return unsubscribe; // Cleanup listener
+  }, []);
+
+  // อัปเดตข้อมูล User ทุกครั้งที่เปลี่ยนหน้า (เพื่อให้รูปเปลี่ยนทันทีหลังแก้โปรไฟล์)
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
@@ -36,18 +62,18 @@ function Navbar() {
     setShowLogoutConfirm(true);
   };
 
-  // ✅ 2. แก้ไขฟังก์ชัน Logout ให้ SignOut จาก Firebase ด้วย
+  // ✅ 2. ฟังก์ชัน Logout
   const confirmLogout = async () => {
     try {
-      // 1. สั่ง Firebase ให้ Logout (ตัวการสำคัญที่ทำให้ MyLists รู้ตัว)
+      // 1. สั่ง Firebase ให้ Logout
       await signOut(auth);
       
-      // 2. เคลียร์ส่วนอื่นๆ ตามปกติ
+      // 2. เคลียร์ส่วนอื่นๆ
       googleLogout(); 
       localStorage.removeItem('user'); 
       localStorage.removeItem('token'); 
       
-      // (Optional) เคลียร์ข้อมูลชั่วคราวอื่นๆ ถ้ามี
+      // เคลียร์ข้อมูลชั่วคราวอื่นๆ
       localStorage.removeItem('myLists'); 
       localStorage.removeItem('pending_save_list');
       localStorage.removeItem('current_draft'); 
@@ -55,7 +81,7 @@ function Navbar() {
       setUser(null);
       setShowLogoutConfirm(false); 
       
-      // 3. ย้ายหน้าและรีเฟรชเพื่อความชัวร์ (ล้าง State ทั้งหมด)
+      // 3. ย้ายหน้าและรีเฟรช
       navigate('/login'); 
       window.location.reload(); 
       
@@ -127,8 +153,22 @@ function Navbar() {
                 onClick={() => navigate('/profile')} 
                 style={{ cursor: 'pointer' }}
               >
-                <img src={user.picture} alt="Profile" className="user-avatar" />
-                <span className="user-name">{(user.given_name || user.name).split(' ')[0]}</span>
+                {/* ตัวย่อชื่อในแถบนำทาง */}
+                <div className="user-initials-badge">
+                  <span className="initials-text">
+                    {(user.name || user.given_name || "")
+                      .split(' ')
+                      .map(word => word[0])
+                      .join('')
+                      .toUpperCase()
+                      .substring(0, 2)}
+                  </span>
+                </div>
+                
+                {/* 🔥 แก้ไข: ป้องกัน Error split ตามที่เคยคุยกัน */}
+                <span className="user-name">
+                  {(user.given_name || user.name || "").split(' ')[0]}
+                </span>
 
                 <button 
                   onClick={(e) => {

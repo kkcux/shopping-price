@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom"; 
 // ❌ ลบ @react-oauth/google และ axios ออก เพราะเราจะใช้ Firebase แทน
 // import { useGoogleLogin } from '@react-oauth/google';
@@ -7,7 +7,7 @@ import "./Login.css";
 
 // ✅ 1. Import Firebase
 import { auth } from "../../firebase-config"; // ตรวจสอบ path ให้ถูกต้อง
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence, browserSessionPersistence } from "firebase/auth";
 
 import Navbar from "../Home/Navbar";
 import Footer from "../Home/Footer";
@@ -28,23 +28,49 @@ const Login = () => {
   // หน้าปลายทาง (ถ้าไม่มีให้ไปหน้า MyLists แทนหน้าแรก จะได้เห็น Dashboard เลย)
   const from = location.state?.from || "/";
 
+  // ✅ โหลดข้อมูล remembered email เมื่อเข้าหน้า Login
+  useEffect(() => {
+    const rememberedEmail = localStorage.getItem('remembered_email');
+    const isRemembered = localStorage.getItem('remember_me');
+    
+    if (rememberedEmail && isRemembered === 'true') {
+      setEmail(rememberedEmail);
+      setRemember(true);
+    }
+  }, []);
+
+  // ✅ จัดการการบันทึกเมื่อ remember checkbox เปลี่ยน
+  const handleRememberChange = (e) => {
+    setRemember(e.target.checked);
+    
+    if (!e.target.checked) {
+      // เมื่อ uncheck ให้เคลียร์ข้อมูล
+      localStorage.removeItem('remembered_email');
+      localStorage.removeItem('remember_me');
+    }
+  };
+
   // --- ส่วนจัดการ Google Login (Firebase Version) ---
   const handleGoogleLogin = async () => {
     const provider = new GoogleAuthProvider();
     try {
+      // ตั้งค่า persistence ตามการเลือก Remember Me
+      const persistenceType = remember ? browserLocalPersistence : browserSessionPersistence;
+      await setPersistence(auth, persistenceType);
+
       // คำสั่งเดียวจบ เด้ง Popup -> Login -> เชื่อม Database
       const result = await signInWithPopup(auth, provider);
       const user = result.user;
 
-      // console.log("Google Login สำเร็จ:", user);
+      console.log("Google Login สำเร็จ:", user);
 
-      // บันทึกข้อมูลลงเครื่อง (เพื่อให้ Navbar โชว์รูปได้ทันที)
-      localStorage.setItem('user', JSON.stringify({
-        uid: user.uid,
-        email: user.email,
-        name: user.displayName,
-        photoURL: user.photoURL
-      }));
+      // บันทึกข้อมูล email ถ้า remember ถูก check
+      if (remember) {
+        localStorage.setItem('remembered_email', user.email);
+        localStorage.setItem('remember_me', 'true');
+      }
+
+      // Firebase Auth Listener ใน Navbar จะตรวจจับการเปลี่ยนแปลงและอัปเดต state อัตโนมัติ
       localStorage.setItem('token', user.accessToken);
 
       // Redirect ไปหน้าเดิม
@@ -62,18 +88,27 @@ const Login = () => {
     setErrorMessage(""); // เคลียร์ error เก่าก่อน
 
     try {
+      // ตั้งค่า persistence ตามการเลือก Remember Me
+      const persistenceType = remember ? browserLocalPersistence : browserSessionPersistence;
+      await setPersistence(auth, persistenceType);
+
       // ส่ง Email/Password ไปตรวจสอบที่ Firebase
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
       console.log("Email Login สำเร็จ:", user);
       
-      // บันทึก user ลง LocalStorage
-      localStorage.setItem('user', JSON.stringify({
-        uid: user.uid,
-        email: user.email,
-        // user.displayName อาจจะว่างถ้าสมัครด้วย email แต่ไม่เป็นไร
-      }));
+      // บันทึกข้อมูล email ถ้า remember ถูก check
+      if (remember) {
+        localStorage.setItem('remembered_email', email);
+        localStorage.setItem('remember_me', 'true');
+      } else {
+        // เคลียร์ข้อมูล remembered ถ้า uncheck
+        localStorage.removeItem('remembered_email');
+        localStorage.removeItem('remember_me');
+      }
+
+      // Firebase Auth Listener ใน Navbar จะตรวจจับการเปลี่ยนแปลงและอัปเดต state อัตโนมัติ
       localStorage.setItem('token', user.accessToken);
 
       // Redirect
@@ -158,7 +193,7 @@ const Login = () => {
                 <input
                   type="checkbox"
                   checked={remember}
-                  onChange={(e) => setRemember(e.target.checked)}
+                  onChange={handleRememberChange}
                 />
                 <span className="custom-checkbox"></span>
                 <span className="label-text">จดจำการเข้าสู่ระบบ</span>
