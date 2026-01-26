@@ -338,3 +338,172 @@
     transform: scale(1) translateY(0);
   }
 }
+
+/* =========================
+   STORE & MEMBERSHIP GRID
+========================= */
+.le-grid-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.le-box-half {
+  margin-bottom: 0 !important;
+  height: 100%;
+}
+
+.le-box {
+  background: #ffffff;
+  border-radius: var(--pf-radius);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--pf-shadow);
+  border: 1px solid #f1f5f9;
+}
+
+.le-boxTitle {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--pf-text-main);
+  margin-bottom: 16px;
+}
+
+/* Store Checkbox Row */
+.le-checkRow {
+  display: flex;
+  align-items: center;
+  padding: 14px;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.le-checkRow:last-child {
+  border-bottom: none;
+}
+.le-checkRow:hover {
+  background-color: #f8fafc;
+}
+
+.le-check {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #1f2937;
+  border-radius: 4px;
+  margin-right: 14px;
+  position: relative;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: white;
+  flex-shrink: 0;
+}
+.le-checkRow:hover .le-check:not(.on) {
+  border-color: #10b77e;
+  background: #f0fdf4;
+}
+.le-check.on {
+  background: #10b77e;
+  border-color: #10b77e;
+  box-shadow: 0 2px 6px rgba(16, 183, 126, 0.25);
+}
+.le-checkRow:hover .le-check.on {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(16, 183, 126, 0.4);
+}
+.le-check.on::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 7px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+  animation: checkmarkPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+@keyframes checkmarkPop {
+  0% {
+    transform: rotate(45deg) scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: rotate(45deg) scale(1.2);
+  }
+  100% {
+    transform: rotate(45deg) scale(1);
+    opacity: 1;
+  }
+}
+.le-checkText {
+  font-size: 1rem;
+  color: #334155;
+  font-weight: 500;
+}
+
+/* Member Row */
+.le-memberRow {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ef4444;
+  background-color: #f9fafb;
+  margin-bottom: 8px;
+  transition: all 0.2s;
+}
+.le-memberRow:last-child {
+  margin-bottom: 0;
+}
+.le-memberRow.ok {
+  background-color: #f0fdf4;
+  border: 1px solid #10b77e;
+}
+
+.le-brand-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-right: 12px;
+  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: white;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+.le-brand-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.le-memberText {
+  flex: 1;
+  font-size: 0.9rem;
+  color: #1f2937;
+  font-weight: 500;
+}
+.le-memberRow.ok .le-memberText {
+  color: #15803d;
+  font-weight: 600;
+}
+
+.le-join {
+  font-size: 0.8rem;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  padding: 6px 12px;
+  background: #3b82f6;
+  border-radius: 6px;
+  transition: all 0.2s;
+  border: none;
+  cursor: pointer;
+}
+.le-join:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+}
