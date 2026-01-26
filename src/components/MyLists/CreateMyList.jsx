@@ -9,8 +9,9 @@ import toast, { Toaster } from 'react-hot-toast';
 import Footer from "../Home/Footer";
 import "./CreateMyList.css"; 
 
-import { auth } from '../../firebase-config';
+import { auth, db } from '../../firebase-config';
 import { onAuthStateChanged } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 
 const STORE_LOGOS = {
   MAKRO: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1weBQ9rq_nOC5CSMa2dFW9Ez5CFXKKy4Q3Q&s",
@@ -67,9 +68,9 @@ export default function CreateMyList() {
   const [selectedStores, setSelectedStores] = useState(() => {
     if (isReturning) {
         const saved = JSON.parse(localStorage.getItem(DRAFT_KEY) || "null");
-        return saved?.selectedStores || { ALL: true, LOTUS: false, BIGC: false, MAKRO: false };
+        return saved?.selectedStores || { ALL: true, LOTUS: true, BIGC: true, MAKRO: true };
     }
-    return { ALL: true, LOTUS: false, BIGC: false, MAKRO: false };
+    return { ALL: true, LOTUS: true, BIGC: true, MAKRO: true };
   });
 
   useEffect(() => {
@@ -79,17 +80,85 @@ export default function CreateMyList() {
     sessionStorage.removeItem('returning_from_add');
   }, []);
 
-  const membership = { LOTUS: true, BIGC: false, MAKRO: false };
+  // ✅ ดึงข้อมูล membership จาก localStorage หรือใช้ค่า default
+  const [membership, setMembership] = useState(() => {
+    try {
+      const storedUser = localStorage.getItem('user');
+      if (storedUser) {
+        const userData = JSON.parse(storedUser);
+        if (userData.membership) {
+          return userData.membership;
+        }
+      }
+    } catch {}
+    return { LOTUS: false, BIGC: false, MAKRO: false };
+  });
 
   const [showExitModal, setShowExitModal] = useState(false);
   const [showWarningModal, setShowWarningModal] = useState(false);
-  const [warningType, setWarningType] = useState("name"); 
+  const [warningType, setWarningType] = useState("name");
+  const [showStoreWarningModal, setShowStoreWarningModal] = useState(false); 
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
+      // ✅ โหลด membership จาก Firestore เมื่อ login
+      if (user) {
+        try {
+          const userRef = doc(db, "users", user.uid);
+          const userSnap = await getDoc(userRef);
+          if (userSnap.exists() && userSnap.data().membership) {
+            setMembership(userSnap.data().membership);
+            // อัปเดต localStorage ด้วย
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
+              const userData = JSON.parse(storedUser);
+              userData.membership = userSnap.data().membership;
+              localStorage.setItem('user', JSON.stringify(userData));
+            }
+          }
+        } catch (error) {
+          console.error("Error loading membership from Firestore:", error);
+        }
+      }
     });
     return () => unsubscribe();
+  }, []);
+
+  // ✅ โหลด membership จาก localStorage เมื่อ component mount
+  useEffect(() => {
+    const loadMembership = () => {
+      try {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          const userData = JSON.parse(storedUser);
+          if (userData.membership) {
+            setMembership(userData.membership);
+          }
+        }
+      } catch {}
+    };
+    
+    loadMembership();
+    
+    // Listen custom event จากหน้า Profile
+    const handleMembershipUpdate = (event) => {
+      if (event.detail && event.detail.membership) {
+        setMembership(event.detail.membership);
+      }
+    };
+    
+    // Listen การเปลี่ยนแปลงของ localStorage และ window focus
+    const handleStorageChange = () => loadMembership();
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('focus', handleStorageChange);
+    window.addEventListener('membershipUpdated', handleMembershipUpdate);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('focus', handleStorageChange);
+      window.removeEventListener('membershipUpdated', handleMembershipUpdate);
+    };
   }, []);
 
   // ✅ 3. แก้ไข Auto-Save: เช็คว่ากำลังทิ้งรายการอยู่หรือเปล่า
@@ -120,6 +189,10 @@ export default function CreateMyList() {
   }, [items]);
 
   /* ===== LOGIC ===== */
+  const getSelectedCount = (stores) => {
+    return [stores.LOTUS, stores.BIGC, stores.MAKRO].filter(Boolean).length;
+  };
+
   const toggleAll = () => {
     const v = !selectedStores.ALL;
     setSelectedStores({ ALL: v, LOTUS: v, BIGC: v, MAKRO: v });
@@ -210,6 +283,13 @@ export default function CreateMyList() {
     if (items.length === 0) {
       setWarningType("empty");
       setShowWarningModal(true);
+      return;
+    }
+
+    // เช็คว่าเลือกร้านค้าอย่างน้อย 2 ร้าน (ตอนกดปุ่มดูราคาเปรียบเทียบ)
+    const selectedCount = getSelectedCount(selectedStores);
+    if (selectedCount < 2) {
+      setShowStoreWarningModal(true);
       return;
     }
 
@@ -358,9 +438,41 @@ export default function CreateMyList() {
 
             <section className="le-box le-box-half">
               <div className="le-boxTitle" style={{marginBottom: 15}}>สถานะสมาชิก</div>
-              {["LOTUS", "BIGC", "MAKRO"].map((brand) => (
-                <MemberRow key={brand} brand={brand} isMember={membership[brand]} />
-              ))}
+              {!currentUser ? (
+                <div style={{ 
+                  padding: '40px 20px', 
+                  textAlign: 'center', 
+                  color: '#64748b',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '16px'
+                }}>
+                  <div style={{ fontSize: '1rem' }}>กรุณาเข้าสู่ระบบเพื่อดูสถานะสมาชิก</div>
+                  <button 
+                    onClick={() => navigate('/login')}
+                    style={{
+                      padding: '10px 24px',
+                      background: '#3b82f6',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontSize: '0.95rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      transition: 'all 0.2s'
+                    }}
+                    onMouseEnter={(e) => e.currentTarget.style.background = '#2563eb'}
+                    onMouseLeave={(e) => e.currentTarget.style.background = '#3b82f6'}
+                  >
+                    เข้าสู่ระบบ
+                  </button>
+                </div>
+              ) : (
+                ["LOTUS", "BIGC", "MAKRO"].map((brand) => (
+                  <MemberRow key={brand} brand={brand} isMember={membership[brand]} />
+                ))
+              )}
             </section>
           </div>
 
@@ -429,6 +541,21 @@ export default function CreateMyList() {
         </div>
       )}
 
+      {showStoreWarningModal && (
+        <div className="modal-overlay" onClick={() => setShowStoreWarningModal(false)}>
+          <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-icon-circle warning">
+              <AlertTriangle size={48} strokeWidth={2} />
+            </div>
+            <h3 className="modal-title">ต้องเลือกร้านค้าอย่างน้อย 2 ร้าน</h3>
+            <p className="modal-desc">กรุณาเลือกร้านค้าอย่างน้อย 2 ร้านเพื่อเปรียบเทียบราคา</p>
+            <div className="modal-actions">
+              <button className="modal-btn primary" onClick={() => setShowStoreWarningModal(false)}>ตกลง</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <Toaster position="top-center" />
       <Footer />
     </>
@@ -442,17 +569,12 @@ function MemberRow({ brand, isMember }) {
         <img src={STORE_LOGOS[brand]} alt={brand} />
       </div>
       <div className="le-memberText">
-        {isMember ? "เป็นสมาชิกแล้ว" : "ไม่ได้เป็นสมาชิก"}
+        {isMember ? `${brand === 'LOTUS' ? "LOTUS's" : brand === 'BIGC' ? "BIG C" : brand === 'MAKRO' ? "MAKRO" : brand} เป็นสมาชิก` : `${brand === 'LOTUS' ? "LOTUS's" : brand === 'BIGC' ? "BIG C" : brand === 'MAKRO' ? "MAKRO" : brand} ไม่เป็นสมาชิก`}
       </div>
       {!isMember && (
         <a href={REGISTER_URL[brand]} target="_blank" rel="noopener noreferrer" className="le-join">
           สมัคร
         </a>
-      )}
-      {isMember && (
-        <div className="le-check-icon">
-          <Check size={18} color="#10b77e" />
-        </div>
       )}
     </div>
   );

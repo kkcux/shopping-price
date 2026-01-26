@@ -1,7 +1,8 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Camera, User, Mail, Info, Crown, Check, LogOut } from 'lucide-react';
 import { updateProfile, onAuthStateChanged, signOut } from "firebase/auth";
-import { auth } from "../../firebase-config";
+import { auth, db } from "../../firebase-config";
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 import { googleLogout } from '@react-oauth/google';
 import { useNavigate } from 'react-router-dom';
 import { cloudinaryConfig } from "../../cloudinary-config";
@@ -21,6 +22,9 @@ const Profile = () => {
   const [firebaseUser, setFirebaseUser] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  
+  // ✅ State สำหรับ membership
+  const [membership, setMembership] = useState({ LOTUS: false, BIGC: false, MAKRO: false });
 
   // ✅ State สำหรับ crop image
   const [showCropModal, setShowCropModal] = useState(false);
@@ -56,13 +60,17 @@ const Profile = () => {
         }
         if (userData.name) setName(userData.name);
         if (userData.email) setEmail(userData.email);
+        // ✅ โหลด membership จาก localStorage
+        if (userData.membership) {
+          setMembership(userData.membership);
+        }
       } catch {
         // Error parsing user data
       }
     }
 
     // 2. ดึงจาก Firebase (ตัวจริง)
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         setFirebaseUser(currentUser);
 
@@ -76,12 +84,64 @@ const Profile = () => {
           setProfileImage(null);
         }
 
+        // ✅ โหลด membership จาก Firestore
+        let loadedMembership = { LOTUS: false, BIGC: false, MAKRO: false };
+        try {
+          const userDocRef = doc(db, "users", currentUser.uid);
+          const userDocSnap = await getDoc(userDocRef);
+          if (userDocSnap.exists()) {
+            const userData = userDocSnap.data();
+            if (userData.membership) {
+              loadedMembership = userData.membership;
+              setMembership(userData.membership);
+            } else {
+              // ถ้าไม่มีใน Firestore ให้ลองดึงจาก localStorage
+              const storedUser = localStorage.getItem('user');
+              if (storedUser) {
+                try {
+                  const userData = JSON.parse(storedUser);
+                  if (userData.membership) {
+                    loadedMembership = userData.membership;
+                    setMembership(userData.membership);
+                  }
+                } catch {}
+              }
+            }
+          } else {
+            // ถ้าไม่มีใน Firestore ให้ลองดึงจาก localStorage
+            const storedUser = localStorage.getItem('user');
+            if (storedUser) {
+              try {
+                const userData = JSON.parse(storedUser);
+                if (userData.membership) {
+                  loadedMembership = userData.membership;
+                  setMembership(userData.membership);
+                }
+              } catch {}
+            }
+          }
+        } catch (error) {
+          console.error("Error loading membership:", error);
+          // ถ้าเกิด error ให้ลองดึงจาก localStorage
+          const storedUser = localStorage.getItem('user');
+          if (storedUser) {
+            try {
+              const userData = JSON.parse(storedUser);
+              if (userData.membership) {
+                loadedMembership = userData.membership;
+                setMembership(userData.membership);
+              }
+            } catch {}
+          }
+        }
+
         // อัปเดตข้อมูลใหม่ลง LocalStorage ด้วย
         const freshUserData = {
           uid: currentUser.uid,
           email: currentUser.email,
           name: currentUser.displayName,
-          photoURL: currentUser.photoURL
+          photoURL: currentUser.photoURL,
+          membership: loadedMembership
         };
         localStorage.setItem('user', JSON.stringify(freshUserData));
 
@@ -499,12 +559,28 @@ const Profile = () => {
         photoURL: photoURL || null
       });
 
+      // ✅ บันทึก membership ลง Firestore
+      try {
+        const userDocRef = doc(db, "users", firebaseUser.uid);
+        await setDoc(userDocRef, {
+          membership: membership
+        }, { merge: true });
+        
+        // ✅ Dispatch custom event เพื่อแจ้งให้ component อื่นทราบ
+        window.dispatchEvent(new CustomEvent('membershipUpdated', {
+          detail: { membership }
+        }));
+      } catch (error) {
+        console.error("Error saving membership:", error);
+      }
+
       // ✅ อัปเดต LocalStorage
       const updatedUserData = {
         uid: firebaseUser.uid,
         email: firebaseUser.email,
         name: name,
-        photoURL: photoURL
+        photoURL: photoURL,
+        membership: membership
       };
       localStorage.setItem('user', JSON.stringify(updatedUserData));
 
@@ -558,11 +634,20 @@ const Profile = () => {
     }
   };
 
+  // ✅ ฟังก์ชัน toggle membership
+  const toggleMembership = (key) => {
+    setMembership(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
   const memberships = [
     {
       id: 1,
+      key: 'LOTUS',
       name: "Lotus's",
-      label: "Lotus's ไม่เป็นสมาชิก",
+      label: "Lotus's",
       bgIcon: '#eafff0',
       color: '#00b050',
       logo: 'https://corporate.lotuss.com/images/2023/02/cover-logo-lotuss-060323.jpg',
@@ -570,8 +655,9 @@ const Profile = () => {
     },
     {
       id: 2,
+      key: 'BIGC',
       name: 'Big C',
-      label: 'Big C ไม่เป็นสมาชิก',
+      label: 'Big C',
       bgIcon: '#f4ffe0',
       color: '#8dc63f',
       logo: 'https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcSlLdbffklYPCCfrhKihAv0yGlVjV__NwsYG36F-_hdtTqDGQ97Y3ur0jEvPsFNYH-_CPZQ9Ynu',
@@ -579,8 +665,9 @@ const Profile = () => {
     },
     {
       id: 3,
+      key: 'MAKRO',
       name: 'Makro',
-      label: 'Makro ไม่เป็นสมาชิก',
+      label: 'Makro',
       bgIcon: '#fff0f0',
       color: '#ed1c24',
       logo: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1weBQ9rq_nOC5CSMa2dFW9Ez5CFXKKy4Q3Q&s',
@@ -673,44 +760,69 @@ const Profile = () => {
             <div className="membership-section">
               <label className="section-label">สถานะสมาชิกร้านค้า</label>
               <div className="membership-list">
-                {memberships.map((item) => (
-                  <div key={item.id} className="membership-item">
-                    <div className="membership-left">
-                      <div className="membership-logo-box" style={{ color: item.color, backgroundColor: item.bgIcon }}>
-                        {item.logo ? <img src={item.logo} alt={item.name} className="membership-logo-img" /> : item.name}
-                      </div>
-                      <div className="membership-info">
-                        <span className="ms-name">{item.name}</span>
-                        <div className="ms-status-row">
-                          <span className="status-text">{item.label}</span>
-                          <div className="info-tooltip-wrapper">
-                            <Info size={16} className="info-icon" />
-                            <div className="benefit-popup">
-                              <div className="popup-header">
-                                <div className="crown-icon-bg"><Crown size={24} color="white" /></div>
-                                <div className="popup-title-text">
-                                  <h3>สิทธิประโยชน์</h3>
-                                  <span>สมาชิก {item.name}</span>
+                {memberships.map((item) => {
+                  const isMember = membership[item.key] || false;
+                  return (
+                    <div key={item.id} className="membership-item">
+                      <div className="membership-left">
+                        <div className="membership-logo-box" style={{ color: item.color, backgroundColor: item.bgIcon }}>
+                          {item.logo ? <img src={item.logo} alt={item.name} className="membership-logo-img" /> : item.name}
+                        </div>
+                        <div className="membership-info">
+                          <span className="ms-name">{item.name}</span>
+                          <div className="ms-status-row">
+                            <span className="status-text" style={{ color: isMember ? '#10b77e' : '#64748b' }}>
+                              {isMember ? 'เป็นสมาชิก' : 'ไม่เป็นสมาชิก'}
+                            </span>
+                            <div className="info-tooltip-wrapper">
+                              <Info size={16} className="info-icon" />
+                              <div className="benefit-popup">
+                                <div className="popup-header">
+                                  <div className="crown-icon-bg"><Crown size={24} color="white" /></div>
+                                  <div className="popup-title-text">
+                                    <h3>สิทธิประโยชน์</h3>
+                                    <span>สมาชิก {item.name}</span>
+                                  </div>
                                 </div>
-                              </div>
-                              <ul className="benefit-list">
-                                <li><Check size={16} /> สะสมคะแนนทุกยอดการใช้จ่าย</li>
-                                <li><Check size={16} /> แลกคะแนนเป็นส่วนลดเงินสด</li>
-                                <li><Check size={16} /> สินค้าราคาพิเศษเฉพาะสมาชิก</li>
-                              </ul>
-                              <div className="popup-footer">
-                                <button type="button" className="popup-btn-ok">เข้าใจแล้ว</button>
+                                <ul className="benefit-list">
+                                  <li><Check size={16} /> สะสมคะแนนทุกยอดการใช้จ่าย</li>
+                                  <li><Check size={16} /> แลกคะแนนเป็นส่วนลดเงินสด</li>
+                                  <li><Check size={16} /> สินค้าราคาพิเศษเฉพาะสมาชิก</li>
+                                </ul>
+                                <div className="popup-footer">
+                                  <button type="button" className="popup-btn-ok">เข้าใจแล้ว</button>
+                                </div>
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <label className="membership-checkbox-label">
+                          <input
+                            type="checkbox"
+                            checked={isMember}
+                            onChange={() => toggleMembership(item.key)}
+                            className="membership-checkbox"
+                          />
+                          <span className={`membership-checkbox-custom ${isMember ? 'checked' : ''}`}>
+                            {isMember && <Check size={14} strokeWidth={3} />}
+                          </span>
+                          <span className="membership-checkbox-text">สมาชิก</span>
+                        </label>
+                        {!isMember && (
+                          <button 
+                            type="button" 
+                            className="btn-apply-member" 
+                            onClick={() => handleRegisterClick(item.registerUrl)}
+                          >
+                            สมัคร
+                          </button>
+                        )}
+                      </div>
                     </div>
-                    <button type="button" className="btn-apply-member" onClick={() => handleRegisterClick(item.registerUrl)}>
-                      สมัคร
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
