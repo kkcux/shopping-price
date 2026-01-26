@@ -15,6 +15,7 @@ import {
   AlertCircle,
   Navigation, // ✅ เพิ่มไอคอนนำทาง
   Lightbulb, // ✅ เพิ่มไอคอน lightbulb
+  MapPin, // ✅ เพิ่มไอคอน MapPin
 } from "lucide-react";
 
 import Footer from "../Home/Footer";
@@ -22,6 +23,7 @@ import "./mylists3.css";
 
 import { db, auth } from '../../firebase-config';
 import { onAuthStateChanged } from 'firebase/auth';
+import { doc, setDoc, getDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 
 /* ===== ✅ Store Logos ===== */
 const STORE_LOGOS = {
@@ -29,7 +31,6 @@ const STORE_LOGOS = {
   LOTUS: "https://upload.wikimedia.org/wikipedia/commons/1/14/Lotus-2021-logo.png",
   BIGC: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Big_C_Logo.svg/500px-Big_C_Logo.svg.png",
 };
-import { doc, setDoc, getDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 
 /* ================= helpers ================= */
 const toNumber = (v) => {
@@ -147,6 +148,7 @@ export default function MyLists3() {
   const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
+  const [membership, setMembership] = useState({ LOTUS: false, BIGC: false, MAKRO: false });
 
   const [isSaving, setIsSaving] = useState(false);
 
@@ -166,10 +168,78 @@ export default function MyLists3() {
   const [branchError, setBranchError] = useState("");
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
+      
+      // โหลด membership จาก localStorage หรือ Firestore
+      if (user) {
+        try {
+          const userDocRef = doc(db, "users", user.uid);
+          const userDocSnap = await getDoc(userDocRef);
+          if (userDocSnap.exists()) {
+            const userData = userDocSnap.data();
+            if (userData.membership) {
+              setMembership(userData.membership);
+              // อัปเดต localStorage เป็น cache
+              const userLocal = JSON.parse(localStorage.getItem("user") || "{}");
+              localStorage.setItem("user", JSON.stringify({ ...userLocal, membership: userData.membership }));
+            } else {
+              // ถ้าไม่มีใน Firestore ให้ลองดึงจาก localStorage
+              const userLocal = JSON.parse(localStorage.getItem("user") || "{}");
+              if (userLocal.membership) {
+                setMembership(userLocal.membership);
+              }
+            }
+          } else {
+            // ถ้าไม่มีใน Firestore ให้ลองดึงจาก localStorage
+            const userLocal = JSON.parse(localStorage.getItem("user") || "{}");
+            if (userLocal.membership) {
+              setMembership(userLocal.membership);
+            }
+          }
+        } catch (error) {
+          console.error("Error loading membership:", error);
+          // ถ้าเกิด error ให้ลองดึงจาก localStorage
+          const userLocal = JSON.parse(localStorage.getItem("user") || "{}");
+          if (userLocal.membership) {
+            setMembership(userLocal.membership);
+          }
+        }
+      } else {
+        // ถ้ายังไม่ login ให้ดึงจาก localStorage
+        const userLocal = JSON.parse(localStorage.getItem("user") || "{}");
+        if (userLocal.membership) {
+          setMembership(userLocal.membership);
+        } else {
+          setMembership({ LOTUS: false, BIGC: false, MAKRO: false });
+        }
+      }
     });
     return () => unsubscribe();
+  }, []);
+
+  // ฟัง membership changes จาก localStorage (เมื่อมีการเปลี่ยนแปลงใน tab อื่น)
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const userLocal = JSON.parse(localStorage.getItem("user") || "{}");
+      if (userLocal.membership) {
+        setMembership(userLocal.membership);
+      }
+    };
+
+    const handleFocus = () => {
+      handleStorageChange();
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    window.addEventListener('focus', handleFocus);
+    window.addEventListener('membershipUpdated', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener('membershipUpdated', handleStorageChange);
+    };
   }, []);
 
   /* ===== load jsonl ===== */
@@ -389,6 +459,15 @@ export default function MyLists3() {
 
   const wanted = selectedList?.items || [];
   const listName = selectedList?.name || "ไม่พบรายการ";
+  
+  // ✅ รับ selectedStores จาก selectedList และสร้าง list ของร้านที่เลือก
+  const selectedStores = selectedList?.selectedStores || { ALL: true, LOTUS: true, BIGC: true, MAKRO: true };
+  const selectedStoreKeys = useMemo(() => {
+    if (selectedStores.ALL) {
+      return ["LOTUS", "BIGC", "MAKRO"];
+    }
+    return ["LOTUS", "BIGC", "MAKRO"].filter(key => selectedStores[key]);
+  }, [selectedStores]);
 
   const rows = useMemo(() => {
     return wanted.map((w) => {
@@ -400,7 +479,10 @@ export default function MyLists3() {
         BIGC: b?.price ?? null,
         MAKRO: m?.price ?? null,
       };
-      const valid = Object.values(priceMap).filter((v) => typeof v === "number");
+      // ✅ คำนวณ minVal จากราคาของร้านที่เลือกเท่านั้น
+      const valid = selectedStoreKeys
+        .map(key => priceMap[key])
+        .filter((v) => typeof v === "number");
       const minVal = valid.length ? Math.min(...valid) : null;
       return {
         name: w.name,
@@ -409,7 +491,7 @@ export default function MyLists3() {
         minVal,
       };
     });
-  }, [wanted, lotusList, bigcList, makroList]);
+  }, [wanted, lotusList, bigcList, makroList, selectedStoreKeys]);
 
   const totals = useMemo(() => {
     const sum = (k) => rows.reduce((acc, r) => acc + (r.priceMap[k] || 0), 0);
@@ -419,6 +501,15 @@ export default function MyLists3() {
       MAKRO: sum("MAKRO"),
     };
   }, [rows]);
+  
+  // ✅ กรอง totals ให้แสดงเฉพาะร้านที่เลือก
+  const filteredTotals = useMemo(() => {
+    const result = {};
+    selectedStoreKeys.forEach(key => {
+      result[key] = totals[key];
+    });
+    return result;
+  }, [totals, selectedStoreKeys]);
 
   /* ===== ✅ “แก้แค่ระยะทาง” ของร้านค้าแนะนำ ===== */
   const recommendShops = useMemo(() => {
@@ -429,7 +520,7 @@ export default function MyLists3() {
     const lotusKm = branches.LOTUS?.[0]?.distance;
     const makroKm = branches.MAKRO?.[0]?.distance;
 
-    return [
+    const allShops = [
       {
         key: "BIGC",
         name: "Big C",
@@ -451,8 +542,13 @@ export default function MyLists3() {
         totalPrice: totals.MAKRO,
         url: "https://www.makro.pro",
       },
-    ].filter((s) => typeof s.totalPrice === "number" && s.totalPrice > 0);
-  }, [branches, totals]);
+    ];
+    
+    // ✅ กรองเฉพาะร้านที่เลือกและมีราคารวม > 0
+    return allShops.filter(
+      (s) => selectedStoreKeys.includes(s.key) && typeof s.totalPrice === "number" && s.totalPrice > 0
+    );
+  }, [branches, totals, selectedStoreKeys]);
 
   /* ===== ✅ ปุ่ม “นำทาง” (เปิด Google Maps) ===== */
   const handleNavigate = (shopKey) => {
@@ -467,7 +563,13 @@ export default function MyLists3() {
   };
 
   const handleBackClick = () => {
-    setShowExitModal(true);
+    // ถ้าเป็น draft (รายการที่ยังไม่ได้บันทึก) ให้แสดง modal ถามว่าต้องการบันทึกหรือไม่
+    // ถ้าไม่ใช่ draft (รายการที่บันทึกแล้ว) ให้กลับได้เลยโดยไม่แสดง modal
+    if (isDraft) {
+      setShowExitModal(true);
+    } else {
+      navigate("/mylists");
+    }
   };
 
   const handleExitWithoutSave = () => {
@@ -682,9 +784,11 @@ export default function MyLists3() {
             <div className="ml3-table">
               <div className="ml3-thead">
                 <div className="ml3-th left">รายการสินค้า</div>
-                <div className="ml3-th">LOTUS'S</div>
-                <div className="ml3-th">BIG C</div>
-                <div className="ml3-th">MAKRO</div>
+                {selectedStoreKeys.map((k) => (
+                  <div className="ml3-th" key={k}>
+                    {k === 'LOTUS' ? "LOTUS'S" : k === 'BIGC' ? "BIG C" : "MAKRO"}
+                  </div>
+                ))}
               </div>
 
               {rows.map((it, idx) => (
@@ -705,7 +809,7 @@ export default function MyLists3() {
                     </div>
                   </div>
 
-                  {["LOTUS", "BIGC", "MAKRO"].map((k) => {
+                  {selectedStoreKeys.map((k) => {
                     const val = it.priceMap[k];
                     const isMin = typeof val === "number" && it.minVal === val;
                     return (
@@ -728,10 +832,10 @@ export default function MyLists3() {
 
               <div className="ml3-tr total">
                 <div className="ml3-td left total-label">รวมทั้งหมด</div>
-                {["LOTUS", "BIGC", "MAKRO"].map((k) => (
+                {selectedStoreKeys.map((k) => (
                   <div className="ml3-td" key={k}>
                     <span className="ml3-pill" style={{ fontWeight: 800, color: "#1e293b" }}>
-                      {totals[k] > 0 ? `฿${Math.round(totals[k]).toLocaleString()}` : "-"}
+                      {filteredTotals[k] > 0 ? `฿${Math.round(filteredTotals[k]).toLocaleString()}` : "-"}
                     </span>
                   </div>
                 ))}
@@ -756,6 +860,7 @@ export default function MyLists3() {
               <div className="ml3-shop-head">
                 <div>ร้านค้า</div>
                 <div>ระยะทาง</div>
+                <div>สถานะสมาชิก</div>
                 <div>ราคารวม</div>
                 <div></div>
               </div>
@@ -764,13 +869,20 @@ export default function MyLists3() {
                 // หาร้านที่ถูกที่สุด (ราคาต่ำสุด)
                 const minPrice = Math.min(...recommendShops.map(shop => shop.totalPrice));
                 const isCheapest = s.totalPrice === minPrice;
+                const isMember = membership[s.key] || false;
                 
                 return (
                 <div 
                   className={`ml3-shop-row ${isCheapest ? 'ml3-shop-row-cheapest' : ''}`} 
                   key={s.key}
                 >
-                  <div className="ml3-shop-brand">
+                  <div className="ml3-shop-brand" style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'flex-start',
+                    gap: '12px',
+                    width: '100%'
+                  }}>
                     {STORE_LOGOS[s.key] ? (
                       <div className={`ml3-shop-logo ${s.key.toLowerCase()}`}>
                         <img 
@@ -785,25 +897,65 @@ export default function MyLists3() {
                       </div>
                     ) : null}
                     <span 
-                      className="ml3-shop-name-fallback" 
-                      style={{ display: STORE_LOGOS[s.key] ? 'none' : 'block' }}
+                      style={{ 
+                        fontWeight: 700, 
+                        color: '#1e293b',
+                        fontSize: '0.95rem',
+                        letterSpacing: '0.3px'
+                      }}
                     >
                       {s.name}
                     </span>
                   </div>
-                  <div className="ml3-shop-muted" style={{ color: "#64748b" }}>
-                    {s.distance}
+                  <div className="ml3-shop-muted" style={{ 
+                    color: "#64748b",
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    width: '100%'
+                  }}>
+                    <MapPin size={12} />
+                    <span>{s.distance}</span>
+                  </div>
+                  <div style={{ 
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '100%'
+                  }}>
+                    <span style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      padding: '6px 14px',
+                      borderRadius: '20px',
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      backgroundColor: isMember ? '#ecfdf5' : '#f1f5f9',
+                      color: isMember ? '#10b77e' : '#64748b',
+                      border: `1.5px solid ${isMember ? '#10b77e' : '#e2e8f0'}`,
+                      transition: 'all 0.2s',
+                      boxShadow: isMember ? '0 2px 4px rgba(16, 183, 126, 0.1)' : 'none'
+                    }}>
+                      {isMember ? '✓ สมาชิก' : 'ไม่ใช่สมาชิก'}
+                    </span>
                   </div>
                   <div className="ml3-shop-price" style={{ 
-                    color: isCheapest ? "#3cb371" : "#1e293b", 
+                    color: isCheapest ? "#10b77e" : "#1e293b", 
                     fontSize: "1.1rem",
-                    fontWeight: "600"
+                    fontWeight: "700",
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '4px',
+                    width: '100%'
                   }}>
-                    ฿{Math.round(s.totalPrice).toLocaleString()}
+                    <span>฿{Math.round(s.totalPrice).toLocaleString()}</span>
+                    {isCheapest && <CheckCircle2 size={16} color="#10b77e" />}
                   </div>
 
                   {/* ✅ ปุ่มเหมือนเดิม + เพิ่มปุ่มนำทาง */}
-                  <div style={{ display: "flex", gap: "8px" }}>
+                  <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
                     <button className="ml3-go-shop" onClick={() => window.open(s.url, "_blank")}>
                       ไปยังร้านค้า
                     </button>
@@ -904,7 +1056,7 @@ export default function MyLists3() {
                   backgroundColor: "#fef2f2",
                 }}
               >
-                ไม่บันทึก (ออกทันที)
+                ไม่บันทึก
               </button>
               <button
                 onClick={() => setShowExitModal(false)}
@@ -916,9 +1068,10 @@ export default function MyLists3() {
                   color: "#64748b",
                   cursor: "pointer",
                   marginTop: 4,
+                  textDecoration: "underline",
                 }}
               >
-                ยกเลิก (อยู่ที่เดิม)
+                ยกเลิก
               </button>
             </div>
           </div>
@@ -928,22 +1081,8 @@ export default function MyLists3() {
       {/* Save Modal */}
       {showModal && (
         <div className="ml3-modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="ml3-modal" onClick={(e) => e.stopPropagation()} style={{ padding: "24px", position: "relative" }}>
-            <button
-              onClick={() => setShowModal(false)}
-              style={{
-                position: "absolute",
-                top: "16px",
-                right: "16px",
-                background: "none",
-                border: "none",
-                cursor: "pointer",
-                color: "#94a3b8",
-              }}
-            >
-              <X size={24} />
-            </button>
-            <div className="ml3-modal-title" style={{marginTop: '10px'}}>ยืนยันการบันทึก</div>
+          <div className="ml3-modal" onClick={(e) => e.stopPropagation()} style={{ padding: "24px" }}>
+            <div className="ml3-modal-title">ยืนยันการบันทึก</div>
             <p className="ml3-modal-desc">
               ต้องการบันทึกข้อมูลการเปลี่ยนแปลงใช่หรือไม่?
             </p>

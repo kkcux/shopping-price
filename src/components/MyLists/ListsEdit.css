@@ -367,15 +367,26 @@
 .le-check {
   width: 22px;
   height: 22px;
-  border: 2px solid #cbd5e1;
-  border-radius: 6px;
+  border: 2px solid #1f2937;
+  border-radius: 4px;
   margin-right: 14px;
   position: relative;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: white;
+  flex-shrink: 0;
+}
+.le-checkRow:hover .le-check:not(.on) {
+  border-color: #10b77e;
+  background: #f0fdf4;
 }
 .le-check.on {
-  background-color: #10b77e;
+  background: #10b77e;
   border-color: #10b77e;
+  box-shadow: 0 2px 6px rgba(16, 183, 126, 0.25);
+}
+.le-checkRow:hover .le-check.on {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(16, 183, 126, 0.4);
 }
 .le-check.on::after {
   content: "";
@@ -383,10 +394,24 @@
   top: 2px;
   left: 7px;
   width: 5px;
-  height: 11px;
+  height: 10px;
   border: solid white;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
+  animation: checkmarkPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+@keyframes checkmarkPop {
+  0% {
+    transform: rotate(45deg) scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: rotate(45deg) scale(1.2);
+  }
+  100% {
+    transform: rotate(45deg) scale(1);
+    opacity: 1;
+  }
 }
 .le-checkText {
   font-size: 1rem;
@@ -398,29 +423,34 @@
 .le-memberRow {
   display: flex;
   align-items: center;
-  padding: 14px;
-  border-bottom: 1px solid #f1f5f9;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #ef4444;
+  background-color: #f9fafb;
+  margin-bottom: 8px;
+  transition: all 0.2s;
 }
 .le-memberRow:last-child {
-  border-bottom: none;
+  margin-bottom: 0;
 }
 .le-memberRow.ok {
   background-color: #f0fdf4;
-  border-radius: 8px;
+  border: 1px solid #10b77e;
 }
 
 .le-brand-logo {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: 6px;
   overflow: hidden;
-  margin-right: 14px;
+  margin-right: 12px;
   border: 1px solid #e2e8f0;
   display: flex;
   align-items: center;
   justify-content: center;
   background: white;
   flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 .le-brand-logo img {
   width: 100%;
@@ -430,8 +460,9 @@
 
 .le-memberText {
   flex: 1;
-  font-size: 0.95rem;
-  color: #64748b;
+  font-size: 0.9rem;
+  color: #1f2937;
+  font-weight: 500;
 }
 .le-memberRow.ok .le-memberText {
   color: #15803d;
@@ -439,20 +470,48 @@
 }
 
 .le-join {
-  font-size: 0.85rem;
-  color: #3b82f6;
+  font-size: 0.8rem;
+  color: white;
   text-decoration: none;
   font-weight: 600;
-  padding: 6px 14px;
-  background: #eff6ff;
-  border-radius: 50px;
+  padding: 6px 12px;
+  background: #3b82f6;
+  border-radius: 6px;
   transition: all 0.2s;
+  border: none;
+  cursor: pointer;
 }
 .le-join:hover {
-  background: #dbeafe;
+  background: #2563eb;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
 }
 .le-check-icon {
   display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #10b77e 0%, #0d9668 100%);
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(16, 183, 126, 0.3);
+  animation: checkIconPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+@keyframes checkIconPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+.le-check-icon svg {
+  color: white !important;
 }
 
 /* =========================
@@ -504,8 +563,10 @@
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  backdrop-filter: blur(4px);
-  animation: fadeIn 0.2s ease-out;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  animation: fadeIn 0.15s ease-out;
+  will-change: opacity;
 }
 .modal-box {
   background: white;
@@ -515,7 +576,9 @@
   border-radius: 24px;
   text-align: center;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-  animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  animation: scaleUp 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
+  transform-origin: center;
 }
 .modal-icon-circle {
   width: 80px;
@@ -593,14 +656,14 @@
     opacity: 1;
   }
 }
-@keyframes popIn {
+@keyframes scaleUp {
   from {
+    transform: scale(0.8);
     opacity: 0;
-    transform: scale(0.9);
   }
   to {
-    opacity: 1;
     transform: scale(1);
+    opacity: 1;
   }
 }
 
