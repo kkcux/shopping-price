@@ -313,6 +313,88 @@ body {
   color: var(--text-gray);
 }
 
+/* ✅ Custom Checkbox Styling */
+.membership-checkbox-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 10px;
+  user-select: none;
+}
+
+.membership-checkbox {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.membership-checkbox-custom {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 2px solid #cbd5e1;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  flex-shrink: 0;
+}
+
+.membership-checkbox-custom.checked {
+  background: linear-gradient(135deg, #10b77e 0%, #0d9668 100%);
+  border-color: #10b77e;
+  box-shadow: 0 2px 8px rgba(16, 183, 126, 0.3);
+  transform: scale(1.05);
+}
+
+.membership-checkbox-custom.checked svg {
+  color: white;
+  animation: checkmarkPop 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.membership-checkbox-label:hover .membership-checkbox-custom:not(.checked) {
+  border-color: #10b77e;
+  background: #f0fdf4;
+  transform: scale(1.05);
+}
+
+.membership-checkbox-label:hover .membership-checkbox-custom.checked {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(16, 183, 126, 0.4);
+}
+
+.membership-checkbox-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #64748b;
+  transition: color 0.2s;
+}
+
+.membership-checkbox-label:hover .membership-checkbox-text {
+  color: #10b77e;
+}
+
+.membership-checkbox-custom.checked + .membership-checkbox-text {
+  color: #10b77e;
+}
+
+@keyframes checkmarkPop {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 .btn-apply-member {
   background: white;
   border: 1px solid var(--primary);

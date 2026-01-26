@@ -179,7 +179,19 @@ const MyLists = () => {
                     <button 
                       className="btn-newlist"
                       onClick={() => navigate('/login', { state: { from: '/mylists' } })}
-                      style={{ marginTop: '12px' }}
+                      style={{ 
+                        marginTop: '12px',
+                        background: '#3b82f6',
+                        boxShadow: '0 4px 6px rgba(59, 130, 246, 0.2)'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = '#2563eb';
+                        e.currentTarget.style.boxShadow = '0 6px 10px rgba(59, 130, 246, 0.3)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = '#3b82f6';
+                        e.currentTarget.style.boxShadow = '0 4px 6px rgba(59, 130, 246, 0.2)';
+                      }}
                     >
                       <LogIn size={16} strokeWidth={3} style={{marginRight:4, transform: "translateY(3px)"}}/> เข้าสู่ระบบ
                     </button>
