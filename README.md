@@ -318,18 +318,6 @@ service firebase.storage {
 
 ---
 
-## 📄 License
-
-MIT License
-
----
-
-## 👥 Contributors
-
-- [Your Name]
-
----
-
 ## 🙏 Acknowledgments
 
 - Firebase Team
