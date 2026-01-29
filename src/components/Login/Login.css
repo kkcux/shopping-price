@@ -305,11 +305,7 @@ body {
   color: #aab;
   font-size: 0.85rem;
   margin-bottom: 12px;
-  cursor: pointer;
-  transition: 0.2s;
-}
-.footer-col li:hover {
-  color: #fff;
+  cursor: default;
 }
 
 .footer-bottom-line {

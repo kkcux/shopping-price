@@ -17,7 +17,39 @@
   margin-bottom: 32px; /* ลดพื้นที่ด้านล่างของ grid อีกเล็กน้อย */
 }
 
-/* --- Brand Section --- */
+/* --- Brand Section (ใช้ใน Footer.jsx) --- */
+.footer-col-brand .brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+}
+
+.footer .logo-circle-footer {
+  background: #10b77e;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(16, 183, 126, 0.25);
+}
+
+.footer .footer-desc {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.65);
+  max-width: 340px;
+  margin: 0;
+}
+
+/* Legacy (ถ้ามีที่อื่นใช้) */
 .footer-logo {
   display: flex;
   align-items: center;
@@ -26,7 +58,7 @@
 }
 
 .logo-squircle {
-  background: #10b77e; /* สีเขียวแบรนด์สว่าง */
+  background: #10b77e;
   width: 48px;
   height: 48px;
   border-radius: 14px;
@@ -45,7 +77,7 @@
 .footer-tagline {
   font-size: 1rem;
   line-height: 1.8;
-  color: rgba(255, 255, 255, 0.6); /* ขาวจางๆ ดูสบายตาและแพง */
+  color: rgba(255, 255, 255, 0.6);
   max-width: 340px;
 }
 
@@ -73,13 +105,7 @@
   margin-bottom: 15px;
   font-size: 0.95rem;
   color: rgba(255, 255, 255, 0.75);
-  cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.footer-col ul li:hover {
-  color: #ffffff;
-  transform: translateX(10px); /* เอฟเฟกต์เลื่อนนุ่มนวลเวลา Hover */
+  cursor: default;
 }
 
 /* --- Bottom Section --- */
@@ -110,26 +136,102 @@
   width: 100%;
 }
 
-/* Responsive */
+/* Responsive - Tablet */
 @media (max-width: 1024px) {
   .footer-grid {
     grid-template-columns: 1fr 1fr;
-    gap: 50px;
+    gap: 40px;
+  }
+}
+
+/* Responsive - Mobile (สวยและอ่านง่าย) */
+@media (max-width: 768px) {
+  .footer {
+    padding: 40px 0 20px;
+  }
+
+  .footer .container {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-bottom: 28px;
+  }
+
+  /* แบรนด์อยู่บนสุด จัดกลาง */
+  .footer-col-brand {
+    text-align: center;
+    padding-bottom: 28px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .footer-col-brand .brand {
+    justify-content: center;
+    margin-bottom: 12px;
+    font-size: 1.4rem;
+  }
+
+  .footer .footer-desc {
+    margin: 0 auto;
+    text-align: center;
+    font-size: 0.9rem;
+    line-height: 1.65;
+    max-width: 100%;
+  }
+
+  /* แต่ละคอลัมน์มีระยะและเส้นแบ่งนุ่มนวล */
+  .footer-col {
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    text-align: center;
+  }
+
+  .footer-col:last-of-type {
+    border-bottom: none;
+  }
+
+  .footer-col h3 {
+    font-size: 0.95rem;
+    margin-bottom: 14px;
+    letter-spacing: 0.5px;
+  }
+
+  .footer-col ul li {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+  }
+
+  .footer-col.hidden-title h3,
+  .footer-col .invisible-header {
+    display: none;
+  }
+
+  /* เส้นแบ่งและลิขสิทธิ์ */
+  .footer-divider {
+    margin-bottom: 20px;
+  }
+
+  .footer-bottom-content {
+    padding: 0 12px;
+    font-size: 0.8rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.35);
+  }
+
+  .footer-bottom-content p {
+    margin: 0;
   }
 }
 
 @media (max-width: 600px) {
-  .footer-grid {
-    grid-template-columns: 1fr;
-    text-align: center;
-  }
   .footer-logo {
     justify-content: center;
   }
   .footer-tagline {
     margin: 0 auto;
-  }
-  .footer-col.hidden-title h3 {
-    display: none;
   }
 }
