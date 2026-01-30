@@ -23,6 +23,7 @@ import "./mylists3.css";
 
 import { db, auth } from '../../firebase-config';
 import { onAuthStateChanged } from 'firebase/auth';
+import { basePath } from '../../utils/basePath';
 import { doc, setDoc, getDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 
 /* ===== ✅ Store Logos ===== */
@@ -245,7 +246,7 @@ export default function MyLists3() {
   /* ===== load jsonl ===== */
   useEffect(() => {
     let mounted = true;
-    fetch("/data/all_retailers_products_merged_v1.jsonl")
+    fetch(`${basePath}/data/all_retailers_products_merged_v1.jsonl`)
       .then((res) => res.text())
       .then((text) => {
         const lines = text.split(/\r?\n/).filter(Boolean);

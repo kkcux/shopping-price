@@ -12,6 +12,7 @@ import toast, { Toaster } from 'react-hot-toast'; // ✅ Import Toast
 import AddToListModal from '../Home/AddToListModal';
 import { getCategorySlug, categorySlugMap } from '../../utils/categoryMap';
 import { useFavorites } from '../../context/FavoritesContext';
+import { basePath } from '../../utils/basePath';
 
 const Products = () => {
   const location = useLocation();
@@ -95,10 +96,10 @@ const Products = () => {
       try {
         let url = '';
         if (activeCategory === 'ทั้งหมด') {
-            url = '/data/categories/mixed_products.json';
+            url = `${basePath}/data/categories/mixed_products.json`;
         } else {
             const slug = getCategorySlug(activeCategory);
-            url = `/data/categories/${slug}.json`;
+            url = `${basePath}/data/categories/${slug}.json`;
         }
 
         const response = await fetch(url);
@@ -154,7 +155,7 @@ const Products = () => {
                 // Trigger lazy load if not started
                 if (!isSearchingIndex) {
                     setIsSearchingIndex(true);
-                    fetch('/data/categories/all_products_lite.json')
+                    fetch(`${basePath}/data/categories/all_products_lite.json`)
                         .then(res => res.json())
                         .then(data => {
                             setFullSearchIndex(data);
