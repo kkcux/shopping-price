@@ -8,8 +8,10 @@ import {
   LayoutGrid, Store, X, Star, Flame, Tag, Filter
 } from 'lucide-react';
 import AddToListModal from '../Home/AddToListModal';
+import AuthRequiredModal from '../Home/AuthRequiredModal';
 import { getCategorySlug, categorySlugMap } from '../../utils/categoryMap';
 import { useFavorites } from '../../context/FavoritesContext';
+import { basePath } from '../../utils/basePath';
 
 const Categories = () => {
   const location = useLocation();
@@ -24,9 +26,10 @@ const Categories = () => {
   const [loading, setLoading] = useState(true);
   
   // Use Context
-  const { favorites: contextFavorites, isFavorite, toggleFavorite } = useFavorites();
+  const { favorites: contextFavorites, isFavorite, toggleFavorite, currentUser } = useFavorites();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const [showCatMenu, setShowCatMenu] = useState(false);
@@ -83,10 +86,10 @@ const Categories = () => {
       try {
         let url = '';
         if (activeCategory === 'ทั้งหมด') {
-            url = '/data/categories/mixed_products.json';
+            url = `${basePath}/data/categories/mixed_products.json`;
         } else {
             const slug = getCategorySlug(activeCategory);
-            url = `/data/categories/${slug}.json`;
+            url = `${basePath}/data/categories/${slug}.json`;
         }
 
         console.log(`Fetching products for: ${activeCategory} -> ${url}`);
@@ -154,7 +157,7 @@ const Categories = () => {
                 // Trigger lazy load if not started
                 if (!isSearchingIndex) {
                     setIsSearchingIndex(true);
-                    fetch('data/categories/all_products_lite.json')
+                    fetch(`${basePath}/data/categories/all_products_lite.json`)
                         .then(res => res.json())
                         .then(data => {
                             setFullSearchIndex(data);
@@ -268,6 +271,14 @@ const Categories = () => {
   const getSpecialFilterLabel = () => {
       const filter = specialFiltersList.find(f => f.id === specialFilter);
       return filter ? filter.label : 'ตัวกรอง';
+  };
+
+  const handleToggleFavorite = (product) => {
+    if (!currentUser) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+    toggleFavorite(product);
   };
 
   return (
@@ -385,7 +396,7 @@ const Categories = () => {
                             const isFav = isFavorite(item.name);
                             return (
                                 <div key={index} className="product-card-std">
-                                    <button className={`fav-btn-std ${isFav ? 'active' : ''}`} onClick={() => toggleFavorite(item)}>
+                                    <button className={`fav-btn-std ${isFav ? 'active' : ''}`} onClick={() => handleToggleFavorite(item)}>
                                         <Heart size={20} fill={isFav ? "#ef4444" : "none"} stroke={isFav ? "#ef4444" : "currentColor"} />
                                     </button>
                                     <div className="img-wrapper-std">
@@ -439,6 +450,11 @@ const Categories = () => {
         )}
       </div>
 
+      <AuthRequiredModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onLogin={() => navigate('/login')}
+      />
       <AddToListModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
