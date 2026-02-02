@@ -329,7 +329,7 @@ const Products = () => {
       <header className="cat-header">
         <div className="cat-header-content">
           {targetListId ? (
-            <div style={{marginBottom: '16px', display: 'flex', justifyContent: 'center'}}>
+            <div style={{marginBottom: '16px', display: 'flex', justifyContent: 'flex-start'}}>
                  <button className="btn-link-action" onClick={() => navigate(-1)} style={{color: '#14532d'}}>
                     <ChevronLeft /> กลับไปที่รายการ
                 </button>
