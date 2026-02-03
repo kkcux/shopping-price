@@ -797,7 +797,7 @@ const Profile = () => {
                           </div>
                         </div>
                       </div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div className="membership-actions">
                         <label className="membership-checkbox-label">
                           <input
                             type="checkbox"

@@ -32,14 +32,34 @@ div {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* 4. บังคับให้ทั้งเว็บชิดซ้ายเป็นค่าเริ่มต้น */
-:root,
+/* 4. บังคับให้ทั้งเว็บชิดซ้าย + body อยู่ตรงกลาง */
+:root {
+  width: 100%;
+}
+
+html {
+  width: 100%;
+  overflow-x: hidden;
+}
+
 body,
 #root {
   text-align: left !important;
   width: 100%;
-  background-color: #f8fafc; /* เพิ่มสีพื้นหลังให้อ่อนๆ สบายตา */
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: #f8fafc;
   color: #333;
+}
+
+/* ตัวหุ้มหลักของแอป — ให้ความกว้างเต็มและจัดเนื้อหาตรงกลาง */
+.App {
+  width: 100%;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  min-height: 100vh;
 }
 
 /* 5. โครงสร้างหลักของหน้าเว็บ */
@@ -50,13 +70,15 @@ body,
 }
 
 /* 6. ตัวจัด layout กลางหน้าจอ (Container) */
-.container {
+.container,
+.content-container,
+.cat-container,
+.le-container {
   max-width: 1200px;
-  margin: 0 auto; /* จัดกล่องให้อยู่กึ่งกลางจอ */
-  padding: 0 20px; /* เว้นขอบซ้ายขวา */
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0 20px;
   width: 100%;
-
-  /* บังคับเนื้อหาข้างในให้ชิดซ้าย */
   display: block;
   text-align: left;
 }
