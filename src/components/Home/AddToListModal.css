@@ -11,8 +11,9 @@
   --text-muted: #9ca3af;
   --bg-card: #ffffff;
   --bg-page: #f3f4f6;
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-xl:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --card-row-height: 76px;
 }
 
 /* =========================================
@@ -20,10 +21,7 @@
    ========================================= */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background-color: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(4px);
   display: flex;
@@ -31,11 +29,13 @@
   justify-content: center;
   z-index: 1000;
   animation: fadeIn 0.2s ease;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .modal-content {
   background: var(--bg-card);
-  width: 90%;
+  width: 100%;
   max-width: 420px;
   max-height: 90vh;
   display: flex;
@@ -100,18 +100,20 @@
   display: flex;
   align-items: center;
   gap: 16px;
+  height: var(--card-row-height);
+  min-height: var(--card-row-height);
   background: #f9fafb;
   border: 1px solid #e5e7eb;
-  border-radius: 16px;
-  padding: 16px;
+  border-radius: 12px;
+  padding: 14px 16px;
   margin-bottom: 20px;
   flex-shrink: 0;
-  overflow: hidden; /* ป้องกันทะลุ */
+  overflow: hidden;
 }
 
 .prod-img {
-  width: 60px;
-  height: 60px;
+  width: 48px;
+  height: 48px;
   flex-shrink: 0;
   background: white;
   border-radius: 8px;
@@ -131,7 +133,7 @@
 
 .prod-name {
   flex: 1;
-  min-width: 0; /* ✅ สำคัญมาก! ต้องใส่เพื่อให้ Flexbox ยอมตัดคำ */
+  min-width: 0;
   font-weight: 600;
   color: var(--text-main);
   font-size: 1rem;
@@ -147,7 +149,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-shrink: 0; /* ห้ามหดปุ่ม */
+  flex-shrink: 0;
 }
 
 .qty-control-group button {
@@ -192,51 +194,37 @@
   color: #f59e0b;
   font-size: 0.85rem;
   margin-bottom: 16px;
-  padding: 0 4px;
+  padding-left: 16px;
 }
 
 /* =========================================
    List Selection Area
    ========================================= */
 .list-selection-container {
-  display: flex !important;
+  display: flex;
   flex-direction: column;
-  min-height: 250px !important;
-
-  /* ✅ ลบ max-height ที่ขัดแย้งออก เพื่อแก้ Scrollbar ซ้อน */
-  max-height: none !important;
-
+  min-height: 160px;
   gap: 12px;
-  overflow-y: auto;
-  padding: 2px 6px 2px 2px;
-}
-
-.list-selection-container::-webkit-scrollbar {
-  width: 6px;
-}
-.list-selection-container::-webkit-scrollbar-track {
-  background: transparent;
-}
-.list-selection-container::-webkit-scrollbar-thumb {
-  background-color: #d1d5db;
-  border-radius: 10px;
-}
-.list-selection-container::-webkit-scrollbar-thumb:hover {
-  background-color: #9ca3af;
+  overflow-y: visible;
+  padding: 0 20px;
 }
 
 /* Empty State */
 .empty-state {
   flex: 1;
+  min-height: 120px;
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   width: 100%;
   background: #f9fafb;
   border: 2px dashed #e5e7eb;
   border-radius: 12px;
   color: #9ca3af;
   margin: 0;
+  padding: 20px;
+  text-align: center;
 }
 
 .empty-state p {
@@ -252,14 +240,16 @@
   display: flex;
   align-items: center;
   gap: 16px;
-  padding: 12px 16px;
+  height: var(--card-row-height);
+  min-height: var(--card-row-height);
+  padding: 14px 16px;
   background: var(--bg-card);
-  border: 1px solid var(--bg-page);
+  border: 1px solid #d1d5db;
   border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
-  overflow: hidden; /* กันทะลุ */
+  overflow: hidden;
 }
 
 .list-card-item:hover {
@@ -276,8 +266,8 @@
 }
 
 .list-icon-box {
-  width: 44px;
-  height: 44px;
+  width: 48px;
+  height: 48px;
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -290,7 +280,7 @@
 
 .list-text {
   flex: 1;
-  min-width: 0; /* ✅ เพิ่มตรงนี้เพื่อให้ชื่อ List ตัดคำได้เหมือนกัน */
+  min-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -300,11 +290,10 @@
   font-weight: 600;
   color: var(--text-main);
   font-size: 0.95rem;
-
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 100%; /* สั่งให้เต็มพื้นที่พ่อ (ที่โดน min-width บังคับแล้ว) */
+  width: 100%;
 }
 
 .list-count {
@@ -339,7 +328,8 @@
 
 .btn-start-create {
   width: 100%;
-  padding: 14px;
+  min-height: 52px;
+  padding: 14px 16px;
   background: #ffffff;
   border: 1px dashed #d1d5db;
   border-radius: 12px;
@@ -377,5 +367,127 @@
   to {
     transform: scale(1);
     opacity: 1;
+  }
+}
+
+/* =========================================
+   📱 Mobile Responsive (AddToListModal)
+   ========================================= */
+
+@media (max-width: 768px) {
+  .modal-overlay {
+    padding: 16px;
+  }
+
+  .modal-content {
+    max-width: 480px;
+    border-radius: 18px;
+    max-height: 70vh;
+  }
+
+  .modal-body {
+    padding: 12px 12px 16px 12px;
+  }
+
+  .product-row-card {
+    padding: 12px 14px;
+    gap: 12px;
+  }
+
+  .prod-name {
+    font-size: 0.95rem;
+  }
+
+  .list-card-item {
+    padding: 12px 14px;
+    gap: 12px;
+  }
+
+  .info-note {
+    padding-left: 12px;
+  }
+
+  .list-selection-container {
+    min-height: 120px;
+    padding: 0 16px;
+  }
+
+  .list-name {
+    font-size: 0.9rem;
+  }
+
+  .create-new-list-area {
+    margin-top: 12px;
+    padding-top: 12px;
+  }
+
+  .btn-start-create {
+    min-height: 48px;
+    padding: 12px 14px;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-overlay {
+    padding: 12px;
+  }
+
+  .modal-content {
+    border-radius: 16px;
+    max-height: 65vh;
+  }
+
+  .modal-header-green {
+    padding: 12px 16px;
+  }
+
+  .modal-header-green h3 {
+    font-size: 1rem;
+  }
+
+  .modal-body {
+    padding: 10px 10px 14px 10px;
+  }
+
+  .product-row-card {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .prod-name {
+    font-size: 0.9rem;
+  }
+
+  .list-card-item {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .list-name {
+    font-size: 0.85rem;
+  }
+
+  .list-count {
+    font-size: 0.78rem;
+  }
+
+  .info-note {
+    padding-left: 10px;
+  }
+
+  .list-selection-container {
+    min-height: 100px;
+    padding: 0 14px;
+  }
+
+  .btn-start-create svg {
+    display: none;
+  }
+
+  .btn-start-create {
+    min-height: 44px;
+    padding: 10px 12px;
+    gap: 4px;
   }
 }

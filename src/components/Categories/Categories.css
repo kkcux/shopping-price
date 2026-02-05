@@ -75,6 +75,32 @@
   align-items: center;
 }
 
+/* --- หมวดหมู่ + ตัวกรอง รวมเป็นกลุ่มเดียวกัน --- */
+.filter-dropdown-group {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+.filter-dropdown-group .tool-wrapper {
+  flex: 1;
+  min-width: 0;
+}
+.filter-dropdown-group .tool-btn {
+  width: 100%;
+  height: 44px;
+  min-height: 44px;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+.filter-dropdown-group .tool-btn-first {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+.filter-dropdown-group .tool-btn-last {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
 /* --- Buttons (Dropdown Menu) --- */
 .tool-btn {
   display: flex;
@@ -515,6 +541,9 @@
     gap: 14px;
     width: 100%;
   }
+  .filter-dropdown-group {
+    width: 100%;
+  }
   .search-wrapper {
     width: 100% !important;
     max-width: none !important;
@@ -605,6 +634,9 @@
     flex-direction: column;
     flex-wrap: nowrap;
     gap: 12px;
+    width: 100%;
+  }
+  .filter-dropdown-group {
     width: 100%;
   }
   .search-wrapper {

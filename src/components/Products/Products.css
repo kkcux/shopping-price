@@ -111,6 +111,32 @@
   align-items: center;
 }
 
+/* --- หมวดหมู่ + ตัวกรอง รวมเป็นกลุ่มเดียวกัน --- */
+.filter-dropdown-group {
+  display: flex;
+  gap: 12px;
+  align-items: stretch;
+}
+.filter-dropdown-group .tool-wrapper {
+  flex: 1;
+  min-width: 0;
+}
+.filter-dropdown-group .tool-btn {
+  width: 100%;
+  height: 44px;
+  min-height: 44px;
+  box-sizing: border-box;
+  white-space: nowrap;
+}
+.filter-dropdown-group .tool-btn-first {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+}
+.filter-dropdown-group .tool-btn-last {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
 /* --- Buttons & Inputs (Design ใหม่: สี่เหลี่ยมมน) --- */
 .tool-btn {
   display: flex;
@@ -332,6 +358,7 @@
   margin: 0;
   line-height: 1.4;
   display: -webkit-box;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
@@ -359,6 +386,10 @@
   margin-top: auto;
   transition: all 0.2s;
   box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px; /* ระยะห่างระหว่าง icon + และข้อความ */
 }
 .btn-add-std:hover {
   background-color: #059669;
@@ -527,6 +558,9 @@
     gap: 14px;
     width: 100%;
   }
+  .products-page .filter-dropdown-group {
+    width: 100%;
+  }
   .products-page .search-wrapper {
     width: 100% !important;
     max-width: none !important;
@@ -612,6 +646,9 @@
     flex-direction: column;
     flex-wrap: nowrap;
     gap: 12px;
+    width: 100%;
+  }
+  .products-page .filter-dropdown-group {
     width: 100%;
   }
   .products-page .search-wrapper {
