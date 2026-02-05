@@ -84,7 +84,7 @@ const Favorites = () => {
                     className="btn-add-cart"
                     onClick={() => handleAddToCart(item)}
                   >
-                    <Plus size={18} /> เพิ่มลง My List
+                    <Plus size={22} strokeWidth={2.4} /> เพิ่มลง My List
                   </button>
                 </div>
               ))}

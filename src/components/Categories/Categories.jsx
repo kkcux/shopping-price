@@ -194,7 +194,16 @@ const Categories = () => {
     };
 
     processData();
-  }, [allProducts, nameFilter, specialFilter, contextFavorites, fullSearchIndex]);
+  }, [
+    allProducts,
+    nameFilter,
+    specialFilter,
+    contextFavorites,
+    fullSearchIndex,
+    activeCategory,
+    isFavorite,
+    isSearchingIndex,
+  ]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -314,66 +323,68 @@ const Categories = () => {
                     )}
                 </div>
 
-                <div className="tool-wrapper" ref={catMenuRef}>
-                    <button 
-                        className={`tool-btn ${showCatMenu ? 'active' : ''}`}
-                        onClick={() => setShowCatMenu(!showCatMenu)}
-                        style={{ minWidth: '160px', justifyContent: 'space-between' }}
-                    >
-                        <span style={{display:'flex', alignItems:'center', gap:'8px'}}>
-                            <LayoutGrid size={18} />
-                            {activeCategory === 'ทั้งหมด' ? 'หมวดหมู่: ทั้งหมด' : activeCategory}
-                        </span>
-                        <ChevronDown size={16} />
-                    </button>
+                <div className="filter-dropdown-group">
+                    <div className="tool-wrapper" ref={catMenuRef}>
+                        <button 
+                            className={`tool-btn tool-btn-first ${showCatMenu ? 'active' : ''}`}
+                            onClick={() => setShowCatMenu(!showCatMenu)}
+                            style={{ justifyContent: 'space-between' }}
+                        >
+                            <span style={{display:'flex', alignItems:'center', gap:'8px'}}>
+                                <LayoutGrid size={18} />
+                                {activeCategory === 'ทั้งหมด' ? 'หมวดหมู่: ทั้งหมด' : activeCategory}
+                            </span>
+                            <ChevronDown size={16} />
+                        </button>
 
-                    {showCatMenu && (
-                        <div className="dropdown-popup cat-menu-popup">
-                            {categoriesList.map((cat, idx) => (
-                                <button 
-                                    key={idx}
-                                    className={activeCategory === cat ? 'selected' : ''} 
-                                    onClick={() => handleSelectCategory(cat)}
-                                >
-                                    {cat} 
-                                </button>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                        {showCatMenu && (
+                            <div className="dropdown-popup cat-menu-popup">
+                                {categoriesList.map((cat, idx) => (
+                                    <button 
+                                        key={idx}
+                                        className={activeCategory === cat ? 'selected' : ''} 
+                                        onClick={() => handleSelectCategory(cat)}
+                                    >
+                                        {cat} 
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
 
-                <div className="tool-wrapper" ref={filterMenuRef}>
-                    <button 
-                        className={`tool-btn ${showFilterMenu || specialFilter !== 'all' ? 'active' : ''}`}
-                        onClick={() => setShowFilterMenu(!showFilterMenu)}
-                        style={{ minWidth: '150px', justifyContent: 'space-between' }}
-                    >
-                        <span style={{display:'flex', alignItems:'center', gap:'8px'}}>
-                            <Filter size={18} />
-                            {getSpecialFilterLabel()}
-                        </span>
-                        <ChevronDown size={16} />
-                    </button>
+                    <div className="tool-wrapper" ref={filterMenuRef}>
+                        <button 
+                            className={`tool-btn tool-btn-last ${showFilterMenu || specialFilter !== 'all' ? 'active' : ''}`}
+                            onClick={() => setShowFilterMenu(!showFilterMenu)}
+                            style={{ justifyContent: 'space-between' }}
+                        >
+                            <span style={{display:'flex', alignItems:'center', gap:'8px'}}>
+                                <Filter size={18} />
+                                {getSpecialFilterLabel()}
+                            </span>
+                            <ChevronDown size={16} />
+                        </button>
 
-                    {showFilterMenu && (
-                        <div className="dropdown-popup" style={{width: '200px'}}>
-                            {specialFiltersList.map((filter) => (
-                                <button 
-                                    key={filter.id}
-                                    className={specialFilter === filter.id ? 'selected' : ''} 
-                                    onClick={() => {
-                                        setSpecialFilter(filter.id);
-                                        setShowFilterMenu(false);
-                                    }}
-                                >
-                                    <span style={{display:'flex', alignItems:'center', gap:'8px'}}>
-                                        {filter.icon}
-                                        {filter.label}
-                                    </span>
-                                </button>
-                            ))}
-                        </div>
-                    )}
+                        {showFilterMenu && (
+                            <div className="dropdown-popup" style={{width: '200px'}}>
+                                {specialFiltersList.map((filter) => (
+                                    <button 
+                                        key={filter.id}
+                                        className={specialFilter === filter.id ? 'selected' : ''} 
+                                        onClick={() => {
+                                            setSpecialFilter(filter.id);
+                                            setShowFilterMenu(false);
+                                        }}
+                                    >
+                                        <span style={{display:'flex', alignItems:'center', gap:'8px'}}>
+                                            {filter.icon}
+                                            {filter.label}
+                                        </span>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
