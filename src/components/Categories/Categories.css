@@ -116,6 +116,11 @@
   cursor: pointer;
   font-weight: 500;
 }
+.tool-btn svg {
+  flex-shrink: 0;
+  width: auto;
+  height: auto;
+}
 .tool-btn:hover {
   border-color: #10b981;
   color: #10b981;
