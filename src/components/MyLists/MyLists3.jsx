@@ -470,6 +470,12 @@ export default function MyLists3() {
     return ["LOTUS", "BIGC", "MAKRO"].filter(key => selectedStores[key]);
   }, [selectedStores]);
 
+  // ✅ ให้ตารางตรงคอลัมน์เสมอ ตามจำนวนร้านที่เลือก
+  const priceGridTemplate = useMemo(() => {
+    const cols = Math.max(1, selectedStoreKeys.length);
+    return `2fr repeat(${cols}, 1fr)`;
+  }, [selectedStoreKeys.length]);
+
   const rows = useMemo(() => {
     return wanted.map((w) => {
       const l = matchProduct(w.name, lotusList);
@@ -511,6 +517,16 @@ export default function MyLists3() {
     });
     return result;
   }, [totals, selectedStoreKeys]);
+
+  // ✅ หา "ราคารวมที่ถูกที่สุด" (เฉพาะร้านที่เลือก และต้อง > 0)
+  const minTotalKey = useMemo(() => {
+    const entries = selectedStoreKeys
+      .map((k) => [k, filteredTotals[k]])
+      .filter(([, v]) => typeof v === "number" && v > 0);
+    if (!entries.length) return null;
+    entries.sort((a, b) => a[1] - b[1]);
+    return entries[0][0];
+  }, [selectedStoreKeys, filteredTotals]);
 
   /* ===== ✅ “แก้แค่ระยะทาง” ของร้านค้าแนะนำ ===== */
   const recommendShops = useMemo(() => {
@@ -765,11 +781,11 @@ export default function MyLists3() {
             </div>
             <div className="ml3-topRight">
               <button className="ml3-btn-edit-pill" onClick={handleEditClick}>
-                <Pencil size={16} strokeWidth={2.5} />
+                <Pencil size={20} strokeWidth={2.5} />
                 <span>แก้ไข</span>
               </button>
               <button className="ml3-btn-delete-circle" onClick={handleDeleteClick}>
-                <Trash2 size={18} strokeWidth={2} />
+                <Trash2 size={20} strokeWidth={2} />
               </button>
             </div>
           </div>
@@ -783,7 +799,7 @@ export default function MyLists3() {
             </div>
 
             <div className="ml3-table">
-              <div className="ml3-thead">
+              <div className="ml3-thead" style={{ gridTemplateColumns: priceGridTemplate }}>
                 <div className="ml3-th left">รายการสินค้า</div>
                 {selectedStoreKeys.map((k) => (
                   <div className="ml3-th" key={k}>
@@ -793,7 +809,7 @@ export default function MyLists3() {
               </div>
 
               {rows.map((it, idx) => (
-                <div className="ml3-tr" key={idx}>
+                <div className="ml3-tr" key={idx} style={{ gridTemplateColumns: priceGridTemplate }}>
                   <div className="ml3-td left">
                     <div className="ml3-img-container">
                       <img
@@ -831,11 +847,14 @@ export default function MyLists3() {
                 </div>
               ))}
 
-              <div className="ml3-tr total">
+              <div className="ml3-tr total" style={{ gridTemplateColumns: priceGridTemplate }}>
                 <div className="ml3-td left total-label">รวมทั้งหมด</div>
                 {selectedStoreKeys.map((k) => (
                   <div className="ml3-td" key={k}>
-                    <span className="ml3-pill" style={{ fontWeight: 800, color: "#1e293b" }}>
+                    <span
+                      className={`ml3-pill ${minTotalKey === k ? "best" : ""}`}
+                      style={{ fontWeight: 800, color: minTotalKey === k ? undefined : "#64748b" }}
+                    >
                       {filteredTotals[k] > 0 ? `฿${Math.round(filteredTotals[k]).toLocaleString()}` : "-"}
                     </span>
                   </div>

@@ -83,6 +83,11 @@
   line-height: 1.2;
 }
 
+.ml3-titlewrap {
+  display: flex;
+  flex-direction: column;
+}
+
 .ml3-subtitle {
   font-size: 0.95rem;
   color: var(--text-muted);
@@ -269,6 +274,15 @@
   box-shadow: 0 2px 6px rgba(16, 183, 126, 0.1);
 }
 
+/* ราคารวมที่ถูกที่สุด: ใช้โทนฟ้าให้ต่างจาก best ของแต่ละรายการ */
+.ml3-tr.total .ml3-pill.best {
+  background: #eff6ff;              /* ฟ้าอ่อนมาก */
+  color: #2563eb;                   /* น้ำเงินกลาง ๆ อ่านง่าย */
+  border-color: #dbeafe;
+  box-shadow: 0 1px 4px rgba(59, 130, 246, 0.12);
+  transform: none;                  /* ไม่ต้องขยายให้เด้งเหมือนแถวสินค้า */
+}
+
 /* Total Row */
 .ml3-tr.total {
   background: #f8fafc;
@@ -294,17 +308,18 @@
 .ml3-shop-head,
 .ml3-shop-row {
   display: grid;
-  grid-template-columns: 2fr 1fr 1.2fr 1.2fr 1.8fr;
+  /* Desktop: คอลัมน์กลาง 3 ช่อง (ระยะทาง / สมาชิก / ราคารวม) เท่ากันเป๊ะ */
+  grid-template-columns: 2.2fr 1fr 1fr 1fr 1.4fr; /* ร้านค้า | ระยะทาง | สมาชิก | ราคารวม | ปุ่ม */
   align-items: center;
   gap: 16px;
   text-align: center;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 12px;
+  padding-right: 12px;
 }
 
 .ml3-shop-head {
-  padding-top: 18px;
-  padding-bottom: 18px;
+  padding-top: 12px;
+  padding-bottom: 12px;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   border-radius: 12px;
   margin-bottom: 16px;
@@ -325,14 +340,20 @@
   width: 100%;
 }
 
+.ml3-shop-head div:first-child {
+  text-align: left;
+  justify-content: flex-start;
+  padding-left: 6px; /* ชิดซ้ายขึ้น แต่ไม่ติดขอบเกินไป */
+}
+
 .ml3-shop-head div:last-child {
   text-align: right;
   justify-content: flex-end;
 }
 
 .ml3-shop-row {
-  padding-top: 24px;
-  padding-bottom: 24px;
+  padding-top: 14px;
+  padding-bottom: 14px;
   background: white;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
@@ -357,6 +378,10 @@
 .ml3-shop-row > div:first-child {
   text-align: left;
   justify-content: flex-start;
+}
+
+.ml3-shop-row > div:first-child {
+  padding-left: 6px; /* ให้ตรงกับ header คอลัมน์แรก */
 }
 
 .ml3-shop-row > div:last-child {
@@ -448,6 +473,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  /* ขยับราคากับไอคอนให้เลื่อนมาทางซ้ายเล็กน้อย เพื่อให้ดูตรงกับหัวคอลัมน์ "ราคารวม" มากขึ้น */
+  transform: translateX(-4px);
 }
 
 /* ✅ Container สำหรับราคาปัจจุบันและราคาเดิม */
@@ -680,12 +707,31 @@
    RESPONSIVE DESIGN
 ========================= */
 @media (max-width: 1024px) {
+  .ml3-shop-table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
   .ml3-shop-head,
   .ml3-shop-row {
-    grid-template-columns: 2fr 1fr 1.3fr 1.3fr 1.5fr;
+    /* iPad แนวนอน: ใช้สัดส่วนเดียวกับ Desktop เพื่อให้คอลัมน์ตรงกัน 100% */
+    grid-template-columns: 2.2fr 1fr 1fr 1fr 1.4fr;
     gap: 12px;
+    min-width: 820px; /* iPad/จอแคบ: คอลัมน์คงที่และเลื่อนได้ */
   }
-  
+
+  /* iPad / Tablet: ให้คอลัมน์สมาชิกและราคารวม ขยับมาทางซ้ายเล็กน้อย */
+  .ml3-shop-head div:nth-child(3),
+  .ml3-shop-head div:nth-child(4) {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .ml3-shop-row > div:nth-child(3),
+  .ml3-shop-row > div:nth-child(4) {
+    justify-content: flex-start;
+  }
+
   .ml3-go-shop,
   .ml3-go-navigate {
     padding: 8px 16px;
@@ -694,51 +740,473 @@
 }
 
 @media (max-width: 768px) {
-  .ml3-shop-head,
-  .ml3-shop-row {
-    grid-template-columns: 1fr;
+  /* Header Section */
+  .ml3-header-section {
+    padding: 16px 0;
+    margin-bottom: 20px;
+  }
+
+  .ml3-header-inner {
+    padding: 0 16px;
+    flex-wrap: nowrap;
+    gap: 10px;
+  }
+
+  .ml3-topLeft {
     gap: 12px;
-    text-align: left !important;
+    flex: 1;
+    min-width: 0;
   }
-  
-  .ml3-shop-head {
-    display: none;
+
+  .ml3-back {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
   }
-  
-  .ml3-shop-row {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+
+  .ml3-back svg {
+    width: 20px;
+    height: 20px;
   }
-  
-  .ml3-shop-brand {
-    width: 100%;
+
+  .ml3-titlewrap {
+    min-width: 0;
+    flex: 1;
+  }
+
+  .ml3-title {
+    font-size: 1.3rem;
+    line-height: 1.3;
+  }
+
+  .ml3-subtitle {
+    font-size: 0.8rem;
+    margin-top: 2px;
+  }
+
+  .ml3-topRight {
+    gap: 8px;
+    width: auto;
+    justify-content: flex-end;
+  }
+
+  .ml3-btn-edit-pill {
+    height: 36px;
+    width: auto;
+    padding: 0 12px;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    gap: 6px;
+    justify-content: center;
+  }
+
+  /* มือถือ: แสดงคำว่า “แก้ไข” ตามเดิม */
+  .ml3-btn-edit-pill span {
+    display: inline;
+  }
+
+  .ml3-btn-edit-pill svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  .ml3-btn-delete-circle {
+    width: 36px;
+    height: 36px;
+  }
+
+  .ml3-btn-delete-circle svg {
+    width: 20px !important;
+    height: 20px !important;
+  }
+
+  /* Container */
+  .ml3-container {
+    padding: 0 16px;
+  }
+
+  /* Blocks */
+  .ml3-block {
+    padding: 20px 16px;
+    margin-bottom: 16px;
+    border-radius: 16px;
+  }
+
+  .ml3-block-head {
+    font-size: 1rem;
+    margin-bottom: 16px;
+    gap: 8px;
+  }
+
+  .ml3-block-head svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Table */
+  .ml3-table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ml3-thead,
+  .ml3-tr {
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    min-width: 600px;
+  }
+
+  .ml3-thead {
+    padding: 12px 8px;
     margin-bottom: 8px;
   }
-  
-  .ml3-shop-muted,
-  .ml3-shop-price {
-    justify-content: flex-start !important;
+
+  .ml3-th {
+    font-size: 0.75rem;
+    padding: 0 4px;
   }
-  
-  .ml3-shop-row > div:last-child {
-    width: 100%;
-    display: flex;
+
+  .ml3-tr {
+    padding: 12px 8px;
+  }
+
+  .ml3-td.left {
+    gap: 12px;
+  }
+
+  .ml3-img-container {
+    width: 48px;
+    height: 48px;
+    padding: 4px;
+    border-radius: 8px;
+    flex-shrink: 0;
+  }
+
+  .ml3-prodname {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .ml3-pill {
+    min-width: 70px;
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    border-radius: 8px;
+  }
+
+  .ml3-pill svg {
+    width: 12px;
+    height: 12px;
+    margin-left: 4px;
+  }
+
+  .ml3-tr.total {
+    padding: 16px 8px;
+    margin-top: 12px;
+  }
+
+  .total-label {
+    font-size: 0.95rem;
+  }
+
+  /* Shop Table */
+  .ml3-shop-table {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ml3-shop-head,
+  .ml3-shop-row {
+    /* iPad แนวตั้ง / แท็บเล็ต: ใช้สัดส่วนเดียวกันทุก breakpoint */
+    grid-template-columns: 2.2fr 1fr 1fr 1fr 1.4fr;
     gap: 10px;
-    margin-top: 8px;
+    min-width: 760px;
+    padding-left: 6px;
+    padding-right: 6px;
   }
-  
+
+  /* Align header with its columns (match row alignment) */
+  .ml3-shop-row > div,
+  .ml3-shop-head div {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .ml3-shop-row > div:first-child,
+  .ml3-shop-head div:first-child {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .ml3-shop-row > div:last-child,
+  .ml3-shop-head div:last-child {
+    justify-content: flex-end;
+    text-align: right;
+  }
+
+  .ml3-shop-head {
+    font-size: 0.7rem;
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
+  .ml3-shop-row {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .ml3-shop-brand {
+    gap: 6px;
+  }
+
+  .ml3-shop-brand span {
+    font-size: 0.75rem;
+  }
+
+  .ml3-shop-logo {
+    width: 44px;
+    height: 44px;
+    border-radius: 6px;
+  }
+
+  .ml3-shop-muted {
+    font-size: 0.7rem;
+  }
+
+  .ml3-shop-muted svg {
+    width: 9px;
+    height: 9px;
+  }
+
+  .ml3-shop-price {
+    font-size: 0.8rem;
+  }
+
+  .ml3-shop-price svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .ml3-shop-row > div:last-child {
+    gap: 5px;
+    flex-wrap: nowrap;
+  }
+
   .ml3-go-shop,
   .ml3-go-navigate {
-    flex: 1;
-    padding: 10px 16px;
-  }
-  
-  .ml3-shop-row-cheapest::before {
-    top: 10px;
-    right: 10px;
+    padding: 6px 10px;
     font-size: 0.7rem;
-    padding: 3px 10px;
+    white-space: nowrap;
+  }
+
+  .ml3-go-shop svg,
+  .ml3-go-navigate svg {
+    width: 11px;
+    height: 11px;
+  }
+
+  .ml3-shop-row-cheapest::before {
+    top: -14px;
+    right: 10px;
+    left: auto;
+    font-size: 0.6rem;
+    padding: 2px 6px;
+  }
+
+  /* Override inline styles for mobile */
+  .ml3-shop-row > div:nth-child(3) span {
+    padding: 4px 10px !important;
+    font-size: 0.7rem !important;
+    border-radius: 16px !important;
+  }
+
+  .ml3-shop-row > div:nth-child(4) span {
+    font-size: 0.8rem !important;
+  }
+
+  /* Save Button */
+  .ml3-save {
+    margin-top: 32px;
+  }
+
+  .ml3-savebtn {
+    padding: 14px 32px;
+    font-size: 0.95rem;
+    gap: 8px;
+    width: 100%;
+    max-width: 100%;
+    justify-content: center;
+  }
+
+  .ml3-savebtn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  /* Modal */
+  .ml3-modal {
+    width: 95%;
+    max-width: 95%;
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
+
+  .ml3-modal-title {
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+  }
+
+  .ml3-modal-desc {
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+  }
+
+  .ml3-modal-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .ml3-btn-cancel,
+  .ml3-btn-discard,
+  .ml3-btn-confirm {
+    width: 100%;
+    padding: 14px;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Phone: make shop columns compact, hide store name (logo-only) */
+  .ml3-shop-head,
+  .ml3-shop-row {
+    grid-template-columns: 52px 0.9fr 1.2fr 0.9fr 1.6fr;
+    gap: 4px;
+    min-width: 560px;
+  }
+
+  .ml3-shop-brand span {
+    display: none;
+  }
+
+  .ml3-title {
+    font-size: 1.1rem;
+  }
+
+  .ml3-subtitle {
+    font-size: 0.75rem;
+  }
+
+  .ml3-btn-edit-pill {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+
+  .ml3-btn-edit-pill span {
+    display: none;
+  }
+
+  .ml3-block {
+    padding: 16px 12px;
+  }
+
+  .ml3-thead,
+  .ml3-tr {
+    min-width: 500px;
+    grid-template-columns: 1.2fr 0.9fr 0.9fr 0.9fr;
+  }
+
+  .ml3-th {
+    font-size: 0.7rem;
+  }
+
+  .ml3-img-container {
+    width: 40px;
+    height: 40px;
+  }
+
+  .ml3-prodname {
+    font-size: 0.8rem;
+  }
+
+  .ml3-pill {
+    min-width: 60px;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+  }
+
+  .ml3-go-shop,
+  .ml3-go-navigate {
+    font-size: 0.7rem;
+    padding: 6px 10px;
+  }
+
+  /* Shop Table - Extra Small */
+  .ml3-shop-head,
+  .ml3-shop-row {
+    grid-template-columns: 48px 0.9fr 1.2fr 0.9fr 1.6fr;
+    gap: 3px;
+    min-width: 520px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .ml3-shop-head {
+    font-size: 0.65rem;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .ml3-shop-row {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+
+  .ml3-shop-row > div:last-child {
+    gap: 5px;
+    flex-wrap: nowrap;
+  }
+
+  .ml3-shop-brand span {
+    font-size: 0.7rem;
+  }
+
+  .ml3-shop-logo {
+    width: 40px;
+    height: 40px;
+  }
+
+  /* Extra small: hide store name, show only logo */
+  .ml3-shop-brand span {
+    display: none;
+  }
+
+  .ml3-shop-muted {
+    font-size: 0.65rem;
+  }
+
+  .ml3-shop-price {
+    font-size: 0.75rem;
+  }
+
+  .ml3-shop-row > div:nth-child(3) span {
+    padding: 3px 8px !important;
+    font-size: 0.65rem !important;
+  }
+
+  .ml3-shop-row > div:nth-child(4) span {
+    font-size: 0.75rem !important;
+  }
+
+  .ml3-go-shop svg,
+  .ml3-go-navigate svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  .ml3-shop-row-cheapest::before {
+    top: -12px;
+    right: 8px;
+    left: auto;
+    font-size: 0.55rem;
+    padding: 2px 5px;
   }
 }
