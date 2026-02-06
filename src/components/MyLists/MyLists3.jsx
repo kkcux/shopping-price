@@ -829,8 +829,9 @@ export default function MyLists3() {
                   {selectedStoreKeys.map((k) => {
                     const val = it.priceMap[k];
                     const isMin = typeof val === "number" && it.minVal === val;
+                    const storeLabel = k === 'LOTUS' ? "LOTUS'S" : k === 'BIGC' ? "BIG C" : "MAKRO";
                     return (
-                      <div className="ml3-td" key={k}>
+                      <div className="ml3-td" key={k} data-store={storeLabel}>
                         <span className={`ml3-pill ${isMin ? "best" : ""}`}>
                           {typeof val === "number" ? (
                             <>
@@ -849,8 +850,10 @@ export default function MyLists3() {
 
               <div className="ml3-tr total" style={{ gridTemplateColumns: priceGridTemplate }}>
                 <div className="ml3-td left total-label">รวมทั้งหมด</div>
-                {selectedStoreKeys.map((k) => (
-                  <div className="ml3-td" key={k}>
+                {selectedStoreKeys.map((k) => {
+                  const storeLabel = k === 'LOTUS' ? "LOTUS'S" : k === 'BIGC' ? "BIG C" : "MAKRO";
+                  return (
+                  <div className="ml3-td" key={k} data-store={storeLabel}>
                     <span
                       className={`ml3-pill ${minTotalKey === k ? "best" : ""}`}
                       style={{ fontWeight: 800, color: minTotalKey === k ? undefined : "#64748b" }}
@@ -858,7 +861,8 @@ export default function MyLists3() {
                       {filteredTotals[k] > 0 ? `฿${Math.round(filteredTotals[k]).toLocaleString()}` : "-"}
                     </span>
                   </div>
-                ))}
+                );
+                })}
               </div>
             </div>
           </section>
@@ -896,7 +900,7 @@ export default function MyLists3() {
                   className={`ml3-shop-row ${isCheapest ? 'ml3-shop-row-cheapest' : ''}`} 
                   key={s.key}
                 >
-                  <div className="ml3-shop-brand" style={{ 
+                  <div className="ml3-shop-brand ml3-shop-cell" data-label="ร้านค้า" style={{ 
                     display: 'flex', 
                     alignItems: 'center', 
                     justifyContent: 'flex-start',
@@ -927,7 +931,7 @@ export default function MyLists3() {
                       {s.name}
                     </span>
                   </div>
-                  <div className="ml3-shop-muted" style={{ 
+                  <div className="ml3-shop-muted ml3-shop-cell" data-label="ระยะทาง" style={{ 
                     color: "#64748b",
                     display: 'flex',
                     alignItems: 'center',
@@ -938,7 +942,7 @@ export default function MyLists3() {
                     <MapPin size={12} />
                     <span>{s.distance}</span>
                   </div>
-                  <div style={{ 
+                  <div className="ml3-shop-cell" data-label="สถานะสมาชิก" style={{ 
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -960,8 +964,8 @@ export default function MyLists3() {
                       {isMember ? '✓ สมาชิก' : 'ไม่ใช่สมาชิก'}
                     </span>
                   </div>
-                  <div className="ml3-shop-price" style={{ 
-                    color: isCheapest ? "#10b77e" : "#1e293b", 
+                  <div className="ml3-shop-price ml3-shop-cell" data-label="ราคารวม" style={{ 
+                    color: isCheapest ? "#10b77e" : "#64748b", 
                     fontSize: "1.1rem",
                     fontWeight: "700",
                     display: 'flex',
