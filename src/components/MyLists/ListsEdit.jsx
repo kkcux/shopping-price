@@ -236,25 +236,45 @@ export default function ListsEdit() {
   const decreaseCatalogQty = (pid) => setCatalog(prev => prev.map(i => i.id === pid && i.qty > 1 ? { ...i, qty: i.qty - 1 } : i));
 
   const handleSelectFromCatalog = (product) => {
+    // ✅ ใช้จำนวนจากตัวเลือกสินค้าแนะนำ เช่น ตั้งไว้ที่ 2 แล้วกดเพิ่ม = +2
+    const qtyToAdd =
+      typeof product.qty === "number" && Number.isFinite(product.qty)
+        ? Math.max(1, product.qty)
+        : 1;
+
     const existingIndex = items.findIndex((item) => item.name === product.name); 
     if (existingIndex !== -1) {
       setItems((prev) => {
         const next = [...prev];
-        next[existingIndex].qty += product.qty;
+        const currentRaw = next[existingIndex].qty;
+        const currentQty =
+          typeof currentRaw === "number" && Number.isFinite(currentRaw)
+            ? currentRaw
+            : parseInt(currentRaw, 10) || 1;
+        next[existingIndex].qty = currentQty + qtyToAdd;
         return next;
       });
     } else {
-      setItems((prev) => [...prev, { ...product }]);
+      setItems((prev) => [...prev, { ...product, qty: qtyToAdd }]);
     }
     toast.success(`เพิ่ม ${product.name} แล้ว`, { duration: 1500, icon: <CheckCircle2 size={18} color="#10b981" /> });
   };
 
   const updateQty = (index, delta) => {
-    setItems((prev) => {
-      const next = [...prev];
-      next[index].qty = Math.max(1, next[index].qty + delta);
-      return next;
-    });
+    // ✅ ให้เพิ่ม/ลดทีละ 1 แบบตรง ๆ และกันค่าเพี้ยนจาก localStorage (เช่น string)
+    setItems((prev) =>
+      prev.map((item, i) => {
+        if (i !== index) return item;
+        const currentQtyRaw = item.qty;
+        const currentQty =
+          typeof currentQtyRaw === "number" && Number.isFinite(currentQtyRaw)
+            ? currentQtyRaw
+            : parseInt(currentQtyRaw, 10) || 1;
+
+        const newQty = Math.max(1, currentQty + delta);
+        return { ...item, qty: newQty };
+      })
+    );
   };
 
   const removeItem = (index) => setItems((prev) => prev.filter((_, i) => i !== index));
@@ -417,7 +437,7 @@ export default function ListsEdit() {
               <div className="le-boxTitle">รายการที่เลือก ({items.length})</div>
             </div>
             {items.length > 0 ? (
-              <div className="le-cards">
+              <div className="le-cards-scroll">
                 {items.map((item, idx) => (
                   <div key={idx} className="le-card">
                     <button className="le-remove" onClick={() => removeItem(idx)}><Trash2 size={14} /></button>

@@ -54,7 +54,6 @@
 VITE_FIREBASE_API_KEY=your_firebase_api_key
 VITE_FIREBASE_AUTH_DOMAIN=your_project_id.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=your_project_id
-VITE_FIREBASE_STORAGE_BUCKET=your_project_id.firebasestorage.app
 VITE_FIREBASE_MESSAGING_SENDER_ID=your_messaging_sender_id
 VITE_FIREBASE_APP_ID=your_app_id
 VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
@@ -181,46 +180,6 @@ service cloud.firestore {
 }
 ```
 
-### 2. Storage Rules
-
-1. ไปที่ [Firebase Console](https://console.firebase.google.com/)
-2. เลือกโปรเจกต์ของคุณ
-3. ไปที่ **Storage** → **Rules**
-4. Copy เนื้อหาจากไฟล์ `storage.rules` ในโปรเจกต์
-5. Paste ลงใน Rules editor
-6. คลิก **Publish**
-
-**ไฟล์ `storage.rules`:**
-```javascript
-rules_version = '2';
-service firebase.storage {
-  match /b/{bucket}/o {
-    // Profile images
-    match /profile-images/{userId}/{allPaths=**} {
-      // อนุญาตให้อ่านไฟล์ได้ (ทุกคนสามารถดูรูปโปรไฟล์ได้)
-      allow read: if true;
-      
-      // อนุญาตให้เขียนไฟล์ได้เฉพาะ user ที่ login แล้วและเป็นเจ้าของโฟลเดอร์
-      allow write: if request.auth != null && request.auth.uid == userId;
-      
-      // อนุญาตให้ลบไฟล์ได้เฉพาะ user ที่เป็นเจ้าของ
-      allow delete: if request.auth != null && request.auth.uid == userId;
-    }
-    
-    // Rules อื่นๆ - ป้องกันการเข้าถึงไฟล์อื่นๆ
-    match /{allPaths=**} {
-      allow read, write: if false;
-    }
-  }
-}
-```
-
-**หมายเหตุ:** 
-- ถ้าใช้ Cloudinary สำหรับเก็บรูปโปรไฟล์แล้ว Storage Rules อาจไม่จำเป็น
-- แต่ควรตั้งค่าไว้เพื่อความปลอดภัย
-
----
-
 ## 🚀 การ Deploy Rules
 
 ### วิธีที่ 1: ใช้ Firebase CLI (แนะนำ)
@@ -242,16 +201,12 @@ service firebase.storage {
 
 4. Deploy Rules:
    ```bash
-   # Deploy Firestore Rules
    firebase deploy --only firestore:rules
-   
-   # Deploy Storage Rules
-   firebase deploy --only storage
    ```
 
 ### วิธีที่ 2: ตั้งค่าใน Firebase Console
 
-1. Copy เนื้อหาจากไฟล์ `firestore.rules` หรือ `storage.rules`
+1. Copy เนื้อหาจากไฟล์ `firestore.rules`
 2. ไปที่ Firebase Console → Rules
 3. Paste เนื้อหาลงใน Rules editor
 4. คลิก **Publish**

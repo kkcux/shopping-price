@@ -34,6 +34,50 @@
   letter-spacing: -0.5px;
 }
 
+/* Header inner layout (missing in this file) */
+.le-header-inner {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.le-topLeft {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+}
+
+.le-back-btn {
+  width: 40px;
+  height: 40px;
+  background-color: #f1f5f9;
+  color: #64748b;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.le-back-btn:hover {
+  background-color: #e2e8f0;
+  color: var(--pf-primary);
+}
+
+.le-subtitle {
+  font-size: 0.95rem;
+  color: #64748b;
+  margin: 4px 0 0 0;
+  font-weight: 400;
+}
+
 /* --- CONTAINER & NAME BLOCK --- */
 .le-container {
   max-width: 1200px;
@@ -63,6 +107,183 @@
   border-color: var(--pf-primary);
   outline: none;
   box-shadow: 0 0 0 4px rgba(16, 183, 126, 0.1);
+}
+
+/* Label (used in JSX) */
+.le-label {
+  font-weight: 700;
+  margin-bottom: 12px;
+  color: #1f2937;
+  font-size: 1.05rem;
+  display: block;
+}
+
+/* Box header + actions (used in JSX) */
+.le-boxHead {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f1f5f9;
+  min-height: 32px; /* ให้ความสูงพอดี */
+}
+.le-seeAllBtn {
+  background: none;
+  border: none;
+  color: #3b82f6;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 10px;
+  transition: background 0.2s, opacity 0.2s;
+  white-space: nowrap;
+  line-height: 1.5; /* ให้ตรงกับ boxTitle */
+}
+.le-seeAllBtn:hover {
+  background: #eff6ff;
+}
+
+/* Cards: scroll (recommended products) */
+.le-cards-scroll {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 16px;
+  padding: 6px 2px 10px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+}
+.le-cards-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+/* Cards: grid (selected items) */
+.le-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 16px;
+  align-items: stretch;
+}
+
+.le-card {
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--pf-radius);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  padding-bottom: 12px;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+  height: 100%;
+  scroll-snap-align: start;
+}
+.le-cards-scroll .le-card {
+  min-width: 190px;
+  max-width: 190px;
+}
+.le-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px -3px rgba(16, 183, 126, 0.14);
+  border-color: var(--pf-primary);
+}
+
+.le-imgWrap {
+  height: 150px;
+  width: 100%;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 14px;
+  background-color: #fff;
+}
+.le-imgWrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.le-cardName {
+  margin-top: 10px;
+  margin-bottom: 6px;
+  font-size: 0.95rem;
+  font-weight: 650;
+  text-align: center;
+  padding: 0 12px;
+  color: #334155;
+  height: 2.8em;
+  line-height: 1.4;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Select button (add from catalog) */
+.le-select {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0 auto 12px;
+  background: var(--pf-primary);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 20px;
+  font-size: 0.95rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.12s, background 0.2s, box-shadow 0.2s;
+  box-shadow: 0 8px 18px rgba(16, 183, 126, 0.22);
+}
+.le-select:hover {
+  background: #0d9668;
+  transform: translateY(-1px);
+}
+.le-select:active {
+  transform: translateY(0);
+}
+
+/* Remove item button (selected list) */
+.le-remove {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid #fee2e2;
+  background: #fff;
+  color: #ef4444;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.12s;
+  z-index: 10;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+.le-remove:hover {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+}
+.le-remove:active {
+  transform: scale(0.96);
 }
 
 /* --- PRODUCT SLIDER (เลือกสินค้าแนะนำ) --- */
@@ -119,6 +340,7 @@
   line-height: 1.4;
   margin-bottom: 20px;
   display: -webkit-box;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
@@ -367,6 +589,12 @@
   font-weight: 700;
   color: var(--pf-text-main);
   margin-bottom: 16px;
+  line-height: 1.4;
+}
+/* เมื่ออยู่ใน boxHead ให้ลบ margin-bottom */
+.le-boxHead .le-boxTitle {
+  margin-bottom: 0;
+  line-height: 1.5;
 }
 
 /* Store Checkbox Row */
@@ -506,4 +734,210 @@
   background: #2563eb;
   transform: translateY(-1px);
   box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+}
+
+/* Save button (used in JSX) */
+.le-saveWrap {
+  margin-top: 36px;
+  display: flex;
+  justify-content: center;
+}
+.le-saveBtn {
+  width: 100%;
+  max-width: 420px;
+  min-height: 54px;
+  background: var(--pf-primary);
+  color: #fff;
+  border: none;
+  border-radius: 999px;
+  font-size: 1.05rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 22px rgba(16, 183, 126, 0.25);
+  transition: transform 0.12s, background 0.2s, box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 18px;
+}
+.le-saveBtn:hover {
+  background: #0d9668;
+  transform: translateY(-1px);
+  box-shadow: 0 14px 26px rgba(16, 183, 126, 0.28);
+}
+.le-saveBtn:active {
+  transform: scale(0.99);
+}
+
+/* =========================
+   RESPONSIVE (Mobile)
+========================= */
+@media (max-width: 768px) {
+  .le-header-section {
+    padding: 16px 0;
+  }
+  .le-header-inner {
+    padding: 0 16px;
+  }
+  .le-title {
+    font-size: 1.25rem;
+  }
+  .le-container {
+    padding: 0 16px;
+  }
+  .le-nameBlock {
+    padding: 18px;
+    margin: 18px 0;
+  }
+  .le-box {
+    padding: 16px;
+  }
+  .le-boxHead {
+    flex-wrap: nowrap; /* ไม่ให้ขึ้นบรรทัดใหม่ */
+    align-items: center;
+  }
+  .le-seeAllBtn {
+    width: auto; /* ไม่ให้เต็มความกว้าง */
+    flex-shrink: 0; /* ไม่ให้หดตัว */
+    white-space: nowrap; /* ไม่ให้ข้อความขึ้นบรรทัดใหม่ */
+  }
+
+  .le-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px; /* ลด gap ให้เหมือนกับส่วนเลือกสินค้าแนะนำ */
+  }
+  /* ปรับการ์ดในรายการที่เลือกให้เล็กลง */
+  .le-cards .le-card {
+    padding: 8px; /* ลด padding */
+  }
+  .le-cards .le-imgWrap {
+    height: 100px; /* ลดความสูงรูปให้เหมือนส่วนเลือกสินค้าแนะนำ */
+    padding: 8px;
+  }
+  .le-cards .le-cardName {
+    font-size: 0.8rem; /* ลดขนาดตัวอักษร */
+    padding: 0 8px;
+    height: 2.4em;
+  }
+  .le-cards .le-qty {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .le-cards .le-qty button {
+    width: 24px;
+    height: 24px;
+  }
+  .le-cards .le-qty span {
+    font-size: 0.9rem;
+  }
+  .le-cards-scroll {
+    gap: 12px;
+  }
+  .le-cards-scroll .le-card {
+    /* ย่อให้เล็กลงอีก เพื่อไม่ให้ล้นขอบ */
+    flex: 0 0 40%;
+    min-width: 40% !important;
+    max-width: 40% !important;
+  }
+  .le-cards-scroll {
+    gap: 8px; /* ลด gap ลง */
+  }
+  .le-imgWrap {
+    height: 100px;
+    padding: 8px;
+  }
+  .le-cardName {
+    font-size: 0.8rem;
+    padding: 0 8px;
+    height: 2.4em;
+  }
+
+  .le-grid-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* Make qty + add button more compact on mobile */
+  .le-qty {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .le-qty button {
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+  }
+  .le-qty span {
+    font-size: 0.9rem;
+  }
+  .le-select {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+  }
+
+  /* Modal: 2 buttons row -> stack on mobile */
+  .modal-actions.row {
+    flex-direction: column;
+  }
+}
+
+/* Match Home product card sizes on mobile */
+@media (max-width: 640px) {
+  /* ลด padding รอบกล่อง เพื่อให้เห็นการ์ดได้หลายใบขึ้น */
+  .le-container {
+    padding: 0 8px; /* ลดลงจาก 12px */
+  }
+  .le-box {
+    padding: 10px; /* ลดลงจาก 12px */
+  }
+
+  .le-cards-scroll {
+    gap: 8px; /* ลด gap ลง */
+    padding: 6px 0 32px;
+    margin: 0 -2px; /* ลด margin ลง */
+  }
+  /* ปรับให้เห็น 2 ใบเต็ม ๆ โดยไม่ล้นขอบ */
+  .le-cards-scroll .le-card {
+    flex: 0 0 calc((100% - 8px) / 2); /* 2 ใบ + 1 gap (8px) */
+    min-width: calc((100% - 8px) / 2) !important;
+    max-width: calc((100% - 8px) / 2) !important;
+    padding: 6px; /* ลด padding ลง */
+    border-radius: 14px;
+  }
+  .le-cards-scroll .le-imgWrap {
+    height: 110px;
+    padding: 0;
+    margin-bottom: 8px;
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .le-cards-scroll .le-cardName {
+    font-size: 0.75rem;
+    max-height: 2.5em;
+  }
+  .le-cards-scroll .le-select {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .le-cards-scroll .le-card {
+    min-width: 140px;
+    max-width: 140px;
+  }
+  .le-cards-scroll .le-imgWrap {
+    height: 100px;
+  }
+}
+
+@media (max-width: 420px) {
+  .le-cards {
+    grid-template-columns: 1fr;
+  }
+  .le-saveBtn {
+    max-width: 100%;
+  }
 }

@@ -5,13 +5,14 @@ import Footer from '../Home/Footer';
 import './Products.css';
 import {
   Heart, ChevronDown, ChevronLeft, ChevronRight,
-  Search, X, LayoutGrid, Store, Filter, Star, Flame, Tag, CheckCircle2
+  Search, X, LayoutGrid, Store, Filter, Star, Flame, Tag, CheckCircle2, Plus, Package
 } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast'; // ✅ Import Toast
 
 import AddToListModal from '../Home/AddToListModal';
 import { getCategorySlug, categorySlugMap } from '../../utils/categoryMap';
 import { useFavorites } from '../../context/FavoritesContext';
+import { basePath } from '../../utils/basePath';
 
 const Products = () => {
   const location = useLocation();
@@ -66,6 +67,7 @@ const Products = () => {
     { id: 'recommended', label: 'สินค้าแนะนำ', icon: <Star size={16} className="text-yellow-500" /> },
     { id: 'popular', label: 'สินค้ายอดนิยม', icon: <Flame size={16} className="text-orange-500" /> },
     { id: 'promo', label: 'สินค้าโปรโมชั่น', icon: <Tag size={16} className="text-emerald-500" /> },
+    { id: 'pack', label: 'สินค้าแพ็ค', icon: <Package size={16} className="text-sky-500" /> },
   ];
 
   // --- Effects ---
@@ -95,10 +97,10 @@ const Products = () => {
       try {
         let url = '';
         if (activeCategory === 'ทั้งหมด') {
-            url = '/data/categories/mixed_products.json';
+            url = `${basePath}/data/categories/mixed_products.json`;
         } else {
             const slug = getCategorySlug(activeCategory);
-            url = `/data/categories/${slug}.json`;
+            url = `${basePath}/data/categories/${slug}.json`;
         }
 
         const response = await fetch(url);
@@ -113,16 +115,26 @@ const Products = () => {
         }
 
         // Filter out nulls and ensure basic fields
-        products = products.filter(item => item && item.name).map(item => {
-            if(!item.tags) {
-                const randomVal = Math.random();
-                item.tags = [];
-                if (randomVal > 0.8) item.tags.push('recommended');
-                else if (randomVal > 0.6) item.tags.push('popular');
-                else if (randomVal > 0.4) item.tags.push('promo');
+        const packRegex = /(แพ็ค|แพค|แพ็ก|pack)\b/i;
+        products = products
+          .filter(item => item && item.name)
+          .map(item => {
+            const name = item.name || '';
+            let tags = Array.isArray(item.tags) ? [...item.tags] : [];
+
+            if (tags.length === 0) {
+              const randomVal = Math.random();
+              if (randomVal > 0.8) tags.push('recommended');
+              else if (randomVal > 0.6) tags.push('popular');
+              else if (randomVal > 0.4) tags.push('promo');
             }
-            return item;
-        });
+
+            if (packRegex.test(name) && !tags.includes('pack')) {
+              tags.push('pack');
+            }
+
+            return { ...item, tags };
+          });
 
         setAllProducts(products);
       } catch (error) { console.error("Error loading products:", error); } 
@@ -154,7 +166,7 @@ const Products = () => {
                 // Trigger lazy load if not started
                 if (!isSearchingIndex) {
                     setIsSearchingIndex(true);
-                    fetch('/data/categories/all_products_lite.json')
+                    fetch(`${basePath}/data/categories/all_products_lite.json`)
                         .then(res => res.json())
                         .then(data => {
                             setFullSearchIndex(data);
@@ -328,7 +340,7 @@ const Products = () => {
       <header className="cat-header">
         <div className="cat-header-content">
           {targetListId ? (
-            <div style={{marginBottom: '16px', display: 'flex', justifyContent: 'center'}}>
+            <div style={{marginBottom: '16px', display: 'flex', justifyContent: 'flex-start'}}>
                  <button className="btn-link-action" onClick={() => navigate(-1)} style={{color: '#14532d'}}>
                     <ChevronLeft /> กลับไปที่รายการ
                 </button>
@@ -360,61 +372,63 @@ const Products = () => {
                     )}
                 </div>
 
-                <div className="tool-wrapper" ref={catMenuRef}>
-                    <button 
-                        className={`tool-btn ${showCatMenu ? 'active' : ''}`}
-                        onClick={() => setShowCatMenu(!showCatMenu)}
-                        style={{ minWidth: '160px', justifyContent: 'space-between' }}
-                    >
-                        <span style={{display:'flex', alignItems:'center', gap:'8px'}}>
-                            <LayoutGrid size={18} />
-                            {activeCategory === 'ทั้งหมด' ? 'หมวดหมู่: ทั้งหมด' : activeCategory}
-                        </span>
-                        <ChevronDown size={16} />
-                    </button>
-                    {showCatMenu && (
-                        <div className="dropdown-popup cat-menu-popup">
-                            {categoriesList.map((cat, idx) => (
-                                <button key={idx} className={activeCategory === cat ? 'selected' : ''} onClick={() => handleSelectCategory(cat)}>
-                                    {cat} 
-                                </button>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                <div className="filter-dropdown-group">
+                    <div className="tool-wrapper" ref={catMenuRef}>
+                        <button 
+                            className={`tool-btn tool-btn-first ${showCatMenu ? 'active' : ''}`}
+                            onClick={() => setShowCatMenu(!showCatMenu)}
+                            style={{ justifyContent: 'space-between' }}
+                        >
+                            <span style={{display:'flex', alignItems:'center', gap:'8px'}}>
+                                <LayoutGrid size={18} />
+                                {activeCategory === 'ทั้งหมด' ? 'หมวดหมู่: ทั้งหมด' : activeCategory}
+                            </span>
+                            <ChevronDown size={16} />
+                        </button>
+                        {showCatMenu && (
+                            <div className="dropdown-popup cat-menu-popup">
+                                {categoriesList.map((cat, idx) => (
+                                    <button key={idx} className={activeCategory === cat ? 'selected' : ''} onClick={() => handleSelectCategory(cat)}>
+                                        {cat} 
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
 
-                <div className="tool-wrapper" ref={filterMenuRef}>
-                    <button 
-                        className={`tool-btn ${showFilterMenu || specialFilter !== 'all' ? 'active' : ''}`}
-                        onClick={() => setShowFilterMenu(!showFilterMenu)}
-                        style={{ minWidth: '150px', justifyContent: 'space-between' }}
-                    >
-                        <span style={{display:'flex', alignItems:'center', gap:'8px'}}>
-                            <Filter size={18} />
-                            {getSpecialFilterLabel()}
-                        </span>
-                        <ChevronDown size={16} />
-                    </button>
+                    <div className="tool-wrapper" ref={filterMenuRef}>
+                        <button 
+                            className={`tool-btn tool-btn-last ${showFilterMenu || specialFilter !== 'all' ? 'active' : ''}`}
+                            onClick={() => setShowFilterMenu(!showFilterMenu)}
+                            style={{ justifyContent: 'space-between' }}
+                        >
+                            <span style={{display:'flex', alignItems:'center', gap:'8px'}}>
+                                <Filter size={18} />
+                                {getSpecialFilterLabel()}
+                            </span>
+                            <ChevronDown size={16} />
+                        </button>
 
-                    {showFilterMenu && (
-                        <div className="dropdown-popup" style={{width: '200px'}}>
-                            {specialFiltersList.map((filter) => (
-                                <button 
-                                    key={filter.id}
-                                    className={specialFilter === filter.id ? 'selected' : ''} 
-                                    onClick={() => {
-                                        setSpecialFilter(filter.id);
-                                        setShowFilterMenu(false);
-                                    }}
-                                >
-                                    <span style={{display:'flex', alignItems:'center', gap:'8px'}}>
-                                        {filter.icon}
-                                        {filter.label}
-                                    </span>
-                                </button>
-                            ))}
-                        </div>
-                    )}
+                        {showFilterMenu && (
+                            <div className="dropdown-popup" style={{width: '200px'}}>
+                                {specialFiltersList.map((filter) => (
+                                    <button 
+                                        key={filter.id}
+                                        className={specialFilter === filter.id ? 'selected' : ''} 
+                                        onClick={() => {
+                                            setSpecialFilter(filter.id);
+                                            setShowFilterMenu(false);
+                                        }}
+                                    >
+                                        <span style={{display:'flex', alignItems:'center', gap:'8px'}}>
+                                            {filter.icon}
+                                            {filter.label}
+                                        </span>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
 
             </div>
@@ -456,7 +470,14 @@ const Products = () => {
                                             onClick={() => handleAddToCart(item)} 
                                             style={{marginTop: 'auto'}}
                                         >
-                                            {targetListId ? 'เพิ่มเลย +' : 'เพิ่มลงรายการ'}
+                                            {targetListId ? (
+                                              <>
+                                                <Plus size={18} />
+                                                เพิ่มเลย
+                                              </>
+                                            ) : (
+                                              'เพิ่มลงรายการ'
+                                            )}
                                         </button>
                                     </div>
                                 </div>

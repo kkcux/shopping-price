@@ -126,6 +126,19 @@
   width: 100%;
 }
 
+/* ===== Tablet / iPad: ประมาณ 4 การ์ดต่อแถว ===== */
+@media (min-width: 768px) and (max-width: 1199px) {
+  .lists-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+  }
+
+  .list-card {
+    padding: 18px;
+    min-height: 190px;
+  }
+}
+
 .list-card {
   background: white;
   border-radius: 16px;
@@ -394,15 +407,39 @@
 }
 
 @media (max-width: 600px) {
+  /* ปุ่ม NEWLIST อยู่แถวเดียวกับ header */
   .mylist-header {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+  }
+  .header-text-group {
+    min-width: 0;
+  }
+  .header-title,
+  .header-subtitle {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .btn-newlist {
-    width: 100%;
+    width: auto;
+    flex-shrink: 0;
+    padding: 10px 14px;
+    font-size: 0.85rem;
   }
   .content-container {
     padding: 0 20px;
+  }
+
+  /* ===== Mobile: แสดงการ์ดอย่างน้อย 2 ใบต่อแถว ===== */
+  .lists-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)); /* 2 คอลัมน์บนหน้าจอมือถือ */
+    gap: 16px;
+  }
+
+  .list-card {
+    padding: 16px;
+    min-height: 180px;
   }
 }
 

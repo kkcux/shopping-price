@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCart, X, ListPlus, Info, Loader2, ChevronRight } from 'lucide-react'; 
 import { Toaster } from 'react-hot-toast'; 
@@ -22,14 +22,7 @@ const AddToListModal = ({ isOpen, onClose, product }) => {
     return () => unsubscribe();
   }, []);
 
-  // 2. โหลดรายการ List
-  useEffect(() => {
-    if (isOpen) {
-        fetchLists();
-    }
-  }, [isOpen, currentUser]);
-
-  const fetchLists = async () => {
+  const fetchLists = useCallback(async () => {
     setLoading(true);
     if (currentUser) {
         try {
@@ -51,18 +44,35 @@ const AddToListModal = ({ isOpen, onClose, product }) => {
             const savedData = localStorage.getItem("myLists");
             const parsedData = savedData ? JSON.parse(savedData) : [];
             setMyLists(Array.isArray(parsedData) ? parsedData : []);
-        } catch (error) {
+        } catch {
             setMyLists([]);
         }
     }
     setLoading(false);
-  };
+  }, [currentUser]);
+
+  // 2. โหลดรายการ List (defer เพื่อหลีกเลี่ยง cascading renders)
+  useEffect(() => {
+    if (isOpen) {
+      queueMicrotask(() => fetchLists());
+    }
+  }, [isOpen, fetchLists]);
+
+  // ล็อก scroll ของ body เมื่อเปิด modal เพื่อให้ modal อยู่กลาง (ไม่มี scrollbar เลื่อน layout)
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen]);
 
   // ✅ ฟังก์ชัน: ไปที่ลิสต์พร้อมหิ้วสินค้าไปด้วย
   const handleGoToList = (listId) => {
     // 1. จัดเตรียมข้อมูลสินค้าให้อยู่ในฟอร์แมตที่พร้อมใช้
     const productToSend = {
-      id: product.id || `prod-${Date.now()}`,
+      id: product.id || `prod-${(product.name || "item").replace(/\s+/g, "-").slice(0, 20)}`,
       name: product.name || product.data || "สินค้าไม่ระบุชื่อ",
       img: product.image || product.img || "", 
       qty: 1, // ค่าเริ่มต้น (เพราะหน้า Modal นี้เราตัดตัวปรับจำนวนออกแล้ว)
@@ -82,7 +92,7 @@ const AddToListModal = ({ isOpen, onClose, product }) => {
   const handleCreateNewList = () => {
     // เตรียมข้อมูลส่งไปหน้าสร้างใหม่เหมือนกัน
     const productToSend = {
-        id: product.id || `prod-${Date.now()}`,
+        id: product.id || `prod-${(product.name || "item").replace(/\s+/g, "-").slice(0, 20)}`,
         name: product.name || product.data || "สินค้าไม่ระบุชื่อ",
         img: product.image || product.img || "", 
         qty: 1

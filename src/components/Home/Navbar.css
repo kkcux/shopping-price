@@ -25,6 +25,13 @@
   position: relative;
 }
 
+/* กลุ่มเมนู + hamburger + LOGIN ให้ชิดกัน */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
 /* --- Brand / Logo --- */
 .brand {
   display: flex;
@@ -60,22 +67,14 @@
   transform: rotate(-10deg) scale(1.1);
 }
 
-/* --- Menu (จัดให้อยู่ตรงกลางระหว่าง Logo และ Actions) --- */
+/* --- Menu --- */
 .menu {
   display: flex;
   align-items: center;
   gap: 32px;
   list-style: none;
   padding: 0;
-
-  /* --- แก้ไขตรงนี้ (ลบอันเก่าที่เป็น position: absolute ออก) --- */
-
-  position: static; /* ยกเลิกการลอยตัว */
-  transform: none; /* ยกเลิกการจัดกึ่งกลาง */
-
-  margin: 0; /* ลบ margin เดิม */
-  margin-left: auto; /* ✨ คำสั่งนี้จะดันเมนูไปชิดขวาสุด (ติดกับปุ่ม Login) */
-  margin-right: -15px;
+  margin: 0;
 }
 
 .menu li a {
@@ -113,13 +112,11 @@
   width: 20px;
 }
 
-/* --- Right Actions (จัดลำดับใหม่) --- */
+/* --- Right Actions --- */
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 16px; /* ระยะห่างระหว่างปุ่ม */
-  min-width: 200px;
-  justify-content: flex-end;
+  gap: 16px;
 }
 
 /* ปุ่ม LOGIN มาก่อน */
@@ -142,26 +139,6 @@
 .login-btn:hover {
   background: #494949;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-}
-
-/* ไอคอนแจ้งเตือน ไว้ขวาสุด */
-.bell-icon {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.15);
-  padding: 8px;
-  border-radius: 12px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  /* บังคับลำดับ */
-  order: 2;
-}
-
-.bell-icon:hover {
-  background: rgba(255, 255, 255, 0.25);
-  transform: scale(1.05);
 }
 
 /* --- Back Button สำหรับหน้า Login/Register --- */
@@ -201,11 +178,95 @@
   transform: translateX(-3px);
 }
 
+/* --- ปุ่ม Hamburger (แสดงเฉพาะมือถือ) --- */
+.nav-hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.nav-hamburger:hover {
+  background: transparent;
+  opacity: 0.85;
+}
+
+/* --- เมนูมือถือ (เลื่อนลงจากใต้ navbar) --- */
+.mobile-menu {
+  display: none; /* แสดงเฉพาะใน media query มือถือ */
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(16, 183, 126, 0.98);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+  z-index: 999;
+}
+
+.mobile-menu.mobile-menu-open {
+  max-height: 280px;
+}
+
+.mobile-menu-list {
+  list-style: none;
+  margin: 0;
+  padding: 16px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mobile-menu-list li a {
+  display: block;
+  padding: 12px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 12px;
+  transition: background 0.2s ease;
+}
+
+.mobile-menu-list li a:hover,
+.mobile-menu-list li a.active {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
 /* Mobile */
 @media (max-width: 900px) {
   .menu {
     display: none;
   }
+
+  .nav-right {
+    gap: 8px;
+  }
+
+  .nav-hamburger {
+    display: flex;
+  }
+
+  .mobile-menu {
+    display: block;
+  }
+
   .navbar {
     height: 64px;
   }
@@ -220,6 +281,26 @@
 
   .btn-nav-back span {
     display: none; /* ซ่อนข้อความในมือถือ เหลือแค่ไอคอน */
+  }
+
+  /* ล็อกอินบนมือถือ: แสดงแค่รูปโปรไฟล์ ไม่แสดงชื่อ + ให้กลมเสมอกัน */
+  .user-profile .user-name {
+    display: none;
+  }
+
+  .user-profile {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    padding: 0;
+    border-radius: 50%;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .user-profile .user-profile-image,
+  .user-profile img[class*="user-profile"] {
+    margin-right: 0 !important;
   }
 }
 
@@ -254,7 +335,9 @@
 .user-profile:active {
   transform: scale(0.95); /* ย่อขนาดลงเหลือ 95% ให้ความรู้สึกเหมือนถูกกด */
   background: rgba(255, 255, 255, 0.05); /* เปลี่ยนสีพื้นหลังนิดหน่อย */
-  transition: transform 0.1s, background 0.1s; /* เปลี่ยนอย่างรวดเร็ว (0.1วิ) ให้รู้สึกกระชับ */
+  transition:
+    transform 0.1s,
+    background 0.1s; /* เปลี่ยนอย่างรวดเร็ว (0.1วิ) ให้รู้สึกกระชับ */
 }
 
 /* ================= User Profile (Avatar Fix) ================= */
@@ -276,7 +359,11 @@
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.3) 0%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
   border: 2px solid rgba(255, 255, 255, 0.6);
   display: flex;
   align-items: center;
