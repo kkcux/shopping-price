@@ -58,8 +58,10 @@ function Navbar() {
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setUser(JSON.parse(storedUser));
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setUser(null);
     }
   }, [location]);
@@ -67,6 +69,7 @@ function Navbar() {
 
   // ปิดเมนูมือถือเมื่อเปลี่ยน route
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
