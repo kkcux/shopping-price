@@ -5,11 +5,13 @@ import Footer from '../Home/Footer';
 import './Categories.css';
 import {
   Heart, Search, ChevronDown, ChevronLeft, ChevronRight,
-  LayoutGrid, Store, X, Star, Flame, Tag, Filter
+  LayoutGrid, Store, X, Star, Flame, Tag, Filter, Package
 } from 'lucide-react';
 import AddToListModal from '../Home/AddToListModal';
+import AuthRequiredModal from '../Home/AuthRequiredModal';
 import { getCategorySlug, categorySlugMap } from '../../utils/categoryMap';
 import { useFavorites } from '../../context/FavoritesContext';
+import { basePath } from '../../utils/basePath';
 
 const Categories = () => {
   const location = useLocation();
@@ -24,9 +26,10 @@ const Categories = () => {
   const [loading, setLoading] = useState(true);
   
   // Use Context
-  const { favorites: contextFavorites, isFavorite, toggleFavorite } = useFavorites();
+  const { favorites: contextFavorites, isFavorite, toggleFavorite, currentUser } = useFavorites();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const [showCatMenu, setShowCatMenu] = useState(false);
@@ -54,6 +57,7 @@ const Categories = () => {
     { id: 'recommended', label: 'สินค้าแนะนำ', icon: <Star size={16} className="text-yellow-500" /> },
     { id: 'popular', label: 'สินค้ายอดนิยม', icon: <Flame size={16} className="text-orange-500" /> },
     { id: 'promo', label: 'สินค้าโปรโมชั่น', icon: <Tag size={16} className="text-emerald-500" /> },
+    { id: 'pack', label: 'สินค้าแพ็ค', icon: <Package size={16} className="text-sky-500" /> },
   ];
 
   useEffect(() => {
@@ -83,10 +87,10 @@ const Categories = () => {
       try {
         let url = '';
         if (activeCategory === 'ทั้งหมด') {
-            url = '/data/categories/mixed_products.json';
+            url = `${basePath}/data/categories/mixed_products.json`;
         } else {
             const slug = getCategorySlug(activeCategory);
-            url = `/data/categories/${slug}.json`;
+            url = `${basePath}/data/categories/${slug}.json`;
         }
 
         console.log(`Fetching products for: ${activeCategory} -> ${url}`);
@@ -105,16 +109,28 @@ const Categories = () => {
         }
 
         // Filter out nulls and ensure basic fields
-        products = products.filter(item => item && item.name).map(item => {
-            if (!item.tags) {
-                const randomVal = Math.random();
-                item.tags = [];
-                if (randomVal > 0.8) item.tags.push('recommended');
-                else if (randomVal > 0.6) item.tags.push('popular');
-                else if (randomVal > 0.4) item.tags.push('promo');
+        const packRegex = /(แพ็ค|แพค|แพ็ก|pack)\b/i;
+        products = products
+          .filter(item => item && item.name)
+          .map(item => {
+            const name = item.name || '';
+            let tags = Array.isArray(item.tags) ? [...item.tags] : [];
+
+            // ถ้าไม่มีแท็กเลย ให้สุ่ม recommended / popular / promo แบบเดิม
+            if (tags.length === 0) {
+              const randomVal = Math.random();
+              if (randomVal > 0.8) tags.push('recommended');
+              else if (randomVal > 0.6) tags.push('popular');
+              else if (randomVal > 0.4) tags.push('promo');
             }
-            return item;
-        });
+
+            // ถ้าชื่อสินค้าดูเหมือนเป็นแพ็ค ให้ติดแท็ก pack เพิ่ม
+            if (packRegex.test(name) && !tags.includes('pack')) {
+              tags.push('pack');
+            }
+
+            return { ...item, tags };
+          });
 
         setAllProducts(products);
 
@@ -154,7 +170,7 @@ const Categories = () => {
                 // Trigger lazy load if not started
                 if (!isSearchingIndex) {
                     setIsSearchingIndex(true);
-                    fetch('data/categories/all_products_lite.json')
+                    fetch(`${basePath}/data/categories/all_products_lite.json`)
                         .then(res => res.json())
                         .then(data => {
                             setFullSearchIndex(data);
@@ -191,7 +207,16 @@ const Categories = () => {
     };
 
     processData();
-  }, [allProducts, nameFilter, specialFilter, contextFavorites, fullSearchIndex]);
+  }, [
+    allProducts,
+    nameFilter,
+    specialFilter,
+    contextFavorites,
+    fullSearchIndex,
+    activeCategory,
+    isFavorite,
+    isSearchingIndex,
+  ]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -270,6 +295,14 @@ const Categories = () => {
       return filter ? filter.label : 'ตัวกรอง';
   };
 
+  const handleToggleFavorite = (product) => {
+    if (!currentUser) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+    toggleFavorite(product);
+  };
+
   return (
     <div className="categories-page">
       <Navbar />
@@ -303,66 +336,68 @@ const Categories = () => {
                     )}
                 </div>
 
-                <div className="tool-wrapper" ref={catMenuRef}>
-                    <button 
-                        className={`tool-btn ${showCatMenu ? 'active' : ''}`}
-                        onClick={() => setShowCatMenu(!showCatMenu)}
-                        style={{ minWidth: '160px', justifyContent: 'space-between' }}
-                    >
-                        <span style={{display:'flex', alignItems:'center', gap:'8px'}}>
-                            <LayoutGrid size={18} />
-                            {activeCategory === 'ทั้งหมด' ? 'หมวดหมู่: ทั้งหมด' : activeCategory}
-                        </span>
-                        <ChevronDown size={16} />
-                    </button>
+                <div className="filter-dropdown-group">
+                    <div className="tool-wrapper" ref={catMenuRef}>
+                        <button 
+                            className={`tool-btn tool-btn-first ${showCatMenu ? 'active' : ''}`}
+                            onClick={() => setShowCatMenu(!showCatMenu)}
+                            style={{ justifyContent: 'space-between' }}
+                        >
+                            <span className="tool-btn-text">
+                                <LayoutGrid size={18} />
+                                {activeCategory === 'ทั้งหมด' ? 'หมวดหมู่: ทั้งหมด' : activeCategory}
+                            </span>
+                            <ChevronDown size={16} />
+                        </button>
 
-                    {showCatMenu && (
-                        <div className="dropdown-popup cat-menu-popup">
-                            {categoriesList.map((cat, idx) => (
-                                <button 
-                                    key={idx}
-                                    className={activeCategory === cat ? 'selected' : ''} 
-                                    onClick={() => handleSelectCategory(cat)}
-                                >
-                                    {cat} 
-                                </button>
-                            ))}
-                        </div>
-                    )}
-                </div>
+                        {showCatMenu && (
+                            <div className="dropdown-popup cat-menu-popup">
+                                {categoriesList.map((cat, idx) => (
+                                    <button 
+                                        key={idx}
+                                        className={activeCategory === cat ? 'selected' : ''} 
+                                        onClick={() => handleSelectCategory(cat)}
+                                    >
+                                        {cat} 
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
 
-                <div className="tool-wrapper" ref={filterMenuRef}>
-                    <button 
-                        className={`tool-btn ${showFilterMenu || specialFilter !== 'all' ? 'active' : ''}`}
-                        onClick={() => setShowFilterMenu(!showFilterMenu)}
-                        style={{ minWidth: '150px', justifyContent: 'space-between' }}
-                    >
-                        <span style={{display:'flex', alignItems:'center', gap:'8px'}}>
-                            <Filter size={18} />
-                            {getSpecialFilterLabel()}
-                        </span>
-                        <ChevronDown size={16} />
-                    </button>
+                    <div className="tool-wrapper" ref={filterMenuRef}>
+                        <button 
+                            className={`tool-btn tool-btn-last ${showFilterMenu || specialFilter !== 'all' ? 'active' : ''}`}
+                            onClick={() => setShowFilterMenu(!showFilterMenu)}
+                            style={{ justifyContent: 'space-between' }}
+                        >
+                            <span className="tool-btn-text">
+                                <Filter size={18} />
+                                {getSpecialFilterLabel()}
+                            </span>
+                            <ChevronDown size={16} />
+                        </button>
 
-                    {showFilterMenu && (
-                        <div className="dropdown-popup" style={{width: '200px'}}>
-                            {specialFiltersList.map((filter) => (
-                                <button 
-                                    key={filter.id}
-                                    className={specialFilter === filter.id ? 'selected' : ''} 
-                                    onClick={() => {
-                                        setSpecialFilter(filter.id);
-                                        setShowFilterMenu(false);
-                                    }}
-                                >
-                                    <span style={{display:'flex', alignItems:'center', gap:'8px'}}>
-                                        {filter.icon}
-                                        {filter.label}
-                                    </span>
-                                </button>
-                            ))}
-                        </div>
-                    )}
+                        {showFilterMenu && (
+                            <div className="dropdown-popup" style={{width: '200px'}}>
+                                {specialFiltersList.map((filter) => (
+                                    <button 
+                                        key={filter.id}
+                                        className={specialFilter === filter.id ? 'selected' : ''} 
+                                        onClick={() => {
+                                            setSpecialFilter(filter.id);
+                                            setShowFilterMenu(false);
+                                        }}
+                                    >
+                                        <span style={{display:'flex', alignItems:'center', gap:'8px'}}>
+                                            {filter.icon}
+                                            {filter.label}
+                                        </span>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
@@ -385,7 +420,7 @@ const Categories = () => {
                             const isFav = isFavorite(item.name);
                             return (
                                 <div key={index} className="product-card-std">
-                                    <button className={`fav-btn-std ${isFav ? 'active' : ''}`} onClick={() => toggleFavorite(item)}>
+                                    <button className={`fav-btn-std ${isFav ? 'active' : ''}`} onClick={() => handleToggleFavorite(item)}>
                                         <Heart size={20} fill={isFav ? "#ef4444" : "none"} stroke={isFav ? "#ef4444" : "currentColor"} />
                                     </button>
                                     <div className="img-wrapper-std">
@@ -439,6 +474,11 @@ const Categories = () => {
         )}
       </div>
 
+      <AuthRequiredModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onLogin={() => navigate('/login')}
+      />
       <AddToListModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

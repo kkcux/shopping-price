@@ -669,12 +669,107 @@
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
-  .le-grid-row {
-    grid-template-columns: 1fr;
+  .le-header-section {
+    padding: 16px 0;
   }
   .le-header-inner {
+    padding: 0 16px;
     flex-direction: column;
     align-items: flex-start;
     gap: 15px;
+  }
+  .le-title {
+    font-size: 1.25rem;
+  }
+  .le-container {
+    padding: 0 16px;
+  }
+  .le-nameBlock {
+    padding: 18px;
+    margin: 18px 0;
+  }
+  .le-box {
+    padding: 16px;
+  }
+  .le-boxHead {
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+  .le-seeAllBtn {
+    width: auto;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .le-cards-scroll {
+    gap: 8px;
+  }
+  .le-cards-scroll .le-card {
+    flex: 0 0 40%;
+    min-width: 40% !important;
+    max-width: 40% !important;
+  }
+  .le-imgWrap {
+    height: 100px;
+    padding: 8px;
+  }
+  .le-cardName {
+    font-size: 0.8rem;
+    padding: 0 8px;
+    height: 2.4em;
+  }
+
+  .le-grid-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* Make qty + add button more compact on mobile */
+  .le-qty {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .le-qty button {
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+  }
+  .le-qty span {
+    font-size: 0.9rem;
+  }
+  .le-select {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+  }
+}
+
+@media (max-width: 640px) {
+  .le-container {
+    padding: 0 12px;
+  }
+  .le-box {
+    padding: 10px;
+  }
+
+  .le-cards-scroll {
+    gap: 8px;
+    padding: 6px 0 32px;
+    margin: 0 -2px;
+  }
+  .le-cards-scroll .le-card {
+    flex: 0 0 calc((100% - 8px) / 2);
+    min-width: calc((100% - 8px) / 2) !important;
+    max-width: calc((100% - 8px) / 2) !important;
+    padding: 6px;
+    border-radius: 14px;
+  }
+  .le-cards-scroll .le-imgWrap {
+    height: 100px;
+    padding: 8px;
+  }
+  .le-cards-scroll .le-cardName {
+    font-size: 0.75rem;
+    max-height: 2.5em;
   }
 }

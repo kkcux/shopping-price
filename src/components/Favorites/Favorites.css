@@ -9,27 +9,35 @@
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background-color: #f8f9fa; /* พื้นหลังสีเทาอ่อน */
+  min-height: 100dvh;
+  background-color: #f3f4f6;
   font-family: "Sarabun", "Prompt", sans-serif;
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
-/* --- Container กลาง (ใช้ 1200px ตามมาตรฐาน) --- */
+/* --- Container กลาง (ขนาดเท่ากันกับหน้า Home: content-wrapper) --- */
 .content-container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
   width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
 }
 
-/* --- Header Section (Copy สไตล์จาก MyLists) --- */
+/* --- Header Section --- */
 .header-section {
   background-color: #ffffff;
   padding: 24px 0;
   border-bottom: 1px solid #e2e8f0;
   width: 100%;
+  max-width: 100vw;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   display: flex;
   justify-content: center;
+  overflow-x: hidden;
 }
 
 .fav-header {
@@ -56,11 +64,16 @@
   cursor: pointer;
   transition: all 0.2s;
   color: #64748b;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .back-circle:hover {
   background-color: #e2e8f0;
-  color: #10b77e; /* สีเขียวธีม */
+  color: #10b77e;
+}
+
+.back-circle:active {
+  transform: scale(0.96);
 }
 
 .header-text-group {
@@ -86,25 +99,41 @@
 /* --- Content Section --- */
 .content-section {
   padding-top: 40px;
-  padding-bottom: 80px;
+  padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px));
   flex: 1;
   display: flex;
   justify-content: center;
+  align-items: flex-start;
+  min-width: 0;
+  overflow-x: hidden;
 }
 
-/* --- Grid Layout --- */
+.content-section .content-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.content-section .fav-grid {
+  align-self: stretch;
+}
+
+/* --- Grid Layout (ขั้นต่ำ 3 ชิ้นต่อแถว, ไม่ล้นจอ) --- */
 .fav-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
   width: 100%;
+  min-width: 0;
+  max-width: 100%;
 }
 
 /* --- Card Design --- */
 .fav-card {
   background: white;
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 14px;
+  padding: 14px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   border: 1px solid #e2e8f0;
   display: flex;
@@ -112,6 +141,8 @@
   position: relative;
   transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
   height: 100%;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .fav-card:hover {
@@ -123,10 +154,10 @@
 /* ปุ่มลบ (ถังขยะ) */
 .btn-remove-fav {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 34px;
-  height: 34px;
+  top: 10px;
+  right: 10px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background: #fff;
   border: 1px solid #f1f5f9;
@@ -137,6 +168,7 @@
   cursor: pointer;
   transition: all 0.2s;
   z-index: 2;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn-remove-fav:hover {
@@ -147,12 +179,12 @@
 
 .fav-img-wrap {
   width: 100%;
-  height: 160px;
+  height: 140px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 16px;
-  padding: 10px;
+  margin-bottom: 12px;
+  padding: 8px;
 }
 
 .fav-img-wrap img {
@@ -168,19 +200,22 @@
 
 .fav-info {
   flex: 1;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  min-width: 0;
 }
 
 .fav-name {
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: #1f2937;
   margin: 0;
-  line-height: 1.5;
-  
+  line-height: 1.4;
+  overflow: hidden;
+
   /* ตัดคำ 2 บรรทัด */
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -191,11 +226,11 @@
   background-color: #10b77e;
   color: white;
   border: none;
-  padding: 10px;
+  padding: 12px 18px;
   border-radius: 8px;
   font-family: "Sarabun", sans-serif;
   font-weight: 600;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -203,12 +238,40 @@
   gap: 8px;
   transition: all 0.2s;
   box-shadow: 0 4px 6px rgba(16, 183, 126, 0.2);
+  -webkit-tap-highlight-color: transparent;
+  white-space: nowrap;
+  min-width: 0;
+  min-height: 44px;
+}
+
+.btn-add-cart svg {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  display: block;
+  stroke: currentColor;
+}
+
+@media (max-width: 480px) {
+  /* มือถือจอแคบมาก: ตัดไอคอนออกให้เหลือแต่ข้อความ */
+  .btn-add-cart svg {
+    display: none;
+  }
+
+  .btn-add-cart {
+    gap: 4px;
+  }
 }
 
 .btn-add-cart:hover {
   background-color: #0d9668;
   transform: translateY(-1px);
   box-shadow: 0 6px 10px rgba(16, 183, 126, 0.3);
+}
+
+.btn-add-cart:active,
+.btn-go-shop:active {
+  transform: scale(0.98);
 }
 
 /* --- Empty State --- */
@@ -221,8 +284,9 @@
   text-align: center;
   background: white;
   border-radius: 16px;
-  border: 1px dashed #cbd5e1;
+  border: 2px dashed #cbd5e1;
   max-width: 400px;
+  width: 100%;
   margin: 40px auto;
 }
 
@@ -250,12 +314,13 @@
 .btn-go-shop {
   background-color: white;
   color: #10b77e;
-  border: 1px solid #10b77e;
+  border: 2px solid #10b77e;
   padding: 10px 24px;
   border-radius: 50px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .btn-go-shop:hover {
@@ -263,30 +328,180 @@
   color: white;
 }
 
-/* --- Responsive --- */
+/* ========================================= */
+/* 📱 Mobile version                         */
+/* ========================================= */
+
 @media (max-width: 768px) {
-  .fav-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 16px;
-  }
-  
   .content-container {
-    padding: 0 16px;
+    padding: 0 16px; /* เท่ากับ Home ที่ 640px */
   }
-  
+
+  .header-section {
+    padding: 16px 0;
+  }
+
+  .header-left {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .header-text-group {
+    min-width: 0;
+  }
+
+  .header-title {
+    font-size: 1.25rem;
+  }
+
+  .header-subtitle {
+    font-size: 0.8rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .back-circle {
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+  }
+
+  .content-section {
+    padding-top: 24px;
+    padding-bottom: 80px;
+  }
+
+  /* จัด empty state ให้อยู่กลางจอ (แนวตั้ง+แนวนอน) บนมือถือ */
+  .content-section:has(.empty-state) {
+    align-items: center;
+  }
+
+  .content-section:has(.empty-state) .content-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 0;
+  }
+
+  .empty-state {
+    margin: 24px 16px;
+    padding: 40px 24px;
+    max-width: none;
+  }
+
+  .empty-icon-box {
+    width: 72px;
+    height: 72px;
+    margin-bottom: 20px;
+  }
+
+  .empty-state h3 {
+    font-size: 1.05rem;
+    line-height: 1.4;
+  }
+
+  .empty-state p {
+    font-size: 0.9rem;
+    margin: 0 0 20px 0;
+  }
+
+  .btn-go-shop {
+    padding: 14px 28px;
+    min-height: 48px;
+    font-size: 1rem;
+  }
+
+  /* แถวละ 3 ชิ้นขั้นต่ำ */
+  .fav-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
   .fav-card {
-    padding: 16px;
+    padding: 10px;
+  }
+
+  .fav-img-wrap {
+    height: 100px;
+    margin-bottom: 8px;
+  }
+
+  .fav-name {
+    font-size: 0.8rem;
   }
 
   .btn-remove-fav {
-    width: 28px;
-    height: 28px;
-    top: 8px;
-    right: 8px;
+    width: 24px;
+    height: 24px;
+    top: 6px;
+    right: 6px;
   }
-  
+
   .btn-add-cart {
-    font-size: 0.85rem;
+    font-size: 0.78rem;
+    padding: 10px 12px;
+    min-height: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .content-container {
+    padding: 0 12px;
+  }
+
+  .header-section {
+    padding: 12px 0;
+  }
+
+  .header-title {
+    font-size: 1.1rem;
+  }
+
+  .content-section {
+    padding-top: 20px;
+    padding-bottom: 72px;
+  }
+
+  .empty-state {
+    margin: 16px 12px;
+    padding: 32px 20px;
+  }
+
+  .empty-state h3 {
+    font-size: 1rem;
+  }
+
+  /* แถวละ 3 ชิ้นขั้นต่ำ (มือถือเล็กก็คง 3 คอลัมน์) */
+  .fav-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .fav-card {
     padding: 8px;
+  }
+
+  .fav-img-wrap {
+    height: 82px;
+    margin-bottom: 6px;
+  }
+
+  .fav-name {
+    font-size: 0.72rem;
+  }
+
+  .btn-remove-fav {
+    width: 22px;
+    height: 22px;
+    top: 4px;
+    right: 4px;
+  }
+
+  .btn-add-cart {
+    padding: 10px 10px;
+    font-size: 0.72rem;
+    min-height: 38px;
   }
 }

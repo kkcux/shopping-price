@@ -10,6 +10,7 @@ import {
 import AddToListModal from './AddToListModal';
 import AuthRequiredModal from './AuthRequiredModal'; // ✅ Import Modal
 import { useFavorites } from '../../context/FavoritesContext';
+import { basePath } from '../../utils/basePath';
 
 const ProductSection = ({ title, icon, items = [], isFavorite, toggleFav, loading, onAddToCart, onViewAll }) => {
   const scrollRef = useRef(null);
@@ -106,7 +107,7 @@ const Home = () => {
   const loadFullIndex = () => {
     if (!fullSearchIndex && !isSearchingIndex) {
         setIsSearchingIndex(true);
-        fetch('data/categories/all_products_lite.json')
+        fetch(`${basePath}/data/categories/all_products_lite.json`)
             .then(res => res.json())
             .then(data => {
                 setFullSearchIndex(data);
@@ -216,7 +217,7 @@ const Home = () => {
       try {
         setLoading(true);
         // ✅ ใช้ไฟล์เล็กสำหรับหน้า Home (24KB)
-        const response = await fetch('data/home_products.json');
+        const response = await fetch(`${basePath}/data/home_products.json`);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
