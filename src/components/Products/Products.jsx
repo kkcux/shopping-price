@@ -7,7 +7,6 @@ import {
   Heart, ChevronDown, ChevronLeft, ChevronRight,
   Search, X, LayoutGrid, Store, Filter, Star, Flame, Tag, CheckCircle2, Plus, Package
 } from 'lucide-react';
-import toast, { Toaster } from 'react-hot-toast'; // ✅ Import Toast
 
 import AddToListModal from '../Home/AddToListModal';
 import { getCategorySlug, categorySlugMap } from '../../utils/categoryMap';

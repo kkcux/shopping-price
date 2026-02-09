@@ -49,7 +49,9 @@ export default function ListsEdit() {
           return userData.membership;
         }
       }
-    } catch {}
+    } catch {
+      // ignore malformed membership data in localStorage
+    }
     return { LOTUS: false, BIGC: false, MAKRO: false };
   });
 
@@ -175,7 +177,9 @@ export default function ListsEdit() {
             setMembership(userData.membership);
           }
         }
-      } catch {}
+      } catch {
+        // ignore malformed membership data in localStorage
+      }
     };
     
     // Listen custom event จากหน้า Profile
@@ -196,6 +200,15 @@ export default function ListsEdit() {
     };
   }, []);
 
+  const hasChanges = () => {
+    if (!originalList) return false;
+    const nameChanged = listName !== originalList.name;
+    const currentItemsStr = JSON.stringify(items);
+    const originalItemsStr = JSON.stringify(originalList.items || []);
+    const storesChanged = JSON.stringify(selectedStores) !== JSON.stringify(originalList.selectedStores || {});
+    return nameChanged || (currentItemsStr !== originalItemsStr) || storesChanged;
+  };
+
   // Prevent Tab Close if unsaved changes
   useEffect(() => {
     const handleBeforeUnload = (e) => {
@@ -206,7 +219,7 @@ export default function ListsEdit() {
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [items, listName, selectedStores, originalList]);
+  }, [items, listName, selectedStores, originalList, hasChanges]);
 
   /* ===== LOGIC ===== */
   const getSelectedCount = (stores) => {
@@ -278,15 +291,6 @@ export default function ListsEdit() {
   };
 
   const removeItem = (index) => setItems((prev) => prev.filter((_, i) => i !== index));
-
-  const hasChanges = () => {
-    if (!originalList) return false;
-    const nameChanged = listName !== originalList.name;
-    const currentItemsStr = JSON.stringify(items);
-    const originalItemsStr = JSON.stringify(originalList.items || []);
-    const storesChanged = JSON.stringify(selectedStores) !== JSON.stringify(originalList.selectedStores || {});
-    return nameChanged || (currentItemsStr !== originalItemsStr) || storesChanged;
-  };
 
   const handleBackClick = () => {
     if (hasChanges()) {

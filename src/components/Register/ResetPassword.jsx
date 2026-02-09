@@ -50,7 +50,7 @@ export default function ResetPassword() {
         if (!mounted) return;
         setResetEmail(email || "");
         setVerifying(false);
-      } catch (err) {
+      } catch {
         if (!mounted) return;
         setVerifying(false);
         setShowError("ลิงก์รีเซ็ตรหัสผ่านไม่ถูกต้องหรือหมดอายุ กรุณาขอลิงก์ใหม่อีกครั้ง");
@@ -92,8 +92,8 @@ export default function ResetPassword() {
       setTimeout(() => {
         navigate("/login", { replace: true });
       }, 1500); // รอ 1.5 วินาทีเพื่อให้ user เห็นข้อความสำเร็จ
-    } catch (err) {
-      const code = err?.code || "";
+    } catch (error) {
+      const code = error?.code || "";
       if (code === "auth/expired-action-code" || code === "auth/invalid-action-code") {
         setShowError("ลิงก์รีเซ็ตรหัสผ่านไม่ถูกต้องหรือหมดอายุ กรุณาขอลิงก์ใหม่อีกครั้ง");
       } else if (code === "auth/weak-password") {

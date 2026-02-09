@@ -19,9 +19,18 @@ const Login = () => {
   const location = useLocation(); 
   
   // ✅ 2. เพิ่ม State สำหรับเก็บค่าจากฟอร์ม
-  const [email, setEmail] = useState("");
+  const [remember, setRemember] = useState(() => {
+    return localStorage.getItem('remember_me') === 'true';
+  });
+  const [email, setEmail] = useState(() => {
+    const rememberedEmail = localStorage.getItem('remembered_email');
+    const isRemembered = localStorage.getItem('remember_me');
+    if (rememberedEmail && isRemembered === 'true') {
+      return rememberedEmail;
+    }
+    return "";
+  });
   const [password, setPassword] = useState("");
-  const [remember, setRemember] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState(""); // เอาไว้โชว์ข้อความสีแดงเวลากรอกผิด
 
@@ -31,17 +40,6 @@ const Login = () => {
   // ✅ Scroll to top เมื่อเข้าหน้า
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
-
-  // ✅ โหลดข้อมูล remembered email เมื่อเข้าหน้า Login
-  useEffect(() => {
-    const rememberedEmail = localStorage.getItem('remembered_email');
-    const isRemembered = localStorage.getItem('remember_me');
-    
-    if (rememberedEmail && isRemembered === 'true') {
-      setEmail(rememberedEmail);
-      setRemember(true);
-    }
   }, []);
 
   // ✅ จัดการการบันทึกเมื่อ remember checkbox เปลี่ยน

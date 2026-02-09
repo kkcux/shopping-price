@@ -90,7 +90,9 @@ export default function CreateMyList() {
           return userData.membership;
         }
       }
-    } catch {}
+    } catch {
+      // ignore malformed membership data in localStorage
+    }
     return { LOTUS: false, BIGC: false, MAKRO: false };
   });
 
@@ -136,7 +138,9 @@ export default function CreateMyList() {
             setMembership(userData.membership);
           }
         }
-      } catch {}
+      } catch {
+        // ignore malformed membership data in localStorage
+      }
     };
     
     loadMembership();

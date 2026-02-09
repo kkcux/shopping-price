@@ -127,7 +127,7 @@ export default function VerifyCode() {
       await new Promise((r) => setTimeout(r, 700));
 
       setCooldown(30); // ส่งซ้ำได้อีกทีใน 30 วิ
-    } catch (err) {
+    } catch {
       setError("ไม่สามารถส่งรหัสใหม่ได้ กรุณาลองอีกครั้ง");
     } finally {
       setLoading(false);
@@ -151,7 +151,7 @@ export default function VerifyCode() {
 
       // ✅ ถ้าถูกต้อง → ไปหน้าตั้งรหัสผ่านใหม่ (คุณเปลี่ยน route ได้)
       navigate("/reset-password", { state: { email: emailFromState } });
-    } catch (err) {
+    } catch {
       setError("รหัสไม่ถูกต้อง กรุณาลองใหม่");
     } finally {
       setLoading(false);
