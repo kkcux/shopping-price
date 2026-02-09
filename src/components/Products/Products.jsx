@@ -5,7 +5,7 @@ import Footer from '../Home/Footer';
 import './Products.css';
 import {
   Heart, ChevronDown, ChevronLeft, ChevronRight,
-  Search, X, LayoutGrid, Store, Filter, Star, Flame, Tag, CheckCircle2, Plus
+  Search, X, LayoutGrid, Store, Filter, Star, Flame, Tag, CheckCircle2, Plus, Package
 } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast'; // ✅ Import Toast
 
@@ -67,6 +67,7 @@ const Products = () => {
     { id: 'recommended', label: 'สินค้าแนะนำ', icon: <Star size={16} className="text-yellow-500" /> },
     { id: 'popular', label: 'สินค้ายอดนิยม', icon: <Flame size={16} className="text-orange-500" /> },
     { id: 'promo', label: 'สินค้าโปรโมชั่น', icon: <Tag size={16} className="text-emerald-500" /> },
+    { id: 'pack', label: 'สินค้าแพ็ค', icon: <Package size={16} className="text-sky-500" /> },
   ];
 
   // --- Effects ---
@@ -114,16 +115,26 @@ const Products = () => {
         }
 
         // Filter out nulls and ensure basic fields
-        products = products.filter(item => item && item.name).map(item => {
-            if(!item.tags) {
-                const randomVal = Math.random();
-                item.tags = [];
-                if (randomVal > 0.8) item.tags.push('recommended');
-                else if (randomVal > 0.6) item.tags.push('popular');
-                else if (randomVal > 0.4) item.tags.push('promo');
+        const packRegex = /(แพ็ค|แพค|แพ็ก|pack)\b/i;
+        products = products
+          .filter(item => item && item.name)
+          .map(item => {
+            const name = item.name || '';
+            let tags = Array.isArray(item.tags) ? [...item.tags] : [];
+
+            if (tags.length === 0) {
+              const randomVal = Math.random();
+              if (randomVal > 0.8) tags.push('recommended');
+              else if (randomVal > 0.6) tags.push('popular');
+              else if (randomVal > 0.4) tags.push('promo');
             }
-            return item;
-        });
+
+            if (packRegex.test(name) && !tags.includes('pack')) {
+              tags.push('pack');
+            }
+
+            return { ...item, tags };
+          });
 
         setAllProducts(products);
       } catch (error) { console.error("Error loading products:", error); } 
