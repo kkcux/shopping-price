@@ -212,29 +212,69 @@ export default function CreateMyList() {
     { id: "c5", name: "ซอฟเท็กซ์ แผ่นรองซับ ขนาดใหญ่ 10 ชิ้น", img: "https://o2o-static.lotuss.com/products/105727/791156.jpg", qty: 1 },
   ]);
 
-  const increaseCatalogQty = (id) => setCatalog(prev => prev.map(i => i.id === id ? { ...i, qty: i.qty + 1 } : i));
-  const decreaseCatalogQty = (id) => setCatalog(prev => prev.map(i => i.id === id && i.qty > 1 ? { ...i, qty: i.qty - 1 } : i));
+  const increaseCatalogQty = (id, e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setCatalog(prev => prev.map(i => i.id === id ? { ...i, qty: i.qty + 1 } : i));
+  };
+  const decreaseCatalogQty = (id, e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setCatalog(prev => prev.map(i => i.id === id && i.qty > 1 ? { ...i, qty: i.qty - 1 } : i));
+  };
 
   const handleSelectFromCatalog = (product) => {
+    // ✅ ใช้จำนวนจากตัวเลือกสินค้าแนะนำ เช่น ตั้งไว้ที่ 2 แล้วกดเพิ่ม = +2
+    const qtyToAdd =
+      typeof product.qty === "number" && Number.isFinite(product.qty)
+        ? Math.max(1, product.qty)
+        : 1;
+
     const existingIndex = items.findIndex((item) => item.name === product.name); 
     if (existingIndex !== -1) {
       setItems((prev) => {
         const next = [...prev];
-        next[existingIndex].qty += product.qty;
+        const currentRaw = next[existingIndex].qty;
+        const currentQty =
+          typeof currentRaw === "number" && Number.isFinite(currentRaw)
+            ? currentRaw
+            : parseInt(currentRaw, 10) || 1;
+        next[existingIndex].qty = currentQty + qtyToAdd;
         return next;
       });
     } else {
-      setItems((prev) => [...prev, { ...product }]);
+      setItems((prev) => [
+        ...prev,
+        { ...product, qty: qtyToAdd }
+      ]);
     }
     toast.success(`เพิ่ม ${product.name} แล้ว`, { duration: 1500, icon: <CheckCircle2 size={18} color="#10b981" /> });
   };
 
-  const updateQty = (index, delta) => {
-    setItems((prev) => {
-      const next = [...prev];
-      next[index].qty = Math.max(1, next[index].qty + delta);
-      return next;
-    });
+  const updateQty = (index, delta, e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    // ✅ ให้เพิ่ม/ลดทีละ 1 แบบตรง ๆ และกันค่าเพี้ยนจาก localStorage (เช่น string)
+    setItems((prev) =>
+      prev.map((item, i) => {
+        if (i !== index) return item;
+        const currentQtyRaw = item.qty;
+        const currentQty =
+          typeof currentQtyRaw === "number" && Number.isFinite(currentQtyRaw)
+            ? currentQtyRaw
+            : parseInt(currentQtyRaw, 10) || 1;
+
+        const newQty = Math.max(1, currentQty + delta);
+        return { ...item, qty: newQty };
+      })
+    );
   };
 
   const removeItem = (index) => setItems((prev) => prev.filter((_, i) => i !== index));
@@ -382,9 +422,9 @@ export default function CreateMyList() {
                   <div className="le-imgWrap"><img src={p.img} alt={p.name} /></div>
                   <div className="le-cardName">{p.name}</div>
                   <div className="le-qty">
-                    <button onClick={() => decreaseCatalogQty(p.id)}><Minus size={14} /></button>
+                    <button onClick={(e) => decreaseCatalogQty(p.id, e)}><Minus size={14} /></button>
                     <span>{p.qty}</span>
-                    <button onClick={() => increaseCatalogQty(p.id)}><Plus size={14} /></button>
+                    <button onClick={(e) => increaseCatalogQty(p.id, e)}><Plus size={14} /></button>
                   </div>
                   <button className="le-select" onClick={() => handleSelectFromCatalog(p)}>
                     <Plus size={16} strokeWidth={3} style={{marginRight:4, transform: "translateY(3px)"}}/> เพิ่ม
@@ -399,16 +439,16 @@ export default function CreateMyList() {
               <div className="le-boxTitle">รายการที่เลือก ({items.length})</div>
             </div>
             {items.length > 0 ? (
-              <div className="le-cards">
+              <div className="le-cards-scroll">
                 {items.map((item, idx) => (
                   <div key={idx} className="le-card">
                     <button className="le-remove" onClick={() => removeItem(idx)}><Trash2 size={14} /></button>
                     <div className="le-imgWrap"><img src={item.img} alt={item.name} /></div>
                     <div className="le-cardName">{item.name}</div>
                     <div className="le-qty">
-                      <button onClick={() => updateQty(idx, -1)}><Minus size={14} /></button>
+                      <button onClick={(e) => updateQty(idx, -1, e)}><Minus size={14} /></button>
                       <span>{item.qty}</span>
-                      <button onClick={() => updateQty(idx, 1)}><Plus size={14} /></button>
+                      <button onClick={(e) => updateQty(idx, 1, e)}><Plus size={14} /></button>
                     </div>
                   </div>
                 ))}

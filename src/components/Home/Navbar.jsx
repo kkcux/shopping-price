@@ -1,9 +1,7 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { ShoppingCart, Bell, ArrowLeft } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ShoppingCart, ArrowLeft, Menu, X } from 'lucide-react';
 import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
-import { googleLogout } from '@react-oauth/google';
 import './Navbar.css';
-import NotificationList from '../Notification/NotificationList';
 
 // ✅ 1. Import Firebase Auth
 import { auth } from '../../firebase-config'; 
@@ -13,8 +11,7 @@ function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   
-  const [showNotif, setShowNotif] = useState(false);
-  const notifRef = useRef(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // โหลดข้อมูล User จาก LocalStorage
   const [user, setUser] = useState(() => {
@@ -68,15 +65,10 @@ function Navbar() {
   }, [location]);
 
 
+  // ปิดเมนูมือถือเมื่อเปลี่ยน route
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (notifRef.current && !notifRef.current.contains(event.target)) {
-        setShowNotif(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
   const getBackBtnConfig = () => {
@@ -117,6 +109,7 @@ function Navbar() {
             PriceFinder
           </Link>
           
+          <div className="nav-right">
           <ul className="menu">
             <li><NavLink to="/" end>HOME</NavLink></li>
             <li><NavLink to="/favorites">FAVORITES</NavLink></li>
@@ -167,21 +160,26 @@ function Navbar() {
                 <button className="login-btn">LOGIN</button>
               </Link>
             )}
-
-            <div className="notif-wrapper" ref={notifRef} style={{ position: 'relative', order: 2 }}>
-              <div 
-                className={`bell-icon ${showNotif ? 'active' : ''}`} 
-                onClick={() => setShowNotif(!showNotif)}
-              >
-                <Bell size={22} />
-              </div>
-              {showNotif && (
-                <div style={{ position: 'absolute', top: '55px', right: '-10px', zIndex: 1000 }}>
-                  <NotificationList />
-                </div>
-              )}
-            </div>
           </div>
+
+          <button
+            type="button"
+            className="nav-hamburger"
+            aria-label="เปิดเมนู"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+          </div>
+        </div>
+
+        {/* เมนูมือถือ (แสดงเมื่อกดฮัมเบอร์เกอร์) */}
+        <div className={`mobile-menu ${mobileMenuOpen ? 'mobile-menu-open' : ''}`}>
+          <ul className="mobile-menu-list">
+            <li><NavLink to="/" end onClick={() => setMobileMenuOpen(false)}>HOME</NavLink></li>
+            <li><NavLink to="/favorites" onClick={() => setMobileMenuOpen(false)}>FAVORITES</NavLink></li>
+            <li><NavLink to="/mylists" onClick={() => setMobileMenuOpen(false)}>MYLISTS</NavLink></li>
+          </ul>
         </div>
       </nav>
     </>

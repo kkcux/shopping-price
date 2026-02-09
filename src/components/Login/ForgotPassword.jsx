@@ -55,7 +55,7 @@ const ForgotPassword = () => {
         const querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
-          setMessage({ type: "error", text: "ไม่พบอีเมลนี้ในระบบ" });
+          setMessage({ type: "error", text: "ไม่พบอีเมลนี้ในระบบหรืออีเมลไม่ถูกต้อง/หากลงทะเบียนด้วย Google กรุณาเข้าสู่ระบบผ่าน Google แทน" });
           setLoading(false);
           return;
         }
