@@ -73,6 +73,8 @@
   display: flex;
   gap: 12px;
   align-items: center;
+  flex-shrink: 0;
+  min-width: 0;
 }
 
 /* --- หมวดหมู่ + ตัวกรอง รวมเป็นกลุ่มเดียวกัน --- */
@@ -82,11 +84,13 @@
   align-items: stretch;
 }
 .filter-dropdown-group .tool-wrapper {
-  flex: 1;
-  min-width: 0;
+  flex: 0 0 auto !important;
+  min-width: fit-content !important;
+  width: auto !important;
 }
 .filter-dropdown-group .tool-btn {
-  width: 100%;
+  width: auto !important;
+  min-width: fit-content !important;
   height: 44px;
   min-height: 44px;
   box-sizing: border-box;
@@ -120,6 +124,12 @@
   flex-shrink: 0;
   width: auto;
   height: auto;
+}
+.tool-btn-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
 }
 .tool-btn:hover {
   border-color: #10b981;
@@ -575,6 +585,16 @@
     min-width: 0;
     flex: 1 1 100%;
   }
+  .filter-dropdown-group .tool-wrapper {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    width: auto !important;
+  }
+  .filter-dropdown-group .tool-btn {
+    width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden;
+  }
   .tool-wrapper .tool-btn {
     width: 100%;
     min-width: 0 !important;
@@ -584,6 +604,18 @@
     justify-content: space-between;
     min-width: 0 !important;
     width: 100%;
+    overflow: hidden;
+  }
+  .tool-btn-text {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+  }
+  .tool-btn-text > span,
+  .tool-btn-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .categories-page .cat-product-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -665,10 +697,20 @@
     min-width: 0;
     flex: 1;
   }
+  .filter-dropdown-group .tool-wrapper {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    width: auto !important;
+  }
+  .filter-dropdown-group .tool-btn {
+    width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden;
+  }
   .tool-wrapper {
     width: 100%;
     min-width: 0;
-    flex: 1 1 100%;
+    flex: 1 1 0 !important;
   }
   .tool-wrapper .tool-btn {
     width: 100%;
@@ -680,8 +722,15 @@
     min-width: 0 !important;
     padding: 12px 14px;
     font-size: 0.85rem;
+    overflow: hidden;
   }
-  .tool-btn span {
+  .tool-btn-text {
+    min-width: 0;
+    flex: 1;
+    overflow: hidden;
+  }
+  .tool-btn-text > span,
+  .tool-btn-text {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;

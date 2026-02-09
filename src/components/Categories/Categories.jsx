@@ -5,7 +5,7 @@ import Footer from '../Home/Footer';
 import './Categories.css';
 import {
   Heart, Search, ChevronDown, ChevronLeft, ChevronRight,
-  LayoutGrid, Store, X, Star, Flame, Tag, Filter
+  LayoutGrid, Store, X, Star, Flame, Tag, Filter, Package
 } from 'lucide-react';
 import AddToListModal from '../Home/AddToListModal';
 import AuthRequiredModal from '../Home/AuthRequiredModal';
@@ -57,6 +57,7 @@ const Categories = () => {
     { id: 'recommended', label: 'สินค้าแนะนำ', icon: <Star size={16} className="text-yellow-500" /> },
     { id: 'popular', label: 'สินค้ายอดนิยม', icon: <Flame size={16} className="text-orange-500" /> },
     { id: 'promo', label: 'สินค้าโปรโมชั่น', icon: <Tag size={16} className="text-emerald-500" /> },
+    { id: 'pack', label: 'สินค้าที่เป็นแพ็ค', icon: <Package size={16} className="text-blue-500" /> },
   ];
 
   useEffect(() => {
@@ -184,6 +185,17 @@ const Categories = () => {
         if (specialFilter !== 'all') {
             if (specialFilter === 'favorites') {
                 processed = processed.filter(item => isFavorite(item.name));
+            } else if (specialFilter === 'pack') {
+                // กรองสินค้าที่เป็นแพ็ค (ตรวจสอบทั้ง tag และชื่อสินค้า)
+                processed = processed.filter(p => {
+                    const hasPackTag = p.tags && p.tags.includes('pack');
+                    const nameHasPack = p.name && (
+                        p.name.toLowerCase().includes('แพ็ค') || 
+                        p.name.toLowerCase().includes('pack') ||
+                        p.name.toLowerCase().includes('แพค')
+                    );
+                    return hasPackTag || nameHasPack;
+                });
             } else {
                 processed = processed.filter(p => p.tags && p.tags.includes(specialFilter));
             }
@@ -330,7 +342,7 @@ const Categories = () => {
                             onClick={() => setShowCatMenu(!showCatMenu)}
                             style={{ justifyContent: 'space-between' }}
                         >
-                            <span style={{display:'flex', alignItems:'center', gap:'8px'}}>
+                            <span className="tool-btn-text">
                                 <LayoutGrid size={18} />
                                 {activeCategory === 'ทั้งหมด' ? 'หมวดหมู่: ทั้งหมด' : activeCategory}
                             </span>
@@ -358,7 +370,7 @@ const Categories = () => {
                             onClick={() => setShowFilterMenu(!showFilterMenu)}
                             style={{ justifyContent: 'space-between' }}
                         >
-                            <span style={{display:'flex', alignItems:'center', gap:'8px'}}>
+                            <span className="tool-btn-text">
                                 <Filter size={18} />
                                 {getSpecialFilterLabel()}
                             </span>
