@@ -256,7 +256,9 @@ export default function MyLists3() {
             const row = JSON.parse(line);
             const n = normalizeRow(row);
             if (n.retailer && n.name) normalized.push(n);
-          } catch {}
+        } catch {
+          // ignore errors while normalizing product rows
+        }
         }
         if (!mounted) return;
         setAllProducts(normalized);

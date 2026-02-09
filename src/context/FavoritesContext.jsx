@@ -1,11 +1,26 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { auth, db } from '../firebase-config';
 import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const FavoritesContext = createContext();
 
 export const useFavorites = () => useContext(FavoritesContext);
+
+const loadFavoritesFromFirestore = async (uid, setFavorites) => {
+  try {
+    const docRef = doc(db, "users", uid);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists() && docSnap.data().favorites) {
+      setFavorites(docSnap.data().favorites);
+    } else {
+      setFavorites([]);
+    }
+  } catch (error) {
+    console.error("Error loading favorites from Firestore:", error);
+  }
+};
 
 export const FavoritesProvider = ({ children }) => {
   const [favorites, setFavorites] = useState([]);
@@ -18,7 +33,7 @@ export const FavoritesProvider = ({ children }) => {
       setCurrentUser(user);
       if (user) {
         // Logged In: Load from Firestore
-        await loadFavoritesFromFirestore(user.uid);
+        await loadFavoritesFromFirestore(user.uid, setFavorites);
       } else {
         // Guest: Load from LocalStorage
         const localFavs = JSON.parse(localStorage.getItem('favoritesItems')) || [];
@@ -29,25 +44,6 @@ export const FavoritesProvider = ({ children }) => {
 
     return () => unsubscribe();
   }, []);
-
-  // 2. Load from Firestore
-  const loadFavoritesFromFirestore = async (uid) => {
-    try {
-      const docRef = doc(db, "users", uid);
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists() && docSnap.data().favorites) {
-        setFavorites(docSnap.data().favorites);
-      } else {
-        // If no data in Firestore, maybe merge local favorites? 
-        // For now, let's just start empty or keep local if needed.
-        // Let's implement a simple "first login merge" if we wanted to be fancy,
-        // but to keep it safe, let's just use what's in DB.
-        setFavorites([]);
-      }
-    } catch (error) {
-      console.error("Error loading favorites from Firestore:", error);
-    }
-  };
 
   // 3. Toggle Favorite
   const toggleFavorite = async (product) => {
