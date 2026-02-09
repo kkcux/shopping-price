@@ -57,7 +57,7 @@ const Categories = () => {
     { id: 'recommended', label: 'สินค้าแนะนำ', icon: <Star size={16} className="text-yellow-500" /> },
     { id: 'popular', label: 'สินค้ายอดนิยม', icon: <Flame size={16} className="text-orange-500" /> },
     { id: 'promo', label: 'สินค้าโปรโมชั่น', icon: <Tag size={16} className="text-emerald-500" /> },
-    { id: 'pack', label: 'สินค้าที่เป็นแพ็ค', icon: <Package size={16} className="text-blue-500" /> },
+    { id: 'pack', label: 'สินค้าแพ็ค', icon: <Package size={16} className="text-sky-500" /> },
   ];
 
   useEffect(() => {
@@ -109,16 +109,28 @@ const Categories = () => {
         }
 
         // Filter out nulls and ensure basic fields
-        products = products.filter(item => item && item.name).map(item => {
-            if (!item.tags) {
-                const randomVal = Math.random();
-                item.tags = [];
-                if (randomVal > 0.8) item.tags.push('recommended');
-                else if (randomVal > 0.6) item.tags.push('popular');
-                else if (randomVal > 0.4) item.tags.push('promo');
+        const packRegex = /(แพ็ค|แพค|แพ็ก|pack)\b/i;
+        products = products
+          .filter(item => item && item.name)
+          .map(item => {
+            const name = item.name || '';
+            let tags = Array.isArray(item.tags) ? [...item.tags] : [];
+
+            // ถ้าไม่มีแท็กเลย ให้สุ่ม recommended / popular / promo แบบเดิม
+            if (tags.length === 0) {
+              const randomVal = Math.random();
+              if (randomVal > 0.8) tags.push('recommended');
+              else if (randomVal > 0.6) tags.push('popular');
+              else if (randomVal > 0.4) tags.push('promo');
             }
-            return item;
-        });
+
+            // ถ้าชื่อสินค้าดูเหมือนเป็นแพ็ค ให้ติดแท็ก pack เพิ่ม
+            if (packRegex.test(name) && !tags.includes('pack')) {
+              tags.push('pack');
+            }
+
+            return { ...item, tags };
+          });
 
         setAllProducts(products);
 
@@ -185,17 +197,6 @@ const Categories = () => {
         if (specialFilter !== 'all') {
             if (specialFilter === 'favorites') {
                 processed = processed.filter(item => isFavorite(item.name));
-            } else if (specialFilter === 'pack') {
-                // กรองสินค้าที่เป็นแพ็ค (ตรวจสอบทั้ง tag และชื่อสินค้า)
-                processed = processed.filter(p => {
-                    const hasPackTag = p.tags && p.tags.includes('pack');
-                    const nameHasPack = p.name && (
-                        p.name.toLowerCase().includes('แพ็ค') || 
-                        p.name.toLowerCase().includes('pack') ||
-                        p.name.toLowerCase().includes('แพค')
-                    );
-                    return hasPackTag || nameHasPack;
-                });
             } else {
                 processed = processed.filter(p => p.tags && p.tags.includes(specialFilter));
             }
