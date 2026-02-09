@@ -274,13 +274,13 @@
   box-shadow: 0 2px 6px rgba(16, 183, 126, 0.1);
 }
 
-/* ราคารวมที่ถูกที่สุด: ใช้โทนฟ้าให้ต่างจาก best ของแต่ละรายการ */
+/* ราคารวมที่ถูกที่สุด: แค่สีตัวหนังสือตรงกับมือถือ พื้นหลังเหมือนร้านอื่น */
 .ml3-tr.total .ml3-pill.best {
-  background: #eff6ff; /* ฟ้าอ่อนมาก */
-  color: #2563eb; /* น้ำเงินกลาง ๆ อ่านง่าย */
-  border-color: #dbeafe;
-  box-shadow: 0 1px 4px rgba(59, 130, 246, 0.12);
-  transform: none; /* ไม่ต้องขยายให้เด้งเหมือนแถวสินค้า */
+  background: #f1f5f9;
+  color: #2563eb;
+  border: none;
+  box-shadow: none;
+  transform: none;
 }
 
 /* Total Row */
@@ -382,6 +382,12 @@
 
 .ml3-shop-row > div:first-child {
   padding-left: 6px; /* ให้ตรงกับ header คอลัมน์แรก */
+}
+
+/* Desktop: wrapper โปร่งใส ให้ layout ตามเดิม */
+.ml3-shop-row > .ml3-shop-row-1-unified,
+.ml3-shop-row > .ml3-shop-row-2-unified {
+  display: contents;
 }
 
 .ml3-shop-row > div:last-child {
@@ -986,52 +992,77 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr auto;
-    gap: 6px;
+    gap: 0;
     min-width: 0;
-    padding: 10px 12px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
     background: #fff;
     border: 1px solid #e2e8f0;
+    border-radius: 12px;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
   }
 
-  /* แถว 1: ร้านค้า | ระยะทาง | แถว 2: สมาชิก | ราคารวม | แถว 3: ปุ่มเต็มความกว้าง */
-  .ml3-shop-row > .ml3-shop-cell:nth-child(1) { grid-column: 1; grid-row: 1; min-width: 0; }
-  .ml3-shop-row > .ml3-shop-cell:nth-child(2) { grid-column: 2; grid-row: 1; min-width: 0; }
-  .ml3-shop-row > .ml3-shop-cell:nth-child(3) { grid-column: 1; grid-row: 2; min-width: 0; }
-  .ml3-shop-row > .ml3-shop-cell:nth-child(4) { grid-column: 2; grid-row: 2; min-width: 0; }
+  /* แถว 1: ร้านค้า+ระยะทาง | แถว 2: สมาชิก | ราคารวม | แถว 3: ปุ่ม */
+  .ml3-shop-row > .ml3-shop-row-1-unified {
+    display: flex !important;
+    grid-column: 1 / -1;
+    grid-row: 1;
+    gap: 20px;
+    align-items: center;
+    padding: 10px 16px;
+    min-height: 48px;
+    background: #f8fafc;
+    border-radius: 10px;
+    min-width: 0;
+  }
+  .ml3-shop-row > .ml3-shop-row-1-unified > .ml3-shop-brand {
+    flex: 1;
+  }
+  .ml3-shop-row > .ml3-shop-row-1-unified > .ml3-shop-muted {
+    flex: 1;
+  }
 
-  .ml3-shop-row > .ml3-shop-cell {
+  /* แสดง label: ร้านค้า, ระยะทาง, สถานะสมาชิก, ราคารวม */
+  .ml3-shop-row .ml3-shop-label[data-label]::before {
+    content: attr(data-label);
+    font-size: 0.8rem;
+    color: #1e293b;
+    font-weight: 700;
+    margin-right: 10px;
+    flex-shrink: 0;
+    letter-spacing: 0.3px;
+  }
+  .ml3-shop-row > .ml3-shop-row-2-unified {
+    display: flex !important;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    gap: 0;
+    align-items: stretch;
+    margin-top: 10px;
+    padding: 10px 16px;
+    min-height: 48px;
+    background: #f8fafc;
+    border-radius: 10px;
+    min-width: 0;
+  }
+  .ml3-shop-row > .ml3-shop-row-2-unified > div {
+    flex: 1;
     display: flex;
     align-items: center;
-    justify-content: center !important;
-    gap: 6px;
-    width: 100%;
-    min-width: 0;
-    min-height: 48px;
-    text-align: left;
-    padding: 6px 4px 6px 10px;
-    background: #f8fafc;
-    border-radius: 6px;
-    overflow: hidden;
+    justify-content: center;
+    background: transparent !important;
+    padding: 4px 12px;
+    min-height: auto;
+    margin: 0;
+    border-radius: 0;
   }
 
-  /* บรรทัดแรก: มีพื้นหลังเหมือนแถวอื่น */
-  .ml3-shop-row > .ml3-shop-cell:nth-child(1),
-  .ml3-shop-row > .ml3-shop-cell:nth-child(2) {
-    padding: 6px 4px;
+  /* โลโก้ไม่ต้องมีกรอบแยก - ให้รวมกับพื้นหลัง */
+  .ml3-shop-row-1-unified .ml3-shop-logo {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
   }
-
-  /* label สั้นลง ให้ชิด ไม่ล้น */
-  .ml3-shop-row > .ml3-shop-cell::before {
-    content: attr(data-label);
-    font-size: 0.75rem;
-    color: var(--text-muted);
-    font-weight: 600;
-    width: 70px;
-    min-width: 70px;
-    flex-shrink: 0;
-  }
-
 
   .ml3-shop-row > div:last-child {
     grid-column: 1 / -1;
@@ -1039,24 +1070,24 @@
     justify-content: center !important;
     flex-direction: row;
     flex-wrap: wrap;
-    padding-top: 10px;
-    margin-top: 4px;
+    padding-top: 14px;
+    margin-top: 8px;
     border-top: 1px solid #e2e8f0;
-    gap: 8px;
+    gap: 10px;
     background: transparent;
   }
 
   .ml3-shop-row > div:last-child .ml3-go-shop,
   .ml3-shop-row > div:last-child .ml3-go-navigate {
     flex: 0 1 auto;
-    min-width: 100px;
-    padding: 6px 12px;
-    font-size: 0.75rem;
+    min-width: 110px;
+    padding: 8px 16px;
+    font-size: 0.8rem;
     justify-content: center;
   }
 
   .ml3-shop-brand {
-    gap: 4px;
+    gap: 8px;
   }
 
   .ml3-shop-brand span {
@@ -1064,14 +1095,14 @@
   }
 
   .ml3-shop-logo {
-    width: 36px;
-    height: 36px;
-    border-radius: 6px;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
     flex-shrink: 0;
   }
 
   .ml3-shop-muted {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
   }
 
   .ml3-shop-muted svg {
@@ -1081,7 +1112,7 @@
   }
 
   .ml3-shop-price {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     transform: none;
   }
 
@@ -1111,18 +1142,23 @@
     padding: 2px 8px;
   }
 
-  .ml3-shop-row > div:nth-child(3) span {
+  .ml3-shop-row-2-unified div:nth-child(1) span {
     padding: 5px 12px !important;
     font-size: 0.75rem !important;
     border-radius: 16px !important;
-    background-color: #f8fafc !important;
+    background-color: transparent !important;
     border-color: #e2e8f0 !important;
     box-shadow: none !important;
     white-space: nowrap !important;
   }
 
-  .ml3-shop-row > div:nth-child(4) span {
+  .ml3-shop-row-2-unified .ml3-shop-price {
     font-size: 0.85rem !important;
+  }
+
+  /* จำนวนราคา (ที่ไม่ใช่ร้านที่ถูกที่สุด) ให้สีจางลง */
+  .ml3-shop-row:not(.ml3-shop-row-cheapest) .ml3-shop-price {
+    color: #94a3b8 !important;
   }
 
   /* Save Button */

@@ -470,12 +470,6 @@ export default function MyLists3() {
     return ["LOTUS", "BIGC", "MAKRO"].filter(key => selectedStores[key]);
   }, [selectedStores]);
 
-  // ✅ ให้ตารางตรงคอลัมน์เสมอ ตามจำนวนร้านที่เลือก
-  const priceGridTemplate = useMemo(() => {
-    const cols = Math.max(1, selectedStoreKeys.length);
-    return `2fr repeat(${cols}, 1fr)`;
-  }, [selectedStoreKeys.length]);
-
   const rows = useMemo(() => {
     return wanted.map((w) => {
       const l = matchProduct(w.name, lotusList);
@@ -517,16 +511,6 @@ export default function MyLists3() {
     });
     return result;
   }, [totals, selectedStoreKeys]);
-
-  // ✅ หา "ราคารวมที่ถูกที่สุด" (เฉพาะร้านที่เลือก และต้อง > 0)
-  const minTotalKey = useMemo(() => {
-    const entries = selectedStoreKeys
-      .map((k) => [k, filteredTotals[k]])
-      .filter(([, v]) => typeof v === "number" && v > 0);
-    if (!entries.length) return null;
-    entries.sort((a, b) => a[1] - b[1]);
-    return entries[0][0];
-  }, [selectedStoreKeys, filteredTotals]);
 
   /* ===== ✅ “แก้แค่ระยะทาง” ของร้านค้าแนะนำ ===== */
   const recommendShops = useMemo(() => {
@@ -781,11 +765,11 @@ export default function MyLists3() {
             </div>
             <div className="ml3-topRight">
               <button className="ml3-btn-edit-pill" onClick={handleEditClick}>
-                <Pencil size={20} strokeWidth={2.5} />
+                <Pencil size={16} strokeWidth={2.5} />
                 <span>แก้ไข</span>
               </button>
               <button className="ml3-btn-delete-circle" onClick={handleDeleteClick}>
-                <Trash2 size={20} strokeWidth={2} />
+                <Trash2 size={18} strokeWidth={2} />
               </button>
             </div>
           </div>
@@ -799,7 +783,7 @@ export default function MyLists3() {
             </div>
 
             <div className="ml3-table">
-              <div className="ml3-thead" style={{ gridTemplateColumns: priceGridTemplate }}>
+              <div className="ml3-thead">
                 <div className="ml3-th left">รายการสินค้า</div>
                 {selectedStoreKeys.map((k) => (
                   <div className="ml3-th" key={k}>
@@ -809,7 +793,7 @@ export default function MyLists3() {
               </div>
 
               {rows.map((it, idx) => (
-                <div className="ml3-tr" key={idx} style={{ gridTemplateColumns: priceGridTemplate }}>
+                <div className="ml3-tr" key={idx}>
                   <div className="ml3-td left">
                     <div className="ml3-img-container">
                       <img
@@ -848,17 +832,17 @@ export default function MyLists3() {
                 </div>
               ))}
 
-              <div className="ml3-tr total" style={{ gridTemplateColumns: priceGridTemplate }}>
+              <div className="ml3-tr total">
                 <div className="ml3-td left total-label">รวมทั้งหมด</div>
                 {selectedStoreKeys.map((k) => {
                   const storeLabel = k === 'LOTUS' ? "LOTUS'S" : k === 'BIGC' ? "BIG C" : "MAKRO";
+                  const totalVal = filteredTotals[k] || 0;
+                  const minTotal = Math.min(...selectedStoreKeys.map(key => filteredTotals[key] || Infinity).filter(v => v > 0), Infinity);
+                  const isCheapest = totalVal > 0 && totalVal === minTotal;
                   return (
                   <div className="ml3-td" key={k} data-store={storeLabel}>
-                    <span
-                      className={`ml3-pill ${minTotalKey === k ? "best" : ""}`}
-                      style={{ fontWeight: 800, color: minTotalKey === k ? undefined : "#64748b" }}
-                    >
-                      {filteredTotals[k] > 0 ? `฿${Math.round(filteredTotals[k]).toLocaleString()}` : "-"}
+                    <span className={`ml3-pill ${isCheapest ? "best" : ""}`} style={{ fontWeight: 800, color: isCheapest ? undefined : "#94a3b8" }}>
+                      {totalVal > 0 ? `฿${Math.round(totalVal).toLocaleString()}` : "-"}
                     </span>
                   </div>
                 );
@@ -900,7 +884,8 @@ export default function MyLists3() {
                   className={`ml3-shop-row ${isCheapest ? 'ml3-shop-row-cheapest' : ''}`} 
                   key={s.key}
                 >
-                  <div className="ml3-shop-brand ml3-shop-cell" data-label="ร้านค้า" style={{ 
+                  <div className="ml3-shop-row-1-unified">
+                  <div className="ml3-shop-brand ml3-shop-label" data-label="ร้านค้า" style={{ 
                     display: 'flex', 
                     alignItems: 'center', 
                     justifyContent: 'flex-start',
@@ -931,7 +916,7 @@ export default function MyLists3() {
                       {s.name}
                     </span>
                   </div>
-                  <div className="ml3-shop-muted ml3-shop-cell" data-label="ระยะทาง" style={{ 
+                  <div className="ml3-shop-muted ml3-shop-label" data-label="ระยะทาง" style={{ 
                     color: "#64748b",
                     display: 'flex',
                     alignItems: 'center',
@@ -942,7 +927,9 @@ export default function MyLists3() {
                     <MapPin size={12} />
                     <span>{s.distance}</span>
                   </div>
-                  <div className="ml3-shop-cell" data-label="สถานะสมาชิก" style={{ 
+                  </div>
+                  <div className="ml3-shop-row-2-unified">
+                  <div className="ml3-shop-label" data-label="สถานะสมาชิก" style={{
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -964,8 +951,8 @@ export default function MyLists3() {
                       {isMember ? '✓ สมาชิก' : 'ไม่ใช่สมาชิก'}
                     </span>
                   </div>
-                  <div className="ml3-shop-price ml3-shop-cell" data-label="ราคารวม" style={{ 
-                    color: isCheapest ? "#10b77e" : "#64748b", 
+                  <div className="ml3-shop-price ml3-shop-label" data-label="ราคารวม" style={{ 
+                    color: isCheapest ? "#10b77e" : "#1e293b", 
                     fontSize: "1.1rem",
                     fontWeight: "700",
                     display: 'flex',
@@ -976,6 +963,7 @@ export default function MyLists3() {
                   }}>
                     <span>฿{Math.round(s.totalPrice).toLocaleString()}</span>
                     {isCheapest && <CheckCircle2 size={16} color="#10b77e" />}
+                  </div>
                   </div>
 
                   {/* ✅ ปุ่มเหมือนเดิม + เพิ่มปุ่มนำทาง */}
