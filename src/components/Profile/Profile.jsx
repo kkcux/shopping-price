@@ -104,7 +104,9 @@ const Profile = () => {
                     loadedMembership = userData.membership;
                     setMembership(userData.membership);
                   }
-                } catch {}
+                } catch {
+                  // ignore malformed membership data in localStorage
+                }
               }
             }
           } else {
@@ -117,7 +119,9 @@ const Profile = () => {
                   loadedMembership = userData.membership;
                   setMembership(userData.membership);
                 }
-              } catch {}
+              } catch {
+                // ignore malformed membership data in localStorage
+              }
             }
           }
         } catch (error) {
@@ -131,7 +135,9 @@ const Profile = () => {
                 loadedMembership = userData.membership;
                 setMembership(userData.membership);
               }
-            } catch {}
+            } catch {
+              // ignore malformed membership data in localStorage
+            }
           }
         }
 
