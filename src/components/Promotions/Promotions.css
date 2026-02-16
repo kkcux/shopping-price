@@ -1,157 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
+
 .promotion-page {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #ececec;
-}
-
-.promotion-hero {
-  background: #f5f5f5;
-  border-bottom: 1px solid #e1e1e1;
-}
-
-.promotion-hero-inner {
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: 16px 24px 8px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.promotion-back-btn {
-  width: 28px;
-  height: 28px;
-  border: none;
-  border-radius: 50%;
-  background: #d9d9d9;
-  color: #5f5f5f;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.promotion-back-btn:hover {
-  background: #c8c8c8;
-}
-
-.promotion-hero h1 {
-  font-size: 2.8rem;
-  line-height: 1;
-  color: #3eb489;
-  letter-spacing: 0.5px;
-}
-
-.promotion-hero p {
-  font-size: 1.15rem;
-  color: #6f6f6f;
-  margin-top: 6px;
+  background: #f8f9fa;
+  font-family: 'Prompt', sans-serif;
 }
 
 .promotion-main {
   max-width: 1240px;
   width: 100%;
   margin: 0 auto;
-  padding: 0 24px 36px;
-  display: grid;
-  grid-template-columns: 170px 1fr;
-  gap: 16px;
+  padding: 24px;
   flex: 1;
 }
 
-.promotion-filter-panel {
-  background: #f7f7f7;
-  border: 1px solid #e2e2e2;
-  border-radius: 0 0 10px 10px;
-  min-height: 560px;
-  padding: 10px 10px 14px;
-}
-
-.promotion-filter-panel h3 {
-  font-size: 1.05rem;
-  color: #505050;
-  margin-bottom: 10px;
-}
-
-.promotion-filter-group {
-  background: #fff;
-  border: 1px solid #e6e6e6;
-  border-radius: 8px;
-  padding: 8px;
-}
-
-.promotion-filter-title {
-  width: 100%;
-  border: none;
-  background: transparent;
-  font-size: 0.9rem;
-  color: #5a5a5a;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
-}
-
-.promotion-checkbox-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.95rem;
-  color: #4f4f4f;
-  margin: 6px 0;
-  cursor: pointer;
-}
-
-.promotion-checkbox-row input {
-  width: 16px;
-  height: 16px;
-  accent-color: #46ba8a;
-}
-
-.promotion-apply-btn {
-  width: 100%;
-  margin-top: 12px;
-  border: none;
-  border-radius: 8px;
-  background: #46ba8a;
-  color: #fff;
-  font-size: 1.05rem;
-  font-weight: 500;
-  padding: 6px 10px;
-  cursor: pointer;
-  transition: background 0.2s ease;
-}
-
-.promotion-apply-btn:hover {
-  background: #35a879;
-}
-
-.promotion-content {
-  min-width: 0;
-}
-
+/* --- Toolbar --- */
 .promotion-toolbar {
   display: flex;
-  justify-content: space-between;
-  gap: 12px;
   align-items: center;
-  padding: 8px 0 12px;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.promotion-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.promotion-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
 
 .promotion-search {
-  max-width: 450px;
-  width: 100%;
   background: #fff;
-  border: 1px solid #dbdbdb;
+  border: 1px solid #ddd;
   border-radius: 8px;
-  height: 40px;
+  height: 42px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  padding: 0 12px;
+  padding: 0 14px;
+  min-width: 280px;
 }
 
 .promotion-search input {
@@ -159,190 +55,206 @@
   background: transparent;
   outline: none;
   width: 100%;
-  font-size: 0.95rem;
-  color: #4d4d4d;
+  margin-left: 10px;
 }
 
-.promotion-search svg {
-  color: #55b88f;
-  flex-shrink: 0;
-}
-
-.promotion-sort {
-  position: relative;
-}
-
-.promotion-sort > button {
-  height: 40px;
+.promotion-btn-green {
+  background: #00c497;
+  color: #fff;
   border: none;
   border-radius: 8px;
-  background: #46ba8a;
-  color: #fff;
-  padding: 0 12px;
+  height: 42px;
+  padding: 0 16px;
+  cursor: pointer;
+  font-weight: 500;
   display: flex;
   align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  font-size: 0.95rem;
+  gap: 8px;
 }
 
-.promotion-sort-menu {
-  position: absolute;
-  top: calc(100% + 6px);
-  right: 0;
-  min-width: 170px;
-  border: 1px solid #d9d9d9;
-  border-radius: 8px;
-  background: #fff;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.09);
-  z-index: 20;
-  overflow: hidden;
-}
-
-.promotion-sort-menu button {
-  width: 100%;
-  border: none;
-  background: #fff;
-  padding: 9px 12px;
-  text-align: left;
-  cursor: pointer;
-  color: #4d4d4d;
-  font-size: 0.9rem;
-}
-
-.promotion-sort-menu button:hover,
-.promotion-sort-menu button.active {
-  background: #ecfbf4;
-  color: #239b6b;
-}
-
+/* --- Grid & Promotion Card --- */
 .promotion-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
 }
 
 .promotion-card {
   position: relative;
-  border: 2px solid #d7d7d7;
-  border-radius: 10px;
   background: #fff;
-  min-height: 222px;
-  padding: 12px 10px 14px;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.07);
+  transition: all 0.2s;
+}
+
+.promotion-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+  border-color: #ef4444; /* Highlight สีแดงเวลา hover */
+}
+
+/* ป้ายส่วนลด */
+.promotion-discount-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #ef4444;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  z-index: 5;
 }
 
 .promotion-fav-btn {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 12px;
+  right: 12px;
+  background: none;
   border: none;
-  background: transparent;
-  color: #d1d5db;
   cursor: pointer;
+  color: #e5e7eb;
+  z-index: 5;
 }
 
-.promotion-fav-btn.active {
-  color: #ef4444;
-}
+.promotion-fav-btn.active { color: #ef4444; }
 
 .promotion-image-wrap {
-  width: 100%;
-  height: 105px;
+  height: 140px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-top: 10px;
+  margin-bottom: 12px;
 }
 
 .promotion-image-wrap img {
-  max-width: 88px;
-  max-height: 88px;
+  max-width: 110px;
+  max-height: 110px;
   object-fit: contain;
-  filter: drop-shadow(0 8px 8px rgba(0, 0, 0, 0.2));
 }
 
-.promotion-card h4 {
-  margin: 8px 0 10px;
-  font-size: 1.85rem;
-  line-height: 1;
-  font-weight: 500;
-  color: #222;
+/* Info Section */
+.promotion-info {
+  margin-bottom: 16px;
+}
+
+.promotion-store-tag {
+  font-size: 0.7rem;
+  color: #6b7280;
+  background: #f3f4f6;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.promotion-name {
+  font-size: 0.95rem;
+  color: #374151;
+  margin: 8px 0;
+  height: 2.6rem;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Price Section */
+.promotion-price-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.promotion-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  color: #ef4444; /* เน้นสีแดง */
+}
+
+.promotion-currency { font-weight: 700; font-size: 0.9rem; }
+.promotion-price { font-size: 1.5rem; font-weight: 700; }
+
+.promotion-original-price {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  text-decoration: line-through;
 }
 
 .promotion-add-btn {
-  width: 86%;
-  border: none;
-  border-radius: 8px;
-  background: #46ba8a;
+  width: 100%;
+  background: #00c497;
   color: #fff;
-  height: 34px;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 8px;
+}
+
+/* Responsive */
+@media (max-width: 1100px) { .promotion-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 850px) { .promotion-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 600px) { 
+  .promotion-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .promotion-title { font-size: 1.3rem; }
+}
+
+
+
+.promotion-dropdown-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.promotion-menu {
+  position: absolute;
+  top: calc(100% + 8px); /* เว้นระยะจากปุ่มกดลงมาหน่อย */
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  z-index: 100; /* ดันให้อยู่หน้าสุด */
+  min-width: 180px;
+  overflow: hidden;
+  padding: 4px;
+  /* แก้ปัญหาตัวหนังสือต่อกันด้วย 2 บรรทัดนี้ */
+  display: flex;
+  flex-direction: column; 
+}
+
+.promotion-menu button {
+  width: 100%;
+  padding: 10px 16px;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: #4b5563;
+  font-size: 0.9rem;
+  font-family: 'Prompt', sans-serif;
   cursor: pointer;
-  font-size: 1.4rem;
-  line-height: 1;
+  transition: all 0.2s;
+  /* ป้องกันข้อความไหลไปรวมกัน */
+  display: block; 
+  white-space: nowrap;
 }
 
-.promotion-add-btn svg {
-  width: 15px;
-  height: 15px;
+.promotion-menu button:hover {
+  background: #f0fdf9;
+  color: #00c497;
 }
 
-@media (max-width: 1100px) {
-  .promotion-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 900px) {
-  .promotion-main {
-    grid-template-columns: 1fr;
-  }
-
-  .promotion-filter-panel {
-    min-height: auto;
-  }
-
-  .promotion-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-
-@media (max-width: 700px) {
-  .promotion-hero h1 {
-    font-size: 2rem;
-  }
-
-  .promotion-toolbar {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .promotion-search {
-    max-width: none;
-  }
-
-  .promotion-sort > button {
-    width: 100%;
-    justify-content: center;
-  }
-
-  .promotion-sort-menu {
-    width: 100%;
-  }
-
-  .promotion-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .promotion-card h4 {
-    font-size: 1.4rem;
-  }
+.promotion-menu button.active {
+  background: #e6fffa;
+  color: #00c497;
+  font-weight: 600;
 }
