@@ -7,109 +7,61 @@ import AddToListModal from '../Home/AddToListModal';
 import { useFavorites } from '../../context/FavoritesContext';
 import './Promotions.css';
 
-// --- ข้อมูลจำลองชุดใหม่ พร้อมราคาโปรโมชั่น ---
-const promotionProducts = [
-  {
-    id: 1,
-    name: 'น้ำมันพืช 1 ลิตร',
-    image: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f9f4.png',
-    store: 'MAKRO',
-    price: 42,
-    originalPrice: 55, // ราคาเดิม
-    createdAt: '2026-02-16',
-    popularity: 1,
-  },
-  {
-    id: 2,
-    name: 'ข้าวหอมมะลิ 5 กก.',
-    image: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f35a.png',
-    store: 'BIG C',
-    price: 189,
-    originalPrice: 215,
-    createdAt: '2026-02-15',
-    popularity: 2,
-  },
-  {
-    id: 3,
-    name: 'บะหมี่กึ่งสำเร็จรูปแพ็ค',
-    image: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f35c.png',
-    store: 'LOTUS',
-    price: 55,
-    originalPrice: 62,
-    createdAt: '2026-02-14',
-    popularity: 5,
-  },
-  {
-    id: 4,
-    name: 'นมจืด 2 ลิตร',
-    image: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f95b.png',
-    store: 'BIG C',
-    price: 92,
-    originalPrice: 98,
-    createdAt: '2026-02-16',
-    popularity: 3,
-  },
-  {
-    id: 5,
-    name: 'ไข่ไก่ (เบอร์ 2) 30 ฟอง',
-    image: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f95a.png',
-    store: 'MAKRO',
-    price: 115,
-    originalPrice: 130,
-    createdAt: '2026-02-13',
-    popularity: 4,
-  },
-  {
-    id: 6,
-    name: 'น้ำอัดลม 1.5 ลิตร',
-    image: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f964.png',
-    store: 'LOTUS',
-    price: 27,
-    originalPrice: 32,
-    createdAt: '2026-02-15',
-    popularity: 8,
-  },
-  {
-    id: 7,
-    name: 'ทิชชู่แพ็ค 6 ม้วน',
-    image: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f9fb.png',
-    store: 'BIG C',
-    price: 69,
-    originalPrice: 85,
-    createdAt: '2026-02-12',
-    popularity: 6,
-  },
-  {
-    id: 8,
-    name: 'ผงซักฟอก 1,000 กรัม',
-    image: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f9fc.png',
-    store: 'MAKRO',
-    price: 79,
-    originalPrice: 99,
-    createdAt: '2026-02-11',
-    popularity: 7,
-  },
-  {
-    id: 9,
-    name: 'ปลากระป๋อง (แพ็ค 3)',
-    image: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/1f96b.png',
-    store: 'LOTUS',
-    price: 45,
-    originalPrice: 54,
-    createdAt: '2026-02-10',
-    popularity: 9,
-  },
-  {
-    id: 10,
-    name: 'กาแฟสำเร็จรูป 3in1',
-    image: 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/2615.png',
-    store: 'BIG C',
-    price: 129,
-    originalPrice: 155,
-    createdAt: '2026-02-09',
-    popularity: 10,
-  },
-];
+// ดึงตัวอย่างข้อมูลจากโฟลเดอร์ `src/data` — นำมาอย่างละ 10 รายการ
+import bigCData from '../../data/bigC/big_c.json';
+import lotusBakery from '../../data/Lotus/lotus_bakery_full.json';
+import makroBeverages from '../../data/makro/makro_beverages.json';
+
+const take = (arr, n) => (Array.isArray(arr) ? arr.slice(0, n) : []);
+
+const promotionProducts = (() => {
+  const items = [];
+  let id = 1;
+
+  take(bigCData, 10).forEach((p) => {
+    const price = typeof p.price === 'number' ? p.price : parseFloat(p.price || 0);
+    items.push({
+      id: id++,
+      name: p.data || p.name || 'ไม่มีชื่อสินค้า',
+      image: p.image || '',
+      store: 'BIG C',
+      price: Math.round(price),
+      originalPrice: Math.round(price * 1.15) || undefined,
+      createdAt: '2026-02-17',
+      popularity: id,
+    });
+  });
+
+  take(lotusBakery, 10).forEach((p) => {
+    const price = parseFloat(p.price || 0);
+    items.push({
+      id: id++,
+      name: p.name || 'ไม่มีชื่อสินค้า',
+      image: p.image || '',
+      store: 'LOTUS',
+      price: Math.round(price),
+      originalPrice: Math.round(price * 1.15) || undefined,
+      createdAt: '2026-02-17',
+      popularity: id,
+    });
+  });
+
+  take(makroBeverages, 10).forEach((p) => {
+    const price = parseFloat(p.price || 0);
+    items.push({
+      id: id++,
+      name: p.name || 'ไม่มีชื่อสินค้า',
+      image: p.image || '',
+      store: 'MAKRO',
+      price: Math.round(price),
+      originalPrice: Math.round(price * 1.15) || undefined,
+      createdAt: '2026-02-17',
+      popularity: id,
+    });
+  });
+
+  return items;
+})();
 
 const sortOptions = [
   { value: 'popular', label: 'สินค้าแนะนำ' },
@@ -169,6 +121,13 @@ const Promotions = () => {
     <div className="promotion-page">
       <Navbar />
 
+      <header className="promotion-hero">
+        <div className="promotion-hero-inner">
+          <h1>PROMOTION</h1>
+          <p>เลือกสินค้าที่มีราคาโปรโมชั่นจากร้านค้าต่าง ๆ ได้จากที่นี่</p>
+        </div>
+      </header>
+
       <main className="promotion-main">
         <section className="promotion-toolbar">
           <h2 className="promotion-title">สินค้าทั้งหมด</h2>
@@ -188,7 +147,7 @@ const Promotions = () => {
 <div className="promotion-dropdown-wrapper" ref={storeMenuRef}>
   <button className="promotion-btn-green" onClick={() => setShowStoreMenu(!showStoreMenu)}>
     <LayoutGrid size={18} />
-    <span>หมวดหมู่ : {selectedStore === 'all' ? 'ทั้งหมด' : selectedStore}</span>
+    <span>ประเภทร้านค้า : {selectedStore === 'all' ? 'ทั้งหมด' : selectedStore}</span>
     <ChevronDown size={16} />
   </button>
   {showStoreMenu && (
@@ -271,7 +230,6 @@ const Promotions = () => {
                 </div>
 
                 <div className="promotion-info">
-                  <span className="promotion-store-tag">{product.store}</span>
                   <h4 className="promotion-name">{product.name}</h4>
                   
                   <div className="promotion-price-container">
