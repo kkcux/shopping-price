@@ -65,7 +65,6 @@ const promotionProducts = (() => {
 
 const sortOptions = [
   { value: 'popular', label: 'สินค้าแนะนำ' },
-  { value: 'latest', label: 'ล่าสุดที่สุด' },
   { value: 'price-low', label: 'ราคาต่ำสุด' },
   { value: 'price-high', label: 'ราคาสูงสุด' },
 ];
@@ -219,10 +218,10 @@ const Promotions = () => {
 
                 <button
                   type="button"
-                  className={`promotion-fav-btn ${favorite ? 'active' : ''}`}
+                  className={`fav-btn-std ${favorite ? 'active' : ''}`}
                   onClick={() => toggleFavorite(product)}
                 >
-                  <Heart size={20} fill={favorite ? '#ef4444' : 'none'} />
+                  <Heart size={20} fill={favorite ? '#fbbf24' : 'none'} stroke={favorite ? '#fbbf24' : 'currentColor'} />
                 </button>
 
                 <div className="promotion-image-wrap">
