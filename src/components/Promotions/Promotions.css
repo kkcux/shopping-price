@@ -129,7 +129,6 @@
 .promotion-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 24px rgba(0,0,0,0.08);
-  border-color: #ef4444; /* Highlight สีแดงเวลา hover */
 }
 
 /* ป้ายส่วนลด */
@@ -137,7 +136,7 @@
   position: absolute;
   top: 12px;
   left: 12px;
-  background: #ef4444;
+  background: #fbbf24;
   color: #fff;
   padding: 2px 8px;
   border-radius: 6px;
@@ -146,18 +145,36 @@
   z-index: 5;
 }
 
-.promotion-fav-btn {
+.fav-btn-std {
   position: absolute;
-  top: 12px;
-  right: 12px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #e5e7eb;
+  top: 16px;
+  right: 16px;
   z-index: 5;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px !important;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  border: 1px solid #e5e7eb;
+  color: #d1d5db;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
 }
 
-.promotion-fav-btn.active { color: #ef4444; }
+.fav-btn-std:hover {
+  transform: scale(1.1);
+  color: #fbbf24;
+  border-color: #fef3c7;
+}
+
+.fav-btn-std.active {
+  background: #fffbeb;
+  border-color: #fef3c7;
+  color: #fbbf24;
+}
 
 .promotion-image-wrap {
   height: 140px;
@@ -208,7 +225,7 @@
   display: flex;
   align-items: baseline;
   gap: 2px;
-  color: #ef4444; /* เน้นสีแดง */
+  color: #fbbf24; /* เน้นสีเหลือง */
 }
 
 .promotion-currency { font-weight: 700; font-size: 0.9rem; }
