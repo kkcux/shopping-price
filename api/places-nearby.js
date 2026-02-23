@@ -35,7 +35,11 @@ export default async function handler(req, res) {
       open_now: p.opening_hours?.open_now ?? null,
     }));
 
-    return res.status(200).json({ status: data.status, results });
+    return res.status(200).json({
+      status: data.status,
+      error_message: data.error_message || null,
+      results,
+    });
   } catch (e) {
     return res.status(500).json({ error: String(e?.message || e) });
   }

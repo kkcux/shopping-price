@@ -50,7 +50,13 @@ export default function placesProxyMiddleware(env) {
           open_now: p.opening_hours?.open_now ?? null,
         }));
 
-        res.end(JSON.stringify({ status: data.status, results }));
+        res.end(
+          JSON.stringify({
+            status: data.status,
+            error_message: data.error_message || null,
+            results,
+          })
+        );
       } catch (error) {
         console.error("API Middleware Error:", error);
         res.statusCode = 500;

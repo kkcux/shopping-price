@@ -26,6 +26,9 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { basePath } from '../../utils/basePath';
 import { doc, setDoc, getDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
 
+const API_BASE_URL = String(import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
+const PLACES_NEARBY_PATH = "/api/places-nearby";
+
 /* ===== ✅ Store Logos ===== */
 const STORE_LOGOS = {
   MAKRO: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR1weBQ9rq_nOC5CSMa2dFW9Ez5CFXKKy4Q3Q&s",
@@ -137,6 +140,18 @@ const getPlaceLatLng = (p) => {
   const lng = p?.location?.lng ?? p?.geometry?.location?.lng;
   if (lat == null || lng == null) return null;
   return { lat: Number(lat), lng: Number(lng) };
+};
+
+const buildPlacesNearbyUrl = ({ lat, lng, q, radius = 10000 }) => {
+  const params = new URLSearchParams({
+    lat: String(lat),
+    lng: String(lng),
+    q: String(q),
+    radius: String(radius),
+  });
+  return API_BASE_URL
+    ? `${API_BASE_URL}${PLACES_NEARBY_PATH}?${params.toString()}`
+    : `${PLACES_NEARBY_PATH}?${params.toString()}`;
 };
 
 /* ================= component ================= */
@@ -422,17 +437,30 @@ export default function MyLists3() {
 
         await Promise.all(
           retailerQueries.map(async (r) => {
-            const url =
-              `/api/places-nearby?lat=${encodeURIComponent(userLocation.lat)}` +
-              `&lng=${encodeURIComponent(userLocation.lng)}` +
-              `&q=${encodeURIComponent(r.q)}&radius=10000`;
+            const url = buildPlacesNearbyUrl({
+              lat: userLocation.lat,
+              lng: userLocation.lng,
+              q: r.q,
+              radius: 10000,
+            });
 
             const res = await fetch(url);
-            const data = await res.json();
+            const contentType = res.headers.get("content-type") || "";
+            let data;
+            if (contentType.includes("application/json")) {
+              data = await res.json();
+            } else {
+              await res.text();
+              throw new Error(
+                `Places API ตอบกลับไม่ใช่ JSON (HTTP ${res.status}) โปรดเช็ก backend route /api/places-nearby`
+              );
+            }
 
             if (!res.ok) throw new Error(data?.error || "Places API error");
             if (data.status && data.status !== "OK" && data.status !== "ZERO_RESULTS") {
-              throw new Error(`Google status: ${data.status}`);
+              throw new Error(
+                `Google status: ${data.status}${data?.error_message ? ` - ${data.error_message}` : ""}`
+              );
             }
 
             const list = (data.results || [])

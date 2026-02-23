@@ -79,6 +79,11 @@ VITE_CLOUDINARY_URL=cloudinary://123456789:abcdefghijk@dqunjp3dj
 ```env
 # Google Maps API Key (ถ้าใช้)
 GOOGLE_MAPS_API_KEY=your_google_maps_api_key
+
+# (Optional) Base URL ของ backend API สำหรับ production
+# ถ้าไม่ใส่ ระบบจะเรียก /api/... ที่โดเมนเดียวกับเว็บ
+# ตัวอย่าง: https://api.ideatrade1.com
+VITE_API_BASE_URL=
 ```
 
 ---
