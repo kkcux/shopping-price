@@ -10,7 +10,6 @@ import './Promotions.css';
 
 const sortOptions = [
   { value: 'popular', label: 'สินค้าแนะนำ' },
-  { value: 'latest', label: 'ล่าสุดที่สุด' },
   { value: 'price-low', label: 'ราคาต่ำสุด' },
   { value: 'price-high', label: 'ราคาสูงสุด' },
 ];
@@ -204,11 +203,41 @@ const Promotions = () => {
               const favorite = isFavorite(product.name);
               const hasDiscount = product.originalPrice && product.originalPrice > product.price;
 
+<<<<<<< HEAD
               return (
                 <article className="promotion-card" key={product.id}>
                   {hasDiscount && (
                     <div className="promotion-discount-badge">
                       -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
+=======
+            return (
+              <article className="promotion-card" key={product.id}>
+                {hasDiscount && (
+                  <div className="promotion-discount-badge">
+                    -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  className={`fav-btn-std ${favorite ? 'active' : ''}`}
+                  onClick={() => toggleFavorite(product)}
+                >
+                  <Heart size={20} fill={favorite ? '#fbbf24' : 'none'} stroke={favorite ? '#fbbf24' : 'currentColor'} />
+                </button>
+
+                <div className="promotion-image-wrap">
+                  <img src={product.image} alt={product.name} loading="lazy" />
+                </div>
+
+                <div className="promotion-info">
+                  <h4 className="promotion-name">{product.name}</h4>
+                  
+                  <div className="promotion-price-container">
+                    <div className="promotion-price-row">
+                      <span className="promotion-currency">฿</span>
+                      <span className="promotion-price">{product.price.toLocaleString()}</span>
+>>>>>>> cade0761191d933a203564a85ad11abd6691fb4e
                     </div>
                   )}
 
