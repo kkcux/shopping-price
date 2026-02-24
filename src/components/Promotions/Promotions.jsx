@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronDown, Heart, Plus, Search, LayoutGrid, ListFilter } from 'lucide-react';
+import { ChevronDown, Heart, Plus, Search, LayoutGrid, ListFilter, ChevronLeft, ChevronRight } from 'lucide-react';
 import Navbar from '../Home/Navbar';
 import Footer from '../Home/Footer';
 import AddToListModal from '../Home/AddToListModal';
+import AuthRequiredModal from '../Home/AuthRequiredModal'; // เพิ่ม Import นี้
 import { useFavorites } from '../../context/FavoritesContext';
 import { supabase } from '../../../supabaseClient';
 import './Promotions.css';
@@ -16,9 +17,9 @@ const sortOptions = [
 
 const Promotions = () => {
   const navigate = useNavigate();
-  const { isFavorite, toggleFavorite } = useFavorites();
+  // ดึง currentUser ออกมาใช้งาน
+  const { isFavorite, toggleFavorite, currentUser } = useFavorites();
 
-  // State สำหรับจัดการข้อมูลจาก Supabase
   const [promotionProducts, setPromotionProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -30,12 +31,16 @@ const Promotions = () => {
   const [selectedStore, setSelectedStore] = useState('all');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false); // เพิ่ม State เช็คล็อกอิน
   const [selectedProduct, setSelectedProduct] = useState(null);
   
+  // เพิ่ม State สำหรับแบ่งหน้า
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 30; // 20 ชิ้นต่อหน้า (แสดงผลได้พอดีกับ Grid 5 คอลัมน์)
+
   const sortMenuRef = useRef(null);
   const storeMenuRef = useRef(null);
 
-  // ดึงข้อมูลจาก Supabase เมื่อโหลดหน้านี้
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
@@ -44,11 +49,10 @@ const Promotions = () => {
           .from('promo_products')
           .select('*')
           .order('created_at', { ascending: false })
-          .limit(100); // จำกัดการดึงข้อมูลเบื้องต้น (ปรับตัวเลขได้)
+          .limit(100);
 
         if (error) throw error;
 
-        // แปลงข้อมูลจาก Supabase ให้อยู่ในรูปแบบที่ UI ของคุณต้องการ
         const formattedData = (data || []).map((item) => ({
           id: item.id,
           name: item.base_name || 'ไม่มีชื่อสินค้า',
@@ -57,7 +61,7 @@ const Promotions = () => {
           price: Number(item.price) || 0,
           originalPrice: Number(item.original_price) || undefined,
           createdAt: item.created_at,
-          popularity: item.id, // ใช้ ID เป็นตัวกำหนดความนิยมชั่วคราว
+          popularity: item.id,
         }));
 
         setPromotionProducts(formattedData);
@@ -71,7 +75,6 @@ const Promotions = () => {
     fetchProducts();
   }, []);
 
-  // ปิดเมนูเมื่อคลิกที่อื่น
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (sortMenuRef.current && !sortMenuRef.current.contains(event.target)) setShowSortMenu(false);
@@ -81,7 +84,6 @@ const Promotions = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // กรองและเรียงลำดับข้อมูล
   const displayedProducts = useMemo(() => {
     let result = promotionProducts.filter((p) => {
       const nameMatch = p.name.toLowerCase().includes(searchTerm.trim().toLowerCase());
@@ -93,11 +95,86 @@ const Promotions = () => {
       if (sortBy === 'latest') return new Date(b.createdAt) - new Date(a.createdAt);
       if (sortBy === 'price-low') return a.price - b.price;
       if (sortBy === 'price-high') return b.price - a.price;
-      return a.popularity - b.popularity; // popular
+      return a.popularity - b.popularity;
     });
 
     return result;
   }, [searchTerm, sortBy, selectedStore, promotionProducts]);
+
+  // รีเซ็ตไปหน้าแรกเมื่อเปลี่ยนตัวกรอง
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, sortBy, selectedStore]);
+
+  // --- ระบบแบ่งหน้า (Pagination Logic) ---
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = displayedProducts.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(displayedProducts.length / itemsPerPage);
+
+  const changePage = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const renderPaginationButtons = () => {
+    const siblingCount = 1;
+    const totalPageNumbers = siblingCount + 5;
+
+    if (totalPages <= totalPageNumbers) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1).map(page => renderPageButton(page));
+    }
+
+    const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
+    const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
+    const shouldShowLeftDots = leftSiblingIndex > 2;
+    const shouldShowRightDots = rightSiblingIndex < totalPages - 2;
+    const firstPageIndex = 1;
+    const lastPageIndex = totalPages;
+    const buttons = [];
+
+    buttons.push(renderPageButton(firstPageIndex));
+
+    if (shouldShowLeftDots) {
+      buttons.push(<span key="left-dots" className="pagination-dots">...</span>);
+    } else {
+        for (let i = 2; i < leftSiblingIndex; i++) { buttons.push(renderPageButton(i)); }
+    }
+
+    for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
+       if (i !== firstPageIndex && i !== lastPageIndex) { buttons.push(renderPageButton(i)); }
+    }
+
+    if (shouldShowRightDots) {
+      buttons.push(<span key="right-dots" className="pagination-dots">...</span>);
+    } else {
+         for (let i = rightSiblingIndex + 1; i < lastPageIndex; i++) { buttons.push(renderPageButton(i)); }
+    }
+
+    buttons.push(renderPageButton(lastPageIndex));
+    return buttons;
+  };
+
+  const renderPageButton = (pageNumber) => (
+    <button
+      key={pageNumber}
+      onClick={() => changePage(pageNumber)}
+      className={`pagination-btn ${currentPage === pageNumber ? 'active' : ''}`}
+    >
+      {pageNumber}
+    </button>
+  );
+
+  // --- ฟังก์ชันกดหัวใจ ---
+  const handleToggleFavorite = (product) => {
+    if (!currentUser) {
+      setIsAuthModalOpen(true);
+      return;
+    }
+    toggleFavorite(product);
+  };
 
   const handleOpenAddModal = (product) => {
     setSelectedProduct(product);
@@ -130,7 +207,6 @@ const Promotions = () => {
               />
             </div>
 
-            {/* ส่วนของ Store Dropdown */}
             <div className="promotion-dropdown-wrapper" ref={storeMenuRef}>
               <button className="promotion-btn-green" onClick={() => setShowStoreMenu(!showStoreMenu)}>
                 <LayoutGrid size={18} />
@@ -167,7 +243,6 @@ const Promotions = () => {
               )}
             </div>
 
-            {/* Sort Dropdown */}
             <div className="promotion-dropdown-wrapper" ref={sortMenuRef}>
               <button className="promotion-btn-green" onClick={() => setShowSortMenu(!showSortMenu)}>
                 <ListFilter size={18} />
@@ -198,65 +273,90 @@ const Promotions = () => {
         ) : displayedProducts.length === 0 ? (
           <p style={{ textAlign: 'center', marginTop: '50px' }}>ไม่พบสินค้าที่ค้นหา</p>
         ) : (
-          <div className="promotion-grid">
-            {displayedProducts.map((product) => {
-              const favorite = isFavorite(product.name);
-              const hasDiscount = product.originalPrice && product.originalPrice > product.price;
+          <>
+            <div className="promotion-grid">
+              {currentItems.map((product) => {
+                const favorite = isFavorite(product.name);
+                const hasDiscount = product.originalPrice && product.originalPrice > product.price;
 
-              return (
-                <article className="promotion-card" key={product.id}>
-                  {hasDiscount && (
-                    <div className="promotion-discount-badge">
-                      -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
-                    </div>
-                  )}
-
-                  <button
-                    type="button"
-                    className={`promotion-fav-btn ${favorite ? 'active' : ''}`}
-                    onClick={() => toggleFavorite(product)}
-                  >
-                    <Heart size={20} fill={favorite ? '#ef4444' : 'none'} />
-                  </button>
-
-                  <div className="promotion-image-wrap">
-                    {product.image ? (
-                      <img src={product.image} alt={product.name} loading="lazy" />
-                    ) : (
-                      <div style={{ width: '100%', height: '150px', backgroundColor: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                         <span style={{ color: '#999' }}>ไม่มีรูป</span>
+                return (
+                  <article className="promotion-card" key={product.id}>
+                    {hasDiscount && (
+                      <div className="promotion-discount-badge">
+                        -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
                       </div>
                     )}
-                  </div>
 
-                  <div className="promotion-info">
-                    <h4 className="promotion-name">{product.name}</h4>
-                    
-                    <div className="promotion-price-container">
-                      <div className="promotion-price-row">
-                        <span className="promotion-currency">฿</span>
-                        <span className="promotion-price">{product.price.toLocaleString()}</span>
-                      </div>
-                      {hasDiscount && (
-                        <span className="promotion-original-price">
-                          ฿{product.originalPrice.toLocaleString()}
-                        </span>
+                    <button
+                      type="button"
+                      className={`fav-btn-std ${favorite ? 'active' : ''}`}
+                      onClick={() => handleToggleFavorite(product)}
+                    >
+                      <Heart size={20} fill={favorite ? '#ef4444' : 'none'} stroke={favorite ? "#ef4444" : "currentColor"} />
+                    </button>
+
+                    <div className="promotion-image-wrap">
+                      {product.image ? (
+                        <img src={product.image} alt={product.name} loading="lazy" />
+                      ) : (
+                        <div style={{ width: '100%', height: '150px', backgroundColor: '#f0f0f0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                           <span style={{ color: '#999' }}>ไม่มีรูป</span>
+                        </div>
                       )}
                     </div>
-                  </div>
 
-                  <button 
-                    type="button" 
-                    className="promotion-add-btn" 
-                    onClick={() => handleOpenAddModal(product)}
-                  >
-                    <Plus size={18} />
-                    เพิ่ม
-                  </button>
-                </article>
-              );
-            })}
-          </div>
+                    <div className="promotion-info">
+                      
+                      <h4 className="promotion-name">{product.name}</h4>
+                      
+                      <div className="promotion-price-container">
+                        <div className="promotion-price-row">
+                          <span className="promotion-currency">฿</span>
+                          <span className="promotion-price">{product.price.toLocaleString()}</span>
+                        </div>
+                        {hasDiscount && (
+                          <span className="promotion-original-price">
+                            ฿{product.originalPrice.toLocaleString()}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+
+                    <button 
+                      type="button" 
+                      className="promotion-add-btn" 
+                      onClick={() => handleOpenAddModal(product)}
+                      style={{ marginTop: 'auto' }}
+                    >
+                      <Plus size={18} />
+                      เพิ่ม
+                    </button>
+                  </article>
+                );
+              })}
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="pagination-container">
+                <button 
+                    onClick={() => changePage(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="pagination-nav-btn"
+                >
+                    <ChevronLeft size={20} />
+                </button>
+                {renderPaginationButtons()}
+                <button 
+                    onClick={() => changePage(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="pagination-nav-btn"
+                >
+                    <ChevronRight size={20} />
+                </button>
+              </div>
+            )}
+          </>
         )}
       </main>
 
@@ -264,6 +364,11 @@ const Promotions = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         product={selectedProduct}
+      />
+      <AuthRequiredModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onLogin={() => navigate('/login')}
       />
       <Footer />
     </div>
