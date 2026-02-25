@@ -4,7 +4,7 @@ import { ChevronDown, Heart, Plus, Search, LayoutGrid, ListFilter, ChevronLeft, 
 import Navbar from '../Home/Navbar';
 import Footer from '../Home/Footer';
 import AddToListModal from '../Home/AddToListModal';
-import AuthRequiredModal from '../Home/AuthRequiredModal'; // เพิ่ม Import นี้
+import AuthRequiredModal from '../Home/AuthRequiredModal';
 import { useFavorites } from '../../context/FavoritesContext';
 import { supabase } from '../../../supabaseClient';
 import './Promotions.css';
@@ -17,7 +17,6 @@ const sortOptions = [
 
 const Promotions = () => {
   const navigate = useNavigate();
-  // ดึง currentUser ออกมาใช้งาน
   const { isFavorite, toggleFavorite, currentUser } = useFavorites();
 
   const [promotionProducts, setPromotionProducts] = useState([]);
@@ -31,12 +30,11 @@ const Promotions = () => {
   const [selectedStore, setSelectedStore] = useState('all');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false); // เพิ่ม State เช็คล็อกอิน
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   
-  // เพิ่ม State สำหรับแบ่งหน้า
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 30; // 20 ชิ้นต่อหน้า (แสดงผลได้พอดีกับ Grid 5 คอลัมน์)
+  const itemsPerPage = 30; 
 
   const sortMenuRef = useRef(null);
   const storeMenuRef = useRef(null);
@@ -49,7 +47,8 @@ const Promotions = () => {
           .from('promo_products')
           .select('*')
           .order('created_at', { ascending: false })
-          .limit(100);
+          // ✅ ปรับ Limit เป็น 1000 หรือมากกว่า เพื่อดึงข้อมูลมาให้ครอบคลุม
+          .limit(3000);
 
         if (error) throw error;
 
@@ -57,6 +56,7 @@ const Promotions = () => {
           id: item.id,
           name: item.base_name || 'ไม่มีชื่อสินค้า',
           image: item.image || '',
+          // แปลงชื่อร้านเป็นตัวใหญ่เพื่อเตรียมเทียบ
           store: item.store_name ? item.store_name.toUpperCase() : 'UNKNOWN',
           price: Number(item.price) || 0,
           originalPrice: Number(item.original_price) || undefined,
@@ -65,6 +65,7 @@ const Promotions = () => {
         }));
 
         setPromotionProducts(formattedData);
+        console.log("รายชื่อร้านค้าทั้งหมดที่ดึงมาได้:", [...new Set(formattedData.map(p => p.store))]);
       } catch (err) {
         setError(`โหลดข้อมูลไม่สำเร็จ: ${err.message}`);
       } finally {
@@ -87,7 +88,24 @@ const Promotions = () => {
   const displayedProducts = useMemo(() => {
     let result = promotionProducts.filter((p) => {
       const nameMatch = p.name.toLowerCase().includes(searchTerm.trim().toLowerCase());
-      const storeMatch = selectedStore === 'all' || p.store === selectedStore;
+      
+      // ✅ กรองร้านค้า
+      if (selectedStore === 'all') return nameMatch;
+
+      const normalizedTargetStore = selectedStore.toUpperCase().replace(/[^A-Zก-๙]/g, '');
+      const normalizedProductStore = p.store.toUpperCase().replace(/[^A-Zก-๙]/g, '');
+      
+      let storeMatch = normalizedProductStore.includes(normalizedTargetStore);
+
+      // ✅ ดักจับเผื่อกรณีภาษาไทย
+      if (selectedStore === 'BIGC') {
+        storeMatch = storeMatch || normalizedProductStore.includes('บิ๊กซี') || normalizedProductStore.includes('BIGC') || normalizedProductStore.includes('BIG C');
+      } else if (selectedStore === 'LOTUS') {
+        storeMatch = storeMatch || normalizedProductStore.includes('โลตัส');
+      } else if (selectedStore === 'MAKRO') {
+        storeMatch = storeMatch || normalizedProductStore.includes('แม็คโคร');
+      }
+      
       return nameMatch && storeMatch;
     });
 
@@ -101,12 +119,10 @@ const Promotions = () => {
     return result;
   }, [searchTerm, sortBy, selectedStore, promotionProducts]);
 
-  // รีเซ็ตไปหน้าแรกเมื่อเปลี่ยนตัวกรอง
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, sortBy, selectedStore]);
 
-  // --- ระบบแบ่งหน้า (Pagination Logic) ---
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = displayedProducts.slice(indexOfFirstItem, indexOfLastItem);
@@ -137,21 +153,15 @@ const Promotions = () => {
 
     buttons.push(renderPageButton(firstPageIndex));
 
-    if (shouldShowLeftDots) {
-      buttons.push(<span key="left-dots" className="pagination-dots">...</span>);
-    } else {
-        for (let i = 2; i < leftSiblingIndex; i++) { buttons.push(renderPageButton(i)); }
-    }
+    if (shouldShowLeftDots) buttons.push(<span key="left-dots" className="pagination-dots">...</span>);
+    else for (let i = 2; i < leftSiblingIndex; i++) buttons.push(renderPageButton(i));
 
     for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
-       if (i !== firstPageIndex && i !== lastPageIndex) { buttons.push(renderPageButton(i)); }
+       if (i !== firstPageIndex && i !== lastPageIndex) buttons.push(renderPageButton(i));
     }
 
-    if (shouldShowRightDots) {
-      buttons.push(<span key="right-dots" className="pagination-dots">...</span>);
-    } else {
-         for (let i = rightSiblingIndex + 1; i < lastPageIndex; i++) { buttons.push(renderPageButton(i)); }
-    }
+    if (shouldShowRightDots) buttons.push(<span key="right-dots" className="pagination-dots">...</span>);
+    else for (let i = rightSiblingIndex + 1; i < lastPageIndex; i++) buttons.push(renderPageButton(i));
 
     buttons.push(renderPageButton(lastPageIndex));
     return buttons;
@@ -167,7 +177,6 @@ const Promotions = () => {
     </button>
   );
 
-  // --- ฟังก์ชันกดหัวใจ ---
   const handleToggleFavorite = (product) => {
     if (!currentUser) {
       setIsAuthModalOpen(true);
@@ -210,7 +219,12 @@ const Promotions = () => {
             <div className="promotion-dropdown-wrapper" ref={storeMenuRef}>
               <button className="promotion-btn-green" onClick={() => setShowStoreMenu(!showStoreMenu)}>
                 <LayoutGrid size={18} />
-                <span>ประเภทร้านค้า : {selectedStore === 'all' ? 'ทั้งหมด' : selectedStore}</span>
+                {/* ✅ แก้ไขการแสดงผลเป็น BIGC */}
+                <span>ประเภทร้านค้า : {
+                  selectedStore === 'all' ? 'ทั้งหมด' : 
+                  selectedStore === 'LOTUS' ? 'Lotus' : 
+                  selectedStore === 'BIGC' ? 'Big C' : 'Makro'
+                }</span>
                 <ChevronDown size={16} />
               </button>
               {showStoreMenu && (
@@ -233,9 +247,10 @@ const Promotions = () => {
                   >
                     Lotus
                   </button>
+                  {/* ✅ แก้ไขค่าตรงปุ่มกดเป็น BIGC */}
                   <button 
-                    className={selectedStore === 'BIG C' ? 'active' : ''}
-                    onClick={() => { setSelectedStore('BIG C'); setShowStoreMenu(false); }}
+                    className={selectedStore === 'BIGC' ? 'active' : ''}
+                    onClick={() => { setSelectedStore('BIGC'); setShowStoreMenu(false); }}
                   >
                     Big C
                   </button>
@@ -336,7 +351,6 @@ const Promotions = () => {
               })}
             </div>
 
-            {/* Pagination Controls */}
             {totalPages > 1 && (
               <div className="pagination-container">
                 <button 
