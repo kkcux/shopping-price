@@ -218,7 +218,7 @@
   display: flex;
   align-items: baseline;
   gap: 2px;
-  color: #fbbf24; /* เน้นสีเหลือง */
+  color: #e53e3e; /* แสดงราคาหลักเป็นตัวอักษรสีแดงเมื่อมีโปรโมชั่น */
 }
 
 .promotion-currency { font-weight: 700; font-size: 0.9rem; }
@@ -226,7 +226,8 @@
 
 .promotion-original-price {
   font-size: 0.85rem;
-  color: #9ca3af;
+  color: #e53e3e; /* เส้นราคาเดิมให้เป็นสีแดงอ่อนเพื่อให้เข้ากับตัวราคาปัจจุบัน */
+  opacity: 0.8;
   text-decoration: line-through;
 }
 
