@@ -304,7 +304,7 @@ const Promotions = () => {
 
                     <button
                       type="button"
-                      className={`fav-btn-std ${favorite ? 'active' : ''}`}
+                      className={`fav-btn ${favorite ? 'active' : ''}`}
                       onClick={() => handleToggleFavorite(product)}
                     >
                       <Heart size={20} fill={favorite ? '#ef4444' : 'none'} stroke={favorite ? "#ef4444" : "currentColor"} />

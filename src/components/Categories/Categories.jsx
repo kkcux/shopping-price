@@ -420,7 +420,7 @@ const Categories = () => {
                             const isFav = isFavorite(item.name);
                             return (
                                 <div key={index} className="product-card-std">
-                                    <button className={`fav-btn-std ${isFav ? 'active' : ''}`} onClick={() => handleToggleFavorite(item)}>
+                                    <button className={`fav-btn ${isFav ? 'active' : ''}`} onClick={() => handleToggleFavorite(item)}>
                                         <Heart size={20} fill={isFav ? "#ef4444" : "none"} stroke={isFav ? "#ef4444" : "currentColor"} />
                                     </button>
                                     <div className="img-wrapper-std">
