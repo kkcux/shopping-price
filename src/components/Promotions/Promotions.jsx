@@ -47,7 +47,6 @@ const Promotions = () => {
           .from('promo_products')
           .select('*')
           .order('created_at', { ascending: false })
-          // ✅ ปรับ Limit เป็น 1000 หรือมากกว่า เพื่อดึงข้อมูลมาให้ครอบคลุม
           .limit(3000);
 
         if (error) throw error;
@@ -56,16 +55,15 @@ const Promotions = () => {
           id: item.id,
           name: item.base_name || 'ไม่มีชื่อสินค้า',
           image: item.image || '',
-          // แปลงชื่อร้านเป็นตัวใหญ่เพื่อเตรียมเทียบ
           store: item.store_name ? item.store_name.toUpperCase() : 'UNKNOWN',
           price: Number(item.price) || 0,
           originalPrice: Number(item.original_price) || undefined,
           createdAt: item.created_at,
           popularity: item.id,
+          promotionText: item.promotion 
         }));
 
         setPromotionProducts(formattedData);
-        console.log("รายชื่อร้านค้าทั้งหมดที่ดึงมาได้:", [...new Set(formattedData.map(p => p.store))]);
       } catch (err) {
         setError(`โหลดข้อมูลไม่สำเร็จ: ${err.message}`);
       } finally {
@@ -89,7 +87,6 @@ const Promotions = () => {
     let result = promotionProducts.filter((p) => {
       const nameMatch = p.name.toLowerCase().includes(searchTerm.trim().toLowerCase());
       
-      // ✅ กรองร้านค้า
       if (selectedStore === 'all') return nameMatch;
 
       const normalizedTargetStore = selectedStore.toUpperCase().replace(/[^A-Zก-๙]/g, '');
@@ -97,7 +94,6 @@ const Promotions = () => {
       
       let storeMatch = normalizedProductStore.includes(normalizedTargetStore);
 
-      // ✅ ดักจับเผื่อกรณีภาษาไทย
       if (selectedStore === 'BIGC') {
         storeMatch = storeMatch || normalizedProductStore.includes('บิ๊กซี') || normalizedProductStore.includes('BIGC') || normalizedProductStore.includes('BIG C');
       } else if (selectedStore === 'LOTUS') {
@@ -219,7 +215,6 @@ const Promotions = () => {
             <div className="promotion-dropdown-wrapper" ref={storeMenuRef}>
               <button className="promotion-btn-green" onClick={() => setShowStoreMenu(!showStoreMenu)}>
                 <LayoutGrid size={18} />
-                {/* ✅ แก้ไขการแสดงผลเป็น BIGC */}
                 <span>ประเภทร้านค้า : {
                   selectedStore === 'all' ? 'ทั้งหมด' : 
                   selectedStore === 'LOTUS' ? 'Lotus' : 
@@ -247,7 +242,6 @@ const Promotions = () => {
                   >
                     Lotus
                   </button>
-                  {/* ✅ แก้ไขค่าตรงปุ่มกดเป็น BIGC */}
                   <button 
                     className={selectedStore === 'BIGC' ? 'active' : ''}
                     onClick={() => { setSelectedStore('BIGC'); setShowStoreMenu(false); }}
@@ -296,11 +290,16 @@ const Promotions = () => {
 
                 return (
                   <article className="promotion-card" key={product.id}>
-                    {hasDiscount && (
+                    {/* ✅ ลอจิกแสดงข้อความโปรโมชั่น เอา Inline CSS ออกแล้ว */}
+                    {product.promotionText ? (
+                      <div className="promotion-discount-badge">
+                        {product.promotionText}
+                      </div>
+                    ) : hasDiscount ? (
                       <div className="promotion-discount-badge">
                         -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
                       </div>
-                    )}
+                    ) : null}
 
                     <button
                       type="button"
