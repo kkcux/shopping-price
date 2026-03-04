@@ -1,0 +1,404 @@
+@import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
+
+.promotion-page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #f8f9fa;
+  font-family: 'Prompt', sans-serif;
+}
+
+.promotion-main {
+  max-width: 1240px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+  flex: 1;
+}
+
+/* --- Hero / Header --- */
+.promotion-hero {
+  background: #dffcf0; /* pale mint */
+  padding: 80px 0; /* ขยายลงมา */
+  border-left: 6px solid rgba(0,0,0,0.04);
+  display: flex;
+  align-items: center;
+}
+.promotion-hero-inner {
+  max-width: 980px; /* ให้ข้อความมีขอบเขตกว้างเหมือนต้นแบบ */
+  margin: 0 auto;
+  padding: 0 24px;
+  text-align: center;
+}
+.promotion-hero h1 {
+  margin: 0;
+  font-size: 2.6rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: #0f172a;
+}
+.promotion-hero p {
+  margin: 12px 0 0;
+  color: #374151;
+  font-size: 1rem;
+  max-width: 780px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 900px) {
+  .promotion-hero { padding: 56px 0; }
+  .promotion-hero h1 { font-size: 1.9rem; }
+  .promotion-hero p { font-size: 0.95rem; }
+}
+
+/* --- Toolbar --- */
+.promotion-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.promotion-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.promotion-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.promotion-search {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  min-width: 280px;
+}
+
+.promotion-search input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  margin-left: 10px;
+}
+
+.promotion-btn-green {
+  background: #00c497;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  height: 42px;
+  padding: 0 16px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* --- Grid & Promotion Card --- */
+.promotion-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 20px;
+}
+
+.promotion-card {
+  position: relative;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s;
+}
+
+.promotion-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+}
+
+/* ป้ายส่วนลด */
+.promotion-discount-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: #fbbf24;
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  z-index: 5;
+}
+
+.fav-btn-std {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 5;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px !important;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  border: 1px solid #e5e7eb;
+  color: #d1d5db;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.fav-btn-std:hover {
+  transform: scale(1.1);
+  color: #fbbf24;
+  border-color: #fef3c7;
+}
+
+.fav-btn-std.active {
+  background: #fffbeb;
+  border-color: #fef3c7;
+  color: #fbbf24;
+}
+
+.promotion-image-wrap {
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.promotion-image-wrap img {
+  max-width: 110px;
+  max-height: 110px;
+  object-fit: contain;
+}
+
+/* Info Section */
+.promotion-info {
+  margin-bottom: 16px;
+}
+
+
+
+.promotion-name {
+  font-size: 0.95rem;
+  color: #374151;
+  margin: 8px 0;
+  height: 2.6rem;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+/* Price Section */
+.promotion-price-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.promotion-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+  color: #e53e3e; /* แสดงราคาหลักเป็นตัวอักษรสีแดงเมื่อมีโปรโมชั่น */
+}
+
+.promotion-currency { font-weight: 700; font-size: 0.9rem; }
+.promotion-price { font-size: 1.5rem; font-weight: 700; }
+
+.promotion-original-price {
+  font-size: 0.85rem;
+  color: #e53e3e; /* เส้นราคาเดิมให้เป็นสีแดงอ่อนเพื่อให้เข้ากับตัวราคาปัจจุบัน */
+  opacity: 0.8;
+  text-decoration: line-through;
+}
+
+.promotion-add-btn {
+  width: 100%;
+  background: #00c497;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Responsive */
+@media (max-width: 1100px) { .promotion-grid { grid-template-columns: repeat(4, 1fr); } }
+@media (max-width: 850px) { .promotion-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 600px) { 
+  .promotion-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .promotion-title { font-size: 1.3rem; }
+}
+
+
+
+.promotion-dropdown-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.promotion-menu {
+  position: absolute;
+  top: calc(100% + 8px); /* เว้นระยะจากปุ่มกดลงมาหน่อย */
+  right: 0;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  z-index: 100; /* ดันให้อยู่หน้าสุด */
+  min-width: 180px;
+  overflow: hidden;
+  padding: 4px;
+  /* แก้ปัญหาตัวหนังสือต่อกันด้วย 2 บรรทัดนี้ */
+  display: flex;
+  flex-direction: column; 
+}
+
+.promotion-menu button {
+  width: 100%;
+  padding: 10px 16px;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: #4b5563;
+  font-size: 0.9rem;
+  font-family: 'Prompt', sans-serif;
+  cursor: pointer;
+  transition: all 0.2s;
+  /* ป้องกันข้อความไหลไปรวมกัน */
+  display: block; 
+  white-space: nowrap;
+}
+
+.promotion-menu button:hover {
+  background: #f0fdf9;
+  color: #00c497;
+}
+
+.promotion-menu button.active {
+  background: #e6fffa;
+  color: #00c497;
+  font-weight: 600;
+}
+
+/* --- แทนที่ .fav-btn-std ตัวเก่าด้วยอันนี้เพื่อให้หัวใจเป็นสีแดงเหมือนหน้าหมวดหมู่ --- */
+.fav-btn-std {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 5;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px !important;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(4px);
+  border: 1px solid #e5e7eb;
+  color: #d1d5db;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.fav-btn-std:hover {
+  transform: scale(1.1);
+  color: #ef4444;
+  border-color: #fee2e2;
+}
+
+.fav-btn-std.active {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #ef4444;
+}
+
+/* --- เพิ่ม Pagination Styles (เอามาจากหน้าหมวดหมู่) --- */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 40px;
+  padding: 20px 0;
+}
+
+.pagination-nav-btn {
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px !important;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6b7280;
+  transition: all 0.2s;
+}
+
+.pagination-nav-btn:hover:not(:disabled) {
+  border-color: #10b981;
+  color: #10b981;
+}
+
+.pagination-nav-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px !important;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #374151;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.pagination-btn:hover {
+  background: #f3f4f6;
+}
+
+.pagination-btn.active {
+  background: #10b981;
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
+}
+
+.pagination-dots {
+  color: #9ca3af;
+  padding: 0 4px;
+}

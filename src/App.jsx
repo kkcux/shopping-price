@@ -15,6 +15,7 @@ import Profile from './components/Profile/Profile';
 import Favorites from './components/Favorites/Favorites';
 import Categories from './components/Categories/Categories';
 import Products from './components/Products/Products';
+import Promotions from './components/Promotions/Promotions';
 
 // MyLists Components
 import MyLists from './components/MyLists/MyLists';
@@ -50,6 +51,8 @@ function App() {
           {/* ===== PRODUCT & CATEGORY ===== */}
           <Route path="/products" element={<Products />} />
           <Route path="/categories" element={<Categories />} />
+          <Route path="/promotion" element={<Promotions />} />
+          <Route path="/promotions" element={<Promotions />} />
 
           {/* ===== SHOPPING LIST FLOW ===== */}
           <Route path="/mylists" element={<MyLists />} />
