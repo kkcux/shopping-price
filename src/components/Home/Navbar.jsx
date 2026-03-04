@@ -117,6 +117,7 @@ function Navbar() {
             <li><NavLink to="/" end>HOME</NavLink></li>
             <li><NavLink to="/favorites">FAVORITES</NavLink></li>
             <li><NavLink to="/mylists">MYLISTS</NavLink></li>
+            <li><NavLink to="/promotion">PROMOTION</NavLink></li>
           </ul>
 
           <div className="nav-actions">
@@ -182,6 +183,7 @@ function Navbar() {
             <li><NavLink to="/" end onClick={() => setMobileMenuOpen(false)}>HOME</NavLink></li>
             <li><NavLink to="/favorites" onClick={() => setMobileMenuOpen(false)}>FAVORITES</NavLink></li>
             <li><NavLink to="/mylists" onClick={() => setMobileMenuOpen(false)}>MYLISTS</NavLink></li>
+            <li><NavLink to="/promotion" onClick={() => setMobileMenuOpen(false)}>PROMOTION</NavLink></li>
           </ul>
         </div>
       </nav>

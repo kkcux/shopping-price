@@ -5,19 +5,41 @@ import Footer from '../Home/Footer';
 import './Categories.css';
 import {
   Heart, Search, ChevronDown, ChevronLeft, ChevronRight,
-  LayoutGrid, Store, X, Star, Flame, Tag, Filter, Package
+  LayoutGrid, X, Star, Flame, Tag, Filter, Package
 } from 'lucide-react';
 import AddToListModal from '../Home/AddToListModal';
 import AuthRequiredModal from '../Home/AuthRequiredModal';
-import { getCategorySlug, categorySlugMap } from '../../utils/categoryMap';
 import { useFavorites } from '../../context/FavoritesContext';
-import { basePath } from '../../utils/basePath';
+import { supabase } from '../../../supabaseClient';
+
+const DB_CATEGORIES = [
+  'ทั้งหมด',
+  'อาหารสดและเบเกอรี่',
+  'ของแห้งและเครื่องปรุง',
+  'ขนมขบเคี้ยวและของหวาน',
+  'น้ำดื่ม เครื่องดื่ม และผงชงดื่ม',
+  'ไข่ นม และผลิตภัณฑ์จากนม',
+  'ความงามและของใช้ส่วนตัว',
+  'ผลิตภัณฑ์ทำความสะอาด',
+  'บ้านและไลฟ์สไตล์',
+  'ห้องครัว',
+  'แม่และเด็ก',
+  'เครื่องใช้ไฟฟ้า อุปกรณ์อิเล็กทรอนิกส์',
+  'เครื่องเขียนและอุปกรณ์สำนักงาน',
+  'เสื้อผ้าและเครื่องประดับ',
+  'อาหารและอุปกรณ์สัตว์เลี้ยง',
+  'อุปกรณ์รถยนต์'
+];
 
 const Categories = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const [activeCategory, setActiveCategory] = useState(location.state?.selectedCategory || 'ทั้งหมด');
+  const initialCategory = DB_CATEGORIES.includes(location.state?.selectedCategory) 
+    ? location.state.selectedCategory 
+    : 'ทั้งหมด';
+
+  const [activeCategory, setActiveCategory] = useState(initialCategory);
   const [specialFilter, setSpecialFilter] = useState(location.state?.selectedFilter || 'all'); 
   const [searchTerm, setSearchTerm] = useState(location.state?.searchTerm || ''); 
   
@@ -25,7 +47,6 @@ const Categories = () => {
   const [displayProducts, setDisplayProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // Use Context
   const { favorites: contextFavorites, isFavorite, toggleFavorite, currentUser } = useFavorites();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -37,20 +58,12 @@ const Categories = () => {
   
   const [nameFilter, setNameFilter] = useState('');
   
-  // 🔥 Full Search Index State
-  const [fullSearchIndex, setFullSearchIndex] = useState(null);
-  const [isSearchingIndex, setIsSearchingIndex] = useState(false);
-  
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 50;
 
   const catMenuRef = useRef(null);
   const filterMenuRef = useRef(null);
 
-  // Safety check for categorySlugMap
-  const safeSlugMap = categorySlugMap || {};
-  const categoriesList = ['ทั้งหมด', ...Object.keys(safeSlugMap).filter(k=>k!=='อื่นๆ')];
-  
   const specialFiltersList = [
     { id: 'all', label: 'ตัวกรอง', icon: null },
     { id: 'favorites', label: 'สินค้าที่บันทึกไว้', icon: <Heart size={16} fill="#ef4444" stroke="#ef4444" /> },
@@ -76,147 +89,143 @@ const Categories = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  /* Removed local favorites effect */
-
-  // ✅ Fetch Data Logic - Changed to fetch by Category
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      setAllProducts([]); // Reset
+      setAllProducts([]);
 
       try {
-        let url = '';
-        if (activeCategory === 'ทั้งหมด') {
-            url = `${basePath}/data/categories/mixed_products.json`;
-        } else {
-            const slug = getCategorySlug(activeCategory);
-            url = `${basePath}/data/categories/${slug}.json`;
+        let query = supabase
+          .from('products')
+          .select('*')
+          .limit(3000); 
+
+        if (activeCategory !== 'ทั้งหมด') {
+          query = query.eq('category', activeCategory);
         }
 
-        console.log(`Fetching products for: ${activeCategory} -> ${url}`);
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Network response not ok');
-        
-        const data = await response.json();
-        
-        // Handle different data structures
-        let products = [];
-        if (Array.isArray(data)) {
-            products = data;
-        } else if (data.recommended) {
-            // it's the home_products structure
-            products = [...data.recommended, ...data.popular, ...data.promo];
-        }
+        const { data: mainData, error: mainError } = await query;
+        if (mainError) throw mainError;
 
-        // Filter out nulls and ensure basic fields
         const packRegex = /(แพ็ค|แพค|แพ็ก|pack)\b/i;
-        products = products
-          .filter(item => item && item.name)
-          .map(item => {
-            const name = item.name || '';
-            let tags = Array.isArray(item.tags) ? [...item.tags] : [];
+        
+        let products = (mainData || []).map(item => {
+          const name = item.base_name || 'ไม่มีชื่อสินค้า';
+          let tags = [];
 
-            // ถ้าไม่มีแท็กเลย ให้สุ่ม recommended / popular / promo แบบเดิม
-            if (tags.length === 0) {
-              const randomVal = Math.random();
-              if (randomVal > 0.8) tags.push('recommended');
-              else if (randomVal > 0.6) tags.push('popular');
-              else if (randomVal > 0.4) tags.push('promo');
-            }
+          const randomVal = Math.random();
+          if (randomVal > 0.8) tags.push('recommended');
+          else if (randomVal > 0.6) tags.push('popular');
 
-            // ถ้าชื่อสินค้าดูเหมือนเป็นแพ็ค ให้ติดแท็ก pack เพิ่ม
-            if (packRegex.test(name) && !tags.includes('pack')) {
-              tags.push('pack');
-            }
+          if (packRegex.test(name)) tags.push('pack');
 
-            return { ...item, tags };
-          });
+          return {
+            id: item.id,
+            name: name,
+            image: item.image || "https://placehold.co/300x300?text=No+Image",
+            price: Number(item.price) || 0,
+            tags: tags
+          };
+        });
+
+        if (activeCategory === 'ทั้งหมด') {
+          const { data: promoData } = await supabase
+            .from('promo_products')
+            .select('*')
+            .limit(500);
+
+          if (promoData) {
+            const promoItems = promoData.map(item => {
+              const name = item.base_name || 'ไม่มีชื่อสินค้า';
+              let tags = ['promo']; 
+              if (packRegex.test(name)) tags.push('pack');
+
+              return {
+                id: `promo_${item.id}`,
+                name: name,
+                image: item.image || "https://placehold.co/300x300?text=No+Image",
+                price: Number(item.price) || 0,
+                originalPrice: Number(item.original_price) || undefined,
+                tags: tags
+              };
+            });
+            products = [...products, ...promoItems];
+          }
+        }
 
         setAllProducts(products);
-
       } catch (error) {
-        console.error("Error fetching category data:", error);
-        setAllProducts([]);
+        console.error("Error fetching category data from Supabase:", error);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [activeCategory]); // Re-fetch when category changes
+  }, [activeCategory]);
 
-  // ✅ Client-side Filtering (Search / Special Filters)
-  // ✅ Client-side Filtering (Search / Special Filters)
+  // ✅ ระบบกรองและเดาคำค้นหา (Fuzzy Search Logic)
   useEffect(() => {
-    const processData = async () => {
-        let processed = [];
+    let processed = [...allProducts];
 
-        // 1. Determine Source Data
-        if (activeCategory === 'ทั้งหมด' && nameFilter.trim() !== '') {
-            // Priority: Use Full Index if available
-            if (fullSearchIndex) {
-                 const PREFIX = "https://st.bigc-cs.com/cdn-cgi/image/format=webp,quality=85/public/media/catalog/product/";
-                 processed = fullSearchIndex.map(p => ({
-                     name: p.n,
-                     price: p.p,
-                     image: p.i ? p.i.replace('{|}', PREFIX) : null, 
-                     category: p.c,
-                     retailer: p.r,
-                     tags: [] 
-                 }));
-            } else {
-                // Fallback to loaded 2000 items while loading index
-                processed = [...allProducts];
-                // Trigger lazy load if not started
-                if (!isSearchingIndex) {
-                    setIsSearchingIndex(true);
-                    fetch(`${basePath}/data/categories/all_products_lite.json`)
-                        .then(res => res.json())
-                        .then(data => {
-                            setFullSearchIndex(data);
-                            setIsSearchingIndex(false);
-                        })
-                        .catch(err => {
-                            console.error("Failed to load search index", err);
-                            setIsSearchingIndex(false);
-                        });
-                }
-            }
+    // 1. ถ้ามีการพิมพ์ค้นหา
+    if (nameFilter.trim() !== '') {
+      const termNorm = nameFilter.toLowerCase().replace(/\s+/g, '');
+      const termNoTone = termNorm.replace(/[\u0E48-\u0E4C\u0E4E]/g, '');
+
+      const scoredProducts = processed.map(p => {
+        if (!p.name) return { product: p, score: 0 };
+
+        const nameNorm = p.name.toLowerCase().replace(/\s+/g, '');
+        const nameNoTone = nameNorm.replace(/[\u0E48-\u0E4C\u0E4E]/g, '');
+
+        let score = 0;
+
+        // กฎที่ 1: ตรงกันเป๊ะ (ให้คะแนนสูงสุด)
+        if (nameNorm.includes(termNorm)) {
+          score += 100;
+        } 
+        // กฎที่ 2: ตรงกันแต่พิมพ์วรรณยุกต์ตกหล่น เช่น มามา -> มาม่า
+        else if (nameNoTone.includes(termNoTone)) {
+          score += 50;
+        } 
+        // กฎที่ 3: พิมพ์สลับคำ หรือเว้นวรรคผิด
+        else {
+          const words = nameFilter.toLowerCase().split(/\s+/).filter(Boolean);
+          if (words.length > 0) {
+            let matchCount = 0;
+            words.forEach(w => {
+              if (nameNorm.includes(w)) matchCount++;
+            });
+            // มีครบทุกคำที่พิมพ์มาแต่สลับที่
+            if (matchCount === words.length) score += 30; 
+            // เจอเกินครึ่งนึงของที่พิมพ์มา (ใกล้เคียง)
+            else if (matchCount > 0 && matchCount >= words.length / 2) score += 10; 
+          }
+        }
+
+        return { product: p, score };
+      });
+
+      // คัดเฉพาะตัวที่มีคะแนน (ค้นเจอ) และเรียงจากคะแนนมากไปน้อย
+      processed = scoredProducts
+        .filter(item => item.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .map(item => item.product);
+    }
+
+    // 2. ตัวกรองพิเศษ (แนะนำ, โปรโมชั่น, บันทึกไว้)
+    if (specialFilter !== 'all') {
+        if (specialFilter === 'favorites') {
+            processed = processed.filter(item => isFavorite(item.name));
         } else {
-             processed = [...allProducts];
+            processed = processed.filter(p => p.tags && p.tags.includes(specialFilter));
         }
-
-        // 2. Apply Name Filter
-        if (nameFilter.trim() !== '') {
-            processed = processed.filter(p => 
-                p.name && p.name.toLowerCase().includes(nameFilter.toLowerCase())
-            );
-        }
-
-        // 3. Special Filters
-        if (specialFilter !== 'all') {
-            if (specialFilter === 'favorites') {
-                processed = processed.filter(item => isFavorite(item.name));
-            } else {
-                processed = processed.filter(p => p.tags && p.tags.includes(specialFilter));
-            }
-        }
-        
-        setDisplayProducts(processed);
-        setCurrentPage(1);
-    };
-
-    processData();
-  }, [
-    allProducts,
-    nameFilter,
-    specialFilter,
-    contextFavorites,
-    fullSearchIndex,
-    activeCategory,
-    isFavorite,
-    isSearchingIndex,
-  ]);
+    }
+    
+    setDisplayProducts(processed);
+    setCurrentPage(1); // กลับไปหน้าแรกเสมอเมื่อค้นหาหรือเปลี่ยนตัวกรอง
+  }, [allProducts, nameFilter, specialFilter, contextFavorites, isFavorite]);
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -248,21 +257,15 @@ const Categories = () => {
 
     buttons.push(renderPageButton(firstPageIndex));
 
-    if (shouldShowLeftDots) {
-      buttons.push(<span key="left-dots" className="pagination-dots">...</span>);
-    } else {
-        for (let i = 2; i < leftSiblingIndex; i++) { buttons.push(renderPageButton(i)); }
-    }
+    if (shouldShowLeftDots) buttons.push(<span key="left-dots" className="pagination-dots">...</span>);
+    else for (let i = 2; i < leftSiblingIndex; i++) buttons.push(renderPageButton(i));
 
     for (let i = leftSiblingIndex; i <= rightSiblingIndex; i++) {
-       if (i !== firstPageIndex && i !== lastPageIndex) { buttons.push(renderPageButton(i)); }
+       if (i !== firstPageIndex && i !== lastPageIndex) buttons.push(renderPageButton(i));
     }
 
-    if (shouldShowRightDots) {
-      buttons.push(<span key="right-dots" className="pagination-dots">...</span>);
-    } else {
-         for (let i = rightSiblingIndex + 1; i < lastPageIndex; i++) { buttons.push(renderPageButton(i)); }
-    }
+    if (shouldShowRightDots) buttons.push(<span key="right-dots" className="pagination-dots">...</span>);
+    else for (let i = rightSiblingIndex + 1; i < lastPageIndex; i++) buttons.push(renderPageButton(i));
 
     buttons.push(renderPageButton(lastPageIndex));
     return buttons;
@@ -282,8 +285,6 @@ const Categories = () => {
       setSearchTerm('');
       setNameFilter('');
   };
-
-  /* Removed local toggleFav */
 
   const handleSelectCategory = (cat) => {
       setActiveCategory(cat);
@@ -352,7 +353,7 @@ const Categories = () => {
 
                         {showCatMenu && (
                             <div className="dropdown-popup cat-menu-popup">
-                                {categoriesList.map((cat, idx) => (
+                                {DB_CATEGORIES.map((cat, idx) => (
                                     <button 
                                         key={idx}
                                         className={activeCategory === cat ? 'selected' : ''} 
@@ -420,20 +421,14 @@ const Categories = () => {
                             const isFav = isFavorite(item.name);
                             return (
                                 <div key={index} className="product-card-std">
-                                    <button className={`fav-btn-std ${isFav ? 'active' : ''}`} onClick={() => handleToggleFavorite(item)}>
+                                    <button className={`fav-btn ${isFav ? 'active' : ''}`} onClick={() => handleToggleFavorite(item)}>
                                         <Heart size={20} fill={isFav ? "#ef4444" : "none"} stroke={isFav ? "#ef4444" : "currentColor"} />
                                     </button>
                                     <div className="img-wrapper-std">
-                                        <img src={item.image || "https://placehold.co/300x300?text=No+Image"} alt={item.name} loading="lazy" />
+                                        <img src={item.image} alt={item.name} loading="lazy" />
                                     </div>
                                     <div className="info-std">
                                         <h3 title={item.name}>{item.name}</h3>
-                                        {(item.retailer || item.store) && (
-                                            <div className="retailer-info">
-                                                <Store size={14} /> 
-                                                {item.retailer || item.store}
-                                            </div>
-                                        )}
                                         <button className="btn-add-std" onClick={() => { setSelectedProduct(item); setIsModalOpen(true); }} style={{marginTop: 'auto'}}>
                                             เพิ่มลงรายการ
                                         </button>
@@ -489,31 +484,4 @@ const Categories = () => {
   );
 };
 
-
-class ErrorBoundary extends React.Component {
-  constructor(props) { super(props); this.state = { hasError: false, error: null }; }
-  static getDerivedStateFromError(error) { return { hasError: true, error }; }
-  componentDidCatch(error, errorInfo) { console.error("Uncaught error:", error, errorInfo); }
-  render() {
-    if (this.state.hasError) return (
-      <div style={{padding:'50px', textAlign:'center', color: '#333'}}>
-        <h1>⚠️ พบข้อผิดพลาด</h1>
-        <p>ไม่สามารถแสดงผลหน้านี้ได้</p>
-        <pre style={{color:'red', background:'#eee', padding:'10px', display:'inline-block', textAlign:'left'}}>
-          {this.state.error && this.state.error.toString()}
-        </pre>
-        <br/><br/>
-        <button onClick={() => window.location.href='/'} style={{padding:'10px 20px', cursor:'pointer'}}>กลับหน้าหลัก</button>
-      </div>
-    );
-    return this.props.children;
-  }
-}
-
-export default function CategoriesWithBoundary() {
-    return (
-        <ErrorBoundary>
-            <Categories />
-        </ErrorBoundary>
-    );
-}
+export default Categories;
