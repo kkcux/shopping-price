@@ -1,40 +1,30 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingCart, ArrowLeft, Menu, X } from 'lucide-react';
+// 1. เพิ่ม Bell เข้ามาใน import
+import { ShoppingCart, ArrowLeft, Menu, X, Bell } from 'lucide-react'; 
 import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 
-// ✅ 1. Import Firebase Auth
 import { auth } from '../../firebase-config'; 
 import { onAuthStateChanged } from 'firebase/auth';
 
 function Navbar() {
+  // ... (โค้ดส่วน State และ useEffect เหมือนเดิม ไม่ต้องแก้) ...
   const location = useLocation();
   const navigate = useNavigate();
-  
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  // โหลดข้อมูล User จาก LocalStorage
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem('user');
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
-  // ✅ ดึงตัวย่อชื่อ (ใช้ logic เดียวกับ Profile)
   const getInitials = (displayName) => {
     if (!displayName) return '';
-    return displayName
-      .split(' ')
-      .map(word => word[0])
-      .join('')
-      .toUpperCase()
-      .substring(0, 2);
+    return displayName.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2);
   };
 
-  // ✅ เพิ่ม Auth State Listener - จะอัปเดต User ทันทีเมื่อ Auth เปลี่ยนแปลง
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
-        // User ล็อกอินแล้ว - อัปเดต localStorage และ state
         const userData = {
           uid: firebaseUser.uid,
           email: firebaseUser.email,
@@ -45,31 +35,23 @@ function Navbar() {
         localStorage.setItem('user', JSON.stringify(userData));
         setUser(userData);
       } else {
-        // User ยังไม่ล็อกอิน - เคลียร์ข้อมูล
         localStorage.removeItem('user');
         setUser(null);
       }
     });
-
-    return unsubscribe; // Cleanup listener
+    return unsubscribe;
   }, []);
 
-  // อัปเดตข้อมูล User ทุกครั้งที่เปลี่ยนหน้า (เพื่อให้รูปเปลี่ยนทันทีหลังแก้โปรไฟล์)
   useEffect(() => {
     const storedUser = localStorage.getItem('user');
     if (storedUser) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setUser(JSON.parse(storedUser));
     } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setUser(null);
     }
   }, [location]);
 
-
-  // ปิดเมนูมือถือเมื่อเปลี่ยน route
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
@@ -122,13 +104,17 @@ function Navbar() {
 
           <div className="nav-actions">
             
+            {/* 2. เพิ่มปุ่มกระดิ่งแจ้งเตือนตรงนี้ (จะแสดงตลอดไม่ว่าจะล็อกอินหรือไม่) */}
+            <button className="notification-btn" aria-label="Notifications">
+              <Bell size={20} />
+            </button>
+
             {user ? (
               <div 
                 className="user-profile" 
                 onClick={() => navigate('/profile')} 
                 style={{ cursor: 'pointer' }}
               >
-                {/* ✅ แสดงรูปโปรไฟล์เหมือน Profile */}
                 {user.photoURL ? (
                   <img 
                     src={user.photoURL} 
@@ -153,8 +139,6 @@ function Navbar() {
                     </span>
                   </div>
                 )}
-                
-                {/* 🔥 แก้ไข: ป้องกัน Error split ตามที่เคยคุยกัน */}
                 <span className="user-name">
                   {(user.given_name || user.name || "").split(' ')[0]}
                 </span>
@@ -177,7 +161,7 @@ function Navbar() {
           </div>
         </div>
 
-        {/* เมนูมือถือ (แสดงเมื่อกดฮัมเบอร์เกอร์) */}
+        {/* ... (Mobile Menu โค้ดส่วนล่างเหมือนเดิม) ... */}
         <div className={`mobile-menu ${mobileMenuOpen ? 'mobile-menu-open' : ''}`}>
           <ul className="mobile-menu-list">
             <li><NavLink to="/" end onClick={() => setMobileMenuOpen(false)}>HOME</NavLink></li>
