@@ -53,7 +53,7 @@ const ProductSection = ({ title, icon, items = [], isFavorite, toggleFav, loadin
                   
                   {/* ✅ เพิ่มป้ายโปรโมชั่นสีแดงที่มุมซ้ายบน สำหรับแถวที่มีข้อมูลนี้ */}
                   {item.promotionText ? (
-                    <div style={{ position: 'absolute', top: '8px', left: '8px', background: '#ef4444', color: 'white', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '600', zIndex: 10, whiteSpace: 'nowrap' }}>
+                    <div style={{ position: 'absolute', top: '8px', left: '8px', background: '#ffd468', color: 'red', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '600', zIndex: 10, whiteSpace: 'nowrap' }}>
                       {item.promotionText}
                     </div>
                   ) : hasDiscount ? (
