@@ -4,8 +4,8 @@
   width: 340px;
   background-color: white;
   border-radius: 8px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-  font-family: 'Prompt', sans-serif;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  font-family: "Prompt", sans-serif;
   border: 1px solid #e5e7eb;
   overflow: hidden;
   display: flex;
@@ -18,8 +18,14 @@
 }
 
 @keyframes fadeInDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* --- Header --- */
@@ -45,11 +51,11 @@
 
 /* --- Body List --- */
 .notification-body {
-  max-height: 420px; /* สูงสุดแค่นี้ ถ้าเกินให้เลื่อน */
+  max-height: 420px;
   overflow-y: auto;
 }
 
-/* Scrollbar สวยๆ */
+/* Scrollbar */
 .notification-body::-webkit-scrollbar {
   width: 6px;
 }
@@ -61,7 +67,7 @@
 .notification-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start; /* ปรับให้ชิดบนเพื่อให้ดูสวยเมื่อมีวันที่ด้านล่าง */
   padding: 16px 20px;
   border-bottom: 1px solid #f3f4f6;
   cursor: pointer;
@@ -88,44 +94,34 @@
   font-size: 0.85rem;
   color: #374151;
   line-height: 1.4;
-  white-space: pre-line; /* รองรับการขึ้นบรรทัดใหม่ */
+  white-space: pre-line;
 }
 
-/* --- Percent Icon (วงกลมเหลือง) --- */
+/* --- เพิ่มส่วนแสดงวันที่ (Date/Update Time) --- */
+.update-date {
+  display: block;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: 6px;
+  font-weight: 400;
+}
+
+/* --- เปลี่ยน Icon Circle เป็นสีเขียว (Theme Update) --- */
 .notif-badge {
   padding-left: 12px;
 }
 
-.percent-circle {
+.update-circle {
   width: 28px;
   height: 28px;
-  border: 2px solid #ffd700; /* สีเหลืองทอง */
+  border: 2px solid #10b77e; /* สีเขียวตามธีมระบบ */
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #ffd700;
-  box-shadow: 0 2px 4px rgba(255, 215, 0, 0.2);
+  color: #10b77e;
+  background-color: rgba(16, 183, 126, 0.05);
+  box-shadow: 0 2px 4px rgba(16, 183, 126, 0.1);
 }
 
-/* --- Footer --- */
-.notification-footer {
-  padding: 12px;
-  text-align: center;
-  border-top: 1px solid #e5e7eb;
-  background-color: white;
-}
-
-.btn-see-more {
-  background: none;
-  border: none;
-  font-family: 'Prompt', sans-serif;
-  font-weight: 700;
-  font-size: 0.95rem;
-  color: #000;
-  cursor: pointer;
-}
-
-.btn-see-more:hover {
-  text-decoration: underline;
-}
+/* ลบส่วน notification-footer และ btn-see-more ออกแล้ว */

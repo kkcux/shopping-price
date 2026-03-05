@@ -1,50 +1,85 @@
-import React from 'react';
-import { Bell, Percent } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Bell, RefreshCw } from 'lucide-react';
+import { createClient } from '@supabase/supabase-js';
 import './NotificationList.css';
 
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
 const NotificationList = () => {
-  // ข้อมูลจำลอง (Mock Data) ตามรูปภาพตัวอย่าง
-  const notifications = [
-    { id: 1, title: 'เลย์รสซาวครีม', desc: 'ลดราคา\nเหลือซองละ 25 บาทเท่านั้น !!' },
-    { id: 2, title: 'ไก่ย่างรสดั้งเดิม', desc: 'ลดราคา\nเหลือซองละ 10 บาทเท่านั้น !!' },
-    { id: 3, title: 'น้ำมันถั่วเหลือง', desc: 'ลดราคา\nเหลือขวดละ 60 บาทเท่านั้น !!' },
-    { id: 4, title: 'นมจืดเมจิ', desc: 'ลดราคา\nเหลือขวดละ 30 บาทเท่านั้น !!' },
-    { id: 5, title: 'คอนเน่', desc: 'ลดราคา\nเหลือซองละ 30 บาทเท่านั้น !!' },
-    { id: 6, title: 'ซอสหอยนางรม', desc: 'ลดราคา\nเหลือขวดละ 50 บาทเท่านั้น !!' },
-  ];
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  
+  const fetchNotifications = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from('product_updates')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(10);
+    
+    if (data) setNotifications(data);
+    if (error) console.error('Error fetching data:', error);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+
+    // ฟังการเปลี่ยนแปลงข้อมูลแบบ Real-time (ต้องเปิด Replication ใน Supabase ก่อน)
+    const channel = supabase
+      .channel('public:product_updates')
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'product_updates' },
+        (payload) => {
+          // เพิ่มข้อมูลใหม่เข้าไปในสถานะปัจจุบันทันทีโดยไม่ต้อง Refresh
+          setNotifications((prev) => [payload.new, ...prev]);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
 
   return (
     <div className="notification-card fade-in-down">
-      
-      {/* Header */}
       <div className="notification-header">
         <Bell size={20} className="header-icon" />
-        <h3>การแจ้งเตือนโปรโมชั่นสินค้า</h3>
+        <h3>ข้อมูลการอัปเดตสินค้า</h3>
       </div>
 
-      {/* List Items */}
       <div className="notification-body">
-        {notifications.map((item) => (
-          <div key={item.id} className="notification-item">
-            <div className="notif-text">
-              <h4>{item.title}</h4>
-              {/* ใช้ css white-space: pre-line เพื่อให้ \n ขึ้นบรรทัดใหม่ */}
-              <p>{item.desc}</p>
-            </div>
-            <div className="notif-badge">
-              <div className="percent-circle">
-                <Percent size={14} strokeWidth={3} />
+        {loading ? (
+          <div style={{ padding: '20px', textAlign: 'center' }}>กำลังโหลด...</div>
+        ) : notifications.length > 0 ? (
+          notifications.map((item) => (
+            <div key={item.id} className="notification-item">
+              <div className="notif-text">
+                <h4>{item.title}</h4>
+                <p>{item.description}</p>
+                <span className="update-date">
+                  {new Date(item.created_at).toLocaleString('th-TH', {
+                    day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit'
+                  })}
+                </span>
+              </div>
+              <div className="notif-badge">
+                <div className="update-circle">
+                  <RefreshCw size={14} strokeWidth={2.5} color="#10b77e" />
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <div style={{ padding: '20px', textAlign: 'center', color: '#999' }}>ไม่มีข้อมูลการอัปเดต</div>
+        )}
       </div>
-
-      {/* Footer */}
-      <div className="notification-footer">
-        <button className="btn-see-more">ดูเพิ่มเติม</button>
-      </div>
-
     </div>
   );
 };
