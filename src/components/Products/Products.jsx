@@ -5,25 +5,44 @@ import Footer from '../Home/Footer';
 import './Products.css';
 import {
   Heart, ChevronDown, ChevronLeft, ChevronRight,
-  Search, X, LayoutGrid, Store, Filter, Star, Flame, Tag, CheckCircle2, Plus, Package
+  Search, X, LayoutGrid, Store, Filter, Star, Flame, Tag, Plus, Package
 } from 'lucide-react';
 
 import AddToListModal from '../Home/AddToListModal';
-import { getCategorySlug, categorySlugMap } from '../../utils/categoryMap';
 import { useFavorites } from '../../context/FavoritesContext';
-import { basePath } from '../../utils/basePath';
+import { supabase } from '../../../supabaseClient'; // ✅ Import Supabase
+
+// ✅ ใช้รายชื่อหมวดหมู่ให้ตรงกับ Database
+const DB_CATEGORIES = [
+  'ทั้งหมด',
+  'อาหารสดและเบเกอรี่',
+  'ของแห้งและเครื่องปรุง',
+  'ขนมขบเคี้ยวและของหวาน',
+  'น้ำดื่ม เครื่องดื่ม และผงชงดื่ม',
+  'ไข่ นม และผลิตภัณฑ์จากนม',
+  'ความงามและของใช้ส่วนตัว',
+  'ผลิตภัณฑ์ทำความสะอาด',
+  'บ้านและไลฟ์สไตล์',
+  'ห้องครัว',
+  'แม่และเด็ก',
+  'เครื่องใช้ไฟฟ้า อุปกรณ์อิเล็กทรอนิกส์',
+  'เครื่องเขียนและอุปกรณ์สำนักงาน',
+  'เสื้อผ้าและเครื่องประดับ',
+  'อาหารและอุปกรณ์สัตว์เลี้ยง',
+  'อุปกรณ์รถยนต์'
+];
 
 const Products = () => {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // ✅ รับ ID เป้าหมายจาก URL (ถ้ามี)
   const { id: targetListId } = useParams();
 
-  // --- State ---
-  const [activeCategory, setActiveCategory] = useState(
-    location.state?.selectedCategory || 'ทั้งหมด'
-  );
+  const initialCategory = DB_CATEGORIES.includes(location.state?.selectedCategory) 
+    ? location.state.selectedCategory 
+    : 'ทั้งหมด';
+
+  const [activeCategory, setActiveCategory] = useState(initialCategory);
   const [specialFilter, setSpecialFilter] = useState('all'); 
   const [showFilterMenu, setShowFilterMenu] = useState(false);
 
@@ -31,7 +50,6 @@ const Products = () => {
   const [displayProducts, setDisplayProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   
-  // Use Context
   const { favorites: contextFavorites, isFavorite, toggleFavorite } = useFavorites();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -41,24 +59,11 @@ const Products = () => {
   const [nameFilter, setNameFilter] = useState('');
   const [showCatMenu, setShowCatMenu] = useState(false);
 
-  // 🔥 Full Search Index State
-  const [fullSearchIndex, setFullSearchIndex] = useState(null);
-  const [isSearchingIndex, setIsSearchingIndex] = useState(false);
-
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 30;
 
   const catMenuRef = useRef(null);
   const filterMenuRef = useRef(null);
-
-  /* 
-  const categoryMapping = {
-    "อาหารสด & แช่แข็ง": ["อาหารสดและแช่แข็ง", "ผักและผลไม้", "เบเกอรี่"],
-     ...
-  };
-  */
-  // Use shared mapping
-  const categoriesList = ['ทั้งหมด', ...Object.keys(categorySlugMap).filter(k=>k!=='อื่นๆ')];
 
   const specialFiltersList = [
     { id: 'all', label: 'ตัวกรอง', icon: null },
@@ -69,7 +74,7 @@ const Products = () => {
     { id: 'pack', label: 'สินค้าแพ็ค', icon: <Package size={16} className="text-sky-500" /> },
   ];
 
-  // --- Effects ---
+  // Debounce search
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       setNameFilter(searchTerm);
@@ -86,125 +91,138 @@ const Products = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  /* Removed local favorites effect */
-
+  // ✅ Fetch Data from Supabase
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setAllProducts([]); 
 
       try {
-        let url = '';
-        if (activeCategory === 'ทั้งหมด') {
-            url = `${basePath}/data/categories/mixed_products.json`;
-        } else {
-            const slug = getCategorySlug(activeCategory);
-            url = `${basePath}/data/categories/${slug}.json`;
+        let query = supabase
+          .from('products')
+          .select('*')
+          .limit(3000); 
+
+        if (activeCategory !== 'ทั้งหมด') {
+          query = query.eq('category', activeCategory);
         }
 
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Network response was not ok');
-        const data = await response.json();
-        
-        let products = [];
-        if (Array.isArray(data)) {
-            products = data;
-        } else if (data.recommended) {
-            products = [...data.recommended, ...data.popular, ...data.promo];
-        }
+        const { data: mainData, error: mainError } = await query;
+        if (mainError) throw mainError;
 
-        // Filter out nulls and ensure basic fields
         const packRegex = /(แพ็ค|แพค|แพ็ก|pack)\b/i;
-        products = products
-          .filter(item => item && item.name)
-          .map(item => {
-            const name = item.name || '';
-            let tags = Array.isArray(item.tags) ? [...item.tags] : [];
+        
+        let products = (mainData || []).map(item => {
+          const name = item.base_name || 'ไม่มีชื่อสินค้า';
+          let tags = [];
 
-            if (tags.length === 0) {
-              const randomVal = Math.random();
-              if (randomVal > 0.8) tags.push('recommended');
-              else if (randomVal > 0.6) tags.push('popular');
-              else if (randomVal > 0.4) tags.push('promo');
-            }
+          const randomVal = Math.random();
+          if (randomVal > 0.8) tags.push('recommended');
+          else if (randomVal > 0.6) tags.push('popular');
 
-            if (packRegex.test(name) && !tags.includes('pack')) {
-              tags.push('pack');
-            }
+          if (packRegex.test(name)) tags.push('pack');
 
-            return { ...item, tags };
-          });
+          return {
+            id: item.id,
+            name: name,
+            image: item.image || "https://placehold.co/300x300?text=No+Image",
+            price: Number(item.price) || 0,
+            retailer: item.store_name, 
+            tags: tags
+          };
+        });
+
+        if (activeCategory === 'ทั้งหมด') {
+          const { data: promoData } = await supabase
+            .from('promo_products')
+            .select('*')
+            .limit(500);
+
+          if (promoData) {
+            const promoItems = promoData.map(item => {
+              const name = item.base_name || 'ไม่มีชื่อสินค้า';
+              let tags = ['promo']; 
+              if (packRegex.test(name)) tags.push('pack');
+
+              return {
+                id: `promo_${item.id}`,
+                name: name,
+                image: item.image || "https://placehold.co/300x300?text=No+Image",
+                price: Number(item.price) || 0,
+                originalPrice: Number(item.original_price) || undefined,
+                retailer: item.store_name,
+                tags: tags
+              };
+            });
+            products = [...products, ...promoItems];
+          }
+        }
 
         setAllProducts(products);
-      } catch (error) { console.error("Error loading products:", error); } 
-      finally { setLoading(false); }
+      } catch (error) { 
+        console.error("Error fetching data from Supabase:", error); 
+      } finally { 
+        setLoading(false); 
+      }
     };
     fetchData();
   }, [activeCategory]);
 
+  // ✅ Client-side Filtering & Fuzzy Search
   useEffect(() => {
-    const processData = async () => {
-        let processed = [];
+    let processed = [...allProducts];
 
-        // 1. Determine Source Data
-        if (activeCategory === 'ทั้งหมด' && nameFilter.trim() !== '') {
-            // Priority: Use Full Index if available
-            if (fullSearchIndex) {
-                 const PREFIX = "https://st.bigc-cs.com/cdn-cgi/image/format=webp,quality=85/public/media/catalog/product/";
-                 processed = fullSearchIndex.map(p => ({
-                     name: p.n,
-                     price: p.p,
-                     image: p.i ? p.i.replace('{|}', PREFIX) : null,
-                     category: p.c,
-                     retailer: p.r,
-                     tags: [] 
-                 }));
-            } else {
-                // Fallback to loaded 2000 items while loading index
-                processed = [...allProducts];
-                // Trigger lazy load if not started
-                if (!isSearchingIndex) {
-                    setIsSearchingIndex(true);
-                    fetch(`${basePath}/data/categories/all_products_lite.json`)
-                        .then(res => res.json())
-                        .then(data => {
-                            setFullSearchIndex(data);
-                            setIsSearchingIndex(false);
-                        })
-                        .catch(err => {
-                            console.error("Failed to load search index", err);
-                            setIsSearchingIndex(false);
-                        });
-                }
-            }
+    // 1. Search Filter
+    if (nameFilter.trim() !== '') {
+      const termNorm = nameFilter.toLowerCase().replace(/\s+/g, '');
+      const termNoTone = termNorm.replace(/[\u0E48-\u0E4C\u0E4E]/g, '');
+
+      const scoredProducts = processed.map(p => {
+        if (!p.name) return { product: p, score: 0 };
+
+        const nameNorm = p.name.toLowerCase().replace(/\s+/g, '');
+        const nameNoTone = nameNorm.replace(/[\u0E48-\u0E4C\u0E4E]/g, '');
+
+        let score = 0;
+
+        if (nameNorm.includes(termNorm)) {
+          score += 100;
+        } else if (nameNoTone.includes(termNoTone)) {
+          score += 50;
         } else {
-             processed = [...allProducts];
+          const words = nameFilter.toLowerCase().split(/\s+/).filter(Boolean);
+          if (words.length > 0) {
+            let matchCount = 0;
+            words.forEach(w => {
+              if (nameNorm.includes(w)) matchCount++;
+            });
+            if (matchCount === words.length) score += 30; 
+            else if (matchCount > 0 && matchCount >= words.length / 2) score += 10; 
+          }
         }
 
-        // 2. Search Filter
-        if (nameFilter.trim() !== '') {
-            processed = processed.filter(p => 
-                p.name && p.name.toLowerCase().includes(nameFilter.toLowerCase())
-            );
+        return { product: p, score };
+      });
+
+      processed = scoredProducts
+        .filter(item => item.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .map(item => item.product);
+    }
+
+    // 2. Special Filters
+    if (specialFilter !== 'all') {
+        if (specialFilter === 'favorites') {
+            processed = processed.filter(item => isFavorite(item.name));
+        } else {
+            processed = processed.filter(p => p.tags && p.tags.includes(specialFilter));
         }
+    }
 
-        // 3. Special Filters
-        if (specialFilter !== 'all') {
-            if (specialFilter === 'favorites') {
-                processed = processed.filter(item => isFavorite(item.name));
-            } else {
-                processed = processed.filter(p => p.tags && p.tags.includes(specialFilter));
-            }
-        }
+    setDisplayProducts(processed);
+    setCurrentPage(1);
+  }, [allProducts, nameFilter, specialFilter, contextFavorites, isFavorite]);
 
-        setDisplayProducts(processed);
-        setCurrentPage(1);
-    };
-
-    processData();
-  }, [allProducts, nameFilter, specialFilter, contextFavorites, fullSearchIndex]);
-
-  // --- Handlers ---
   const changePage = (newPage) => {
     const totalPages = Math.ceil(displayProducts.length / itemsPerPage);
     if (newPage >= 1 && newPage <= totalPages) {
@@ -213,9 +231,6 @@ const Products = () => {
     }
   };
 
-  /* Removed local toggleFav */
-
-  // ✅ ฟังก์ชันเพิ่มสินค้า (แก้ไขให้รองรับ temp_editing)
   const handleAddToCart = (item) => {
     if (targetListId) {
       try {
@@ -227,30 +242,21 @@ const Products = () => {
           retailer: item.retailer || 'Unknown' 
         };
 
-        // 🟢 สร้าง Key ชั่วคราวตาม ID ที่ส่งมา
         const TEMP_KEY = `temp_editing_${targetListId}`;
         const tempString = localStorage.getItem(TEMP_KEY);
 
         if (tempString) {
-            // A. เจอของที่ฝากไว้ (จากหน้า Edit)
             const tempData = JSON.parse(tempString);
-            
-            // เช็คว่ามีของซ้ำไหม
             const existingIndex = tempData.items.findIndex(i => i.name === item.name);
             if (existingIndex > -1) {
                 tempData.items[existingIndex].qty += 1;
             } else {
                 tempData.items.push(newItem);
             }
-
-            // บันทึกกลับลงกล่อง
             localStorage.setItem(TEMP_KEY, JSON.stringify(tempData));
-            
-            // กลับไปหน้า Edit ทันที
             navigate(-1);
 
         } else if (targetListId === 'new') {
-            // B. สร้างรายการใหม่ (Create Flow)
             const draftString = localStorage.getItem('current_draft');
             const draft = draftString ? JSON.parse(draftString) : { items: [] };
             
@@ -262,9 +268,6 @@ const Products = () => {
             navigate(-1);
 
         } else {
-            // C. กรณีอื่นๆ (Fallback: เพิ่มลง DB ตรงๆ หรือแจ้งเตือน)
-            // ถ้า User ไม่ได้กด Edit เข้ามา แต่กด URL เข้ามาตรงๆ อาจจะให้แจ้งเตือน
-            // หรือถ้าจะให้เพิ่มลง LocalStorage เลยก็ได้ แต่ตาม Flow ควรมีกล่องฝาก
             alert('ไม่พบข้อมูลการแก้ไข (Session Expired) กรุณากลับไปหน้าแก้ไขแล้วลองใหม่');
         }
 
@@ -334,8 +337,6 @@ const Products = () => {
 
   return (
     <div className="products-page">
-      {/* <Navbar /> */}
-      
       <header className="cat-header">
         <div className="cat-header-content">
           {targetListId ? (
@@ -386,7 +387,7 @@ const Products = () => {
                         </button>
                         {showCatMenu && (
                             <div className="dropdown-popup cat-menu-popup">
-                                {categoriesList.map((cat, idx) => (
+                                {DB_CATEGORIES.map((cat, idx) => (
                                     <button key={idx} className={activeCategory === cat ? 'selected' : ''} onClick={() => handleSelectCategory(cat)}>
                                         {cat} 
                                     </button>
@@ -458,12 +459,6 @@ const Products = () => {
                                     </div>
                                     <div className="info-std">
                                         <h3 title={item.name}>{item.name}</h3>
-                                        {(item.retailer || item.store) && (
-                                            <div className="retailer-info">
-                                                <Store size={14} /> 
-                                                {item.retailer || item.store}
-                                            </div>
-                                        )}
                                         <button 
                                             className="btn-add-std" 
                                             onClick={() => handleAddToCart(item)} 

@@ -46,8 +46,22 @@ const ProductSection = ({ title, icon, items = [], isFavorite, toggleFav, loadin
           <div className="product-grid" ref={scrollRef}>
             {items && items.length > 0 ? items.map((item, index) => {
               const isFav = isFavorite ? isFavorite(item.name) : false;
+              const hasDiscount = item.originalPrice && item.originalPrice > item.price;
+
               return (
-                <div key={item.id || index} className="product-card">
+                <div key={item.id || index} className="product-card" style={{ position: 'relative' }}>
+                  
+                  {/* ✅ เพิ่มป้ายโปรโมชั่นสีแดงที่มุมซ้ายบน สำหรับแถวที่มีข้อมูลนี้ */}
+                  {item.promotionText ? (
+                    <div style={{ position: 'absolute', top: '8px', left: '8px', background: '#ef4444', color: 'white', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '600', zIndex: 10, whiteSpace: 'nowrap' }}>
+                      {item.promotionText}
+                    </div>
+                  ) : hasDiscount ? (
+                    <div style={{ position: 'absolute', top: '8px', left: '8px', background: '#ef4444', color: 'white', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '600', zIndex: 10, whiteSpace: 'nowrap' }}>
+                      -{Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100)}%
+                    </div>
+                  ) : null}
+
                   <button
                     className={`fav-btn ${isFav ? 'active' : ''}`}
                     onClick={() => toggleFav(item)}
@@ -102,7 +116,6 @@ const Home = () => {
   const [showSuggestions, setShowSuggestions] = useState(false); 
   const searchContainerRef = useRef(null); 
 
-  // --- ดึงข้อมูลแสดงหน้าโฮม 3 แถว ---
   useEffect(() => {
     const fetchHomeData = async () => {
       setLoading(true);
@@ -119,9 +132,10 @@ const Home = () => {
           .order('price', { ascending: true }) 
           .limit(10);
 
+        // ✅ ดึง promotion และ original_price มาด้วย
         const { data: promoData } = await supabase
           .from('promo_products')
-          .select('id, base_name, image, price, original_price')
+          .select('id, base_name, image, price, original_price, promotion')
           .order('created_at', { ascending: false })
           .limit(10);
 
@@ -132,9 +146,19 @@ const Home = () => {
           price: Number(item.price) || 0,
         });
 
+        // ✅ Format ข้อมูลโปรโมชั่นแยกต่างหาก เพื่อเก็บ promotionText 
+        const formatPromoProduct = (item) => ({
+          id: item.id,
+          name: item.base_name || 'ไม่มีชื่อสินค้า',
+          image: item.image || '',
+          price: Number(item.price) || 0,
+          originalPrice: Number(item.original_price) || undefined,
+          promotionText: item.promotion
+        });
+
         setRecommended((recData || []).map(formatProduct));
         setPopular((popData || []).map(formatProduct));
-        setPromo((promoData || []).map(formatProduct));
+        setPromo((promoData || []).map(formatPromoProduct));
 
       } catch (error) {
         console.error("Error fetching data from Supabase:", error);
@@ -146,17 +170,15 @@ const Home = () => {
     fetchHomeData();
   }, []);
 
-  // ✅ ระบบเดาคำค้นหาฉบับอัปเกรด (ยิงตรงเข้า Database ดึงจาก 70,000 ชิ้น)
+  // ระบบเดาคำค้นหา
   useEffect(() => {
     const fetchSuggestions = setTimeout(async () => {
       const term = searchTerm.trim();
       
       if (term.length > 0) {
         try {
-          // แทนที่ช่องว่างด้วย % เพื่อให้หาเจอแม้พิมพ์เว้นวรรค เช่น "หมู สับ" -> "%หมู%สับ%"
           const searchPattern = `%${term.replace(/\s+/g, '%')}%`;
 
-          // วิ่งไปค้นใน Supabase โดยตรง ดึงมา 6 ชิ้นแรกที่ใกล้เคียง
           const { data, error } = await supabase
             .from('products')
             .select('id, base_name, image')
@@ -172,7 +194,6 @@ const Home = () => {
               image: item.image || "https://placehold.co/300x300?text=No+Image"
             }));
             
-            // กรองชื่อซ้ำออก (กรณีฐานข้อมูลมีสินค้าชื่อเหมือนกันเป๊ะ)
             const uniqueSuggestions = Array.from(new Map(formatted.map(item => [item.name, item])).values());
             
             setSuggestions(uniqueSuggestions);
@@ -188,7 +209,7 @@ const Home = () => {
         setSuggestions([]);
         setShowSuggestions(false);
       }
-    }, 300); // 👈 หน่วงเวลา 0.3 วินาทีหลังพิมพ์เสร็จ ค่อยยิงดึงข้อมูล กันเว็บค้าง
+    }, 300); 
 
     return () => clearTimeout(fetchSuggestions);
   }, [searchTerm]);
@@ -214,7 +235,6 @@ const Home = () => {
     if (e.key === 'Enter') handleSearch();
   };
 
-  // ปิด Dropdown เมื่อคลิกที่อื่น
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
@@ -334,7 +354,6 @@ const Home = () => {
           </div>
         </section>
 
-        {/* ✅ ย้าย สินค้าโปรโมชั่น ขึ้นมาไว้ด้านบนสุด */}
         <ProductSection
           title="สินค้าโปรโมชั่น"
           icon={<Tag size={24} color="var(--primary)" />}

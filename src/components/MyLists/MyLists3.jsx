@@ -11,11 +11,10 @@ import {
   Store,
   LogIn,
   Loader2,
-  X,
   AlertCircle,
-  Navigation, // ✅ เพิ่มไอคอนนำทาง
-  Lightbulb, // ✅ เพิ่มไอคอน lightbulb
-  MapPin, // ✅ เพิ่มไอคอน MapPin
+  Navigation,
+  Lightbulb,
+  MapPin,
 } from "lucide-react";
 
 import Footer from "../Home/Footer";
@@ -25,6 +24,9 @@ import { db, auth } from '../../firebase-config';
 import { onAuthStateChanged } from 'firebase/auth';
 import { basePath } from '../../utils/basePath';
 import { doc, setDoc, getDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
+
+// ✅ Import Supabase
+import { supabase } from '../../../supabaseClient'; 
 
 /* ===== ✅ Store Logos ===== */
 const STORE_LOGOS = {
@@ -72,52 +74,6 @@ const matchProduct = (targetName, candidates) => {
   return bestScore >= 1 ? best : null;
 };
 
-const normalizeRetailer = (v) => {
-  const s = String(v || "").toLowerCase().replace(/\s+/g, "");
-  if (!s) return "";
-  if (s.includes("lotus") || s.includes("โลตัส")) return "LOTUS";
-  if (s.includes("big")) return "BIGC";
-  if (s.includes("makro") || s.includes("แม็คโคร")) return "MAKRO";
-  return "";
-};
-
-const pickFirst = (obj, keys) => {
-  for (const k of keys) {
-    const v = obj?.[k];
-    if (v !== undefined && v !== null && String(v).trim() !== "") return v;
-  }
-  return null;
-};
-
-const normalizeRow = (row) => {
-  const retailerRaw = pickFirst(row, [
-    "retailer",
-    "store",
-    "shop",
-    "source",
-    "merchant",
-    "platform",
-  ]);
-  const retailer = normalizeRetailer(retailerRaw);
-  const name = pickFirst(row, ["name", "title", "product_name", "productName", "product_title"]);
-  const price = pickFirst(row, [
-    "price",
-    "sale_price",
-    "final_price",
-    "current_price",
-    "min_price",
-    "discount_price",
-  ]);
-  const image = pickFirst(row, ["image", "img", "image_url", "imageUrl", "thumbnail", "thumb"]);
-
-  return {
-    retailer,
-    name: name ? String(name) : "",
-    price: toNumber(price),
-    image: image ? String(image) : "",
-  };
-};
-
 /* ===== ✅ distance (Haversine) ===== */
 const haversineDistance = (lat1, lon1, lat2, lon2) => {
   const toRad = (v) => (v * Math.PI) / 180;
@@ -131,7 +87,6 @@ const haversineDistance = (lat1, lon1, lat2, lon2) => {
   return R * c;
 };
 
-// รองรับทั้ง {location:{lat,lng}} และ {geometry:{location:{lat,lng}}}
 const getPlaceLatLng = (p) => {
   const lat = p?.location?.lat ?? p?.geometry?.location?.lat;
   const lng = p?.location?.lng ?? p?.geometry?.location?.lng;
@@ -159,10 +114,8 @@ export default function MyLists3() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showExitModal, setShowExitModal] = useState(false);
 
-  // ✅ เปลี่ยนจาก useState เป็น useRef เพื่อแก้ปัญหา Alert เด้งซ้ำ
   const processedIncomingRef = useRef(false);
 
-  // ✅ สำหรับคำนวณ “ระยะทางจริง” ของร้านค้าแนะนำ
   const [userLocation, setUserLocation] = useState(null);
   const [branches, setBranches] = useState({ LOTUS: [], BIGC: [], MAKRO: [] });
   const [branchLoading, setBranchLoading] = useState(false);
@@ -172,7 +125,6 @@ export default function MyLists3() {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setCurrentUser(user);
       
-      // โหลด membership จาก localStorage หรือ Firestore
       if (user) {
         try {
           const userDocRef = doc(db, "users", user.uid);
@@ -181,18 +133,15 @@ export default function MyLists3() {
             const userData = userDocSnap.data();
             if (userData.membership) {
               setMembership(userData.membership);
-              // อัปเดต localStorage เป็น cache
               const userLocal = JSON.parse(localStorage.getItem("user") || "{}");
               localStorage.setItem("user", JSON.stringify({ ...userLocal, membership: userData.membership }));
             } else {
-              // ถ้าไม่มีใน Firestore ให้ลองดึงจาก localStorage
               const userLocal = JSON.parse(localStorage.getItem("user") || "{}");
               if (userLocal.membership) {
                 setMembership(userLocal.membership);
               }
             }
           } else {
-            // ถ้าไม่มีใน Firestore ให้ลองดึงจาก localStorage
             const userLocal = JSON.parse(localStorage.getItem("user") || "{}");
             if (userLocal.membership) {
               setMembership(userLocal.membership);
@@ -200,14 +149,12 @@ export default function MyLists3() {
           }
         } catch (error) {
           console.error("Error loading membership:", error);
-          // ถ้าเกิด error ให้ลองดึงจาก localStorage
           const userLocal = JSON.parse(localStorage.getItem("user") || "{}");
           if (userLocal.membership) {
             setMembership(userLocal.membership);
           }
         }
       } else {
-        // ถ้ายังไม่ login ให้ดึงจาก localStorage
         const userLocal = JSON.parse(localStorage.getItem("user") || "{}");
         if (userLocal.membership) {
           setMembership(userLocal.membership);
@@ -219,7 +166,6 @@ export default function MyLists3() {
     return () => unsubscribe();
   }, []);
 
-  // ฟัง membership changes จาก localStorage (เมื่อมีการเปลี่ยนแปลงใน tab อื่น)
   useEffect(() => {
     const handleStorageChange = () => {
       const userLocal = JSON.parse(localStorage.getItem("user") || "{}");
@@ -243,31 +189,55 @@ export default function MyLists3() {
     };
   }, []);
 
-  /* ===== load jsonl ===== */
+  /* ===== ✅ โหลดข้อมูลจาก Supabase แทนไฟล์ JSONL ===== */
   useEffect(() => {
-    let mounted = true;
-    fetch(`${basePath}/data/all_retailers_products_merged_v1.jsonl`)
-      .then((res) => res.text())
-      .then((text) => {
-        const lines = text.split(/\r?\n/).filter(Boolean);
-        const normalized = [];
-        for (const line of lines) {
-          try {
-            const row = JSON.parse(line);
-            const n = normalizeRow(row);
-            if (n.retailer && n.name) normalized.push(n);
-        } catch {
-          // ignore errors while normalizing product rows
-        }
-        }
-        if (!mounted) return;
+    const fetchProductsFromSupabase = async () => {
+      setLoading(true);
+      try {
+        // 1. ดึงข้อมูลสินค้าปกติ
+        const { data: normalData, error: normalError } = await supabase
+          .from('products')
+          .select('base_name, image, price, store_name')
+          .limit(15000); // ดึงมาจำนวนหนึ่งเพื่อเปรียบเทียบ
+
+        if (normalError) throw normalError;
+
+        // 2. ดึงข้อมูลสินค้าโปรโมชั่น
+        const { data: promoData, error: promoError } = await supabase
+          .from('promo_products')
+          .select('base_name, image, price, store_name')
+          .limit(3000);
+
+        if (promoError) throw promoError;
+
+        // 3. รวมและจัด Format 
+        const formatForComparison = (item) => {
+          let retailerCode = "UNKNOWN";
+          const storeName = String(item.store_name || "").toUpperCase();
+          if (storeName.includes("LOTUS") || storeName.includes("โลตัส")) retailerCode = "LOTUS";
+          else if (storeName.includes("BIGC") || storeName.includes("BIG C") || storeName.includes("บิ๊กซี")) retailerCode = "BIGC";
+          else if (storeName.includes("MAKRO") || storeName.includes("แม็คโคร")) retailerCode = "MAKRO";
+
+          return {
+            retailer: retailerCode,
+            name: item.base_name ? String(item.base_name) : "",
+            price: Number(item.price) || null,
+            image: item.image ? String(item.image) : "",
+          };
+        };
+
+        const allItems = [...(normalData || []), ...(promoData || [])];
+        const normalized = allItems.map(formatForComparison).filter(n => n.name && n.price);
+
         setAllProducts(normalized);
+      } catch (error) {
+        console.error("Error fetching products from Supabase:", error);
+      } finally {
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
-    return () => {
-      mounted = false;
+      }
     };
+
+    fetchProductsFromSupabase();
   }, []);
 
   const lotusList = useMemo(
@@ -289,24 +259,19 @@ export default function MyLists3() {
 
   useEffect(() => {
     const fetchListData = async () => {
-      // 1. DRAFT DATA PRIORITY (จากหน้า Create)
       if (location.state?.draftData) {
-        console.log("RECEIVED DRAFT DATA:", location.state.draftData);
         setSelectedList(location.state.draftData);
         setIsDraft(true); 
         return;
       }
 
-      // 2. ถ้าเป็น temporary ID ให้ดึงจาก draft
       if (String(id).startsWith('temp_')) {
-        // ลองดึงจาก temp_draft ก่อน
         const tempDraft = JSON.parse(localStorage.getItem("temp_draft") || "null");
         if (tempDraft && String(tempDraft.id) === String(id)) {
           setSelectedList(tempDraft);
           setIsDraft(true);
           return;
         }
-        // ถ้าไม่มี ลองดึงจาก current_draft
         const draft = JSON.parse(localStorage.getItem("current_draft") || "null");
         if (draft && String(draft.id) === String(id)) {
           setSelectedList(draft);
@@ -315,9 +280,7 @@ export default function MyLists3() {
         }
       }
 
-      // 3. ถ้า login แล้ว ให้หาใน Local Storage หรือ FireStore
       if (auth.currentUser) {
-        // 3.1 หาใน Local Storage ก่อน
         const allLocalLists = JSON.parse(localStorage.getItem("myLists")) || [];
         const localList = allLocalLists.find((l) => String(l.id) === String(id));
 
@@ -326,7 +289,6 @@ export default function MyLists3() {
           return;
         }
 
-        // 3.2 หาใน FireStore
         try {
             const docRef = doc(db, "shopping_lists", String(id));
             const docSnap = await getDoc(docRef);
@@ -334,21 +296,15 @@ export default function MyLists3() {
             if (docSnap.exists()) {
                 const data = docSnap.data();
                 setSelectedList({ id: docSnap.id, ...data });
-            } else {
-                console.log("No such document in Firestore!");
             }
         } catch (err) {
             console.error("Error fetching from Firestore:", err);
         }
-      } else {
-        // ✅ ถ้ายังไม่ login และไม่ใช่ draft ให้แสดงข้อความ
-        console.log("Not logged in and no draft data");
       }
     };
     fetchListData();
   }, [id, location.state]);
 
-  // ✅ แก้ไข: ใช้ useRef เช็ค ทำให้ Alert เด้งแค่ครั้งเดียวแน่นอน
   useEffect(() => {
     if (selectedList && location.state?.incomingItem && !processedIncomingRef.current) {
       processedIncomingRef.current = true;
@@ -463,7 +419,6 @@ export default function MyLists3() {
   const wanted = selectedList?.items || [];
   const listName = selectedList?.name || "ไม่พบรายการ";
   
-  // ✅ รับ selectedStores จาก selectedList และสร้าง list ของร้านที่เลือก
   const selectedStores = selectedList?.selectedStores || { ALL: true, LOTUS: true, BIGC: true, MAKRO: true };
   const selectedStoreKeys = useMemo(() => {
     if (selectedStores.ALL) {
@@ -482,7 +437,6 @@ export default function MyLists3() {
         BIGC: b?.price ?? null,
         MAKRO: m?.price ?? null,
       };
-      // ✅ คำนวณ minVal จากราคาของร้านที่เลือกเท่านั้น
       const valid = selectedStoreKeys
         .map(key => priceMap[key])
         .filter((v) => typeof v === "number");
@@ -497,15 +451,14 @@ export default function MyLists3() {
   }, [wanted, lotusList, bigcList, makroList, selectedStoreKeys]);
 
   const totals = useMemo(() => {
-    const sum = (k) => rows.reduce((acc, r) => acc + (r.priceMap[k] || 0), 0);
+    const sum = (k) => rows.reduce((acc, r) => acc + ((r.priceMap[k] || 0) * (wanted.find(i => i.name === r.name)?.qty || 1)), 0);
     return {
       LOTUS: sum("LOTUS"),
       BIGC: sum("BIGC"),
       MAKRO: sum("MAKRO"),
     };
-  }, [rows]);
+  }, [rows, wanted]);
   
-  // ✅ กรอง totals ให้แสดงเฉพาะร้านที่เลือก
   const filteredTotals = useMemo(() => {
     const result = {};
     selectedStoreKeys.forEach(key => {
@@ -547,15 +500,13 @@ export default function MyLists3() {
       },
     ];
     
-    // ✅ กรองเฉพาะร้านที่เลือกและมีราคารวม > 0
     return allShops.filter(
       (s) => selectedStoreKeys.includes(s.key) && typeof s.totalPrice === "number" && s.totalPrice > 0
     );
   }, [branches, totals, selectedStoreKeys]);
 
-  /* ===== ✅ ปุ่ม “นำทาง” (เปิด Google Maps) ===== */
   const handleNavigate = (shopKey) => {
-    const branch = branches?.[shopKey]?.[0]; // เอาสาขาที่ใกล้สุด
+    const branch = branches?.[shopKey]?.[0]; 
     const ll = getPlaceLatLng(branch);
     if (!ll) {
       toast.error("ไม่พบพิกัดสาขาสำหรับนำทาง");
@@ -566,8 +517,6 @@ export default function MyLists3() {
   };
 
   const handleBackClick = () => {
-    // ถ้าเป็น draft (รายการที่ยังไม่ได้บันทึก) ให้แสดง modal ถามว่าต้องการบันทึกหรือไม่
-    // ถ้าไม่ใช่ draft (รายการที่บันทึกแล้ว) ให้กลับได้เลยโดยไม่แสดง modal
     if (isDraft) {
       setShowExitModal(true);
     } else {
@@ -589,7 +538,6 @@ export default function MyLists3() {
   };
 
   const handleSaveClick = () => {
-    // ✅ ถ้ายังไม่ login ให้แสดง modal ให้ login
     if (!currentUser) {
       setShowLoginModal(true);
       return;
@@ -603,14 +551,12 @@ export default function MyLists3() {
   };
 
   const confirmSave = async () => {
-    // ✅ ต้อง login ก่อนบันทึก
     if (!currentUser) {
       setShowModal(false);
       setShowLoginModal(true);
       return;
     }
 
-    console.log("CONFIRM SAVE CALLED - WRITING TO STORAGE");
     setShowModal(false); 
     setShowExitModal(false); 
     setIsSaving(true);
@@ -620,7 +566,6 @@ export default function MyLists3() {
     try {
         const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
         
-        // ✅ สร้าง ID ใหม่ถ้าเป็น temporary list
         let finalId = id;
         if (id.startsWith('temp_') || selectedList?.isTemporary) {
           finalId = Date.now().toString();
@@ -633,7 +578,7 @@ export default function MyLists3() {
           ...selectedList,
           id: finalId,
           isGuest: false,
-          isTemporary: false, // ✅ ไม่ใช่ temporary แล้ว
+          isTemporary: false, 
           updatedAt: new Date().toISOString()
         };
         
@@ -645,7 +590,6 @@ export default function MyLists3() {
         }
         localStorage.setItem("myLists", JSON.stringify(newLists));
 
-        // 🟢 CLOUD SAVE (ต้อง login แล้ว)
         try {
            const cloudData = {
                ...listToSave,
@@ -655,13 +599,11 @@ export default function MyLists3() {
                totalItems: (selectedList.items || []).reduce((sum, i) => sum + (i.qty || 1), 0)
            };
            await setDoc(doc(db, "shopping_lists", String(finalId)), cloudData);
-           console.log("Cloud save success");
         } catch (cloudErr) {
            console.error("Cloud save failed:", cloudErr);
            toast.error("บันทึกออนไลน์ไม่สำเร็จ (แต่ในเครื่องบันทึกแล้ว)");
         }
         
-        // Clear related temp data
         localStorage.removeItem("pending_save_list");
         localStorage.removeItem("current_draft");
         localStorage.removeItem("temp_draft");
@@ -672,7 +614,6 @@ export default function MyLists3() {
         setIsSaving(false);
         setIsDraft(false);
 
-        // Redirect to My Lists page
         setTimeout(() => {
           navigate('/mylists');
         }, 500); 
@@ -709,20 +650,15 @@ export default function MyLists3() {
     const toastId = toast.loading("กำลังลบรายการ...");
 
       try {
-        // ลบจาก Local Storage เท่านั้น
         const allLists = JSON.parse(localStorage.getItem("myLists")) || [];
         const filteredLists = allLists.filter((l) => String(l.id) !== String(id));
         localStorage.setItem("myLists", JSON.stringify(filteredLists));
 
-        // 🟢 CLOUD DELETE (If Logged In)
         if (currentUser) {
             try {
                 await deleteDoc(doc(db, "shopping_lists", String(id)));
-                console.log("Cloud delete success");
             } catch (cloudErr) {
                 console.error("Cloud delete failed:", cloudErr);
-                // ไม่ต้อง throw error เพื่อให้ process การลบในเครื่องจบสมบูรณ์
-                // toast.error("ลบออนไลน์ไม่สำเร็จ"); 
             }
         }
         
@@ -808,7 +744,7 @@ export default function MyLists3() {
                       />
                     </div>
                     <div className="ml3-prodmeta">
-                      <div className="ml3-prodname">{it.name}</div>
+                      <div className="ml3-prodname">{it.name} <span style={{color: '#94a3b8', fontSize: '0.8rem'}}>x{wanted.find(w => w.name === it.name)?.qty || 1}</span></div>
                     </div>
                   </div>
 
@@ -968,7 +904,6 @@ export default function MyLists3() {
                   </div>
                   </div>
 
-                  {/* ✅ ปุ่มเหมือนเดิม + เพิ่มปุ่มนำทาง */}
                   <div style={{ display: "flex", gap: "10px", justifyContent: "flex-end" }}>
                     <button className="ml3-go-shop" onClick={() => window.open(s.url, "_blank")}>
                       ไปยังร้านค้า
