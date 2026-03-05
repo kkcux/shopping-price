@@ -1,40 +1,47 @@
-import React, { useState, useEffect } from 'react';
-import { ShoppingCart, ArrowLeft, Menu, X } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { ShoppingCart, ArrowLeft, Menu, X, Bell } from 'lucide-react'; 
 import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 
-// ✅ 1. Import Firebase Auth
+// 1. นำ NotificationList Component มาใช้งานตรงนี้
+import NotificationList from '../Notification/NotificationList'; 
+
 import { auth } from '../../firebase-config'; 
 import { onAuthStateChanged } from 'firebase/auth';
 
 function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
-  
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  
+  // 2. สร้าง State และ Ref สำหรับ Pop-up แจ้งเตือน
+  const [showNoti, setShowNoti] = useState(false);
+  const notiRef = useRef(null); 
 
-  // โหลดข้อมูล User จาก LocalStorage
   const [user, setUser] = useState(() => {
     const storedUser = localStorage.getItem('user');
     return storedUser ? JSON.parse(storedUser) : null;
   });
 
-  // ✅ ดึงตัวย่อชื่อ (ใช้ logic เดียวกับ Profile)
   const getInitials = (displayName) => {
     if (!displayName) return '';
-    return displayName
-      .split(' ')
-      .map(word => word[0])
-      .join('')
-      .toUpperCase()
-      .substring(0, 2);
+    return displayName.split(' ').map(word => word[0]).join('').toUpperCase().substring(0, 2);
   };
 
-  // ✅ เพิ่ม Auth State Listener - จะอัปเดต User ทันทีเมื่อ Auth เปลี่ยนแปลง
+  // 3. ฟังก์ชันปิด Pop-up เมื่อคลิกที่อื่น (Click Outside)
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (notiRef.current && !notiRef.current.contains(event.target)) {
+        setShowNoti(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
-        // User ล็อกอินแล้ว - อัปเดต localStorage และ state
         const userData = {
           uid: firebaseUser.uid,
           email: firebaseUser.email,
@@ -45,56 +52,31 @@ function Navbar() {
         localStorage.setItem('user', JSON.stringify(userData));
         setUser(userData);
       } else {
-        // User ยังไม่ล็อกอิน - เคลียร์ข้อมูล
         localStorage.removeItem('user');
         setUser(null);
       }
     });
-
-    return unsubscribe; // Cleanup listener
+    return unsubscribe;
   }, []);
 
-  // อัปเดตข้อมูล User ทุกครั้งที่เปลี่ยนหน้า (เพื่อให้รูปเปลี่ยนทันทีหลังแก้โปรไฟล์)
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    if (storedUser) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setUser(JSON.parse(storedUser));
-    } else {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setUser(null);
-    }
-  }, [location]);
-
-
-  // ปิดเมนูมือถือเมื่อเปลี่ยน route
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMobileMenuOpen(false);
+    setShowNoti(false); // ปิดแจ้งเตือนเมื่อเปลี่ยนหน้า
   }, [location.pathname]);
 
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
-  const getBackBtnConfig = () => {
-    if (location.pathname === '/register') {
-      return { text: 'กลับหน้าเข้าสู่ระบบ', path: '/login' };
-    }
-    return { text: 'กลับหน้าหลัก', path: '/' };
-  };
-  const backConfig = getBackBtnConfig();
-
+  
   if (isAuthPage) {
     return (
       <nav className="navbar">
         <div className="nav-content">
           <Link to="/" className="brand">
-            <div className="logo-circle-nav">
-              <ShoppingCart size={20} color="#FFFFFF" strokeWidth={2.5} />
-            </div>
+            <div className="logo-circle-nav"><ShoppingCart size={20} color="#FFFFFF" strokeWidth={2.5} /></div>
             PriceFinder
           </Link>
-          <button className="btn-nav-back" onClick={() => navigate(backConfig.path)}>
+          <button className="btn-nav-back" onClick={() => navigate(location.pathname === '/register' ? '/login' : '/')}>
             <ArrowLeft size={18} />
-            <span>{backConfig.text}</span>
+            <span>{location.pathname === '/register' ? 'กลับหน้าเข้าสู่ระบบ' : 'กลับหน้าหลัก'}</span>
           </button>
         </div>
       </nav>
@@ -102,90 +84,71 @@ function Navbar() {
   }
 
   return (
-    <>
-      <nav className="navbar">
-        <div className="nav-content">
-          <Link to="/" className="brand">
-            <div className="logo-circle-nav">
-              <ShoppingCart size={20} color="#FFFFFF" strokeWidth={2.5} />
-            </div>
-            PriceFinder
-          </Link>
-          
-          <div className="nav-right">
+    <nav className="navbar">
+      <div className="nav-content">
+        <Link to="/" className="brand">
+          <div className="logo-circle-nav"><ShoppingCart size={20} color="#FFFFFF" strokeWidth={2.5} /></div>
+          PriceFinder
+        </Link>
+        
+        <div className="nav-right">
           <ul className="menu">
             <li><NavLink to="/" end>HOME</NavLink></li>
             <li><NavLink to="/favorites">FAVORITES</NavLink></li>
             <li><NavLink to="/mylists">MYLISTS</NavLink></li>
+            <li><NavLink to="/promotion">PROMOTION</NavLink></li>
           </ul>
 
           <div className="nav-actions">
-            
-            {user ? (
-              <div 
-                className="user-profile" 
-                onClick={() => navigate('/profile')} 
-                style={{ cursor: 'pointer' }}
+            {/* 4. ส่วนของกระดิ่งที่เรียกใช้ NotificationList */}
+            <div className="noti-wrapper" ref={notiRef}>
+              <button 
+                className={`notification-btn ${showNoti ? 'active' : ''}`} 
+                onClick={() => setShowNoti(!showNoti)}
               >
-                {/* ✅ แสดงรูปโปรไฟล์เหมือน Profile */}
+                <Bell size={20} />
+                <span className="noti-dot"></span>
+              </button>
+
+              {/* แสดง Component NotificationList ของคุณเมื่อกดปุ่ม */}
+              {showNoti && (
+                <div className="noti-dropdown-container">
+                  <NotificationList />
+                </div>
+              )}
+            </div>
+
+            {user ? (
+              <div className="user-profile" onClick={() => navigate('/profile')} style={{ cursor: 'pointer' }}>
                 {user.photoURL ? (
-                  <img 
-                    src={user.photoURL} 
-                    alt="Profile" 
-                    className="user-profile-image"
-                    style={{
-                      width: '32px',
-                      height: '32px',
-                      borderRadius: '50%',
-                      objectFit: 'cover',
-                      marginRight: '8px'
-                    }}
-                  />
+                  <img src={user.photoURL} alt="Profile" className="user-profile-image" style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', marginRight: '8px' }} />
                 ) : (
-                  <div className="user-initials-badge" style={{
-                    width: '32px',
-                    height: '32px',
-                    fontSize: '0.75rem'
-                  }}>
-                    <span className="initials-text">
-                      {getInitials(user.name || user.given_name || user.email || '')}
-                    </span>
+                  <div className="user-initials-badge" style={{ width: '32px', height: '32px', fontSize: '0.75rem' }}>
+                    <span className="initials-text">{getInitials(user.name || user.given_name || user.email || '')}</span>
                   </div>
                 )}
-                
-                {/* 🔥 แก้ไข: ป้องกัน Error split ตามที่เคยคุยกัน */}
-                <span className="user-name">
-                  {(user.given_name || user.name || "").split(' ')[0]}
-                </span>
+                <span className="user-name">{(user.given_name || user.name || "").split(' ')[0]}</span>
               </div>
             ) : (
-              <Link to="/login">
-                <button className="login-btn">LOGIN</button>
-              </Link>
+              <Link to="/login"><button className="login-btn">LOGIN</button></Link>
             )}
           </div>
 
-          <button
-            type="button"
-            className="nav-hamburger"
-            aria-label="เปิดเมนู"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
+          <button type="button" className="nav-hamburger" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
             {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
-          </div>
         </div>
+      </div>
 
-        {/* เมนูมือถือ (แสดงเมื่อกดฮัมเบอร์เกอร์) */}
-        <div className={`mobile-menu ${mobileMenuOpen ? 'mobile-menu-open' : ''}`}>
-          <ul className="mobile-menu-list">
-            <li><NavLink to="/" end onClick={() => setMobileMenuOpen(false)}>HOME</NavLink></li>
-            <li><NavLink to="/favorites" onClick={() => setMobileMenuOpen(false)}>FAVORITES</NavLink></li>
-            <li><NavLink to="/mylists" onClick={() => setMobileMenuOpen(false)}>MYLISTS</NavLink></li>
-          </ul>
-        </div>
-      </nav>
-    </>
+      <div className={`mobile-menu ${mobileMenuOpen ? 'mobile-menu-open' : ''}`}>
+        <ul className="mobile-menu-list">
+          <li><NavLink to="/" end onClick={() => setMobileMenuOpen(false)}>HOME</NavLink></li>
+          <li><NavLink to="/favorites" onClick={() => setMobileMenuOpen(false)}>FAVORITES</NavLink></li>
+          <li><NavLink to="/mylists" onClick={() => setMobileMenuOpen(false)}>MYLISTS</NavLink></li>
+          <li><NavLink to="/promotion" onClick={() => setMobileMenuOpen(false)}>PROMOTION</NavLink></li>
+        </ul>
+      </div>
+    </nav>
   );
 }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Home.css';
 import {
@@ -8,9 +8,9 @@ import {
 } from 'lucide-react';
 
 import AddToListModal from './AddToListModal';
-import AuthRequiredModal from './AuthRequiredModal'; // ✅ Import Modal
+import AuthRequiredModal from './AuthRequiredModal';
 import { useFavorites } from '../../context/FavoritesContext';
-import { basePath } from '../../utils/basePath';
+import { supabase } from '../../../supabaseClient'; 
 
 const ProductSection = ({ title, icon, items = [], isFavorite, toggleFav, loading, onAddToCart, onViewAll }) => {
   const scrollRef = useRef(null);
@@ -46,8 +46,22 @@ const ProductSection = ({ title, icon, items = [], isFavorite, toggleFav, loadin
           <div className="product-grid" ref={scrollRef}>
             {items && items.length > 0 ? items.map((item, index) => {
               const isFav = isFavorite ? isFavorite(item.name) : false;
+              const hasDiscount = item.originalPrice && item.originalPrice > item.price;
+
               return (
-                <div key={item.id || index} className="product-card">
+                <div key={item.id || index} className="product-card" style={{ position: 'relative' }}>
+                  
+                  {/* ✅ เพิ่มป้ายโปรโมชั่นสีแดงที่มุมซ้ายบน สำหรับแถวที่มีข้อมูลนี้ */}
+                  {item.promotionText ? (
+                    <div style={{ position: 'absolute', top: '8px', left: '8px', background: '#ffd468', color: 'red', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '600', zIndex: 10, whiteSpace: 'nowrap' }}>
+                      {item.promotionText}
+                    </div>
+                  ) : hasDiscount ? (
+                    <div style={{ position: 'absolute', top: '8px', left: '8px', background: '#ef4444', color: 'white', padding: '4px 8px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: '600', zIndex: 10, whiteSpace: 'nowrap' }}>
+                      -{Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100)}%
+                    </div>
+                  ) : null}
+
                   <button
                     className={`fav-btn ${isFav ? 'active' : ''}`}
                     onClick={() => toggleFav(item)}
@@ -87,20 +101,119 @@ const ProductSection = ({ title, icon, items = [], isFavorite, toggleFav, loadin
 const Home = () => {
   const navigate = useNavigate();
   const { isFavorite, toggleFavorite, currentUser } = useFavorites();
-  // const [favorites, setFavorites] = useState({}); // Removed for Context
-  const [allProducts, setAllProducts] = useState([]);
+  
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false); // ✅ New State for Auth Modal
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
-  // --- Search & Suggestion States ---
+  const [recommended, setRecommended] = useState([]);
+  const [popular, setPopular] = useState([]);
+  const [promo, setPromo] = useState([]);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [suggestions, setSuggestions] = useState([]);     
   const [showSuggestions, setShowSuggestions] = useState(false); 
   const searchContainerRef = useRef(null); 
 
-  // ฟังก์ชันเมื่อกดค้นหา (Enter หรือ ปุ่มแว่นขยาย)
+  useEffect(() => {
+    const fetchHomeData = async () => {
+      setLoading(true);
+      try {
+        const { data: recData } = await supabase
+          .from('products')
+          .select('id, base_name, image, price')
+          .order('id', { ascending: false })
+          .limit(10);
+
+        const { data: popData } = await supabase
+          .from('products')
+          .select('id, base_name, image, price')
+          .order('price', { ascending: true }) 
+          .limit(10);
+
+        // ✅ ดึง promotion และ original_price มาด้วย
+        const { data: promoData } = await supabase
+          .from('promo_products')
+          .select('id, base_name, image, price, original_price, promotion')
+          .order('created_at', { ascending: false })
+          .limit(10);
+
+        const formatProduct = (item) => ({
+          id: item.id,
+          name: item.base_name || 'ไม่มีชื่อสินค้า',
+          image: item.image || '',
+          price: Number(item.price) || 0,
+        });
+
+        // ✅ Format ข้อมูลโปรโมชั่นแยกต่างหาก เพื่อเก็บ promotionText 
+        const formatPromoProduct = (item) => ({
+          id: item.id,
+          name: item.base_name || 'ไม่มีชื่อสินค้า',
+          image: item.image || '',
+          price: Number(item.price) || 0,
+          originalPrice: Number(item.original_price) || undefined,
+          promotionText: item.promotion
+        });
+
+        setRecommended((recData || []).map(formatProduct));
+        setPopular((popData || []).map(formatProduct));
+        setPromo((promoData || []).map(formatPromoProduct));
+
+      } catch (error) {
+        console.error("Error fetching data from Supabase:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchHomeData();
+  }, []);
+
+  // ระบบเดาคำค้นหา
+  useEffect(() => {
+    const fetchSuggestions = setTimeout(async () => {
+      const term = searchTerm.trim();
+      
+      if (term.length > 0) {
+        try {
+          const searchPattern = `%${term.replace(/\s+/g, '%')}%`;
+
+          const { data, error } = await supabase
+            .from('products')
+            .select('id, base_name, image')
+            .ilike('base_name', searchPattern)
+            .limit(6);
+
+          if (error) throw error;
+
+          if (data && data.length > 0) {
+            const formatted = data.map(item => ({
+              id: item.id,
+              name: item.base_name || 'ไม่มีชื่อสินค้า',
+              image: item.image || "https://placehold.co/300x300?text=No+Image"
+            }));
+            
+            const uniqueSuggestions = Array.from(new Map(formatted.map(item => [item.name, item])).values());
+            
+            setSuggestions(uniqueSuggestions);
+            setShowSuggestions(true);
+          } else {
+            setSuggestions([]);
+            setShowSuggestions(false);
+          }
+        } catch (err) {
+          console.error("Search suggestion error:", err);
+        }
+      } else {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    }, 300); 
+
+    return () => clearTimeout(fetchSuggestions);
+  }, [searchTerm]);
+
   const handleSearch = () => {
     if (searchTerm.trim()) {
       setShowSuggestions(false);
@@ -110,23 +223,18 @@ const Home = () => {
     }
   };
 
-  // ฟังก์ชันเมื่อเลือกรายการจาก Dropdown
   const handleSelectSuggestion = (productName) => {
     setSearchTerm(productName);
     setShowSuggestions(false);
-    // ไปหน้า Categories เพื่อค้นหาสินค้านั้นทันที
     navigate('/categories', { 
         state: { searchTerm: productName, selectedCategory: 'ทั้งหมด' } 
     });
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      handleSearch();
-    }
+    if (e.key === 'Enter') handleSearch();
   };
 
-  // ปิด Dropdown เมื่อคลิกข้างนอก
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
@@ -137,78 +245,32 @@ const Home = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // ... (ฟังก์ชันอื่นๆ: handleViewAll, favorites, loading - เหมือนเดิม) ...
   const handleViewAll = (filterType) => {
-    navigate('/categories', { state: { selectedFilter: filterType, selectedCategory: 'ทั้งหมด' } });
+    if (filterType === 'promo') {
+        navigate('/promotion');
+    } else {
+        navigate('/categories', { state: { selectedFilter: filterType, selectedCategory: 'ทั้งหมด' } });
+    }
   };
-
-  /* Removed local favorites effect */
-
-
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        // ✅ ใช้ไฟล์เล็กสำหรับหน้า Home (24KB)
-        const response = await fetch(`${basePath}/data/home_products.json`);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        // data format: { recommended: [], popular: [], promo: [] }
-        setAllProducts(data); // เก็บทั้งหมดลง State (ในที่นี้โครงสร้างเปลี่ยนไปเล็กน้อย แต่เราจะ destructure ข้างล่าง)
-        
-      } catch (error) {
-        console.error("Error loading products:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchData();
-  }, []);
-
-  const { recommended, popular, promo } = useMemo(() => {
-    // ถ้า allProducts เป็น Array (กรณีเก่า) หรือยังไม่โหลด
-    if (!allProducts || (Array.isArray(allProducts) && allProducts.length === 0)) {
-        return { recommended: [], popular: [], promo: [] };
-    }
-    
-    // ถ้าเป็น Object ที่โหลดมาจาก home_products.json
-    if (!Array.isArray(allProducts) && allProducts.recommended) {
-        return allProducts;
-    }
-
-    // Fallback logic (ถ้าเผื่อมีการเปลี่ยนกลับไปใช้ Array)
-    const list = Array.isArray(allProducts) ? allProducts : [];
-    return {
-       recommended: list.slice(0, 10),
-       popular: list.slice(10, 20),
-       promo: list.slice(20, 30)
-    };
-  }, [allProducts]);
 
   const categories = [
-    { name: "อาหารสด & แช่แข็ง", icon: <Beef size={28} /> },
-    { name: "อาหารแห้ง", icon: <PackageSearch size={28} /> },
-    { name: "ของใช้ในบ้าน", icon: <HomeIcon size={28} /> },
-    { name: "สุขภาพ & ความงาม", icon: <Sparkles size={28} /> },
-    { name: "แม่และเด็ก", icon: <Baby size={28} /> },
-    { name: "เครื่องใช้ไฟฟ้า", icon: <Tv size={28} /> },
-    { name: "เครื่องมือช่าง", icon: <Hammer size={28} /> },
-    { name: "สัตว์เลี้ยง", icon: <Dog size={28} /> },
+    { displayName: "อาหารสด & แช่แข็ง", dbName: "อาหารสดและเบเกอรี่", icon: <Beef size={28} /> },
+    { displayName: "อาหารแห้ง", dbName: "ของแห้งและเครื่องปรุง", icon: <PackageSearch size={28} /> },
+    { displayName: "ของใช้ในบ้าน", dbName: "บ้านและไลฟ์สไตล์", icon: <HomeIcon size={28} /> },
+    { displayName: "สุขภาพ & ความงาม", dbName: "ความงามและของใช้ส่วนตัว", icon: <Sparkles size={28} /> },
+    { displayName: "แม่และเด็ก", dbName: "แม่และเด็ก", icon: <Baby size={28} /> },
+    { displayName: "เครื่องใช้ไฟฟ้า", dbName: "เครื่องใช้ไฟฟ้า อุปกรณ์อิเล็กทรอนิกส์", icon: <Tv size={28} /> },
+    { displayName: "เครื่องมือช่าง", dbName: "บ้านและไลฟ์สไตล์", icon: <Hammer size={28} /> }, 
+    { displayName: "สัตว์เลี้ยง", dbName: "อาหารและอุปกรณ์สัตว์เลี้ยง", icon: <Dog size={28} /> },
   ];
 
-  const handleCategoryClick = (categoryName) => {
-    navigate('/categories', { state: { selectedCategory: categoryName } });
+  const handleCategoryClick = (dbCategoryName) => {
+    navigate('/categories', { state: { selectedCategory: dbCategoryName } });
   };
 
-  // ✅ New Handler for Secure Likes
   const handleToggleFavorite = (product) => {
     if (!currentUser) {
-      setIsAuthModalOpen(true); // ✅ Show Beautiful Modal instead of confirm
+      setIsAuthModalOpen(true);
       return;
     }
     toggleFavorite(product);
@@ -224,43 +286,17 @@ const Home = () => {
           </h1>
           <p>
             เปรียบเทียบราคาจากสินค้ากว่า
-            <strong> {!loading ? '70,000+' : '...'} </strong>
+            <strong> 70,000+ </strong>
             รายการ เพื่อดีลที่คุ้มที่สุด
           </p>
           
-          {/* 🟢 4. ส่วน Search Box + Dropdown Suggestions */}
           <div className="search-container-relative" ref={searchContainerRef}>
             <div className="search-box-wrapper">
               <input 
                   type="text" 
                   placeholder="ค้นหาชื่อสินค้าที่ต้องการ..." 
                   value={searchTerm}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    setSearchTerm(value);
-
-                    if (value.trim().length > 0) {
-                      let searchSource = [];
-                      if (Array.isArray(allProducts)) {
-                        searchSource = allProducts;
-                      } else if (allProducts && (allProducts.recommended || allProducts.popular)) {
-                        searchSource = [
-                          ...(allProducts.recommended || []),
-                          ...(allProducts.popular || []),
-                          ...(allProducts.promo || [])
-                        ];
-                      }
-
-                      const filtered = searchSource
-                        .filter(p => p.name && p.name.toLowerCase().includes(value.toLowerCase()))
-                        .slice(0, 6);
-                      setSuggestions(filtered);
-                      setShowSuggestions(true);
-                    } else {
-                      setSuggestions([]);
-                      setShowSuggestions(false);
-                    }
-                  }} 
+                  onChange={(e) => setSearchTerm(e.target.value)} 
                   onKeyDown={handleKeyDown}
                   onFocus={() => { if(searchTerm && suggestions.length > 0) setShowSuggestions(true); }}
               />
@@ -269,7 +305,6 @@ const Home = () => {
               </button>
             </div>
 
-            {/* 🟢 5. กล่อง Dropdown แสดงผลการค้นหา */}
             {showSuggestions && suggestions.length > 0 && (
               <div className="search-suggestions-dropdown">
                 {suggestions.map((item, idx) => (
@@ -293,7 +328,6 @@ const Home = () => {
               </div>
             )}
           </div>
-
         </div>
       </header>
 
@@ -311,14 +345,25 @@ const Home = () => {
               <div 
                 key={idx} 
                 className="cat-item"
-                onClick={() => handleCategoryClick(cat.name)}
+                onClick={() => handleCategoryClick(cat.dbName)}
               >
                 <div className="cat-icon-box">{cat.icon}</div>
-                <span className="cat-text">{cat.name}</span>
+                <span className="cat-text">{cat.displayName}</span>
               </div>
             ))}
           </div>
         </section>
+
+        <ProductSection
+          title="สินค้าโปรโมชั่น"
+          icon={<Tag size={24} color="var(--primary)" />}
+          items={promo} 
+          isFavorite={isFavorite}
+          toggleFav={handleToggleFavorite}
+          loading={loading}
+          onAddToCart={(p) => { setSelectedProduct(p); setIsModalOpen(true); }}
+          onViewAll={() => handleViewAll('promo')} 
+        />
 
         <ProductSection
           title="สินค้าแนะนำ"
@@ -330,6 +375,7 @@ const Home = () => {
           onAddToCart={(p) => { setSelectedProduct(p); setIsModalOpen(true); }}
           onViewAll={() => handleViewAll('recommended')} 
         />
+        
         <ProductSection
           title="สินค้ายอดนิยม"
           icon={<Flame size={24} color="#ea580c" />}
@@ -339,16 +385,6 @@ const Home = () => {
           loading={loading}
           onAddToCart={(p) => { setSelectedProduct(p); setIsModalOpen(true); }}
           onViewAll={() => handleViewAll('popular')} 
-        />
-        <ProductSection
-          title="สินค้าโปรโมชั่น"
-          icon={<Tag size={24} color="var(--primary)" />}
-          items={promo}
-          isFavorite={isFavorite}
-          toggleFav={handleToggleFavorite}
-          loading={loading}
-          onAddToCart={(p) => { setSelectedProduct(p); setIsModalOpen(true); }}
-          onViewAll={() => handleViewAll('promo')} 
         />
       </main>
 
