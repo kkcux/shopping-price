@@ -287,6 +287,7 @@ export default function MyLists3() {
   const [selectedList, setSelectedList] = useState(null);
   const [isDraft, setIsDraft] = useState(false);
 
+  // ✅ แก้ไขส่วนนี้: ดึงข้อมูลจาก Local Storage เสมอ ไม่ต้องรอสถานะ Login
   useEffect(() => {
     const fetchListData = async () => {
       // 1. DRAFT DATA PRIORITY (จากหน้า Create)
@@ -299,14 +300,12 @@ export default function MyLists3() {
 
       // 2. ถ้าเป็น temporary ID ให้ดึงจาก draft
       if (String(id).startsWith('temp_')) {
-        // ลองดึงจาก temp_draft ก่อน
         const tempDraft = JSON.parse(localStorage.getItem("temp_draft") || "null");
         if (tempDraft && String(tempDraft.id) === String(id)) {
           setSelectedList(tempDraft);
           setIsDraft(true);
           return;
         }
-        // ถ้าไม่มี ลองดึงจาก current_draft
         const draft = JSON.parse(localStorage.getItem("current_draft") || "null");
         if (draft && String(draft.id) === String(id)) {
           setSelectedList(draft);
@@ -315,18 +314,16 @@ export default function MyLists3() {
         }
       }
 
-      // 3. ถ้า login แล้ว ให้หาใน Local Storage หรือ FireStore
-      if (auth.currentUser) {
-        // 3.1 หาใน Local Storage ก่อน
-        const allLocalLists = JSON.parse(localStorage.getItem("myLists")) || [];
-        const localList = allLocalLists.find((l) => String(l.id) === String(id));
+      // 3. หาใน Local Storage เสมอ (ไม่ต้องรอ login จะได้ไม่ติดหน้าขาวเวลารีเฟรช)
+      const allLocalLists = JSON.parse(localStorage.getItem("myLists")) || [];
+      const localList = allLocalLists.find((l) => String(l.id) === String(id));
 
-        if (localList) {
-          setSelectedList(localList);
-          return;
-        }
+      if (localList) {
+        setSelectedList(localList);
+      }
 
-        // 3.2 หาใน FireStore
+      // 4. หากโหลด currentUser สำเร็จ ให้ซิงค์หาใน Firestore เผื่อมีข้อมูลที่ใหม่กว่าหรือเฉพาะของ User
+      if (currentUser) {
         try {
             const docRef = doc(db, "shopping_lists", String(id));
             const docSnap = await getDoc(docRef);
@@ -341,12 +338,13 @@ export default function MyLists3() {
             console.error("Error fetching from Firestore:", err);
         }
       } else {
-        // ✅ ถ้ายังไม่ login และไม่ใช่ draft ให้แสดงข้อความ
-        console.log("Not logged in and no draft data");
+        if (!localList && !isDraft) {
+          console.log("Not logged in and no draft data found");
+        }
       }
     };
     fetchListData();
-  }, [id, location.state]);
+  }, [id, location.state, currentUser]); // 👈 เพิ่ม currentUser ใน dependency
 
   // ✅ แก้ไข: ใช้ useRef เช็ค ทำให้ Alert เด้งแค่ครั้งเดียวแน่นอน
   useEffect(() => {
